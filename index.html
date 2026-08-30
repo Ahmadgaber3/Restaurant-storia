@@ -6,7 +6,7 @@
     <title>Storia Restaurant & Cafe | المنيو الرسمي</title>
     
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#e65100">
+    <meta name="theme-color" content="#0284c7">
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -19,10 +19,10 @@
             --bg: #f4f6f8; 
             --main-text: #1a1a1a; 
             --desc-text: #64748b;
-            --accent: #e65100; 
-            --accent-hover: #d84315;
-            --yellow-gold: #e65100;
-            --address-tag: #e65100;
+            --accent: #0284c7; 
+            --accent-hover: #0369a1;
+            --yellow-gold: #0284c7;
+            --address-tag: #0284c7;
             --white: #ffffff; 
             --glass: rgba(255, 255, 255, 0.95);
             --success-dark: #2e7d32; 
@@ -35,7 +35,7 @@
             --bg: #0f1115; 
             --main-text: #f8fafc;
             --desc-text: #94a3b8;
-            --yellow-gold: #ff8f00;
+            --yellow-gold: #38bdf8;
             --white: #1a1e24;
             --glass: rgba(26, 30, 36, 0.95);
             --header-bg: #1a1e24;
@@ -55,13 +55,13 @@
 
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: radial-gradient(circle, rgba(230, 81, 0, 0.15) 0%, rgba(0, 0, 0, 0.1) 100%), url('images/splash-bg.jpg');
+            background-image: radial-gradient(circle, rgba(2, 132, 199, 0.15) 0%, rgba(0, 0, 0, 0.1) 100%), url('images/splash-bg.jpg');
             background-size: cover;
             background-position: center center;
             background-repeat: no-repeat;
             z-index: 9999;
             display: flex; justify-content: center; align-items: flex-end;
-            padding: 0 20px 190px 20px;
+            padding: 0 20px 90px 20px; /* تم تنزيل العداد حوالي 2 سنتيمتر */
             transition: 0.6s ease-out;
             filter: brightness(105%) contrast(100%);
         }
@@ -92,13 +92,13 @@
             display: block; 
             width: 0%; 
             height: 100%; 
-            background: var(--accent); 
+            background: #38bdf8; 
             border-radius: 10px;
-            transition: width 0.03s linear;
+            transition: width 0.04s linear;
         }
         
         .creative-counter {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: 900;
             color: #ffffff;
             background: rgba(0, 0, 0, 0.75);
@@ -107,15 +107,15 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 4px;
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
             border: 1.5px solid rgba(255, 255, 255, 0.4);
             letter-spacing: 0.5px;
         }
         .creative-counter span {
-            color: var(--accent);
+            color: #38bdf8;
             font-variant-numeric: tabular-nums;
-            font-size: 1.25rem;
+            font-size: 1.35rem;
         }
         
         .splash-hidden { transform: translateY(-100%); opacity: 0; pointer-events: none; }
@@ -248,7 +248,7 @@
             color: #ffffff;
             padding: 0 8px;
             gap: 3px;
-            box-shadow: 0 3px 8px rgba(230, 81, 0, 0.35);
+            box-shadow: 0 3px 8px rgba(2, 132, 199, 0.35);
             transition: transform 0.15s ease;
             width: 100%;
         }
@@ -278,7 +278,6 @@
         .app-inner-title { font-size: 1.25rem; font-weight: 800; color: var(--accent); letter-spacing: 0.5px; line-height: 1.2; }
         .app-inner-sub { font-size: 0.95rem; font-weight: 700; color: var(--main-text); margin-bottom: 2px; }
 
-        /* شريط الأقسام العلوي منظم بأسماء مبسطة ومريحة للعين */
         .category-nav { 
             display: flex; 
             overflow-x: auto; 
@@ -338,7 +337,6 @@
         
         .menu-list { padding: 12px 14px; max-width: 600px; margin: auto; }
         
-        /* تنسيق كارت الوجبات المحكم بدقة دون أي بروز للخارج */
         .food-card { 
             background: var(--white); 
             border-radius: 20px; 
@@ -354,7 +352,6 @@
         }
         .food-card.disabled-item { opacity: 0.5; filter: grayscale(0.3); }
         
-        /* صورة المنتج 120x120 */
         .item-img-box { 
             width: 120px; 
             height: 120px; 
@@ -389,7 +386,6 @@
             margin-bottom: 4px;
         }
 
-        /* اسم الصنف منظم وبالعرض وبدون تكسير */
         .food-name { 
             font-weight: 800; 
             font-size: 0.92rem; 
@@ -443,10 +439,9 @@
             background: var(--accent);
             color: white;
             border-color: var(--accent);
-            box-shadow: 0 2px 8px rgba(230, 81, 0, 0.25);
+            box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25);
         }
 
-        /* صف أزرار الكارت: الإضافات يمين - اطلب الان شمال */
         .card-actions-box {
             display: flex;
             align-items: center;
@@ -475,7 +470,6 @@
         }
         .mini-addons-btn:active { background: var(--accent); color: white; }
 
-        /* زر اطلب الان ثابت ومستطيل */
         .order-btn { 
             flex: 1.3;
             background: var(--accent); 
@@ -486,7 +480,7 @@
             font-size: 0.80rem; 
             font-weight: 800; 
             cursor: pointer; 
-            box-shadow: 0 2px 6px rgba(230, 81, 0, 0.2);
+            box-shadow: 0 2px 6px rgba(2, 132, 199, 0.2);
             transition: background-color 0.2s ease, border-color 0.2s ease; 
             display: inline-flex;
             align-items: center;
@@ -507,7 +501,6 @@
 
         .fly-item { position: fixed; z-index: 9999; pointer-events: none; width: 30px; height: 30px; background: var(--accent); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1); }
 
-        /* نافذة الإضافات الطائرة البسيطة */
         .simple-addons-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.55); z-index: 3500; display: none;
@@ -586,7 +579,7 @@
         }
         .simple-addon-item.checked {
             border-color: var(--accent);
-            background: rgba(230, 81, 0, 0.05);
+            background: rgba(2, 132, 199, 0.05);
         }
         .simple-addon-left {
             display: flex;
@@ -643,7 +636,7 @@
             font-weight: 800;
             font-size: 0.9rem;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(230, 81, 0, 0.25);
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
         }
 
         .restaurant-footer { padding: 30px 20px; text-align: center; background: var(--white); border-top: 1px solid var(--border-color); margin-top: 20px; }
@@ -653,7 +646,7 @@
         .branch-item strong { color: var(--accent); display: block; }
         
         .complaints-box {
-            background: rgba(230, 81, 0, 0.08);
+            background: rgba(2, 132, 199, 0.08);
             border: 1.5px dashed var(--accent);
             border-radius: 16px;
             padding: 12px;
@@ -705,7 +698,7 @@
 
         .order-type-container { display: flex; background: var(--bg); padding: 6px; border-radius: 16px; margin: 15px 0; gap: 6px; border: 1px solid var(--border-color); }
         .order-type-btn { flex: 1; border: none; background: transparent; padding: 12px; border-radius: 12px; font-weight: 800; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; color: var(--desc-text); transition: all 0.2s ease; }
-        .order-type-btn.active { background: var(--accent); color: white; box-shadow: 0 4px 12px rgba(230, 81, 0, 0.2); }
+        .order-type-btn.active { background: var(--accent); color: white; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.2); }
 
         .user-fields input { background: var(--bg); border: 1.5px solid var(--border-color); padding: 16px; border-radius: 14px; width: 100%; margin-bottom: 10px; color: var(--main-text); text-align: right; outline: none; }
         #uAddr { transition: all 0.2s ease; }
@@ -753,7 +746,7 @@
         .admin-box { background: var(--white); width: 100%; max-width: 480px; border-radius: 28px; padding: 22px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.3); animation: smoothFadeIn 0.2s ease-out; }
         
         .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
-        .admin-header h3 { font-size: 1.25rem; font-weight: 900; color: #d35400; display: flex; align-items: center; gap: 6px; }
+        .admin-header h3 { font-size: 1.25rem; font-weight: 900; color: #0284c7; display: flex; align-items: center; gap: 6px; }
         .admin-close { background: var(--bg); border: 1px solid var(--border-color); width: 34px; height: 34px; border-radius: 50%; font-weight: 800; cursor: pointer; color: var(--main-text); display: flex; align-items: center; justify-content: center; }
 
         .admin-cards-grid {
@@ -809,7 +802,7 @@
             width: 62px;
             height: 62px;
             border-radius: 50%;
-            background: #ffedd5;
+            background: #e0f2fe;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -819,7 +812,7 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
 
-        .card-avatar-box.orange-bg { background: #ffedd5; }
+        .card-avatar-box.orange-bg { background: #e0f2fe; }
         .card-avatar-box.blue-bg { background: #dbeafe; }
         .card-avatar-box.green-bg { background: #dcfce7; }
         .card-avatar-box.purple-bg { background: #f3e8ff; }
@@ -942,7 +935,7 @@
         .admin-global-actions { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
         .admin-action-btn { flex: 1; min-width: 120px; padding: 9px; border: none; border-radius: 12px; font-weight: 800; font-size: 0.82rem; cursor: pointer; color: white; }
         .btn-enable-all { background: #27ae60; }
-        .btn-disable-all { background: #e65100; }
+        .btn-disable-all { background: #0284c7; }
 
         .pass-form input { width: 100%; padding: 14px; border-radius: 14px; border: 1px solid var(--border-color); background: var(--bg); color: var(--main-text); margin-bottom: 12px; font-size: 0.95rem; text-align: center; }
         .pass-form button { width: 100%; padding: 14px; border-radius: 14px; border: none; background: var(--accent); color: white; font-weight: 800; cursor: pointer; }
@@ -1063,7 +1056,7 @@
         }
 
         .order-chat-btn-custom {
-            background: #e65100;
+            background: #0284c7;
             color: #ffffff;
             border: none;
             border-radius: 12px;
@@ -1074,7 +1067,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            box-shadow: 0 4px 12px rgba(230, 81, 0, 0.3);
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
             transition: transform 0.15s ease;
         }
         .order-chat-btn-custom:active {
@@ -1158,7 +1151,7 @@
     <div id="splash-screen">
         <div class="loader-content">
             <div class="loading-bar"><span id="progressBarFill"></span></div>
-            <div class="creative-counter">Storia Cafe & Restaurant # <span id="loadPercentage">0</span>%</div>
+            <div class="creative-counter"><span id="loadPercentage">0</span>%</div>
         </div>
     </div>
 
@@ -1200,7 +1193,6 @@
 
     <div id="menuList" class="menu-list"></div>
 
-    <!-- نافذة الإضافات الطائرة الهادئة والبسيطة في منتصف الشاشة -->
     <div class="simple-addons-modal" id="simpleAddonsModal" onclick="if(event.target===this) closeSimpleAddonsModal()">
         <div class="simple-addons-content">
             <div class="simple-addons-header">
@@ -1260,7 +1252,6 @@
         </div>
     </div>
 
-    <!-- لوحة التحكم للإدارة -->
     <div class="admin-modal" id="adminModal" onclick="if(event.target==this) closeAdminPanel()">
         <div class="admin-box">
             <div class="admin-header">
@@ -1317,7 +1308,6 @@
         </div>
     </div>
 
-    <!-- نافذة تعديل الأرقام لحظياً -->
     <div class="floating-sub-modal" id="contactsModal" onclick="if(event.target==this) closeFloatingModal('contactsModal')">
         <div class="floating-card-box">
             <div class="floating-header">
@@ -1325,7 +1315,7 @@
                 <button class="admin-close" onclick="closeFloatingModal('contactsModal')">✕</button>
             </div>
             
-            <div style="background: rgba(230, 81, 0, 0.08); border: 1.5px solid var(--accent); border-radius: 16px; padding: 12px; margin-bottom: 14px;">
+            <div style="background: rgba(2, 132, 199, 0.08); border: 1.5px solid var(--accent); border-radius: 16px; padding: 12px; margin-bottom: 14px;">
                 <div class="admin-custom-input-group">
                     <label>📱 رقم استلام الأوردرات (واتساب المطعم):</label>
                     <input type="tel" id="edit_nasr_order_phone" placeholder="01014144144">
@@ -1348,7 +1338,6 @@
         </div>
     </div>
 
-    <!-- نافذة إدارة الأصناف -->
     <div class="floating-sub-modal" id="statusModal" onclick="if(event.target==this) closeFloatingModal('statusModal')">
         <div class="floating-card-box">
             <div class="floating-header">
@@ -1364,7 +1353,6 @@
         </div>
     </div>
 
-    <!-- سجل الطلبات الواردة (Live) داخل لوحة الإدارة -->
     <div class="floating-sub-modal" id="logsModal" onclick="if(event.target==this) closeFloatingModal('logsModal')">
         <div class="floating-card-box">
             <div class="floating-header">
@@ -1412,12 +1400,11 @@
         </div>
     </footer>
 
-    <!-- مودال السلة -->
     <div class="modal" id="cartModal" onclick="if(event.target==this) toggleCart(false)">
         <div class="modal-content">
             <h2 style="margin-bottom: 20px;">طلباتك</h2>
             <div id="cartItemsList"></div>
-            <div style="margin: 20px 0; padding: 15px; background: rgba(230, 81, 0, 0.08); border-radius: 18px; display: flex; flex-direction: column; gap: 6px;">
+            <div style="margin: 20px 0; padding: 15px; background: rgba(2, 132, 199, 0.08); border-radius: 18px; display: flex; flex-direction: column; gap: 6px;">
                 <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
                     <span>مجموع الأصناف:</span>
                     <span id="itemsSubtotalAmount">0 ج.م</span>
@@ -1473,7 +1460,6 @@
     <script>
         const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTnQY_CtB_RYZQmR6AMh1YtKXngxkouZc8annSVpPaoSh1-ZjmXpHSGWbXL9p791ARv4xunlF7akopY/pub?output=csv";
 
-        // إضافات الشوربة الرسمية
         const soupAddons = [
             { name: "دجاج", price: 64.95 },
             { name: "مشروم", price: 29.95 },
@@ -1484,7 +1470,6 @@
             { name: "عيش كريتون", price: 29.95 }
         ];
 
-        // إضافات قسم المقبلات الرسمية
         const appetizerAddons = [
             { name: "فرنش", price: 0.00 },
             { name: "صويا", price: 0.00 },
@@ -1494,7 +1479,6 @@
             { name: "كوكتيل", price: 0.00 }
         ];
 
-        // إضافات قسم السلطات الرسمية
         const saladAddons = [
             { name: "مشروم", price: 29.95 },
             { name: "ذرة", price: 29.95 },
@@ -1509,7 +1493,6 @@
             { name: "زيتون", price: 19.95 }
         ];
 
-        // إضافات قسم السندوتشات الرسمية
         const sandwichAddons = [
             { name: "بيض", price: 29.95 },
             { name: "دجاج", price: 64.95 },
@@ -1521,7 +1504,6 @@
             { name: "جبنة موزاريلا", price: 44.95 }
         ];
 
-        // إضافات قسم المكرونة الرسمية
         const pastaAddons = [
             { name: "صوص ريحان", price: 24.95 },
             { name: "زيتون", price: 19.95 },
@@ -1536,7 +1518,6 @@
             { name: "دجاج", price: 64.95 }
         ];
 
-        // إضافات قسم فخارات ستوريا الرسمية
         const fakharaAddons = [
             { name: "مشروم", price: 24.95 },
             { name: "ذرة", price: 24.95 },
@@ -1549,7 +1530,6 @@
             { name: "beef مدخن", price: 39.95 }
         ];
 
-        // إضافات قسم فته لبناني الرسمية
         const fattehAddons = [
             { name: "مشروم", price: 29.95 },
             { name: "ذرة", price: 29.95 },
@@ -1557,7 +1537,6 @@
             { name: "لحوم", price: 119.95 }
         ];
 
-        // إضافات قسم الأطباق الرئيسية الرسمية
         const mainDishesAddons = [
             { name: "زيتون", price: 19.95 },
             { name: "مشروم", price: 29.95 },
@@ -1574,7 +1553,6 @@
             { name: "خبز", price: 29.95 }
         ];
 
-        // إضافات قسم البيتزا الرسمية
         const pizzaAddons = [
             { name: "ذرة", price: 29.95 },
             { name: "زيتون", price: 19.95 },
@@ -1589,7 +1567,6 @@
             { name: "جبنة موزاريلا", price: 44.95 }
         ];
 
-        // إضافات قسم الحلويات الرسمية
         const dessertAddons = [
             { name: "فانيلا", price: 29.95 },
             { name: "كريمة مخفوقة", price: 34.95 },
@@ -1605,7 +1582,6 @@
             { name: "بندق", price: 29.95 }
         ];
 
-        // إضافات قسم المشروبات الساخنة الرسمية
         const hotDrinksAddons = [
             { name: "فانيلا", price: 29.95 },
             { name: "بندق", price: 29.95 },
@@ -1621,7 +1597,6 @@
             { name: "ايس كريم", price: 29.95 }
         ];
 
-        // إضافات قسم الميلك شيك والزبادي الرسمية
         const milkshakeYogurtAddons = [
             { name: "ايس كريم", price: 29.95 },
             { name: "فانيلا", price: 29.95 },
@@ -1648,7 +1623,6 @@
         let currentActiveChatOrderId = null;
         let currentChatUserType = 'admin'; 
 
-        // بيانات النافذة الطائرة للإضافات
         let currentActiveItem = null;
         let currentActiveCardId = null;
         let selectedAddonsMap = [];
@@ -1676,8 +1650,9 @@
 
             const counterEl = document.getElementById('loadPercentage');
             const barFill = document.getElementById('progressBarFill');
+            const splashScreen = document.getElementById('splash-screen');
             let count = 0;
-            const duration = 1800;
+            const duration = 4000; // تم الضبط إلى 4 ثوانٍ بالكامل
             const intervalTime = duration / 100;
 
             const timer = setInterval(() => {
@@ -1687,9 +1662,18 @@
                     if (barFill) barFill.style.width = count + '%';
                 } else {
                     clearInterval(timer);
+                    if (splashScreen) {
+                        splashScreen.classList.add('splash-hidden');
+                    }
                 }
             }, intervalTime);
         }
+
+        // تشغيل العداد فور فتح الصفحة
+        window.addEventListener('DOMContentLoaded', () => {
+            startCreativeCounter();
+            fetchMenuFromGoogleSheet();
+        });
 
         function parseCSVLine(line) {
             const result = [];
@@ -2125,7 +2109,6 @@
             orderText += `------------------------------------\n`;
             orderText += `*الإجمالي الكلي:* ${currentTotal.toFixed(2)} ج.م\n`;
 
-            // تسجيل الطلب في الفايربيس لواتساب المباشر ولعرضه للإدارة
             try {
                 if (window.db && window.firebaseModules) {
                     const { collection, addDoc } = window.firebaseModules;
@@ -2150,12 +2133,10 @@
 
             toggleCart(false);
             
-            // فتح واتساب
             const waPhone = restaurantInfo.orderPhone || '201014144144';
             const waUrl = `https://wa.me/${waPhone}?text=${encodeURIComponent(orderText)}`;
             window.open(waUrl, '_blank');
 
-            // تفريغ السلة وتنبيه المستلم
             cart = [];
             updateCartBadge();
             document.getElementById('successModal').style.display = 'flex';
@@ -2195,7 +2176,6 @@
             }
         }
 
-        // إعدادات الشات واللوحة
         let chatUnsubscribe = null;
 
         function openChatModal(orderId, userType = 'admin', clientName = 'العميل') {
@@ -2296,7 +2276,6 @@
             }
         }
 
-        // لوحة التحكم بالأصناف والأرقام
         function openAdminPanel() {
             document.getElementById('adminModal').style.display = 'flex';
             document.getElementById('adminAuthView').style.display = 'block';
@@ -2400,237 +2379,18 @@
                     itemStatusMap[item.name] = status;
                 });
             });
-            renderMenu();
             loadAdminItemsList();
+            renderMenu();
 
             if (window.db && window.firebaseModules) {
                 try {
                     const { doc, setDoc } = window.firebaseModules;
                     await setDoc(doc(window.db, "settings", "menu_status"), {
                         items: itemStatusMap
-                    });
+                    }, { merge: true });
                 } catch(e) {}
             }
         }
-
-        function loadAdminContactsData() {
-            document.getElementById('edit_nasr_order_phone').value = restaurantInfo.orderPhone || '';
-            document.getElementById('edit_nasr_display_phone1').value = restaurantInfo.displayPhone1 || '';
-            document.getElementById('edit_nasr_display_phone2').value = restaurantInfo.displayPhone2 || '';
-            document.getElementById('edit_nasr_complaint_phone').value = restaurantInfo.complaintPhone || '';
-        }
-
-        async function saveContactsToFirebase() {
-            const orderP = document.getElementById('edit_nasr_order_phone').value.trim();
-            const disp1 = document.getElementById('edit_nasr_display_phone1').value.trim();
-            const disp2 = document.getElementById('edit_nasr_display_phone2').value.trim();
-            const compP = document.getElementById('edit_nasr_complaint_phone').value.trim();
-
-            restaurantInfo.orderPhone = orderP;
-            restaurantInfo.displayPhone1 = disp1;
-            restaurantInfo.displayPhone2 = disp2;
-            restaurantInfo.complaintPhone = compP;
-
-            updateFooterContactsUI();
-
-            if (window.db && window.firebaseModules) {
-                try {
-                    const { doc, setDoc } = window.firebaseModules;
-                    await setDoc(doc(window.db, "settings", "contacts"), restaurantInfo);
-                    alert('تم حفظ وتحديث الأرقام بنجاح!');
-                    closeFloatingModal('contactsModal');
-                } catch(e) {
-                    alert('خطأ في حفظ البيانات للفايربيس');
-                }
-            }
-        }
-
-        function updateFooterContactsUI() {
-            const bContainer = document.getElementById('footerBranchesContainer');
-            if (bContainer) {
-                bContainer.innerHTML = `
-                    <div class="branch-item">
-                        <strong>📍 Storia Cafe & Restaurant:</strong>
-                        ${restaurantInfo.address}<br>
-                        📞 للطلبات والحجز: ${restaurantInfo.displayPhone1} - ${restaurantInfo.displayPhone2}
-                    </div>
-                `;
-            }
-
-            const cContainer = document.getElementById('footerComplaintsContainer');
-            if (cContainer) {
-                cContainer.innerHTML = `
-                    <div class="complaints-box">
-                        <div class="complaints-title">⚠️ للشكاوى والإقتراحات المباشرة:</div>
-                        <a href="tel:${restaurantInfo.complaintPhone}" class="complaints-number">📞 ${restaurantInfo.complaintPhone}</a>
-                    </div>
-                `;
-            }
-        }
-
-        let ordersUnsubscribe = null;
-
-        function listenToLiveOrders() {
-            if (!window.db || !window.firebaseModules) return;
-            const { collection, onSnapshot } = window.firebaseModules;
-
-            if (ordersUnsubscribe) ordersUnsubscribe();
-
-            ordersUnsubscribe = onSnapshot(collection(window.db, "orders"), (snapshot) => {
-                const logsList = document.getElementById('adminOrdersLogsList');
-                const countBadge = document.getElementById('currentBranchOrdersCount');
-                if (!logsList) return;
-
-                logsList.innerHTML = '';
-                const orders = [];
-
-                snapshot.forEach(docSnap => {
-                    orders.push({ id: docSnap.id, ...docSnap.data() });
-                });
-
-                orders.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-
-                if (countBadge) countBadge.innerText = `عدد الطلبات: ${orders.length}`;
-
-                if (orders.length === 0) {
-                    logsList.innerHTML = '<div style="text-align:center; padding:20px; color:var(--desc-text);">لا توجد طلبات مسجلة حتى الآن</div>';
-                    return;
-                }
-
-                orders.forEach(ord => {
-                    const card = document.createElement('div');
-                    card.className = 'order-card-custom';
-
-                    const itemsHtml = (ord.items || []).map(i => `<li>${i}</li>`).join('');
-
-                    card.innerHTML = `
-                        <div class="order-custom-header">
-                            <div class="order-user-name-box">
-                                <span class="order-user-icon">👤</span>
-                                <span>${ord.userName || 'عميل'}</span>
-                            </div>
-                            <div class="order-delete-btn-circ" onclick="deleteOrderRecord('${ord.id}')" title="حذف الطلب">✕</div>
-                        </div>
-                        <div class="order-contact-sub">
-                            <span>📞 <a href="tel:${ord.userPhone}">${ord.userPhone || 'بدون رقم'}</a></span> | 
-                            <span>📍 ${ord.userAddr || 'بدون عنوان'}</span> | 
-                            <span>🛵 ${ord.orderType === 'delivery' ? 'دليفري' : 'صالة'}</span>
-                        </div>
-                        <div class="order-items-box-custom">
-                            <ul class="order-items-list-custom">
-                                ${itemsHtml}
-                            </ul>
-                        </div>
-                        <div class="order-custom-footer">
-                            <div class="order-total-price-custom">
-                                <span>الإجمالي:</span>
-                                <span>${ord.totalPrice ? ord.totalPrice.toFixed(2) : '0'} ج.م</span>
-                            </div>
-                            <button class="order-chat-btn-custom" onclick="openChatModal('${ord.id}', 'admin', '${ord.userName || 'العميل'}')">
-                                💬 محادثة العميل
-                            </button>
-                        </div>
-                    `;
-                    logsList.appendChild(card);
-                });
-            });
-        }
-
-        async function deleteOrderRecord(orderId) {
-            if (!confirm('هل أنت متأكد من حذف هذا الطلب؟')) return;
-            if (window.db && window.firebaseModules) {
-                try {
-                    const { doc, deleteDoc } = window.firebaseModules;
-                    await deleteDoc(doc(window.db, "orders", orderId));
-                } catch(e) {
-                    console.error("خطأ حذف الطلب:", e);
-                }
-            }
-        }
-
-        async function clearCurrentOrderLogs() {
-            if (!confirm('هل أنت متأكد من مسح كافة الطلبات المسجلة؟')) return;
-            if (window.db && window.firebaseModules) {
-                try {
-                    const { collection, getDocs, deleteDoc, doc } = window.firebaseModules;
-                    const snap = await getDocs(collection(window.db, "orders"));
-                    snap.forEach(async (d) => {
-                        await deleteDoc(doc(window.db, "orders", d.id));
-                    });
-                } catch(e) {}
-            }
-        }
-
-        async function updateAdminPassword() {
-            const current = document.getElementById('currentAdminPass').value;
-            const newP = document.getElementById('newAdminPass').value;
-            const confirmP = document.getElementById('confirmAdminPass').value;
-
-            if (!newP || newP !== confirmP) {
-                alert('كلمات المرور الجديدة غير متطابقة!');
-                return;
-            }
-
-            if (window.db && window.firebaseModules) {
-                try {
-                    const { doc, setDoc } = window.firebaseModules;
-                    await setDoc(doc(window.db, "settings", "admin_config"), { password: newP }, { merge: true });
-                    alert('تم تغيير كلمة المرور بنجاح!');
-                    closeFloatingModal('passwordModal');
-                } catch(e) {
-                    alert('خطأ أثناء التحديث');
-                }
-            }
-        }
-
-        function openSupportWhatsApp() {
-            window.open('https://wa.me/201014144144?text=' + encodeURIComponent('مرحباً، أود الحصول على الدعم الفني الخاص بـ Storia Cafe'), '_blank');
-        }
-
-        function triggerUniversalInstall() {
-            alert('لتثبيت التطبيق على جهازك:\n- للأندرويد (Chrome): اضغط على قائمة الخيارات (⋮) ثم اختر "التثبيت على الشاشة الرئيسية".\n- للآيفون (Safari): اضغط على زر المشاركة (Share) ثم اختر "إضافة إلى الشاشة الرئيسية Add to Home Screen".');
-        }
-
-        // التهيئة الابتدائية وتحميل البيانات
-        window.addEventListener('firebase-ready', async () => {
-            if (!window.db || !window.firebaseModules) return;
-            const { doc, getDoc, onSnapshot } = window.firebaseModules;
-
-            // جلب أرقام التواصل
-            try {
-                const cSnap = await getDoc(doc(window.db, "settings", "contacts"));
-                if (cSnap.exists()) {
-                    restaurantInfo = { ...restaurantInfo, ...cSnap.data() };
-                }
-                updateFooterContactsUI();
-            } catch(e) {}
-
-            // الاستماع لحالة الأصناف لحظياً
-            try {
-                onSnapshot(doc(window.db, "settings", "menu_status"), (snap) => {
-                    if (snap.exists() && snap.data().items) {
-                        itemStatusMap = snap.data().items;
-                        renderMenu();
-                    }
-                });
-            } catch(e) {}
-        });
-
-        window.addEventListener('DOMContentLoaded', () => {
-            startCreativeCounter();
-            fetchMenuFromGoogleSheet();
-            updateFooterContactsUI();
-
-            const activeOrderId = localStorage.getItem('storia_active_order_id');
-            if (activeOrderId) {
-                showClientHeaderChatButton();
-            }
-
-            setTimeout(() => {
-                const splash = document.getElementById('splash-screen');
-                if (splash) splash.classList.add('splash-hidden');
-            }, 2000);
-        });
     </script>
 </body>
 </html>
