@@ -778,7 +778,6 @@
         </div>
     </div>
 
-    <!-- نافذة اختيار نوع الطلب -->
     <div class="welcome-order-type-modal" id="welcomeOrderModal">
         <div class="welcome-card">
             <img src="images/logooo.png" class="welcome-logo" alt="Storia Cafe" onerror="this.src='https://www.storia-eg.com/images/logo.png'">
@@ -1116,7 +1115,6 @@
         </div>
     </div>
 
-    <!-- كود إعداد وربط Firebase -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, onSnapshot, addDoc, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -1306,7 +1304,6 @@
             }
         });
 
-        // --- نظام النقاط والمكافآت ---
         function updatePointsBadge(pts) {
             userLoyaltyPoints = pts;
             const badge = document.getElementById('headerPointsBadge');
@@ -1412,7 +1409,6 @@
             }
         }
 
-        // --- تحميل ومعالجة شيت جوجل للأصناف بدقة وفك حظر الصور ---
         function parseCSVLine(line) {
             const result = [];
             let insideQuote = false;
@@ -1429,13 +1425,10 @@
             return result;
         }
 
-        // دالة كسر حظر السيرفرات وتسريع الصور
         function formatSafeImageUrl(rawUrl) {
             if (!rawUrl) return 'images/logooo.png';
             let clean = rawUrl.trim().replace(/^\[|\]$/g, '').replace(/[\(\)]/g, '');
             if (!clean.startsWith('http')) return clean;
-            
-            // تمرير الرابط عبر خدمة تحويل آمنة لفك قيود CORS والـ Hotlinking
             return `https://images.weserv.nl/?url=${encodeURIComponent(clean)}&default=https://www.storia-eg.com/images/logo.png`;
         }
 
@@ -1455,15 +1448,6 @@
                 const nameIdx = headers.findIndex(h => h.includes('صنف') || h.includes('اسم') || h.includes('item') || h.includes('name'));
                 const priceIdx = headers.findIndex(h => h.includes('سعر') || h.includes('price'));
                 const descIdx = headers.findIndex(h => h.includes('مكون') || h.includes('وصف') || h.includes('desc'));
-                
-                // البحث عن عمود الصور بالاسم أو البحث التلقائي عن العمود الذي يحتوي روابط
-                let imgIdx = headers.findIndex(h => h.includes('صورة') || h.includes('صوره') || h.includes('img') || h.includes('image'));
-                
-                // إذا لم يجد اسم العمود، يكتشف العمود الذي يحتوي على روابط http في أول سطر بيانات
-                if (imgIdx === -1 && lines.length > 1) {
-                    const sampleRow = parseCSVLine(lines[1]);
-                    imgIdx = sampleRow.findIndex(cell => cell && (cell.includes('http') || cell.includes('.jpg') || cell.includes('.png')));
-                }
 
                 const parsedMenu = [];
 
@@ -1478,8 +1462,15 @@
 
                     const desc = (descIdx >= 0 && row[descIdx]) ? row[descIdx] : '';
                     
-                    // استخراج الرابط وتأمينه
-                    const rawImg = (imgIdx >= 0 && row[imgIdx]) ? row[imgIdx] : '';
+                    // بحث تلقائي وذكي عن أي خلية بها رابط صورة في السطر
+                    let rawImg = '';
+                    for (let c = 0; c < row.length; c++) {
+                        if (row[c] && (row[c].includes('http://') || row[c].includes('https://'))) {
+                            rawImg = row[c];
+                            break;
+                        }
+                    }
+
                     const img = formatSafeImageUrl(rawImg);
 
                     let addons = null;
@@ -1948,7 +1939,6 @@
             } catch(e) {}
         }
 
-        // --- لوحة التحكم ---
         function openAdminPanel() {
             document.getElementById('adminModal').style.display = 'flex';
             document.getElementById('adminAuthView').style.display = 'block';
