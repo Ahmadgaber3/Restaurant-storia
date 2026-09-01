@@ -1427,7 +1427,7 @@
 
         async function fetchMenuFromGoogleSheet() {
             try {
-                // منع التخزين المؤقت لجلب أي تحديث فوري
+                // منع التخزين المؤقت لجلب أي تعديل من الشيت فوراً
                 const freshUrl = GOOGLE_SHEET_CSV_URL + (GOOGLE_SHEET_CSV_URL.includes('?') ? '&' : '?') + '_t=' + Date.now() + '&nocache=' + Math.random();
                 const response = await fetch(freshUrl);
                 if (!response.ok) throw new Error("فشل في تحميل شيت جوجل");
@@ -1457,10 +1457,13 @@
 
                     const desc = (descIdx >= 0 && row[descIdx]) ? row[descIdx] : '';
                     
-                    // مسار الصورة بالترقيم الافتراضي i.jpg (1.jpg, 2.jpg, ...)
-                    let img = `images/${i}.jpg`;
+                    const actualSheetRow = i + 1; // رقم الصف الحقيقي في شيت جوجل (2, 3, 4...)
+                    const itemSeqNumber = i;      // الترقيم التسلسلي للأصناف (1, 2, 3...)
 
-                    // إذا كان الشيت يحتوي على رابط أو مسار مخصص نستخدمه
+                    // المسار المبدئي: يبحث باسم الصنف
+                    let img = `images/${encodeURIComponent(rawName)}.jpg`;
+
+                    // إذا وُجد عمود صورة في الشيت وتمت كتابة مسار مخصص
                     if (imgIdx >= 0 && row[imgIdx] && row[imgIdx].trim() !== '') {
                         let customImg = row[imgIdx].trim().replace(/^\[|\]$/g, '');
                         if (customImg.startsWith('http') || customImg.startsWith('images/')) {
@@ -1492,7 +1495,8 @@
 
                     catObj.items.push({
                         id: 'item_' + i + '_' + Math.random().toString(36).substr(2, 5),
-                        indexNum: i,
+                        sheetRow: actualSheetRow, // رقم الصف بالشيت
+                        seqIndex: itemSeqNumber,  // رقم الصنف المتسلسل
                         name: rawName,
                         price: parseFloat(price) || 0,
                         desc: desc,
@@ -1564,7 +1568,10 @@
                 card.innerHTML = `
                     <div class="item-img-box">
                         <img src="${item.img}" loading="lazy" alt="${item.name}" 
-                             onerror="if(!this.dataset.step){this.dataset.step='1'; this.src='images/' + encodeURIComponent('${item.name}') + '.jpg';} else if(this.dataset.step==='1'){this.dataset.step='2'; this.src='images/' + encodeURIComponent('${cleanUnderscore}') + '.jpg';} else {this.src='images/logooo.png';}">
+                             onerror="if(!this.dataset.step){this.dataset.step='1'; this.src='images/' + encodeURIComponent('${cleanUnderscore}') + '.jpg';} 
+                                      else if(this.dataset.step==='1'){this.dataset.step='2'; this.src='images/${item.sheetRow}.jpg';} 
+                                      else if(this.dataset.step==='2'){this.dataset.step='3'; this.src='images/${item.seqIndex}.jpg';} 
+                                      else {this.src='images/logooo.png';}">
                     </div>
                     <div class="food-info">
                         <div>
