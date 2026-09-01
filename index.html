@@ -1427,7 +1427,8 @@
 
         async function fetchMenuFromGoogleSheet() {
             try {
-                const freshUrl = GOOGLE_SHEET_CSV_URL + (GOOGLE_SHEET_CSV_URL.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
+                // منع التخزين المؤقت لجلب أي تعديل من شيت جوجل في نفس الثانية
+                const freshUrl = GOOGLE_SHEET_CSV_URL + (GOOGLE_SHEET_CSV_URL.includes('?') ? '&' : '?') + '_t=' + Date.now() + '&nocache=' + Math.random();
                 const response = await fetch(freshUrl);
                 if (!response.ok) throw new Error("فشل في تحميل شيت جوجل");
                 
@@ -1456,14 +1457,18 @@
 
                     const desc = (descIdx >= 0 && row[descIdx]) ? row[descIdx] : '';
                     
-                    // البحث عن الصورة داخل مجلد images مباشرة باسم الصنف
-                    // إزالة المسافات الزائدة لدعم التسمية المباشرة
-                    const safeName = rawName.replace(/[\/\\?%*:|"<>]/g, '');
-                    let img = `images/${safeName}.jpg`;
-
-                    // إذا كان الشيت يحتوي على رابط أو مسار مخصص نستخدمه
+                    // استخدام اسم الصورة كما هو بالضبط في الشيت أو مطابقة اسم الصنف مباشرة داخل مجلد images/
+                    let img = `images/${encodeURIComponent(rawName)}.jpg`;
+                    
                     if (imgIdx >= 0 && row[imgIdx] && row[imgIdx].trim() !== '') {
-                        img = row[imgIdx].trim().replace(/^\[|\]$/g, '');
+                        let customImg = row[imgIdx].trim().replace(/^\[|\]$/g, '');
+                        if (customImg.startsWith('http')) {
+                            img = customImg;
+                        } else if (customImg.startsWith('images/')) {
+                            img = customImg;
+                        } else {
+                            img = `images/${encodeURIComponent(customImg)}`;
+                        }
                     }
 
                     let addons = null;
