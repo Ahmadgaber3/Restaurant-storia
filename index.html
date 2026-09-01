@@ -120,7 +120,6 @@
         
         .splash-hidden { transform: translateY(-100%); opacity: 0; pointer-events: none; }
 
-        /* كارت اختيار طريقة الاستلام بدون فراغات زائدة */
         .welcome-order-type-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15, 20, 18, 0.85); backdrop-filter: blur(8px);
@@ -450,7 +449,6 @@
         }
         .mini-addons-btn:active { background: var(--accent); color: white; }
 
-        /* ضبط الزر بدقة حتى لا يخرج عن الكارت نهائياً */
         .order-btn { 
             flex: 1.4;
             background: var(--accent); 
@@ -1227,27 +1225,84 @@
     <script>
         const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTsz0Q8FatsNvh7u2MGFmJpXDuXjC6HD23Vt1VlEnS2EX-dElZco3evuNUXKZSe3-rLmOabuU1NTiyO/pub?output=csv";
 
-        // قاموس ترجمة الأسماء والوصف بالكامل
+        // قاموس ترجمة شامل لكافة الأقسام، الأصناف، والوصف
         const menuTranslationMap = {
             // الشوربة
             "Creamy Potato Soup": { ar: "شوربة بطاطس بالكريمة", en: "Creamy Potato Soup", descAr: "شوربة بطاطس غنية بالكريمة والبهارات الطبيعية", descEn: "Rich and smooth creamy potato soup with natural spices" },
-            "Vegetables Soup": { ar: "شوربة خضار مشكل", en: "Vegetables Soup", descAr: "شوربة خضروات طازجة مشكلة مع قطع المشروم اللذيذة", descEn: "Fresh mixed vegetables soup with delicious mushrooms" },
+            "شوربة بطاطس بالكريمة": { ar: "شوربة بطاطس بالكريمة", en: "Creamy Potato Soup", descAr: "شوربة بطاطس غنية بالكريمة والبهارات الطبيعية", descEn: "Rich and smooth creamy potato soup with natural spices" },
+            "Vegetables Soup": { ar: "شوربة خضار مشكل", en: "Vegetables Soup", descAr: "شوربة خضروات طازجة مشكلة مع قطع المشروم اللذيذة", descEn: "Fresh mixed vegetables soup with mushrooms" },
+            "شوربة خضار": { ar: "شوربة خضار مشكل", en: "Vegetables Soup", descAr: "شوربة خضروات طازجة مشكلة مع قطع المشروم اللذيذة", descEn: "Fresh mixed vegetables soup with mushrooms" },
             "Lesan Asfour Soup": { ar: "شوربة لسان عصفور", en: "Lesan Asfour Soup", descAr: "شوربة لسان عصفور شهية مع قطع الدجاج الطازجة", descEn: "Orzo (Lesan Asfour) soup with fresh chicken pieces" },
+            "شوربة لسان عصفور": { ar: "شوربة لسان عصفور", en: "Lesan Asfour Soup", descAr: "شوربة لسان عصفور شهية مع قطع الدجاج الطازجة", descEn: "Orzo (Lesan Asfour) soup with fresh chicken pieces" },
             "Minestrone Soup With Chicken": { ar: "شوربة مينستروني بالدجاج", en: "Minestrone Soup With Chicken", descAr: "شوربة إيطالية غنية بالخضار والدجاج والأعشاب", descEn: "Italian soup with vegetables, chicken, and herbs" },
             "Chicken Cream Soup": { ar: "شوربة كريمة بالدجاج", en: "Chicken Cream Soup", descAr: "شوربة كريمة ناعمة وغنية بقطع صدور الدجاج", descEn: "Smooth and rich cream soup with tender chicken pieces" },
+            "شوربة كريمة بالدجاج": { ar: "شوربة كريمة بالدجاج", en: "Chicken Cream Soup", descAr: "شوربة كريمة ناعمة وغنية بقطع صدور الدجاج", descEn: "Smooth and rich cream soup with tender chicken pieces" },
             "Mushroom Cream Soup": { ar: "شوربة كريمة بالمشروم", en: "Mushroom Cream Soup", descAr: "شوربة كريمة غنية بالمشروم الطازج والبهارات الخاصة", descEn: "Creamy soup loaded with fresh mushrooms and spices" },
+            "شوربة كريمة بالمشروم": { ar: "شوربة كريمة بالمشروم", en: "Mushroom Cream Soup", descAr: "شوربة كريمة غنية بالمشروم الطازج والبهارات الخاصة", descEn: "Creamy soup loaded with fresh mushrooms and spices" },
             "Onion Soup": { ar: "شوربة بصل فرنسية", en: "French Onion Soup", descAr: "شوربة بصل فرنسية شهية تقدم مع التوست والموزاريلا", descEn: "Delicious onion soup served with toasted bread and mozzarella" },
-            "Sea Food Cream Soup": { ar: "شوربة سي فود بالكريمة", en: "Seafood Cream Soup", descAr: "شوربة كريمة فاخرة مع الجمبري والكاليماري والسي فود", descEn: "Delicious cream soup with fresh shrimp, calamari and seafood" },
-            "Storia Soup": { ar: "شوربة ستوريا المميزة", en: "Storia Special Soup", descAr: "شوربة عدس مميزة متبلة بأعشاب طبيعية ونكهة ستوريا", descEn: "Lentil soup blended with fine natural herbs and special spices" },
+            "French Onion Soup": { ar: "شوربة بصل فرنسية", en: "French Onion Soup", descAr: "شوربة بصل فرنسية شهية تقدم مع التوست والموزاريلا", descEn: "Delicious onion soup served with toasted bread and mozzarella" },
+            "شوربة بصل فرنسية": { ar: "شوربة بصل فرنسية", en: "French Onion Soup", descAr: "شوربة بصل فرنسية شهية تقدم مع التوست والموزاريلا", descEn: "Delicious onion soup served with toasted bread and mozzarella" },
+            "Sea Food Cream Soup": { ar: "شوربة سي فود بالكريمة", en: "Seafood Cream Soup", descAr: "شوربة كريمة فاخرة مع الجمبري والكاليماري والسي فود", descEn: "Delicious cream soup with fresh shrimp and calamari with chef's touch" },
+            "شوربة سي فود بالكريمة": { ar: "شوربة سي فود بالكريمة", en: "Seafood Cream Soup", descAr: "شوربة كريمة فاخرة مع الجمبري والكاليماري والسي فود", descEn: "Delicious cream soup with fresh shrimp and calamari with chef's touch" },
+            "Storia Soup": { ar: "شوربة ستوريا المميزة", en: "Storia Special Soup", descAr: "شوربة عدس مميزة متبلة بأعشاب طبيعية ونكهة ستوريا الخاصة", descEn: "Lentil soup blended with fine natural herbs and special spices" },
             "Broccoli Soup": { ar: "شوربة بروكلي بالكريمة", en: "Creamy Broccoli Soup", descAr: "شوربة بروكلي طازجة محضرة مع الكريمة الغنية اللذيذة", descEn: "Fresh broccoli soup with rich cream" },
 
             // المقبلات
             "Chicken Crispy Strips": { ar: "تشيكن كريسبي ستربس", en: "Chicken Crispy Strips", descAr: "أصابع صدور الدجاج المقرمشة بتتبيلة خاصة وصوص التغميس", descEn: "Crispy chicken strips seasoned with unique spices and dip" },
-            "Cheddar Fries": { ar: "بطاطس بصوص الشيدر", en: "Cheddar Fries", descAr: "بطاطس مقرمشة مغطاة بصوص جبنة الشيدر الذائبة والغنية", descEn: "Crispy french fries topped with rich melted cheddar cheese sauce" },
+            "Cheddar Fries": { ar: "بطاطس بصوص الشيدر", en: "Cheddar Fries", descAr: "بطاطس مقرمشة مغطاة بصوص جبنة الشيدر الذائبة والغنية", descEn: "Crispy french fries topped with rich cheddar cheese sauce" },
             "Cheddar Fries with Chicken & Jalapeno": { ar: "بطاطس شيدر بالفراخ والهلابينو", en: "Cheddar Fries with Chicken & Jalapeno", descAr: "بطاطس مقلية مغطاة بجبنة الشيدر، قطع الدجاج، وشرائح الهلابينو الحار", descEn: "French fries topped with cheddar sauce, chicken pieces, and spicy jalapeno" },
             "Mozzarella Sticks": { ar: "أصابع الموزاريلا المقلية", en: "Mozzarella Sticks", descAr: "أصابع جبنة موزاريلا مقرمشة وذائبة تقدم مع صوص المارينارا", descEn: "Crispy fried mozzarella sticks served with dipping sauce" },
             "Garlic Bread": { ar: "خبز بالثوم والجبنة", en: "Cheesy Garlic Bread", descAr: "خبز فرنسي محمص بالثوم والأعشاب ومغطى بالجبنة الموزاريلا", descEn: "Toasted French bread with garlic, herbs, and melted mozzarella" },
-            "Onion Rings": { ar: "حلقات البصل المقرمشة", en: "Crispy Onion Rings", descAr: "حلقات بصل ذهبية مقرمشة تقدم مع صوص الباربكيو", descEn: "Golden crispy onion rings served with BBQ sauce" }
+            "Onion Rings": { ar: "حلقات البصل المقرمشة", en: "Crispy Onion Rings", descAr: "حلقات بصل ذهبية مقرمشة تقدم مع صوص الباربكيو", descEn: "Golden crispy onion rings served with BBQ sauce" },
+            "Chicken Wings": { ar: "أجنحة دجاج مقرمشة", en: "Crispy Chicken Wings", descAr: "أجنحة دجاج مقرمشة بصوص البافلو أو الباربكيو", descEn: "Crispy chicken wings with buffalo or BBQ sauce" },
+            "Nachos Supreme": { ar: "ناتشوز سوبريم", en: "Nachos Supreme", descAr: "رقائق الناتشوز مع الجبن الذائب، الهلابينو وصوص السالسا", descEn: "Tortilla chips with melted cheese, jalapenos and salsa" },
+
+            // السلطات
+            "Caesar Salad": { ar: "سلطة سيزر", en: "Caesar Salad", descAr: "خس طازج مع صوص السيزر، جبنة البارميزان وعيش الكريتون المحمص", descEn: "Fresh lettuce with Caesar dressing, parmesan and croutons" },
+            "Chicken Caesar Salad": { ar: "سلطة سيزر بالدجاج", en: "Chicken Caesar Salad", descAr: "سلطة سيزر الكلاسيكية مضافاً إليها شرائح صدور الدجاج المشوية", descEn: "Classic Caesar salad topped with grilled chicken breast" },
+            "Greek Salad": { ar: "سلطة يونانية", en: "Greek Salad", descAr: "خضار طازج، جبنة فيتا، زيتون كالاماتا وزيت زيتون بكر", descEn: "Fresh veggies, feta cheese, Kalamata olives and olive oil" },
+            "Tuna Salad": { ar: "سلطة تونة", en: "Tuna Salad", descAr: "تونة فاخرة مع الخضار المشكل والليمون وزيت الزيتون", descEn: "Premium tuna with fresh mixed greens, lemon and olive oil" },
+
+            // السندوتشات
+            "Classic Burger": { ar: "كلاسيك برجر", en: "Classic Burger", descAr: "برجر لحم بقري مشوي مع الخس، الطماطم، وصوص البرجر الخاص", descEn: "Grilled beef burger with lettuce, tomato and special burger sauce" },
+            "Cheese Burger": { ar: "تشيز برجر", en: "Cheese Burger", descAr: "برجر لحم مع جبنة الشيدر الذائبة والخضار الطازج", descEn: "Beef burger with melted cheddar cheese and fresh veggies" },
+            "Crispy Chicken Burger": { ar: "برجر دجاج مقرمش", en: "Crispy Chicken Burger", descAr: "صدر دجاج كريسبي مقرمش مع المايونيز، الخس والجبنة", descEn: "Crispy fried chicken breast with mayo, lettuce and cheese" },
+            "Club Sandwich": { ar: "كلوب ساندوتش", en: "Club Sandwich", descAr: "طبقات التوست مع الدجاج، البيض، الجبنة، واللحم المدخن", descEn: "Layered toasted bread with chicken, egg, cheese and smoked meat" },
+            "Fajita Sandwich": { ar: "ساندوتش فاهيتا دجاج", en: "Chicken Fajita Sandwich", descAr: "شرائح دجاج مع الفلفل الألوان، البصل، والبهارات المكسيكية", descEn: "Sliced chicken with bell peppers, onions and Mexican spices" },
+
+            // المكرونة والباستا
+            "Alfredo Pasta": { ar: "باستا ألفريدو بالدجاج", en: "Chicken Alfredo Pasta", descAr: "فيتوتشيني بصوص الكريمة الأبيض، المشروم، وقطع الدجاج المشوي", descEn: "Fettuccine in white cream sauce with mushrooms and grilled chicken" },
+            "Negresco": { ar: "مكرونة نجرسكو", en: "Negresco Pasta", descAr: "باستا الدجاج والمشروم بخلطة البشاميل والموزاريلا المحمرة", descEn: "Baked pasta with chicken, mushrooms, béchamel and mozzarella" },
+            "Pasta Bolognese": { ar: "باستا بولونيز", en: "Pasta Bolognese", descAr: "سباجيتي مع صوص الطماطم الإيطالي واللحم المفروم المتبل", descEn: "Spaghetti with Italian tomato sauce and seasoned minced meat" },
+            "Seafood Pasta": { ar: "باستا سي فود", en: "Seafood Pasta", descAr: "باستا مع الجمبري، الكاليماري بصوص الكريمة أو الطماطم", descEn: "Pasta with shrimp and calamari in creamy or red sauce" },
+
+            // البيتزا
+            "Margherita Pizza": { ar: "بيتزا مارجريتا", en: "Margherita Pizza", descAr: "صلصة طماطم إيطالية، جبنة موزاريلا فاخرة، وريحان طازج", descEn: "Italian tomato sauce, premium mozzarella cheese and fresh basil" },
+            "Pepperoni Pizza": { ar: "بيتزا ببروني", en: "Pepperoni Pizza", descAr: "قطع الببروني البقري مع صلصة البيتزا والموزاريلا الغنية", descEn: "Beef pepperoni slices with pizza sauce and rich mozzarella" },
+            "Super Supreme Pizza": { ar: "بيتزا سوبر سوبريم", en: "Super Supreme Pizza", descAr: "مكس لحوم، فلفل، زيتون، مشروم، وموزاريلا", descEn: "Mixed meats, peppers, olives, mushrooms and mozzarella" },
+            "Quattro Formaggi": { ar: "بيتزا أربعة أجبان", en: "Four Cheese Pizza", descAr: "مزيج فاخر من الموزاريلا، الشيدر، الرومي، والجبنة الزرقاء", descEn: "Blend of mozzarella, cheddar, romano and blue cheese" },
+            "BBQ Chicken Pizza": { ar: "بيتزا تشيكن باربكيو", en: "BBQ Chicken Pizza", descAr: "قطع الدجاج المشوي مع صوص الباربكيو المدخن والموزاريلا", descEn: "Grilled chicken with smoked BBQ sauce and mozzarella" },
+
+            // الأطباق الرئيسية
+            "Mix Grill": { ar: "مكس جريل مشويات", en: "Mixed Grill Platter", descAr: "تشكيلة من الكفتة، الشيش طاووق، واللحم المشوي على الفحم", descEn: "Charcoal grilled assortment of kofta, shish tawook and kebab" },
+            "Chicken Cordon Bleu": { ar: "تشيكن كوردون بلو", en: "Chicken Cordon Bleu", descAr: "صدور دجاج محشوة بالجبنة واللحم المدخن ومقلية حتى القرمشة", descEn: "Chicken breast stuffed with cheese and smoked beef, fried crisp" },
+            "Grilled Chicken Breast": { ar: "صدور دجاج مشوية", en: "Grilled Chicken Breast", descAr: "صدور دجاج مشوية متبلة بالأعشاب وتقدم مع الأرز والخضار", descEn: "Herb marinated grilled chicken breast served with rice and veggies" },
+            "Beef Steak": { ar: "ستيك لحم بقري", en: "Beef Steak", descAr: "قطعة لحم تندرلوين مشوية بصوص المشروم أو الفلفل الأسود", descEn: "Grilled tenderloin steak served with mushroom or pepper sauce" },
+
+            // الحلويات
+            "Molten Cake": { ar: "مولتن كيك الشوكولاتة", en: "Molten Chocolate Cake", descAr: "كيك شوكولاتة غني بالصوص الذائب يقدم مع بولة آيس كريم فانيليا", descEn: "Warm molten chocolate cake served with vanilla ice cream" },
+            "Cheesecake": { ar: "تشيز كيك", en: "Cheesecake", descAr: "تشيز كيك كريمي مع صوص التوت البري أو الفراولة أو الكراميل", descEn: "Creamy cheesecake with blueberry, strawberry or caramel topping" },
+            "Waffle Nutella": { ar: "وافل نوتيلا", en: "Nutella Waffle", descAr: "وافل بلجيكي مقرمش مغطى بشوكولاتة النوتيلا والمكسرات", descEn: "Crispy Belgian waffle covered with Nutella and crushed nuts" },
+            "Brownies": { ar: "براونيز كيك", en: "Fudge Brownies", descAr: "قطع البراونيز الغنية بالشوكولاتة مع الآيس كريم وصوص الشوكولاتة", descEn: "Rich chocolate fudge brownies with ice cream and chocolate sauce" },
+
+            // المشروبات
+            "Espresso": { ar: "إسبريسو", en: "Espresso", descAr: "قهوة إسبريسو إيطالية مركزة وغنية بالكريما", descEn: "Rich and concentrated Italian espresso shot" },
+            "Cappuccino": { ar: "كابتشينو", en: "Cappuccino", descAr: "إسبريسو مع الحليب المبخر ورغوة الحليب الكثيفة", descEn: "Espresso with steamed milk and thick velvety foam" },
+            "Cafe Latte": { ar: "كافيه لاتيه", en: "Cafe Latte", descAr: "مزيج ناعم من الإسبريسو الإيطالي والحليب الطازج", descEn: "Smooth blend of Italian espresso and fresh steamed milk" },
+            "Turkish Coffee": { ar: "قهوة تركي", en: "Turkish Coffee", descAr: "قهوة تركية تقليدية محضرة على الطريقة الأصلية", descEn: "Traditional Turkish coffee brewed to perfection" },
+            "Mojito": { ar: "موهيتو منعش", en: "Classic Mojito", descAr: "مشروب الموهيتو المنعش مع النعناع والليمون والثلج المجروش", descEn: "Refreshing mojito with fresh mint, lime and crushed ice" },
+            "Strawberry Milkshake": { ar: "ميلك شيك فراولة", en: "Strawberry Milkshake", descAr: "ميلك شيك كريمي غني بنكهة الفراولة والآيس كريم", descEn: "Creamy milkshake loaded with real strawberries and ice cream" },
+            "Chocolate Milkshake": { ar: "ميلك شيك شوكولاتة", en: "Chocolate Milkshake", descAr: "ميلك شيك شوكولاتة غني ومزين بالكريمة المخفوقة", descEn: "Decadent chocolate milkshake topped with whipped cream" }
         };
 
         function parseCleanCategory(rawCat) {
@@ -1256,17 +1311,20 @@
             if (cat.includes("شورب") || cat.toLowerCase().includes("soup")) return { ar: "الشوربة", en: "Soups" };
             if (cat.includes("مقبل") || cat.toLowerCase().includes("appetizer")) return { ar: "المقبلات", en: "Appetizers" };
             if (cat.includes("سلط") || cat.toLowerCase().includes("salad")) return { ar: "السلطات", en: "Salads" };
-            if (cat.includes("سندوتش") || cat.toLowerCase().includes("sandwich")) return { ar: "السندوتشات", en: "Sandwiches" };
-            if (cat.includes("مكرون") || cat.includes("باستا") || cat.toLowerCase().includes("pasta")) return { ar: "المكرونة", en: "Pasta" };
-            if (cat.includes("فخار") || cat.toLowerCase().includes("fakhara")) return { ar: "الفخارات", en: "Fakhara" };
+            if (cat.includes("سندوتش") || cat.toLowerCase().includes("sandwich") || cat.toLowerCase().includes("burger")) return { ar: "السندوتشات والبرجر", en: "Sandwiches & Burgers" };
+            if (cat.includes("مكرون") || cat.includes("باستا") || cat.toLowerCase().includes("pasta")) return { ar: "المكرونة والباستا", en: "Pasta" };
+            if (cat.includes("فخار") || cat.toLowerCase().includes("fakhara")) return { ar: "الفخارات", en: "Fakhara Dishes" };
             if (cat.includes("فت") || cat.toLowerCase().includes("fatteh")) return { ar: "الفتة", en: "Fatteh" };
-            if (cat.includes("رئيس") || cat.toLowerCase().includes("main")) return { ar: "الأطباق الرئيسية", en: "Main Dishes" };
-            if (cat.includes("بيتزا") || cat.toLowerCase().includes("pizza")) return { ar: "البيتزا", en: "Pizza" };
+            if (cat.includes("رئيس") || cat.toLowerCase().includes("main") || cat.toLowerCase().includes("grill")) return { ar: "الأطباق الرئيسية والمشويات", en: "Main Dishes & Grill" };
+            if (cat.includes("بيتزا") || cat.toLowerCase().includes("pizza")) return { ar: "البيتزا الإيطالية", en: "Pizza" };
             if (cat.includes("حلو") || cat.toLowerCase().includes("dessert")) return { ar: "الحلويات", en: "Desserts" };
-            if (cat.includes("ساخن") || cat.toLowerCase().includes("hot")) return { ar: "المشروبات الساخنة", en: "Hot Drinks" };
-            if (cat.includes("بارد") || cat.includes("ميلك") || cat.includes("زبادي") || cat.toLowerCase().includes("shake")) return { ar: "المشروبات والسموزي", en: "Cold Drinks & Shakes" };
+            if (cat.includes("ساخن") || cat.toLowerCase().includes("hot") || cat.toLowerCase().includes("coffee")) return { ar: "المشروبات الساخنة", en: "Hot Drinks" };
+            if (cat.includes("بارد") || cat.includes("ميلك") || cat.includes("زبادي") || cat.toLowerCase().includes("shake") || cat.toLowerCase().includes("mojito")) return { ar: "المشروبات والسموزي", en: "Cold Drinks & Shakes" };
             
-            return { ar: cat.replace(/[a-zA-Z\(\)]/g, '').trim() || cat, en: cat.replace(/[\u0600-\u06FF\(\)]/g, '').trim() || cat };
+            return { 
+                ar: cat.replace(/[a-zA-Z\(\)]/g, '').trim() || cat, 
+                en: cat.replace(/[\u0600-\u06FF\(\)]/g, '').trim() || cat 
+            };
         }
 
         const soupAddons = [
@@ -1438,23 +1496,6 @@
                 chatPlaceholder: 'Type your message here...'
             }
         };
-
-        function getLocalizedItemName(rawName) {
-            if (!rawName) return '';
-            const trimmed = rawName.trim();
-            if (menuTranslationMap[trimmed]) {
-                return menuTranslationMap[trimmed][currentLang];
-            }
-            return trimmed;
-        }
-
-        function getLocalizedItemDesc(rawName, rawDesc) {
-            const trimmedName = (rawName || '').trim();
-            if (menuTranslationMap[trimmedName]) {
-                return menuTranslationMap[trimmedName]['desc' + (currentLang === 'ar' ? 'Ar' : 'En')];
-            }
-            return rawDesc || '';
-        }
 
         function toggleLanguage() {
             currentLang = currentLang === 'ar' ? 'en' : 'ar';
@@ -1787,15 +1828,15 @@
                     if (rawCat.includes("شورب") || rawCat.toLowerCase().includes("soup")) addons = soupAddons;
                     else if (rawCat.includes("مقبل") || rawCat.toLowerCase().includes("appetizer")) addons = appetizerAddons;
                     else if (rawCat.includes("سلط") || rawCat.toLowerCase().includes("salad")) addons = saladAddons;
-                    else if (rawCat.includes("سندوتش") || rawCat.toLowerCase().includes("sandwich")) addons = sandwichAddons;
+                    else if (rawCat.includes("سندوتش") || rawCat.toLowerCase().includes("sandwich") || rawCat.toLowerCase().includes("burger")) addons = sandwichAddons;
                     else if (rawCat.includes("مكرون") || rawCat.includes("باستا") || rawCat.toLowerCase().includes("pasta")) addons = pastaAddons;
                     else if (rawCat.includes("فخار") || rawCat.toLowerCase().includes("fakhara")) addons = fakharaAddons;
                     else if (rawCat.includes("فت") || rawCat.toLowerCase().includes("fatteh")) addons = fattehAddons;
-                    else if (rawCat.includes("رئيس") || rawCat.toLowerCase().includes("main")) addons = mainDishesAddons;
+                    else if (rawCat.includes("رئيس") || rawCat.toLowerCase().includes("main") || rawCat.toLowerCase().includes("grill")) addons = mainDishesAddons;
                     else if (rawCat.includes("بيتزا") || rawCat.toLowerCase().includes("pizza")) addons = pizzaAddons;
                     else if (rawCat.includes("حلو") || rawCat.toLowerCase().includes("dessert")) addons = dessertAddons;
-                    else if (rawCat.includes("ساخن") || rawCat.toLowerCase().includes("hot")) addons = hotDrinksAddons;
-                    else if (rawCat.includes("بارد") || rawCat.includes("ميلك") || rawCat.includes("زبادي") || rawCat.toLowerCase().includes("shake")) addons = milkshakeYogurtAddons;
+                    else if (rawCat.includes("ساخن") || rawCat.toLowerCase().includes("hot") || rawCat.toLowerCase().includes("coffee")) addons = hotDrinksAddons;
+                    else if (rawCat.includes("بارد") || rawCat.includes("ميلك") || rawCat.includes("زبادي") || rawCat.toLowerCase().includes("shake") || rawCat.toLowerCase().includes("mojito")) addons = milkshakeYogurtAddons;
 
                     let catObj = parsedMenu.find(c => c.categoryKey === catData.en);
                     if (!catObj) {
