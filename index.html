@@ -120,26 +120,26 @@
         
         .splash-hidden { transform: translateY(-100%); opacity: 0; pointer-events: none; }
 
+        /* كارت اختيار طريقة الاستلام بدون فراغات زائدة */
         .welcome-order-type-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15, 20, 18, 0.85); backdrop-filter: blur(8px);
             z-index: 8000; display: none; justify-content: center; align-items: center;
-            padding: 20px;
+            padding: 16px;
         }
         .welcome-card {
-            background: var(--white); width: 100%; max-width: 380px;
-            border-radius: 28px; padding: 26px 20px; text-align: center;
+            background: var(--white); width: 100%; max-width: 350px;
+            border-radius: 24px; padding: 20px 16px; text-align: center;
             box-shadow: 0 25px 50px rgba(0,0,0,0.3);
             animation: smoothFadeIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
             border: 1.5px solid var(--border-color);
         }
-        .welcome-logo { width: 90px; height: 90px; object-fit: contain; margin-bottom: 12px; }
-        .welcome-title { font-size: 1.25rem; font-weight: 900; color: var(--accent); margin-bottom: 4px; }
-        .welcome-subtitle { font-size: 0.82rem; color: var(--desc-text); font-weight: 700; margin-bottom: 20px; }
-        .welcome-buttons-grid { display: flex; flex-direction: column; gap: 12px; }
+        .welcome-title { font-size: 1.15rem; font-weight: 900; color: var(--accent); margin-bottom: 4px; }
+        .welcome-subtitle { font-size: 0.80rem; color: var(--desc-text); font-weight: 700; margin-bottom: 14px; }
+        .welcome-buttons-grid { display: flex; flex-direction: column; gap: 10px; }
         .welcome-choice-btn {
-            background: var(--bg); border: 2px solid var(--border-color);
-            border-radius: 18px; padding: 14px 16px; cursor: pointer;
+            background: var(--bg); border: 1.5px solid var(--border-color);
+            border-radius: 16px; padding: 12px 14px; cursor: pointer;
             display: flex; align-items: center; justify-content: space-between;
             transition: all 0.2s ease;
         }
@@ -150,9 +150,9 @@
         }
         .welcome-choice-info { text-align: right; }
         [dir="ltr"] .welcome-choice-info { text-align: left; }
-        .welcome-choice-ar { font-size: 0.96rem; font-weight: 900; color: var(--main-text); }
-        .welcome-choice-en { font-size: 0.76rem; font-weight: 700; color: var(--desc-text); }
-        .welcome-choice-icon { font-size: 1.8rem; }
+        .welcome-choice-ar { font-size: 0.92rem; font-weight: 900; color: var(--main-text); }
+        .welcome-choice-en { font-size: 0.74rem; font-weight: 700; color: var(--desc-text); }
+        .welcome-choice-icon { font-size: 1.6rem; }
 
         header { 
             background: var(--header-bg); 
@@ -351,9 +351,9 @@
         .food-card.disabled-item { opacity: 0.5; filter: grayscale(0.3); }
         
         .item-img-box { 
-            width: 120px; 
-            height: 120px; 
-            min-width: 120px;
+            width: 115px; 
+            height: 115px; 
+            min-width: 115px;
             border-radius: 16px; 
             overflow: hidden; 
             background: #e2e8f0; 
@@ -375,6 +375,7 @@
             flex-direction: column; 
             justify-content: space-between; 
             padding: 2px 0;
+            overflow: hidden;
         }
 
         .food-header {
@@ -410,7 +411,7 @@
             font-size: 0.73rem; 
             color: var(--desc-text); 
             line-height: 1.35; 
-            margin-bottom: 6px; 
+            margin-bottom: 8px; 
             font-weight: 600;
             display: -webkit-box;
             -webkit-line-clamp: 2;
@@ -425,6 +426,7 @@
             gap: 6px;
             width: 100%;
             margin-top: auto;
+            flex-wrap: nowrap;
         }
 
         .mini-addons-btn {
@@ -432,7 +434,7 @@
             background: var(--bg);
             color: var(--accent);
             border: 1.5px solid var(--accent);
-            padding: 5px 6px;
+            padding: 5px 4px;
             border-radius: 9px;
             font-size: 0.74rem;
             font-weight: 800;
@@ -443,17 +445,20 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            min-width: 0;
+            flex-shrink: 0;
         }
         .mini-addons-btn:active { background: var(--accent); color: white; }
 
+        /* ضبط الزر بدقة حتى لا يخرج عن الكارت نهائياً */
         .order-btn { 
-            flex: 1.3;
+            flex: 1.4;
             background: var(--accent); 
             color: #ffffff; 
             border: 1.5px solid var(--accent); 
-            padding: 5px 10px; 
+            padding: 5px 6px; 
             border-radius: 9px; 
-            font-size: 0.80rem; 
+            font-size: 0.78rem; 
             font-weight: 800; 
             cursor: pointer; 
             box-shadow: 0 2px 6px rgba(27, 77, 62, 0.25);
@@ -463,6 +468,10 @@
             justify-content: center;
             white-space: nowrap;
             height: 33px;
+            min-width: 0;
+            flex-shrink: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .order-btn:disabled { background: #94a3b8 !important; border-color: #94a3b8 !important; cursor: not-allowed; box-shadow: none !important; }
         
@@ -843,7 +852,6 @@
     <!-- نافذة اختيار طريقة الاستلام في كل زيارة -->
     <div class="welcome-order-type-modal" id="welcomeOrderModal">
         <div class="welcome-card">
-            <img src="images/logooo.png" class="welcome-logo" alt="Storia Cafe" onerror="this.src='https://www.storia-eg.com/images/logo.png'">
             <h2 class="welcome-title" id="t_welcome_title">مرحباً بك في ستوريا | Welcome</h2>
             <p class="welcome-subtitle" id="t_welcome_sub">من فضلك اختر طريقة استلام طلبك للمتابعة:</p>
             
@@ -1219,64 +1227,29 @@
     <script>
         const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTsz0Q8FatsNvh7u2MGFmJpXDuXjC6HD23Vt1VlEnS2EX-dElZco3evuNUXKZSe3-rLmOabuU1NTiyO/pub?output=csv";
 
-        // قاموس ترجمة الأسماء
-        const itemNamesDictionary = {
-            "Creamy Potato Soup": { ar: "شوربة بطاطس بالكريمة", en: "Creamy Potato Soup" },
-            "شوربة بطاطس بالكريمة": { ar: "شوربة بطاطس بالكريمة", en: "Creamy Potato Soup" },
-            "Vegetables Soup": { ar: "شوربة خضار مشكل", en: "Vegetables Soup" },
-            "شوربة خضار": { ar: "شوربة خضار مشكل", en: "Vegetables Soup" },
-            "Lesan Asfour Soup": { ar: "شوربة لسان عصفور", en: "Lesan Asfour Soup" },
-            "شوربة لسان عصفور": { ar: "شوربة لسان عصفور", en: "Lesan Asfour Soup" },
-            "Minestrone Soup With Chicken": { ar: "شوربة مينستروني بالدجاج", en: "Minestrone Soup With Chicken" },
-            "شوربة مينستروني بالدجاج": { ar: "شوربة مينستروني بالدجاج", en: "Minestrone Soup With Chicken" },
-            "Chicken Cream Soup": { ar: "شوربة كريمة بالدجاج", en: "Chicken Cream Soup" },
-            "شوربة كريمة بالدجاج": { ar: "شوربة كريمة بالدجاج", en: "Chicken Cream Soup" },
-            "Mushroom Cream Soup": { ar: "شوربة كريمة بالمشروم", en: "Mushroom Cream Soup" },
-            "شوربة كريمة بالمشروم": { ar: "شوربة كريمة بالمشروم", en: "Mushroom Cream Soup" },
-            "Onion Soup": { ar: "شوربة بصل فرنسية", en: "French Onion Soup" },
-            "شوربة بصل": { ar: "شوربة بصل فرنسية", en: "French Onion Soup" },
-            "شوربة بصل فرنسية": { ar: "شوربة بصل فرنسية", en: "French Onion Soup" },
-            "Sea Food Cream Soup": { ar: "شوربة سي فود بالكريمة", en: "Seafood Cream Soup" },
-            "شوربة سي فود بالكريمة": { ar: "شوربة سي فود بالكريمة", en: "Seafood Cream Soup" },
-            "Storia Soup": { ar: "شوربة ستوريا المميزة", en: "Storia Special Soup" },
-            "شوربة ستوريا": { ar: "شوربة ستوريا المميزة", en: "Storia Special Soup" },
-            "Broccoli Soup": { ar: "شوربة بروكلي بالكريمة", en: "Creamy Broccoli Soup" },
-            "شوربة بروكلي": { ar: "شوربة بروكلي بالكريمة", en: "Creamy Broccoli Soup" }
+        // قاموس ترجمة الأسماء والوصف بالكامل
+        const menuTranslationMap = {
+            // الشوربة
+            "Creamy Potato Soup": { ar: "شوربة بطاطس بالكريمة", en: "Creamy Potato Soup", descAr: "شوربة بطاطس غنية بالكريمة والبهارات الطبيعية", descEn: "Rich and smooth creamy potato soup with natural spices" },
+            "Vegetables Soup": { ar: "شوربة خضار مشكل", en: "Vegetables Soup", descAr: "شوربة خضروات طازجة مشكلة مع قطع المشروم اللذيذة", descEn: "Fresh mixed vegetables soup with delicious mushrooms" },
+            "Lesan Asfour Soup": { ar: "شوربة لسان عصفور", en: "Lesan Asfour Soup", descAr: "شوربة لسان عصفور شهية مع قطع الدجاج الطازجة", descEn: "Orzo (Lesan Asfour) soup with fresh chicken pieces" },
+            "Minestrone Soup With Chicken": { ar: "شوربة مينستروني بالدجاج", en: "Minestrone Soup With Chicken", descAr: "شوربة إيطالية غنية بالخضار والدجاج والأعشاب", descEn: "Italian soup with vegetables, chicken, and herbs" },
+            "Chicken Cream Soup": { ar: "شوربة كريمة بالدجاج", en: "Chicken Cream Soup", descAr: "شوربة كريمة ناعمة وغنية بقطع صدور الدجاج", descEn: "Smooth and rich cream soup with tender chicken pieces" },
+            "Mushroom Cream Soup": { ar: "شوربة كريمة بالمشروم", en: "Mushroom Cream Soup", descAr: "شوربة كريمة غنية بالمشروم الطازج والبهارات الخاصة", descEn: "Creamy soup loaded with fresh mushrooms and spices" },
+            "Onion Soup": { ar: "شوربة بصل فرنسية", en: "French Onion Soup", descAr: "شوربة بصل فرنسية شهية تقدم مع التوست والموزاريلا", descEn: "Delicious onion soup served with toasted bread and mozzarella" },
+            "Sea Food Cream Soup": { ar: "شوربة سي فود بالكريمة", en: "Seafood Cream Soup", descAr: "شوربة كريمة فاخرة مع الجمبري والكاليماري والسي فود", descEn: "Delicious cream soup with fresh shrimp, calamari and seafood" },
+            "Storia Soup": { ar: "شوربة ستوريا المميزة", en: "Storia Special Soup", descAr: "شوربة عدس مميزة متبلة بأعشاب طبيعية ونكهة ستوريا", descEn: "Lentil soup blended with fine natural herbs and special spices" },
+            "Broccoli Soup": { ar: "شوربة بروكلي بالكريمة", en: "Creamy Broccoli Soup", descAr: "شوربة بروكلي طازجة محضرة مع الكريمة الغنية اللذيذة", descEn: "Fresh broccoli soup with rich cream" },
+
+            // المقبلات
+            "Chicken Crispy Strips": { ar: "تشيكن كريسبي ستربس", en: "Chicken Crispy Strips", descAr: "أصابع صدور الدجاج المقرمشة بتتبيلة خاصة وصوص التغميس", descEn: "Crispy chicken strips seasoned with unique spices and dip" },
+            "Cheddar Fries": { ar: "بطاطس بصوص الشيدر", en: "Cheddar Fries", descAr: "بطاطس مقرمشة مغطاة بصوص جبنة الشيدر الذائبة والغنية", descEn: "Crispy french fries topped with rich melted cheddar cheese sauce" },
+            "Cheddar Fries with Chicken & Jalapeno": { ar: "بطاطس شيدر بالفراخ والهلابينو", en: "Cheddar Fries with Chicken & Jalapeno", descAr: "بطاطس مقلية مغطاة بجبنة الشيدر، قطع الدجاج، وشرائح الهلابينو الحار", descEn: "French fries topped with cheddar sauce, chicken pieces, and spicy jalapeno" },
+            "Mozzarella Sticks": { ar: "أصابع الموزاريلا المقلية", en: "Mozzarella Sticks", descAr: "أصابع جبنة موزاريلا مقرمشة وذائبة تقدم مع صوص المارينارا", descEn: "Crispy fried mozzarella sticks served with dipping sauce" },
+            "Garlic Bread": { ar: "خبز بالثوم والجبنة", en: "Cheesy Garlic Bread", descAr: "خبز فرنسي محمص بالثوم والأعشاب ومغطى بالجبنة الموزاريلا", descEn: "Toasted French bread with garlic, herbs, and melted mozzarella" },
+            "Onion Rings": { ar: "حلقات البصل المقرمشة", en: "Crispy Onion Rings", descAr: "حلقات بصل ذهبية مقرمشة تقدم مع صوص الباربكيو", descEn: "Golden crispy onion rings served with BBQ sauce" }
         };
 
-        // قاموس ترجمة الوصف
-        const itemDescDictionary = {
-            "Delicious onion soup served with toasted bread and mozzarella": {
-                ar: "شوربة بصل فرنسية شهية تقدم مع التوست المحمص والموزاريلا الذائبة",
-                en: "Delicious onion soup served with toasted bread and melted mozzarella"
-            },
-            "Lentil soup blended with fine natural herbs and special": {
-                ar: "شوربة عدس مميزة متبلة بأعشاب طبيعية ونكهة ستوريا الخاصة",
-                en: "Lentil soup blended with fine natural herbs and special spices"
-            },
-            "Delicious cream soup with fresh shrimp and calamari with chef's": {
-                ar: "شوربة كريمة غنية مع الجمبري الطازج والكاليماري بخلطة الشيف",
-                en: "Delicious cream soup with fresh shrimp and calamari with chef's special touch"
-            },
-            "Fresh broccoli soup with rich cream": {
-                ar: "شوربة بروكلي طازجة محضرة مع الكريمة الغنية اللذيذة",
-                en: "Fresh broccoli soup with rich delicious cream"
-            },
-            "Fresh mixed vegetables soup with mushrooms": {
-                ar: "شوربة خضروات طازجة مشكلة مع قطع المشروم",
-                en: "Fresh mixed vegetables soup with mushrooms"
-            },
-            "Orzo (Lesan Asfour) soup with fresh chicken pieces": {
-                ar: "شوربة لسان عصفور تقليدية مع قطع الدجاج الطازجة",
-                en: "Orzo (Lesan Asfour) soup with fresh chicken pieces"
-            },
-            "Rich and smooth creamy potato soup": {
-                ar: "شوربة بطاطس كريمية ناعمة وغنية بالنكهات اللذيذة",
-                en: "Rich and smooth creamy potato soup"
-            }
-        };
-
-        // استخراج اسم القسم النظيف
         function parseCleanCategory(rawCat) {
             if (!rawCat) return { ar: "أصناف متنوعة", en: "Various Items" };
             let cat = rawCat.trim();
@@ -1291,7 +1264,7 @@
             if (cat.includes("بيتزا") || cat.toLowerCase().includes("pizza")) return { ar: "البيتزا", en: "Pizza" };
             if (cat.includes("حلو") || cat.toLowerCase().includes("dessert")) return { ar: "الحلويات", en: "Desserts" };
             if (cat.includes("ساخن") || cat.toLowerCase().includes("hot")) return { ar: "المشروبات الساخنة", en: "Hot Drinks" };
-            if (cat.includes("بارد") || cat.includes("ميلك") || cat.includes("زبادي") || cat.toLowerCase().includes("shake")) return { ar: "المشروبات والسموزي", en: "Drinks & Shakes" };
+            if (cat.includes("بارد") || cat.includes("ميلك") || cat.includes("زبادي") || cat.toLowerCase().includes("shake")) return { ar: "المشروبات والسموزي", en: "Cold Drinks & Shakes" };
             
             return { ar: cat.replace(/[a-zA-Z\(\)]/g, '').trim() || cat, en: cat.replace(/[\u0600-\u06FF\(\)]/g, '').trim() || cat };
         }
@@ -1469,19 +1442,18 @@
         function getLocalizedItemName(rawName) {
             if (!rawName) return '';
             const trimmed = rawName.trim();
-            if (itemNamesDictionary[trimmed]) {
-                return itemNamesDictionary[trimmed][currentLang];
+            if (menuTranslationMap[trimmed]) {
+                return menuTranslationMap[trimmed][currentLang];
             }
             return trimmed;
         }
 
-        function getLocalizedItemDesc(rawDesc) {
-            if (!rawDesc) return '';
-            const trimmed = rawDesc.trim();
-            if (itemDescDictionary[trimmed]) {
-                return itemDescDictionary[trimmed][currentLang];
+        function getLocalizedItemDesc(rawName, rawDesc) {
+            const trimmedName = (rawName || '').trim();
+            if (menuTranslationMap[trimmedName]) {
+                return menuTranslationMap[trimmedName]['desc' + (currentLang === 'ar' ? 'Ar' : 'En')];
             }
-            return trimmed;
+            return rawDesc || '';
         }
 
         function toggleLanguage() {
@@ -1903,7 +1875,7 @@
                 const cleanUnderscore = item.name.replace(/\s+/g, '_');
                 
                 const displayName = getLocalizedItemName(item.name);
-                const displayDesc = getLocalizedItemDesc(item.desc);
+                const displayDesc = getLocalizedItemDesc(item.name, item.desc);
 
                 card.innerHTML = `
                     <div class="item-img-box" onclick="openImageLightbox(this.querySelector('img').src, '${displayName.replace(/'/g, "\\'")}', ${item.price})" title="${currentLang==='ar'?'اضغط لتكبير الصورة':'Click to view photo'}">
@@ -2340,7 +2312,7 @@
         let adminSearchedPhone = '';
         async function adminSearchClientPoints() {
             const phone = document.getElementById('adminLoyaltySearchPhone').value.trim();
-            if (!phone) return alert('اكتب رقم الموبايل');
+            if (!phone) return alert(currentLang === 'ar' ? 'اكتب رقم الموبايل' : 'Enter mobile number');
             adminSearchedPhone = phone;
 
             if (window.db && window.firebaseModules) {
