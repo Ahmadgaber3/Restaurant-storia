@@ -1230,23 +1230,35 @@
     <script>
         const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTsz0Q8FatsNvh7u2MGFmJpXDuXjC6HD23Vt1VlEnS2EX-dElZco3evuNUXKZSe3-rLmOabuU1NTiyO/pub?output=csv";
 
-        // قاموس أسماء الأقسام
+        // خريطة ترجمة الأقسام تلقائياً حسب لغة العرض
         const categoryNamesMap = {
             "الشوربة": { ar: "الشوربة", en: "Soups" },
+            "soups": { ar: "الشوربة", en: "Soups" },
             "المقبلات": { ar: "المقبلات", en: "Appetizers" },
+            "appetizers": { ar: "المقبلات", en: "Appetizers" },
             "السلطات": { ar: "السلطات", en: "Salads" },
+            "salads": { ar: "السلطات", en: "Salads" },
             "السندوتشات": { ar: "السندوتشات والبرجر", en: "Sandwiches & Burgers" },
+            "sandwiches": { ar: "السندوتشات والبرجر", en: "Sandwiches & Burgers" },
+            "burgers": { ar: "السندوتشات والبرجر", en: "Sandwiches & Burgers" },
             "المكرونة": { ar: "المكرونة والباستا", en: "Pasta" },
+            "pasta": { ar: "المكرونة والباستا", en: "Pasta" },
             "الفخارات": { ar: "الفخارات", en: "Fakhara Dishes" },
+            "fakhara": { ar: "الفخارات", en: "Fakhara Dishes" },
             "الفتة": { ar: "الفتة", en: "Fatteh" },
+            "fatteh": { ar: "الفتة", en: "Fatteh" },
             "الأطباق الرئيسية": { ar: "الأطباق الرئيسية", en: "Main Dishes" },
+            "main dishes": { ar: "الأطباق الرئيسية", en: "Main Dishes" },
             "البيتزا": { ar: "البيتزا", en: "Pizza" },
+            "pizza": { ar: "البيتزا", en: "Pizza" },
             "الحلويات": { ar: "الحلويات", en: "Desserts" },
+            "desserts": { ar: "الحلويات", en: "Desserts" },
             "المشروبات الساخنة": { ar: "المشروبات الساخنة", en: "Hot Drinks" },
-            "المشروبات الباردة": { ar: "المشروبات الباردة", en: "Cold Drinks" }
+            "hot drinks": { ar: "المشروبات الساخنة", en: "Hot Drinks" },
+            "المشروبات الباردة": { ar: "المشروبات الباردة", en: "Cold Drinks" },
+            "cold drinks": { ar: "المشروبات الباردة", en: "Cold Drinks" }
         };
 
-        // الإضافات
         const soupAddons = [
             { name: "دجاج", nameEn: "Chicken", price: 64.95 }, { name: "مشروم", nameEn: "Mushroom", price: 29.95 }, { name: "ذرة", nameEn: "Corn", price: 29.95 },
             { name: "خضروات", nameEn: "Vegetables", price: 39.95 }, { name: "سمك", nameEn: "Fish", price: 74.95 }, { name: "جبنة موزاريلا", nameEn: "Mozzarella Cheese", price: 29.95 },
@@ -1393,73 +1405,31 @@
             }
         };
 
-        // دالة الفصل الذكي للثنائية اللغوية
-        function parseDualLanguageText(text) {
-            if (!text) return { ar: '', en: '' };
-            let raw = text.trim();
-            
-            // نمط: English Name (اسم عربي)
-            let match = raw.match(/^([^(]+)\(([^)]+)\)$/);
-            if (match) {
-                let part1 = match[1].trim();
-                let part2 = match[2].trim();
-                
-                // فحص أي جزء عربي وأي جزء إنجليزي
-                if (/[\u0600-\u06FF]/.test(part2)) {
-                    return { en: part1, ar: part2 };
-                } else if (/[\u0600-\u06FF]/.test(part1)) {
-                    return { ar: part1, en: part2 };
-                }
-            }
-
-            // نمط مفصول بشرطة: English - عربي
-            let dashMatch = raw.split(/[-–—/|]/);
-            if (dashMatch.length === 2) {
-                let p1 = dashMatch[0].trim();
-                let p2 = dashMatch[1].trim();
-                if (/[\u0600-\u06FF]/.test(p2)) return { en: p1, ar: p2 };
-                if (/[\u0600-\u06FF]/.test(p1)) return { ar: p1, en: p2 };
-            }
-
-            // إذا كان النص فقط عربي أو فقط إنجليزي
-            if (/[\u0600-\u06FF]/.test(raw)) {
-                return { ar: raw, en: raw };
-            } else {
-                return { en: raw, ar: raw };
-            }
-        }
-
         function getLocalizedItemName(item) {
             if (!item) return '';
-            if (typeof item === 'object' && item.nameAr && item.nameEn) {
-                return currentLang === 'ar' ? item.nameAr : item.nameEn;
-            }
-            let parsed = parseDualLanguageText(typeof item === 'string' ? item : item.name);
-            return currentLang === 'ar' ? parsed.ar : parsed.en;
+            if (currentLang === 'en' && item.nameEn) return item.nameEn;
+            if (currentLang === 'ar' && item.nameAr) return item.nameAr;
+            return item.nameAr || item.nameEn || item.name || '';
         }
 
         function getLocalizedItemDesc(item) {
             if (!item) return '';
-            if (typeof item === 'object') {
-                if (currentLang === 'ar' && item.descAr) return item.descAr;
-                if (currentLang === 'en' && item.descEn) return item.descEn;
-                return item.desc || '';
-            }
-            let parsed = parseDualLanguageText(item);
-            return currentLang === 'ar' ? parsed.ar : parsed.en;
+            if (currentLang === 'en' && item.descEn) return item.descEn;
+            if (currentLang === 'ar' && item.descAr) return item.descAr;
+            return item.descAr || item.descEn || item.desc || '';
         }
 
-        function getCategoryCleanName(catName) {
-            if (!catName) return '';
-            let parsed = parseDualLanguageText(catName);
-            let checkKey = (currentLang === 'ar' ? parsed.ar : parsed.en).toLowerCase();
+        function getCategoryCleanName(cat) {
+            if (!cat) return '';
+            let rawCat = currentLang === 'en' ? (cat.catEn || cat.categoryRaw) : (cat.catAr || cat.categoryRaw);
+            let checkKey = rawCat.toLowerCase().trim();
 
             for (let k in categoryNamesMap) {
-                if (checkKey.includes(k.toLowerCase()) || catName.includes(k)) {
+                if (checkKey.includes(k.toLowerCase()) || rawCat.includes(k)) {
                     return categoryNamesMap[k][currentLang];
                 }
             }
-            return currentLang === 'ar' ? parsed.ar : parsed.en;
+            return rawCat;
         }
 
         function toggleLanguage() {
@@ -1757,26 +1727,40 @@
 
                 const headers = parseCSVLine(lines[0]).map(h => h.trim().toLowerCase());
                 
-                const catIdx = headers.findIndex(h => h.includes('قسم') || h === 'category');
-                const nameIdx = headers.findIndex(h => h.includes('صنف') || h.includes('اسم') || h === 'item' || h === 'name');
+                // البحث الذكي عن الأعمدة العربية والإنجليزية في الشيت
+                const catArIdx = headers.findIndex(h => h.includes('قسم') || h.includes('category') || h.includes('cat_ar'));
+                const catEnIdx = headers.findIndex(h => h.includes('category_en') || h.includes('قسم_en') || h.includes('cat_en'));
+                
+                const nameArIdx = headers.findIndex(h => h.includes('صنف') || h.includes('اسم') || h.includes('name') || h.includes('item') || h.includes('name_ar'));
+                const nameEnIdx = headers.findIndex(h => h.includes('name_en') || h.includes('item_en') || h.includes('english'));
+
                 const priceIdx = headers.findIndex(h => h.includes('سعر') || h.includes('price'));
-                const descIdx = headers.findIndex(h => h.includes('مكون') || h.includes('وصف') || h.includes('desc'));
+                
+                const descArIdx = headers.findIndex(h => h.includes('وصف') || h.includes('مكون') || h.includes('desc') || h.includes('desc_ar'));
+                const descEnIdx = headers.findIndex(h => h.includes('desc_en') || h.includes('وصف_en'));
+
                 const imgIdx = headers.findIndex(h => h.includes('صورة') || h.includes('صوره') || h.includes('img') || h.includes('image'));
 
                 const parsedMenu = [];
 
                 for (let i = 1; i < lines.length; i++) {
                     const row = parseCSVLine(lines[i]);
-                    const rawCat = (row[catIdx >= 0 ? catIdx : 0] || 'أصناف متنوعة').trim();
-                    const rawName = (row[nameIdx >= 0 ? nameIdx : 1] || '').trim();
-                    if (!rawName) continue;
+                    
+                    const catAr = (catArIdx >= 0 && row[catArIdx]) ? row[catArIdx].trim() : (row[0] || 'أصناف متنوعة').trim();
+                    const catEn = (catEnIdx >= 0 && row[catEnIdx]) ? row[catEnIdx].trim() : catAr;
 
-                    let price = (row[priceIdx >= 0 ? priceIdx : 2] || '0').replace(/[^0-9.]/g, '');
+                    const nameAr = (nameArIdx >= 0 && row[nameArIdx]) ? row[nameArIdx].trim() : (row[1] || '').trim();
+                    const nameEn = (nameEnIdx >= 0 && row[nameEnIdx]) ? row[nameEnIdx].trim() : nameAr;
+
+                    if (!nameAr && !nameEn) continue;
+
+                    let price = (priceIdx >= 0 && row[priceIdx]) ? row[priceIdx].replace(/[^0-9.]/g, '') : '0';
                     if (!price) price = '0';
 
-                    const desc = (descIdx >= 0 && row[descIdx]) ? row[descIdx] : '';
-                    const sheetRowNumber = i + 1;
+                    const descAr = (descArIdx >= 0 && row[descArIdx]) ? row[descArIdx].trim() : '';
+                    const descEn = (descEnIdx >= 0 && row[descEnIdx]) ? row[descEnIdx].trim() : descAr;
 
+                    const sheetRowNumber = i + 1;
                     let img = `images/${sheetRowNumber}.jpg`;
 
                     if (imgIdx >= 0 && row[imgIdx] && row[imgIdx].trim() !== '') {
@@ -1789,7 +1773,7 @@
                     }
 
                     let addons = null;
-                    const catLower = rawCat.toLowerCase();
+                    const catLower = catAr.toLowerCase();
                     if (catLower.includes("شورب") || catLower.includes("soup")) addons = soupAddons;
                     else if (catLower.includes("مقبل") || catLower.includes("appetizer")) addons = appetizerAddons;
                     else if (catLower.includes("سلط") || catLower.includes("salad")) addons = saladAddons;
@@ -1798,24 +1782,19 @@
                     else if (catLower.includes("بيتزا") || catLower.includes("pizza")) addons = pizzaAddons;
                     else if (catLower.includes("حلو") || catLower.includes("dessert") || catLower.includes("شيكولات")) addons = dessertAddons;
 
-                    let catObj = parsedMenu.find(c => c.categoryRaw === rawCat);
+                    let catObj = parsedMenu.find(c => c.catAr === catAr);
                     if (!catObj) {
-                        catObj = { categoryRaw: rawCat, items: [] };
+                        catObj = { catAr: catAr, catEn: catEn, items: [] };
                         parsedMenu.push(catObj);
                     }
-
-                    let parsedName = parseDualLanguageText(rawName);
-                    let parsedDesc = parseDualLanguageText(desc);
 
                     catObj.items.push({
                         id: 'item_' + i + '_' + Math.random().toString(36).substr(2, 5),
                         sheetRow: sheetRowNumber,
-                        name: rawName,
-                        nameAr: parsedName.ar,
-                        nameEn: parsedName.en,
-                        desc: desc,
-                        descAr: parsedDesc.ar,
-                        descEn: parsedDesc.en,
+                        nameAr: nameAr,
+                        nameEn: nameEn,
+                        descAr: descAr,
+                        descEn: descEn,
                         price: parseFloat(price) || 0,
                         img: img,
                         addons: addons
@@ -1845,10 +1824,10 @@
                 const imgBox = document.createElement('div');
                 imgBox.className = 'cat-img-box';
                 const firstItemImg = cat.items && cat.items[0] ? cat.items[0].img : 'images/logooo.png';
-                imgBox.innerHTML = `<img src="${firstItemImg}" alt="${cat.categoryRaw}" onerror="this.src='images/logooo.png'">`;
+                imgBox.innerHTML = `<img src="${firstItemImg}" alt="${cat.catAr}" onerror="this.src='images/logooo.png'">`;
 
                 const label = document.createElement('span');
-                label.innerText = getCategoryCleanName(cat.categoryRaw);
+                label.innerText = getCategoryCleanName(cat);
 
                 itemEl.appendChild(imgBox);
                 itemEl.appendChild(label);
@@ -1873,19 +1852,20 @@
             if (!activeCatData || !activeCatData.items) return;
 
             activeCatData.items.forEach(item => {
-                const isEnabled = itemStatusMap[item.name] !== false;
+                const primaryKey = item.nameAr || item.nameEn;
+                const isEnabled = itemStatusMap[primaryKey] !== false;
                 const card = document.createElement('div');
                 card.className = 'food-card' + (isEnabled ? '' : ' disabled-item');
                 const hasAddons = item.addons && item.addons.length > 0;
-                const cleanUnderscore = item.name.replace(/\s+/g, '_');
+                const cleanUnderscore = primaryKey.replace(/\s+/g, '_');
                 
                 const displayName = getLocalizedItemName(item);
                 const displayDesc = getLocalizedItemDesc(item);
 
                 card.innerHTML = `
                     <div class="item-img-box" onclick="openImageLightbox(this.querySelector('img').src, '${displayName.replace(/'/g, "\\'")}', ${item.price})" title="${currentLang==='ar'?'اضغط لتكبير الصورة':'Click to view photo'}">
-                        <img src="${item.img}" loading="lazy" alt="${item.name}" 
-                             onerror="if(!this.dataset.step){this.dataset.step='1'; this.src='images/' + encodeURIComponent('${item.name}') + '.jpg';} 
+                        <img src="${item.img}" loading="lazy" alt="${primaryKey}" 
+                             onerror="if(!this.dataset.step){this.dataset.step='1'; this.src='images/' + encodeURIComponent('${primaryKey}') + '.jpg';} 
                                       else if(this.dataset.step==='1'){this.dataset.step='2'; this.src='images/' + encodeURIComponent('${cleanUnderscore}') + '.jpg';} 
                                       else {this.src='images/logooo.png';}">
                     </div>
@@ -1922,7 +1902,7 @@
                 id: item.id,
                 itemRef: item,
                 name: displayName,
-                rawName: item.name,
+                rawName: item.nameAr || item.nameEn,
                 price: item.price,
                 img: item.img,
                 addons: []
@@ -2019,7 +1999,7 @@
                 id: currentActiveItem.id,
                 itemRef: currentActiveItem,
                 name: displayName,
-                rawName: currentActiveItem.name,
+                rawName: currentActiveItem.nameAr || currentActiveItem.nameEn,
                 price: total,
                 basePrice: currentActiveItem.price,
                 img: currentActiveItem.img,
@@ -2075,7 +2055,7 @@
                 const itemEl = document.createElement('div');
                 itemEl.className = 'cart-item-card';
                 const addonsText = item.addons && item.addons.length > 0 ? item.addons.map(a => currentLang==='ar'?a.name:(a.nameEn||a.name)).join('، ') : '';
-                const displayName = item.itemRef ? getLocalizedItemName(item.itemRef) : getLocalizedItemName(item.name);
+                const displayName = item.itemRef ? getLocalizedItemName(item.itemRef) : item.name;
 
                 itemEl.innerHTML = `
                     <img src="${item.img}" class="cart-item-img" alt="${displayName}" onerror="this.src='images/logooo.png'">
@@ -2126,7 +2106,7 @@
 
             const itemsArrayForLog = [];
             cart.forEach((item, i) => {
-                const displayName = item.itemRef ? getLocalizedItemName(item.itemRef) : getLocalizedItemName(item.name);
+                const displayName = item.itemRef ? getLocalizedItemName(item.itemRef) : item.name;
                 let line = `${i + 1}. ${displayName}`;
                 if (item.addons && item.addons.length > 0) {
                     line += ` (+ ${currentLang==='ar'?'إضافات:':'Extras:'} ${item.addons.map(a => currentLang==='ar'?a.name:(a.nameEn||a.name)).join('، ')})`;
