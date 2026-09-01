@@ -120,7 +120,6 @@
         
         .splash-hidden { transform: translateY(-100%); opacity: 0; pointer-events: none; }
 
-        /* نافذة اختيار نوع الطلب أول ما يفتح الأبلكيشن */
         .welcome-order-type-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15, 20, 18, 0.85); backdrop-filter: blur(8px);
@@ -215,7 +214,6 @@
         }
         .header-logo { width: 100%; height: 100%; border-radius: 10px; object-fit: contain; }
 
-        /* شريط الوظائف والمكافآت والشات المنظم تحت الهيدر */
         .sub-header-bar {
             width: 100%;
             padding: 6px 14px 8px 14px;
@@ -655,7 +653,6 @@
             padding: 10px 20px; border-radius: 14px; font-weight: 800; font-size: 0.85rem; cursor: pointer; width: 100%;
         }
 
-        /* Simplified Clean Loyalty Modal */
         .loyalty-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.72); z-index: 4500; display: none;
@@ -710,7 +707,6 @@
         }
         .reward-redeem-btn:disabled { background: #cbd5e1; color: #64748b; cursor: not-allowed; }
 
-        /* Admin Dashboard */
         .admin-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.72); z-index: 4000; display: none; justify-content: center; align-items: center; padding: 14px; }
         .admin-box { background: var(--white); width: 100%; max-width: 480px; border-radius: 28px; padding: 22px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.3); animation: smoothFadeIn 0.2s ease-out; }
         .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
@@ -755,19 +751,6 @@
         .pass-form input { width: 100%; padding: 14px; border-radius: 14px; border: 1px solid var(--border-color); background: var(--bg); color: var(--main-text); margin-bottom: 12px; font-size: 0.95rem; text-align: center; }
         .pass-form button { width: 100%; padding: 14px; border-radius: 14px; border: none; background: var(--accent); color: white; font-weight: 800; cursor: pointer; }
 
-        .order-card-custom { background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 18px; padding: 14px; margin-bottom: 16px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06); }
-        .order-custom-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-        .order-user-name-box { font-size: 0.98rem; font-weight: 900; color: #0f172a; display: flex; align-items: center; gap: 6px; }
-        .order-delete-btn-circ { width: 26px; height: 26px; background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 900; cursor: pointer; }
-        .order-contact-sub { font-size: 0.80rem; color: #64748b; font-weight: 700; margin-bottom: 10px; }
-        .order-items-box-custom { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 12px; margin-bottom: 12px; }
-        .order-items-list-custom { list-style: none; padding: 0; margin: 0; }
-        .order-items-list-custom li { font-size: 0.80rem; font-weight: 800; color: #334155; line-height: 1.6; }
-        .order-custom-footer { display: flex; justify-content: space-between; align-items: center; }
-        .order-total-price-custom { font-size: 0.95rem; font-weight: 900; color: #dc2626; }
-        .order-chat-btn-custom { background: var(--accent); color: #ffffff; border: none; border-radius: 10px; padding: 7px 14px; font-weight: 800; font-size: 0.82rem; cursor: pointer; }
-
-        /* Chat Live Modal */
         .chat-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 6000; display: none; justify-content: center; align-items: center; padding: 14px; }
         .chat-box-card { background: var(--white); width: 100%; max-width: 440px; height: 80vh; border-radius: 24px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5); animation: smoothFadeIn 0.25s ease-out; border: 1px solid var(--border-color); }
         .chat-header { background: var(--accent); color: white; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; }
@@ -795,7 +778,7 @@
         </div>
     </div>
 
-    <!-- نافذة اختيار نوع الطلب فور الدخول (دليفري أو صالة بالعربي والإنجليزي) -->
+    <!-- نافذة اختيار نوع الطلب -->
     <div class="welcome-order-type-modal" id="welcomeOrderModal">
         <div class="welcome-card">
             <img src="images/logooo.png" class="welcome-logo" alt="Storia Cafe" onerror="this.src='https://www.storia-eg.com/images/logo.png'">
@@ -841,7 +824,6 @@
             </div>
         </div>
 
-        <!-- شريط الوظائف والمكافآت والشات المنظم تحت الهيدر -->
         <div class="sub-header-bar">
             <div class="order-mode-pill" onclick="showWelcomeModal()" title="تغيير طريقة الاستلام">
                 <span id="currentOrderModeIcon">🛵</span>
@@ -866,7 +848,6 @@
 
     <div id="menuList" class="menu-list"></div>
 
-    <!-- نافذة نظام النقاط والمكافآت كارفور (Simple & Clean) -->
     <div class="loyalty-modal" id="loyaltyModal" onclick="if(event.target===this) closeLoyaltyModal()">
         <div class="loyalty-box">
             <div class="loyalty-header">
@@ -885,7 +866,6 @@
         </div>
     </div>
 
-    <!-- نافذة الإضافات المخصصة للأصناف -->
     <div class="simple-addons-modal" id="simpleAddonsModal" onclick="if(event.target===this) closeSimpleAddonsModal()">
         <div class="simple-addons-content">
             <div class="simple-addons-header">
@@ -911,7 +891,6 @@
         </div>
     </div>
 
-    <!-- نافذة نجاح الطلب مع احتفال الإيموجيز المتطايرة -->
     <div class="success-modal" id="successModal">
         <div class="success-card">
             <div class="emoji-burst-container" id="emojiBurstArea"></div>
@@ -931,7 +910,6 @@
         </div>
     </div>
 
-    <!-- نافذة الشات المباشر -->
     <div class="chat-modal" id="chatModal" onclick="if(event.target==this) closeChatModal()">
         <div class="chat-box-card">
             <div class="chat-header">
@@ -952,7 +930,6 @@
         </div>
     </div>
 
-    <!-- لوحة التحكم الرئيسية -->
     <div class="admin-modal" id="adminModal" onclick="if(event.target==this) closeAdminPanel()">
         <div class="admin-box">
             <div class="admin-header">
@@ -1009,7 +986,6 @@
         </div>
     </div>
 
-    <!-- نافذة تحكم النقاط للعملاء (Admin Loyalty Control) -->
     <div class="floating-sub-modal" id="loyaltyAdminModal" onclick="if(event.target==this) closeFloatingModal('loyaltyAdminModal')">
         <div class="floating-card-box">
             <div class="floating-header">
@@ -1034,7 +1010,6 @@
         </div>
     </div>
 
-    <!-- نافذة تعديل الأرقام -->
     <div class="floating-sub-modal" id="contactsModal" onclick="if(event.target==this) closeFloatingModal('contactsModal')">
         <div class="floating-card-box">
             <div class="floating-header">
@@ -1063,7 +1038,6 @@
         </div>
     </div>
 
-    <!-- نافذة تشغيل وإيقاف الأصناف -->
     <div class="floating-sub-modal" id="statusModal" onclick="if(event.target==this) closeFloatingModal('statusModal')">
         <div class="floating-card-box">
             <div class="floating-header">
@@ -1079,7 +1053,6 @@
         </div>
     </div>
 
-    <!-- نافذة الطلبات الواردة Live -->
     <div class="floating-sub-modal" id="logsModal" onclick="if(event.target==this) closeFloatingModal('logsModal')">
         <div class="floating-card-box">
             <div class="floating-header">
@@ -1090,7 +1063,6 @@
         </div>
     </div>
 
-    <!-- نافذة تغيير كلمة المرور -->
     <div class="floating-sub-modal" id="passwordModal" onclick="if(event.target==this) closeFloatingModal('passwordModal')">
         <div class="floating-card-box">
             <div class="floating-header">
@@ -1114,7 +1086,6 @@
         </div>
     </footer>
 
-    <!-- سلة الطلبات -->
     <div class="modal" id="cartModal" onclick="if(event.target==this) toggleCart(false)">
         <div class="modal-content">
             <h2 style="margin-bottom: 20px;">طلباتك</h2>
@@ -1170,10 +1141,8 @@
     </script>
 
     <script>
-        // الرابط الجديد لشيت جوجل الخاص بك
         const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTsz0Q8FatsNvh7u2MGFmJpXDuXjC6HD23Vt1VlEnS2EX-dElZco3evuNUXKZSe3-rLmOabuU1NTiyO/pub?output=csv";
 
-        // قوائم الإضافات الكاملة
         const soupAddons = [
             { name: "دجاج", price: 64.95 }, { name: "مشروم", price: 29.95 }, { name: "ذرة", price: 29.95 },
             { name: "خضروات", price: 39.95 }, { name: "سمك", price: 74.95 }, { name: "جبنة موزاريلا", price: 29.95 },
@@ -1229,7 +1198,6 @@
         const hotDrinksAddons = dessertAddons;
         const milkshakeYogurtAddons = dessertAddons;
 
-        // قائمة هدايا ومكافآت كارفور للاستبدال
         const loyaltyRewards = [
             { id: 'rew_1', title: 'قهوة اسبريسو / تركي ☕', cost: 100 },
             { id: 'rew_2', title: 'مشروب موهيتو منعش 🍹', cost: 200 },
@@ -1338,8 +1306,7 @@
             }
         });
 
-        // --- نظام نقاط كارفور (Loyalty Engine) ---
-
+        // --- نظام النقاط والمكافآت ---
         function updatePointsBadge(pts) {
             userLoyaltyPoints = pts;
             const badge = document.getElementById('headerPointsBadge');
@@ -1445,8 +1412,7 @@
             }
         }
 
-        // --- تحميل ومعالجة شيت جوجل للأصناف ---
-
+        // --- تحميل ومعالجة شيت جوجل للأصناف بدقة وفك حظر الصور ---
         function parseCSVLine(line) {
             const result = [];
             let insideQuote = false;
@@ -1463,6 +1429,16 @@
             return result;
         }
 
+        // دالة كسر حظر السيرفرات وتسريع الصور
+        function formatSafeImageUrl(rawUrl) {
+            if (!rawUrl) return 'images/logooo.png';
+            let clean = rawUrl.trim().replace(/^\[|\]$/g, '').replace(/[\(\)]/g, '');
+            if (!clean.startsWith('http')) return clean;
+            
+            // تمرير الرابط عبر خدمة تحويل آمنة لفك قيود CORS والـ Hotlinking
+            return `https://images.weserv.nl/?url=${encodeURIComponent(clean)}&default=https://www.storia-eg.com/images/logo.png`;
+        }
+
         async function fetchMenuFromGoogleSheet() {
             try {
                 const freshUrl = GOOGLE_SHEET_CSV_URL + (GOOGLE_SHEET_CSV_URL.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
@@ -1474,11 +1450,20 @@
                 if (lines.length < 2) return;
 
                 const headers = parseCSVLine(lines[0]).map(h => h.trim().toLowerCase());
+                
                 const catIdx = headers.findIndex(h => h.includes('قسم') || h.includes('category'));
                 const nameIdx = headers.findIndex(h => h.includes('صنف') || h.includes('اسم') || h.includes('item') || h.includes('name'));
                 const priceIdx = headers.findIndex(h => h.includes('سعر') || h.includes('price'));
                 const descIdx = headers.findIndex(h => h.includes('مكون') || h.includes('وصف') || h.includes('desc'));
-                const imgIdx = headers.findIndex(h => h.includes('صورة') || h.includes('img') || h.includes('image'));
+                
+                // البحث عن عمود الصور بالاسم أو البحث التلقائي عن العمود الذي يحتوي روابط
+                let imgIdx = headers.findIndex(h => h.includes('صورة') || h.includes('صوره') || h.includes('img') || h.includes('image'));
+                
+                // إذا لم يجد اسم العمود، يكتشف العمود الذي يحتوي على روابط http في أول سطر بيانات
+                if (imgIdx === -1 && lines.length > 1) {
+                    const sampleRow = parseCSVLine(lines[1]);
+                    imgIdx = sampleRow.findIndex(cell => cell && (cell.includes('http') || cell.includes('.jpg') || cell.includes('.png')));
+                }
 
                 const parsedMenu = [];
 
@@ -1492,7 +1477,10 @@
                     if (!price) price = '0';
 
                     const desc = (descIdx >= 0 && row[descIdx]) ? row[descIdx] : '';
-                    const img = (imgIdx >= 0 && row[imgIdx]) ? row[imgIdx] : 'images/logooo.png';
+                    
+                    // استخراج الرابط وتأمينه
+                    const rawImg = (imgIdx >= 0 && row[imgIdx]) ? row[imgIdx] : '';
+                    const img = formatSafeImageUrl(rawImg);
 
                     let addons = null;
                     if (category.includes("شورب")) addons = soupAddons;
@@ -1584,7 +1572,7 @@
 
                 card.innerHTML = `
                     <div class="item-img-box">
-                        <img src="${item.img}" alt="${item.name}" onerror="this.src='images/logooo.png'">
+                        <img src="${item.img}" loading="lazy" alt="${item.name}" onerror="this.src='images/logooo.png'">
                     </div>
                     <div class="food-info">
                         <div>
@@ -1822,7 +1810,6 @@
             orderText += `*الإجمالي الكلي:* ${currentTotal.toFixed(2)} ج.م\n`;
             orderText += `*🎁 النقاط المكتسبة:* +${earnedPts} نقطة\n`;
 
-            // حفظ الطلب وإضافة النقاط على Firebase
             try {
                 if (window.db && window.firebaseModules) {
                     const { collection, addDoc, doc, getDoc, setDoc } = window.firebaseModules;
@@ -1842,7 +1829,6 @@
                     localStorage.setItem('storia_active_user_name', name);
                     showClientHeaderChatButton();
 
-                    // زيادة رصيد النقاط
                     const userRef = doc(window.db, "loyalty_users", phone);
                     const userSnap = await getDoc(userRef);
                     let currentPts = userSnap.exists() ? (userSnap.data().points || 0) : 0;
@@ -1962,8 +1948,7 @@
             } catch(e) {}
         }
 
-        // --- لوحة التحكم وتعديل النقاط وكلمة المرور ---
-
+        // --- لوحة التحكم ---
         function openAdminPanel() {
             document.getElementById('adminModal').style.display = 'flex';
             document.getElementById('adminAuthView').style.display = 'block';
