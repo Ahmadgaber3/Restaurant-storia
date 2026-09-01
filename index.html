@@ -120,6 +120,40 @@
         
         .splash-hidden { transform: translateY(-100%); opacity: 0; pointer-events: none; }
 
+        /* نافذة اختيار نوع الطلب أول ما يفتح الأبلكيشن */
+        .welcome-order-type-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 20, 18, 0.85); backdrop-filter: blur(8px);
+            z-index: 8000; display: none; justify-content: center; align-items: center;
+            padding: 20px;
+        }
+        .welcome-card {
+            background: var(--white); width: 100%; max-width: 380px;
+            border-radius: 28px; padding: 26px 20px; text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            animation: smoothFadeIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            border: 1.5px solid var(--border-color);
+        }
+        .welcome-logo { width: 90px; height: 90px; object-fit: contain; margin-bottom: 12px; }
+        .welcome-title { font-size: 1.25rem; font-weight: 900; color: var(--accent); margin-bottom: 4px; }
+        .welcome-subtitle { font-size: 0.82rem; color: var(--desc-text); font-weight: 700; margin-bottom: 20px; }
+        .welcome-buttons-grid { display: flex; flex-direction: column; gap: 12px; }
+        .welcome-choice-btn {
+            background: var(--bg); border: 2px solid var(--border-color);
+            border-radius: 18px; padding: 14px 16px; cursor: pointer;
+            display: flex; align-items: center; justify-content: space-between;
+            transition: all 0.2s ease;
+        }
+        .welcome-choice-btn:active, .welcome-choice-btn:hover {
+            border-color: var(--accent);
+            background: rgba(27, 77, 62, 0.06);
+            transform: translateY(-2px);
+        }
+        .welcome-choice-info { text-align: right; }
+        .welcome-choice-ar { font-size: 0.96rem; font-weight: 900; color: var(--main-text); }
+        .welcome-choice-en { font-size: 0.76rem; font-weight: 700; color: var(--desc-text); }
+        .welcome-choice-icon { font-size: 1.8rem; }
+
         header { 
             background: var(--header-bg); 
             position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 15px var(--card-shadow);
@@ -130,33 +164,20 @@
             width: 100%; 
             display: flex; 
             align-items: center; 
-            justify-content: center; 
-            position: relative; 
-            margin-bottom: 4px; 
-            min-height: 88px; 
-            padding: 0 15px;
+            justify-content: space-between; 
+            padding: 0 16px;
+            min-height: 80px;
         }
         
-        .header-right-actions {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
+        .header-left-actions, .header-right-actions {
             display: flex;
             align-items: center;
-            gap: 6px;
-            z-index: 10;
+            gap: 8px;
         }
 
-        .header-right-col {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .theme-toggle, .admin-trigger-btn, .loyalty-pill-btn {
-            width: 38px;
-            height: 38px;
+        .theme-toggle, .admin-trigger-btn, .cart-trigger, .header-action-btn {
+            width: 40px;
+            height: 40px;
             background: var(--bg);
             border-radius: 12px;
             display: flex;
@@ -168,127 +189,98 @@
             color: var(--main-text);
             box-shadow: 0 2px 6px var(--card-shadow);
             transition: transform 0.15s ease;
+            position: relative;
         }
-        .theme-toggle:active, .admin-trigger-btn:active, .loyalty-pill-btn:active {
+        .theme-toggle:active, .admin-trigger-btn:active, .cart-trigger:active, .header-action-btn:active {
             transform: scale(0.92);
         }
 
-        .loyalty-pill-btn {
-            width: auto;
-            min-width: 42px;
-            padding: 0 8px;
-            background: linear-gradient(135deg, #1b4d3e 0%, #113329 100%);
-            color: #ffffff;
-            border: none;
-            gap: 4px;
-            font-size: 0.85rem;
-            font-weight: 800;
-        }
-
-        .loyalty-pts-num {
-            font-size: 0.78rem;
-            background: rgba(255, 255, 255, 0.22);
-            padding: 1px 6px;
-            border-radius: 6px;
-        }
-
-        .header-left-actions {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            align-items: center;
-            z-index: 10;
-        }
-
-        .header-buttons-row {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .cart-trigger { 
-            width: 38px; 
-            height: 38px; 
-            background: var(--bg); 
-            border-radius: 12px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            position: relative; 
-            border: 1px solid var(--border-color); 
-            box-shadow: 0 2px 6px var(--card-shadow); 
-            cursor: pointer; 
-        }
         .cart-trigger.shake { animation: cartShake 0.5s ease-in-out; }
         @keyframes cartShake { 0%, 100% { transform: scale(1) rotate(0deg); } 20%, 60% { transform: scale(1.15) rotate(-10deg); } 40%, 80% { transform: scale(1.15) rotate(10deg); } }
         .badge { position: absolute; top: -5px; right: -5px; background: #ef4444; color: #fff; font-size: 10px; font-weight: 800; width: 19px; height: 19px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--white); transform: scale(0); transition: 0.2s ease; }
         .badge.show { transform: scale(1); }
 
-        .client-header-chat-btn {
-            width: 38px;
-            height: 38px;
-            background: #25D366;
-            color: #ffffff;
-            border-radius: 12px;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 1.15rem;
-            border: 1px solid #1ebe5d;
-            box-shadow: 0 2px 8px rgba(37, 211, 102, 0.35);
-            transition: transform 0.15s ease;
-            position: relative;
-            animation: pulseHeaderChat 2s infinite ease-in-out;
-        }
-        .client-header-chat-btn:active { transform: scale(0.92); }
-        @keyframes pulseHeaderChat {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.08); }
-        }
-
-        .install-pwa-btn {
-            height: 32px;
-            background: var(--accent);
-            border-radius: 10px;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 0.72rem;
-            font-weight: 800;
-            border: none;
-            color: #ffffff;
-            padding: 0 8px;
-            gap: 3px;
-            box-shadow: 0 3px 8px rgba(27, 77, 62, 0.35);
-            transition: transform 0.15s ease;
-            width: 100%;
-        }
-        .install-pwa-btn:active { transform: scale(0.92); }
-
         .header-logo-container { 
-            width: 155px; 
-            height: 72px; 
-            border-radius: 18px; 
+            width: 125px; 
+            height: 65px; 
+            border-radius: 16px; 
             background: var(--white); 
-            padding: 4px 10px; 
-            box-shadow: 0 6px 20px var(--card-shadow); 
+            padding: 4px 8px; 
+            box-shadow: 0 4px 15px var(--card-shadow); 
             overflow: hidden; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
             border: 2px solid var(--accent); 
         }
-        .header-logo { width: 100%; height: 100%; border-radius: 12px; object-fit: contain; }
+        .header-logo { width: 100%; height: 100%; border-radius: 10px; object-fit: contain; }
 
-        .header-brand-info { text-align: center; width: 100%; padding: 4px 15px 8px 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
-        .app-inner-title { font-size: 1.25rem; font-weight: 800; color: var(--accent); letter-spacing: 0.5px; line-height: 1.2; }
-        .app-inner-sub { font-size: 0.95rem; font-weight: 700; color: var(--main-text); margin-bottom: 2px; }
+        /* شريط الوظائف السريع (نقاط المكافآت + الشات + نوع الطلب) تحت الهيدر */
+        .sub-header-bar {
+            width: 100%;
+            padding: 6px 14px 8px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            border-top: 1px solid var(--border-color);
+            background: var(--header-bg);
+        }
+
+        .order-mode-pill {
+            background: var(--bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 4px 10px;
+            font-size: 0.76rem;
+            font-weight: 800;
+            color: var(--accent);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+        }
+
+        .sub-actions-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .loyalty-sub-btn {
+            background: linear-gradient(135deg, #1b4d3e 0%, #113329 100%);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-size: 0.76rem;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(27, 77, 62, 0.25);
+        }
+        .loyalty-sub-btn .pts {
+            background: rgba(255, 255, 255, 0.22);
+            padding: 1px 6px;
+            border-radius: 6px;
+        }
+
+        .chat-sub-btn {
+            background: #25D366;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-size: 0.76rem;
+            font-weight: 800;
+            display: none;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(37, 211, 102, 0.3);
+        }
 
         .category-nav { 
             display: flex; 
@@ -302,7 +294,6 @@
             border-top: 1px solid var(--border-color); 
             border-bottom: 1px solid var(--border-color); 
             scroll-behavior: smooth; 
-            margin-top: 4px;
             -webkit-overflow-scrolling: touch;
         }
         .category-nav::-webkit-scrollbar { display: none; }
@@ -565,19 +556,6 @@
         .branch-item:last-child { margin-bottom: 0; }
         .branch-item strong { color: var(--accent); display: block; }
         
-        .complaints-box {
-            background: rgba(27, 77, 62, 0.08); border: 1.5px dashed var(--accent);
-            border-radius: 16px; padding: 12px; margin-bottom: 15px; text-align: center;
-            display: flex; flex-direction: column; align-items: center; gap: 4px;
-        }
-        .complaints-title { font-size: 0.88rem; font-weight: 800; color: var(--accent); display: flex; align-items: center; gap: 5px; }
-        .complaints-number {
-            font-size: 1.05rem; font-weight: 900; color: var(--main-text);
-            text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
-            background: var(--white); padding: 4px 14px; border-radius: 20px;
-            border: 1px solid var(--border-color); margin-top: 3px;
-        }
-
         .footer-rights { font-size: 0.8rem; color: var(--main-text); font-weight: 600; margin-bottom: 5px; }
         .dev-credit { font-size: 0.85rem; color: var(--desc-text); font-weight: 700; }
         .dev-credit a { color: var(--accent); text-decoration: none; display: block; margin-top: 3px; }
@@ -594,15 +572,10 @@
         .cart-item-price { color: var(--accent); font-weight: 800; font-size: 0.85rem; display: block; }
         .remove-btn { color: #ff3b30; font-weight: 800; font-size: 0.75rem; cursor: pointer; }
 
-        .order-type-container { display: flex; background: var(--bg); padding: 6px; border-radius: 16px; margin: 15px 0; gap: 6px; border: 1px solid var(--border-color); }
-        .order-type-btn { flex: 1; border: none; background: transparent; padding: 12px; border-radius: 12px; font-weight: 800; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; color: var(--desc-text); transition: all 0.2s ease; }
-        .order-type-btn.active { background: var(--accent); color: white; box-shadow: 0 4px 12px rgba(27, 77, 62, 0.25); }
-
         .user-fields input { background: var(--bg); border: 1.5px solid var(--border-color); padding: 16px; border-radius: 14px; width: 100%; margin-bottom: 10px; color: var(--main-text); text-align: right; outline: none; font-size: 0.9rem; font-weight: 700; }
 
         .submit-btn { background: var(--accent); color: white; border: none; padding: 18px; border-radius: 18px; width: 100%; font-weight: 800; cursor: pointer; font-size: 1rem; }
 
-        /* Points Preview Box in Cart */
         .cart-points-preview {
             background: linear-gradient(135deg, rgba(27, 77, 62, 0.12), rgba(82, 183, 154, 0.15));
             border: 1.5px dashed var(--accent);
@@ -616,7 +589,6 @@
             font-weight: 800;
         }
 
-        /* Success Modal & Floating Emojis */
         .success-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.75); z-index: 5000; display: none;
@@ -738,16 +710,14 @@
         }
         .reward-redeem-btn:disabled { background: #cbd5e1; color: #64748b; cursor: not-allowed; }
 
-        /* Admin Dashboard & Submodals */
+        /* Admin Dashboard */
         .admin-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.72); z-index: 4000; display: none; justify-content: center; align-items: center; padding: 14px; }
         .admin-box { background: var(--white); width: 100%; max-width: 480px; border-radius: 28px; padding: 22px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.3); animation: smoothFadeIn 0.2s ease-out; }
-        
         .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
         .admin-header h3 { font-size: 1.25rem; font-weight: 900; color: var(--accent); display: flex; align-items: center; gap: 6px; }
         .admin-close { background: var(--bg); border: 1px solid var(--border-color); width: 34px; height: 34px; border-radius: 50%; font-weight: 800; cursor: pointer; color: var(--main-text); display: flex; align-items: center; justify-content: center; }
 
         .admin-cards-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
         .admin-nav-card {
             background: #ffffff; border: 2px solid #e2e8f0; border-radius: 22px;
             padding: 16px 12px 14px 12px; text-align: center; cursor: pointer;
@@ -758,7 +728,6 @@
         .admin-nav-card:active { transform: scale(0.96); border-color: var(--accent); }
         .card-badge-num { position: absolute; top: 10px; left: 10px; width: 24px; height: 24px; background: var(--accent); color: #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 900; }
         .card-badge-num.gray { background: #e2e8f0; color: #64748b; }
-
         .card-avatar-box { width: 56px; height: 56px; border-radius: 50%; background: rgba(27, 77, 62, 0.08); display: flex; align-items: center; justify-content: center; margin-bottom: 8px; font-size: 1.8rem; overflow: hidden; }
         .card-title { font-size: 0.92rem; font-weight: 900; color: #0f172a; margin-bottom: 4px; line-height: 1.2; }
         .card-subtitle { font-size: 0.70rem; font-weight: 700; color: #64748b; line-height: 1.35; }
@@ -783,34 +752,8 @@
 
         .admin-save-btn { width: 100%; background: var(--accent); color: white; border: none; padding: 13px; border-radius: 12px; font-weight: 900; font-size: 0.92rem; cursor: pointer; margin-top: 8px; box-shadow: 0 4px 12px rgba(27, 77, 62, 0.25); }
 
-        .switch-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: var(--bg); border-radius: 14px; margin-bottom: 8px; border: 1px solid var(--border-color); }
-        .switch-label { font-weight: 800; font-size: 0.86rem; color: var(--main-text); }
-        .switch { position: relative; display: inline-block; width: 48px; height: 26px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .2s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: .2s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--accent); }
-        input:checked + .slider:before { transform: translateX(22px); }
-
-        .admin-global-actions { display: flex; gap: 8px; margin-bottom: 12px; }
-        .admin-action-btn { flex: 1; padding: 9px; border: none; border-radius: 12px; font-weight: 800; font-size: 0.80rem; cursor: pointer; color: white; }
-        .btn-enable-all { background: var(--accent); }
-        .btn-disable-all { background: #94a3b8; }
-
         .pass-form input { width: 100%; padding: 14px; border-radius: 14px; border: 1px solid var(--border-color); background: var(--bg); color: var(--main-text); margin-bottom: 12px; font-size: 0.95rem; text-align: center; }
         .pass-form button { width: 100%; padding: 14px; border-radius: 14px; border: none; background: var(--accent); color: white; font-weight: 800; cursor: pointer; }
-
-        .order-card-custom { background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 18px; padding: 14px; margin-bottom: 16px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06); }
-        .order-custom-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-        .order-user-name-box { font-size: 0.98rem; font-weight: 900; color: #0f172a; display: flex; align-items: center; gap: 6px; }
-        .order-delete-btn-circ { width: 26px; height: 26px; background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 900; cursor: pointer; }
-        .order-contact-sub { font-size: 0.80rem; color: #64748b; font-weight: 700; margin-bottom: 10px; }
-        .order-items-box-custom { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 12px; margin-bottom: 12px; }
-        .order-items-list-custom { list-style: none; padding: 0; margin: 0; }
-        .order-items-list-custom li { font-size: 0.80rem; font-weight: 800; color: #334155; line-height: 1.6; }
-        .order-custom-footer { display: flex; justify-content: space-between; align-items: center; }
-        .order-total-price-custom { font-size: 0.95rem; font-weight: 900; color: #dc2626; }
-        .order-chat-btn-custom { background: var(--accent); color: #ffffff; border: none; border-radius: 10px; padding: 7px 14px; font-weight: 800; font-size: 0.82rem; cursor: pointer; }
 
         /* Chat Live Modal */
         .chat-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 6000; display: none; justify-content: center; align-items: center; padding: 14px; }
@@ -840,13 +783,38 @@
         </div>
     </div>
 
+    <!-- نافذة اختيار نوع الطلب فور الدخول (دليفري أو صالة بالعربي والإنجليزي) -->
+    <div class="welcome-order-type-modal" id="welcomeOrderModal">
+        <div class="welcome-card">
+            <img src="images/logooo.png" class="welcome-logo" alt="Storia Cafe" onerror="this.src='https://www.storia-eg.com/images/logo.png'">
+            <h2 class="welcome-title">مرحباً بك في ستوريا | Welcome</h2>
+            <p class="welcome-subtitle">من فضلك اختر طريقة استلام طلبك للمتابعة:</p>
+            
+            <div class="welcome-buttons-grid">
+                <div class="welcome-choice-btn" onclick="selectInitialOrderType('delivery')">
+                    <div class="welcome-choice-info">
+                        <div class="welcome-choice-ar">🛵 توصيل دليفري</div>
+                        <div class="welcome-choice-en">Home Delivery</div>
+                    </div>
+                    <span class="welcome-choice-icon">🛵</span>
+                </div>
+
+                <div class="welcome-choice-btn" onclick="selectInitialOrderType('takeaway')">
+                    <div class="welcome-choice-info">
+                        <div class="welcome-choice-ar">🍽️ صالة وتيك اواي</div>
+                        <div class="welcome-choice-en">Dine-in & Takeaway</div>
+                    </div>
+                    <span class="welcome-choice-icon">🍽️</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <header>
         <div class="header-top">
             <div class="header-right-actions">
-                <div class="header-right-col">
-                    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="الوضع الليلي / النهاري">🌙</button>
-                    <button class="admin-trigger-btn" onclick="openAdminPanel()" title="لوحة التحكم">⚙️</button>
-                </div>
+                <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="الوضع الليلي / النهاري">🌙</button>
+                <button class="admin-trigger-btn" onclick="openAdminPanel()" title="لوحة التحكم">⚙️</button>
             </div>
             
             <div class="header-logo-container">
@@ -854,29 +822,33 @@
             </div>
             
             <div class="header-left-actions">
-                <div class="header-buttons-row">
-                    <button class="loyalty-pill-btn" onclick="openLoyaltyModal()" title="محفظة نقاط المكافآت">
-                        <span>🎁</span>
-                        <span class="loyalty-pts-num" id="headerPointsBadge">0</span>
-                    </button>
-                    <button class="client-header-chat-btn" id="clientHeaderChatBtn" onclick="openClientHeaderChat()" title="متابعة شات الأوردر">
-                        💬
-                    </button>
-                    <div class="cart-trigger" onclick="toggleCart(true)" id="cartBtn" title="عربة الطلبات">
-                        <span class="badge" id="cartBadge">0</span>
-                        <span style="font-size: 1.25rem;">🛒</span>
-                    </div>
+                <div class="cart-trigger" onclick="toggleCart(true)" id="cartBtn" title="عربة الطلبات">
+                    <span class="badge" id="cartBadge">0</span>
+                    <span>🛒</span>
                 </div>
-                <button class="install-pwa-btn" id="installPwaBtn" onclick="triggerUniversalInstall()">
-                    <span>📲</span>
-                    <span>تثبيت</span>
+            </div>
+        </div>
+
+        <!-- شريط الوظائف والمكافآت والشات المنظم تحت الهيدر -->
+        <div class="sub-header-bar">
+            <div class="order-mode-pill" onclick="showWelcomeModal()" title="تغيير طريقة الاستلام">
+                <span id="currentOrderModeIcon">🛵</span>
+                <span id="currentOrderModeLabel">دليفري | Delivery</span>
+                <span style="font-size:0.65rem; opacity:0.7;">✎</span>
+            </div>
+
+            <div class="sub-actions-row">
+                <button class="chat-sub-btn" id="clientHeaderChatBtn" onclick="openClientHeaderChat()" title="متابعة شات الأوردر">
+                    <span>💬</span>
+                    <span>شات الطلب</span>
+                </button>
+                <button class="loyalty-sub-btn" onclick="openLoyaltyModal()" title="محفظة نقاط المكافآت">
+                    <span>🎁 الهدايا</span>
+                    <span class="pts" id="headerPointsBadge">0</span>
                 </button>
             </div>
         </div>
-        <div class="header-brand-info">
-            <div class="app-inner-title">Storia Cafe & Restaurant</div>
-            <div class="app-inner-sub">Coffee, Food & Special Atmosphere</div>
-        </div>
+
         <div class="category-nav" id="catNav"></div>
     </header>
 
@@ -1123,7 +1095,6 @@
 
     <footer class="restaurant-footer">
         <div class="branches-container" id="footerBranchesContainer"></div>
-        <div class="complaints-container" id="footerComplaintsContainer" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;"></div>
         <p class="footer-rights">جميع الحقوق محفوظة لـ Storia Coffee and Restaurant 2026 ©</p>
         <div class="dev-credit">
             Designed & Developed with Passion
@@ -1131,7 +1102,7 @@
         </div>
     </footer>
 
-    <!-- سلة الطلبات -->
+    <!-- سلة الطلبات (تم حذف خيار دليفري وتيك اواي من هنا) -->
     <div class="modal" id="cartModal" onclick="if(event.target==this) toggleCart(false)">
         <div class="modal-content">
             <h2 style="margin-bottom: 20px;">طلباتك</h2>
@@ -1151,11 +1122,6 @@
                     <b>الإجمالي الكلي</b>
                     <b id="totalAmount">0 ج.م</b>
                 </div>
-            </div>
-
-            <div class="order-type-container">
-                <button type="button" class="order-type-btn active" id="deliveryBtn" onclick="setOrderType('delivery')">🛵 دليفري</button>
-                <button type="button" class="order-type-btn" id="takeawayBtn" onclick="setOrderType('takeaway')">🛍️ تيك اواي / صالة</button>
             </div>
 
             <div class="user-fields">
@@ -1194,7 +1160,7 @@
     <script>
         const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTnQY_CtB_RYZQmR6AMh1YtKXngxkouZc8annSVpPaoSh1-ZjmXpHSGWbXL9p791ARv4xunlF7akopY/pub?output=csv";
 
-        // قوائم الإضافات الكاملة لجميع الأقسام
+        // قوائم الإضافات الكاملة
         const soupAddons = [
             { name: "دجاج", price: 64.95 }, { name: "مشروم", price: 29.95 }, { name: "ذرة", price: 29.95 },
             { name: "خضروات", price: 39.95 }, { name: "سمك", price: 74.95 }, { name: "جبنة موزاريلا", price: 29.95 },
@@ -1262,7 +1228,7 @@
         let menuData = [];
         let cart = [];
         let currentTotal = 0; 
-        let selectedOrderType = 'delivery';
+        let selectedOrderType = localStorage.getItem('storia_saved_order_type') || 'delivery';
         let itemStatusMap = {}; 
         let currentActiveCategory = null;
 
@@ -1304,9 +1270,48 @@
                     if (barFill) barFill.style.width = count + '%';
                 } else {
                     clearInterval(timer);
-                    if (splashScreen) splashScreen.classList.add('splash-hidden');
+                    if (splashScreen) {
+                        splashScreen.classList.add('splash-hidden');
+                        checkWelcomeOrderType();
+                    }
                 }
-            }, 30);
+            }, 25);
+        }
+
+        function checkWelcomeOrderType() {
+            const saved = localStorage.getItem('storia_saved_order_type');
+            if (!saved) {
+                showWelcomeModal();
+            } else {
+                setInitialOrderTypeUI(saved);
+            }
+        }
+
+        function showWelcomeModal() {
+            document.getElementById('welcomeOrderModal').style.display = 'flex';
+        }
+
+        function selectInitialOrderType(type) {
+            selectedOrderType = type;
+            localStorage.setItem('storia_saved_order_type', type);
+            setInitialOrderTypeUI(type);
+            document.getElementById('welcomeOrderModal').style.display = 'none';
+        }
+
+        function setInitialOrderTypeUI(type) {
+            const icon = document.getElementById('currentOrderModeIcon');
+            const label = document.getElementById('currentOrderModeLabel');
+            const addrInput = document.getElementById('uAddr');
+
+            if (type === 'delivery') {
+                if (icon) icon.innerText = '🛵';
+                if (label) label.innerText = 'دليفري | Delivery';
+                if (addrInput) addrInput.placeholder = 'العنوان بالتفصيل';
+            } else {
+                if (icon) icon.innerText = '🍽️';
+                if (label) label.innerText = 'صالة وتيك اواي | Dine-in';
+                if (addrInput) addrInput.placeholder = 'رقم الترابيزة أو ملاحظات الاستلام';
+            }
         }
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -1766,23 +1771,6 @@
             renderCartItems();
         }
 
-        function setOrderType(type) {
-            selectedOrderType = type;
-            const delBtn = document.getElementById('deliveryBtn');
-            const takBtn = document.getElementById('takeawayBtn');
-            const addrInput = document.getElementById('uAddr');
-
-            if (type === 'delivery') {
-                delBtn.classList.add('active');
-                takBtn.classList.remove('active');
-                if (addrInput) addrInput.placeholder = 'العنوان بالتفصيل';
-            } else {
-                takBtn.classList.add('active');
-                delBtn.classList.remove('active');
-                if (addrInput) addrInput.placeholder = 'رقم الترابيزة أو ملاحظات الاستلام';
-            }
-        }
-
         async function sendToWA() {
             const name = document.getElementById('uName').value.trim();
             const phone = document.getElementById('uPhone').value.trim();
@@ -1795,12 +1783,13 @@
             if (cart.length === 0) return;
 
             const earnedPts = Math.floor(currentTotal);
+            const modeText = selectedOrderType === 'delivery' ? 'دليفري توصيل 🛵' : 'صالة / تيك اواي 🍽️';
 
             let orderText = `*طلب جديد من Storia Cafe & Restaurant*\n`;
             orderText += `------------------------------------\n`;
             orderText += `*الاسم:* ${name}\n`;
             orderText += `*الموبايل:* ${phone}\n`;
-            orderText += `*نوع الطلب:* ${selectedOrderType === 'delivery' ? 'دليفري 🛵' : 'تيك اواي / صالة 🛍️'}\n`;
+            orderText += `*نوع الطلب:* ${modeText}\n`;
             if (addr) orderText += `*العنوان / التفاصيل:* ${addr}\n`;
             orderText += `------------------------------------\n`;
             orderText += `*تفاصيل الطلبات:*\n`;
@@ -1857,7 +1846,6 @@
             const waPhone = restaurantInfo.orderPhone || '201014144144';
             window.open(`https://wa.me/${waPhone}?text=${encodeURIComponent(orderText)}`, '_blank');
 
-            // عرض شاشة النجاح والاحتفال بالإيموجيز
             document.getElementById('successPointsPill').innerHTML = `<span>🌟 +${earnedPts} نقطة جديدة أضيفت لرصيدك!</span>`;
             document.getElementById('successModal').style.display = 'flex';
             triggerEmojiCelebration();
@@ -1869,7 +1857,7 @@
         function closeSuccessModal() { document.getElementById('successModal').style.display = 'none'; }
         function showClientHeaderChatButton() {
             const btn = document.getElementById('clientHeaderChatBtn');
-            if (btn) btn.style.display = 'flex';
+            if (btn) btn.style.display = 'inline-flex';
         }
 
         function openClientHeaderChat() {
