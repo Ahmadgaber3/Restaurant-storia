@@ -366,8 +366,11 @@
             justify-content: center; 
             font-size: 2.2rem; 
             align-self: center;
+            cursor: pointer;
+            position: relative;
         }
-        .item-img-box img { width: 100%; height: 100%; object-fit: cover; }
+        .item-img-box img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.2s; }
+        .item-img-box:hover img { transform: scale(1.05); }
         
         .food-info { 
             flex: 1; 
@@ -474,6 +477,44 @@
             box-shadow: none !important;
             pointer-events: none;
             font-weight: 900;
+        }
+
+        /* نافذة تكبير الصورة Lightbox */
+        .image-lightbox-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(8px);
+            z-index: 9000; display: none; justify-content: center; align-items: center;
+            padding: 16px;
+        }
+        .image-lightbox-content {
+            background: var(--white); width: 100%; max-width: 440px;
+            border-radius: 24px; overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+            animation: smoothFadeIn 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+        .image-lightbox-img-wrapper {
+            width: 100%; height: 280px; background: #000;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .image-lightbox-img-wrapper img {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+        .image-lightbox-details {
+            padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;
+            background: var(--white);
+        }
+        .image-lightbox-title { font-size: 1.1rem; font-weight: 900; color: var(--main-text); }
+        .image-lightbox-price { font-size: 1.1rem; font-weight: 900; color: var(--accent); }
+        .image-lightbox-close {
+            position: absolute; top: 12px; left: 12px;
+            background: rgba(0, 0, 0, 0.6); color: #fff;
+            width: 36px; height: 36px; border-radius: 50%;
+            border: 1.5px solid rgba(255,255,255,0.4);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; font-weight: 900; cursor: pointer;
+            z-index: 10;
         }
 
         .simple-addons-modal {
@@ -778,6 +819,7 @@
         </div>
     </div>
 
+    <!-- نافذة اختيار طريقة الاستلام في كل زيارة -->
     <div class="welcome-order-type-modal" id="welcomeOrderModal">
         <div class="welcome-card">
             <img src="images/logooo.png" class="welcome-logo" alt="Storia Cafe" onerror="this.src='https://www.storia-eg.com/images/logo.png'">
@@ -800,6 +842,20 @@
                     </div>
                     <span class="welcome-choice-icon">🍽️</span>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة تكبير الصورة (Lightbox) -->
+    <div class="image-lightbox-modal" id="imageLightboxModal" onclick="if(event.target===this) closeImageLightbox()">
+        <div class="image-lightbox-content">
+            <button class="image-lightbox-close" onclick="closeImageLightbox()">✕</button>
+            <div class="image-lightbox-img-wrapper">
+                <img id="lightboxImg" src="" alt="صورة الصنف" onerror="this.src='images/logooo.png'">
+            </div>
+            <div class="image-lightbox-details">
+                <div class="image-lightbox-title" id="lightboxTitle">اسم الصنف</div>
+                <div class="image-lightbox-price" id="lightboxPrice">0.00 ج.م</div>
             </div>
         </div>
     </div>
@@ -1207,7 +1263,7 @@
         let menuData = [];
         let cart = [];
         let currentTotal = 0; 
-        let selectedOrderType = localStorage.getItem('storia_saved_order_type') || 'delivery';
+        let selectedOrderType = 'delivery';
         let itemStatusMap = {}; 
         let currentActiveCategory = null;
 
@@ -1251,19 +1307,11 @@
                     clearInterval(timer);
                     if (splashScreen) {
                         splashScreen.classList.add('splash-hidden');
-                        checkWelcomeOrderType();
+                        // إظهار نافذة الاختيار في كل مرة يتم فتح الأبلكيشن فيها
+                        showWelcomeModal();
                     }
                 }
             }, 25);
-        }
-
-        function checkWelcomeOrderType() {
-            const saved = localStorage.getItem('storia_saved_order_type');
-            if (!saved) {
-                showWelcomeModal();
-            } else {
-                setInitialOrderTypeUI(saved);
-            }
         }
 
         function showWelcomeModal() {
@@ -1272,7 +1320,6 @@
 
         function selectInitialOrderType(type) {
             selectedOrderType = type;
-            localStorage.setItem('storia_saved_order_type', type);
             setInitialOrderTypeUI(type);
             document.getElementById('welcomeOrderModal').style.display = 'none';
         }
@@ -1291,6 +1338,25 @@
                 if (label) label.innerText = 'صالة وتيك اواي | Dine-in';
                 if (addrInput) addrInput.placeholder = 'رقم الترابيزة أو ملاحظات الاستلام';
             }
+        }
+
+        // دوال تكبير الصورة (Lightbox)
+        function openImageLightbox(imgSrc, itemName, itemPrice) {
+            const modal = document.getElementById('imageLightboxModal');
+            const imgEl = document.getElementById('lightboxImg');
+            const titleEl = document.getElementById('lightboxTitle');
+            const priceEl = document.getElementById('lightboxPrice');
+
+            if (imgEl) imgEl.src = imgSrc;
+            if (titleEl) titleEl.innerText = itemName;
+            if (priceEl) priceEl.innerText = itemPrice.toFixed(2) + ' ج.م';
+
+            if (modal) modal.style.display = 'flex';
+        }
+
+        function closeImageLightbox() {
+            const modal = document.getElementById('imageLightboxModal');
+            if (modal) modal.style.display = 'none';
         }
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -1565,7 +1631,7 @@
                 const cleanUnderscore = item.name.replace(/\s+/g, '_');
 
                 card.innerHTML = `
-                    <div class="item-img-box">
+                    <div class="item-img-box" onclick="openImageLightbox(this.querySelector('img').src, '${item.name.replace(/'/g, "\\'")}', ${item.price})" title="اضغط لتكبير الصورة">
                         <img src="${item.img}" loading="lazy" alt="${item.name}" 
                              onerror="if(!this.dataset.step){this.dataset.step='1'; this.src='images/' + encodeURIComponent('${item.name}') + '.jpg';} 
                                       else if(this.dataset.step==='1'){this.dataset.step='2'; this.src='images/' + encodeURIComponent('${cleanUnderscore}') + '.jpg';} 
