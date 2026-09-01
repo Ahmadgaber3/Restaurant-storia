@@ -1425,13 +1425,6 @@
             return result;
         }
 
-        function formatSafeImageUrl(rawUrl) {
-            if (!rawUrl) return 'images/logooo.png';
-            let clean = rawUrl.trim().replace(/^\[|\]$/g, '').replace(/[\(\)]/g, '');
-            if (!clean.startsWith('http')) return clean;
-            return `https://images.weserv.nl/?url=${encodeURIComponent(clean)}&default=https://www.storia-eg.com/images/logo.png`;
-        }
-
         async function fetchMenuFromGoogleSheet() {
             try {
                 const freshUrl = GOOGLE_SHEET_CSV_URL + (GOOGLE_SHEET_CSV_URL.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
@@ -1448,6 +1441,7 @@
                 const nameIdx = headers.findIndex(h => h.includes('صنف') || h.includes('اسم') || h.includes('item') || h.includes('name'));
                 const priceIdx = headers.findIndex(h => h.includes('سعر') || h.includes('price'));
                 const descIdx = headers.findIndex(h => h.includes('مكون') || h.includes('وصف') || h.includes('desc'));
+                const imgIdx = headers.findIndex(h => h.includes('صورة') || h.includes('صوره') || h.includes('img') || h.includes('image'));
 
                 const parsedMenu = [];
 
@@ -1462,16 +1456,11 @@
 
                     const desc = (descIdx >= 0 && row[descIdx]) ? row[descIdx] : '';
                     
-                    // بحث تلقائي وذكي عن أي خلية بها رابط صورة في السطر
-                    let rawImg = '';
-                    for (let c = 0; c < row.length; c++) {
-                        if (row[c] && (row[c].includes('http://') || row[c].includes('https://'))) {
-                            rawImg = row[c];
-                            break;
-                        }
+                    // تحديد مسار الصورة (إذا مكتوب مسار بالشيت يستخدمه، وإلا يرقم تلقائياً 1.jpg, 2.jpg)
+                    let img = `images/items/${i}.jpg`;
+                    if (imgIdx >= 0 && row[imgIdx] && row[imgIdx].trim() !== '') {
+                        img = row[imgIdx].trim().replace(/^\[|\]$/g, '');
                     }
-
-                    const img = formatSafeImageUrl(rawImg);
 
                     let addons = null;
                     if (category.includes("شورب")) addons = soupAddons;
