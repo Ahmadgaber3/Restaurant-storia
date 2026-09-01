@@ -1457,10 +1457,10 @@
 
                     const desc = (descIdx >= 0 && row[descIdx]) ? row[descIdx] : '';
                     
-                    // مسار الصورة الأساسي
-                    let img = `images/${encodeURIComponent(rawName)}.jpg`;
+                    // مسار الصورة بالترقيم الافتراضي i.jpg (1.jpg, 2.jpg, ...)
+                    let img = `images/${i}.jpg`;
 
-                    // إذا كان الشيت يحتوي على رابط أو مسار مخصص
+                    // إذا كان الشيت يحتوي على رابط أو مسار مخصص نستخدمه
                     if (imgIdx >= 0 && row[imgIdx] && row[imgIdx].trim() !== '') {
                         let customImg = row[imgIdx].trim().replace(/^\[|\]$/g, '');
                         if (customImg.startsWith('http') || customImg.startsWith('images/')) {
@@ -1564,7 +1564,7 @@
                 card.innerHTML = `
                     <div class="item-img-box">
                         <img src="${item.img}" loading="lazy" alt="${item.name}" 
-                             onerror="if(!this.dataset.step){this.dataset.step='1'; this.src='images/' + encodeURIComponent('${cleanUnderscore}') + '.jpg';} else if(this.dataset.step==='1'){this.dataset.step='2'; this.src='images/${item.indexNum}.jpg';} else {this.src='images/logooo.png';}">
+                             onerror="if(!this.dataset.step){this.dataset.step='1'; this.src='images/' + encodeURIComponent('${item.name}') + '.jpg';} else if(this.dataset.step==='1'){this.dataset.step='2'; this.src='images/' + encodeURIComponent('${cleanUnderscore}') + '.jpg';} else {this.src='images/logooo.png';}">
                     </div>
                     <div class="food-info">
                         <div>
