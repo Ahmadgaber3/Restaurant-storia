@@ -1448,7 +1448,7 @@
                 for (let i = 1; i < lines.length; i++) {
                     const row = parseCSVLine(lines[i]);
                     const category = row[catIdx >= 0 ? catIdx : 0] || 'أصناف متنوعة';
-                    const name = row[nameIdx >= 0 ? nameIdx : 1] || '';
+                    const name = (row[nameIdx >= 0 ? nameIdx : 1] || '').trim();
                     if (!name) continue;
 
                     let price = (row[priceIdx >= 0 ? priceIdx : 2] || '0').replace(/[^0-9.]/g, '');
@@ -1456,8 +1456,8 @@
 
                     const desc = (descIdx >= 0 && row[descIdx]) ? row[descIdx] : '';
                     
-                    // تحديد مسار الصورة (إذا مكتوب مسار بالشيت يستخدمه، وإلا يرقم تلقائياً 1.jpg, 2.jpg)
-                    let img = `images/items/${i}.jpg`;
+                    // البحث عن اسم الصورة ليطابق اسم الصنف تماماً
+                    let img = `images/items/${encodeURIComponent(name)}.jpg`;
                     if (imgIdx >= 0 && row[imgIdx] && row[imgIdx].trim() !== '') {
                         img = row[imgIdx].trim().replace(/^\[|\]$/g, '');
                     }
