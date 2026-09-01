@@ -228,66 +228,58 @@
             padding: 6px 14px 8px 14px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: flex-end;
             gap: 8px;
             border-top: 1px solid var(--border-color);
             background: var(--header-bg);
-        }
-
-        .order-mode-pill {
-            background: var(--bg);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 4px 10px;
-            font-size: 0.76rem;
-            font-weight: 800;
-            color: var(--accent);
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            cursor: pointer;
         }
 
         .sub-actions-row {
             display: flex;
             align-items: center;
             gap: 8px;
+            width: 100%;
+            justify-content: space-between;
         }
 
         .loyalty-sub-btn {
             background: linear-gradient(135deg, #1b4d3e 0%, #113329 100%);
             color: white;
             border: none;
-            padding: 5px 10px;
-            border-radius: 10px;
-            font-size: 0.76rem;
+            padding: 6px 14px;
+            border-radius: 12px;
+            font-size: 0.80rem;
             font-weight: 800;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
             cursor: pointer;
-            box-shadow: 0 2px 6px rgba(27, 77, 62, 0.25);
+            box-shadow: 0 2px 8px rgba(27, 77, 62, 0.25);
         }
         .loyalty-sub-btn .pts {
             background: rgba(255, 255, 255, 0.22);
-            padding: 1px 6px;
-            border-radius: 6px;
+            padding: 2px 7px;
+            border-radius: 8px;
+            font-weight: 900;
         }
 
-        .chat-sub-btn {
+        /* زر شات الطلب المصغر الأنيق */
+        .chat-sub-btn-mini {
             background: #25D366;
             color: white;
             border: none;
-            padding: 5px 10px;
-            border-radius: 10px;
-            font-size: 0.76rem;
-            font-weight: 800;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 1.1rem;
             display: none;
             align-items: center;
-            gap: 4px;
+            justify-content: center;
             cursor: pointer;
-            box-shadow: 0 2px 6px rgba(37, 211, 102, 0.3);
+            box-shadow: 0 3px 10px rgba(37, 211, 102, 0.35);
+            transition: transform 0.15s ease;
         }
+        .chat-sub-btn-mini:active { transform: scale(0.9); }
 
         .category-nav { 
             display: flex; 
@@ -646,6 +638,9 @@
             top: 0; right: 0; width: 6px; height: 100%;
             background: var(--accent);
         }
+        [dir="ltr"] .cart-points-card-pro::before {
+            right: auto; left: 0;
+        }
         .cart-points-left {
             display: flex;
             align-items: center;
@@ -944,20 +939,15 @@
         </div>
 
         <div class="sub-header-bar">
-            <div class="order-mode-pill" onclick="showWelcomeModal()" title="تغيير طريقة الاستلام">
-                <span id="currentOrderModeIcon">🛵</span>
-                <span id="currentOrderModeLabel">دليفري | Delivery</span>
-                <span style="font-size:0.65rem; opacity:0.7;">✎</span>
-            </div>
-
             <div class="sub-actions-row">
-                <button class="chat-sub-btn" id="clientHeaderChatBtn" onclick="openClientHeaderChat()" title="متابعة شات الأوردر">
-                    <span>💬</span>
-                    <span id="t_chat_btn_text">شات الطلب</span>
-                </button>
                 <button class="loyalty-sub-btn" onclick="openLoyaltyModal()" title="محفظة نقاط المكافآت">
-                    <span id="t_loyalty_btn_text">🎁 الهدايا</span>
+                    <span id="t_loyalty_btn_text">🎁 الهدايا والمكافآت</span>
                     <span class="pts" id="headerPointsBadge">0</span>
+                </button>
+
+                <!-- زر شات الطلب المصغر الأنيق -->
+                <button class="chat-sub-btn-mini" id="clientHeaderChatBtn" onclick="openClientHeaderChat()" title="متابعة شات الأوردر">
+                    <span>💬</span>
                 </button>
             </div>
         </div>
@@ -1355,6 +1345,38 @@
             complaintPhone: '01014144144'
         };
 
+        const categoryTranslations = {
+            "الشوربة": "Soups",
+            "شوربة": "Soups",
+            "المقبلات": "Appetizers",
+            "مقبلات": "Appetizers",
+            "السلطات": "Salads",
+            "سلطات": "Salads",
+            "السندوتشات": "Sandwiches",
+            "سندوتشات": "Sandwiches",
+            "المكرونة": "Pasta",
+            "مكرونة": "Pasta",
+            "باستا": "Pasta",
+            "الفخارات": "Fakhara",
+            "فخارات": "Fakhara",
+            "الفتة": "Fatteh",
+            "فتة": "Fatteh",
+            "الأطباق الرئيسية": "Main Dishes",
+            "اطباق رئيسية": "Main Dishes",
+            "رئيسي": "Main Dishes",
+            "البيتزا": "Pizza",
+            "بيتزا": "Pizza",
+            "الحلويات": "Desserts",
+            "حلويات": "Desserts",
+            "حلو": "Desserts",
+            "المشروبات الساخنة": "Hot Drinks",
+            "مشروبات ساخنة": "Hot Drinks",
+            "ساخن": "Hot Drinks",
+            "المشروبات الباردة": "Cold Drinks & Shakes",
+            "ميلك شيك وزبادي": "Milkshakes & Yogurt",
+            "أصناف متنوعة": "Various Items"
+        };
+
         const translations = {
             ar: {
                 langBtn: 'EN',
@@ -1364,8 +1386,7 @@
                 takeAr: '🍽️ صالة وتيك اواي',
                 delMode: 'دليفري | Delivery',
                 takeMode: 'صالة وتيك اواي | Dine-in',
-                chatBtnText: 'شات الطلب',
-                loyaltyBtnText: '🎁 الهدايا',
+                loyaltyBtnText: '🎁 الهدايا والمكافآت',
                 loyaltyTitle: '🎁 محفظة مكافآت ستوريا',
                 loyaltyBalLbl: 'رصيد نقاطك الحالي (1 ج.م = 1 نقطة)',
                 loyaltyRedeemLbl: 'استبدل نقاطك بهدايا مجانية فوراً:',
@@ -1405,8 +1426,7 @@
                 takeAr: '🍽️ Dine-in & Takeaway',
                 delMode: 'Delivery | دليفري',
                 takeMode: 'Dine-in | صالة وتيك اواي',
-                chatBtnText: 'Order Chat',
-                loyaltyBtnText: '🎁 Rewards',
+                loyaltyBtnText: '🎁 Rewards Wallet',
                 loyaltyTitle: '🎁 Storia Rewards Wallet',
                 loyaltyBalLbl: 'Current Points Balance (1 EGP = 1 Pt)',
                 loyaltyRedeemLbl: 'Redeem points for free items instantly:',
@@ -1440,6 +1460,11 @@
             }
         };
 
+        function getTranslatedCategory(catName) {
+            if (currentLang === 'ar') return catName;
+            return categoryTranslations[catName.trim()] || catName;
+        }
+
         function toggleLanguage() {
             currentLang = currentLang === 'ar' ? 'en' : 'ar';
             localStorage.setItem('storia_lang', currentLang);
@@ -1463,8 +1488,6 @@
             const tWelcomeSub = document.getElementById('t_welcome_sub');
             if (tWelcomeSub) tWelcomeSub.innerText = t.welcomeSub;
 
-            const tChatBtnText = document.getElementById('t_chat_btn_text');
-            if (tChatBtnText) tChatBtnText.innerText = t.chatBtnText;
             const tLoyaltyBtnText = document.getElementById('t_loyalty_btn_text');
             if (tLoyaltyBtnText) tLoyaltyBtnText.innerText = t.loyaltyBtnText;
 
@@ -1558,18 +1581,12 @@
         }
 
         function setInitialOrderTypeUI(type) {
-            const icon = document.getElementById('currentOrderModeIcon');
-            const label = document.getElementById('currentOrderModeLabel');
             const addrInput = document.getElementById('uAddr');
             const t = translations[currentLang];
 
             if (type === 'delivery') {
-                if (icon) icon.innerText = '🛵';
-                if (label) label.innerText = t.delMode;
                 if (addrInput) addrInput.placeholder = t.addrPlaceholderDel;
             } else {
-                if (icon) icon.innerText = '🍽️';
-                if (label) label.innerText = t.takeMode;
                 if (addrInput) addrInput.placeholder = t.addrPlaceholderTake;
             }
         }
@@ -1831,7 +1848,7 @@
                 imgBox.innerHTML = `<img src="${firstItemImg}" alt="${cat.category}" onerror="this.src='images/logooo.png'">`;
 
                 const label = document.createElement('span');
-                label.innerText = cat.category;
+                label.innerText = getTranslatedCategory(cat.category);
 
                 itemEl.appendChild(imgBox);
                 itemEl.appendChild(label);
@@ -2277,7 +2294,7 @@
                 document.getElementById('adminAuthView').style.display = 'none';
                 document.getElementById('adminDashboardView').style.display = 'block';
             } else {
-                alert('كلمة المرور غير صحيحة!');
+                alert(currentLang === 'ar' ? 'كلمة المرور غير صحيحة!' : 'Incorrect password!');
             }
         }
 
