@@ -13,7 +13,7 @@
     <meta name="apple-mobile-web-app-title" content="Storia Cafe">
     <link rel="apple-touch-icon" href="images/logooo.png">
     
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #f9f8f6; 
@@ -45,6 +45,10 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
         
+        [dir="ltr"] * {
+            font-family: 'Plus Jakarta Sans', 'Cairo', sans-serif;
+        }
+
         body { 
             background-color: var(--bg); 
             color: var(--main-text); 
@@ -405,6 +409,7 @@
             direction: ltr;
             margin-right: 4px;
         }
+        [dir="ltr"] .food-price { margin-right: 0; margin-left: 4px; }
         
         .food-desc { 
             font-size: 0.73rem; 
@@ -847,7 +852,7 @@
         </div>
     </div>
 
-    <!-- نافذة اختيار طريقة الاستلام في كل زيارة -->
+    <!-- نافذة اختيار طريقة الاستلام -->
     <div class="welcome-order-type-modal" id="welcomeOrderModal">
         <div class="welcome-card">
             <h2 class="welcome-title" id="t_welcome_title">مرحباً بك في ستوريا | Welcome</h2>
@@ -1157,13 +1162,13 @@
     <footer class="restaurant-footer">
         <div class="branches-container" id="footerBranchesContainer">
             <div class="branch-item">
-                <strong>📍 فرع مدينة نصر:</strong>
-                شارع عباس العقاد - أمام الجامعة العمالية
+                <strong id="t_branch_title">📍 فرع مدينة نصر:</strong>
+                <span id="t_branch_desc">شارع عباس العقاد - أمام الجامعة العمالية</span>
             </div>
         </div>
         <p class="footer-rights" id="t_footer_rights">جميع الحقوق محفوظة لـ Storia Coffee and Restaurant 2026 ©</p>
         <div class="dev-credit">
-            Designed & Developed with Passion
+            Designed & Developed by أحمد جابر
             <a href="tel:01014144144">📞 info@storia-eg.com</a>
         </div>
     </footer>
@@ -1230,43 +1235,14 @@
     <script>
         const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTsz0Q8FatsNvh7u2MGFmJpXDuXjC6HD23Vt1VlEnS2EX-dElZco3evuNUXKZSe3-rLmOabuU1NTiyO/pub?output=csv";
 
-        // خريطة ترجمة الأقسام تلقائياً حسب لغة العرض
-        const categoryNamesMap = {
-            "الشوربة": { ar: "الشوربة", en: "Soups" },
-            "soups": { ar: "الشوربة", en: "Soups" },
-            "المقبلات": { ar: "المقبلات", en: "Appetizers" },
-            "appetizers": { ar: "المقبلات", en: "Appetizers" },
-            "السلطات": { ar: "السلطات", en: "Salads" },
-            "salads": { ar: "السلطات", en: "Salads" },
-            "السندوتشات": { ar: "السندوتشات والبرجر", en: "Sandwiches & Burgers" },
-            "sandwiches": { ar: "السندوتشات والبرجر", en: "Sandwiches & Burgers" },
-            "burgers": { ar: "السندوتشات والبرجر", en: "Sandwiches & Burgers" },
-            "المكرونة": { ar: "المكرونة والباستا", en: "Pasta" },
-            "pasta": { ar: "المكرونة والباستا", en: "Pasta" },
-            "الفخارات": { ar: "الفخارات", en: "Fakhara Dishes" },
-            "fakhara": { ar: "الفخارات", en: "Fakhara Dishes" },
-            "الفتة": { ar: "الفتة", en: "Fatteh" },
-            "fatteh": { ar: "الفتة", en: "Fatteh" },
-            "الأطباق الرئيسية": { ar: "الأطباق الرئيسية", en: "Main Dishes" },
-            "main dishes": { ar: "الأطباق الرئيسية", en: "Main Dishes" },
-            "البيتزا": { ar: "البيتزا", en: "Pizza" },
-            "pizza": { ar: "البيتزا", en: "Pizza" },
-            "الحلويات": { ar: "الحلويات", en: "Desserts" },
-            "desserts": { ar: "الحلويات", en: "Desserts" },
-            "المشروبات الساخنة": { ar: "المشروبات الساخنة", en: "Hot Drinks" },
-            "hot drinks": { ar: "المشروبات الساخنة", en: "Hot Drinks" },
-            "المشروبات الباردة": { ar: "المشروبات الباردة", en: "Cold Drinks" },
-            "cold drinks": { ar: "المشروبات الباردة", en: "Cold Drinks" }
-        };
-
         const soupAddons = [
             { name: "دجاج", nameEn: "Chicken", price: 64.95 }, { name: "مشروم", nameEn: "Mushroom", price: 29.95 }, { name: "ذرة", nameEn: "Corn", price: 29.95 },
             { name: "خضروات", nameEn: "Vegetables", price: 39.95 }, { name: "سمك", nameEn: "Fish", price: 74.95 }, { name: "جبنة موزاريلا", nameEn: "Mozzarella Cheese", price: 29.95 },
             { name: "عيش كريتون", nameEn: "Croutons", price: 29.95 }
         ];
         const appetizerAddons = [
-            { name: "فرنش صوص", nameEn: "French Sauce", price: 0.00 }, { name: "صويا صوص", nameEn: "Soya Sauce", price: 0.00 }, { name: "هاني ماسترد", nameEn: "Honey Mustard", price: 0.00 },
-            { name: "تارتار صوص", nameEn: "Tartar Sauce", price: 0.00 }, { name: "باربكيو صوص", nameEn: "BBQ Sauce", price: 0.00 }, { name: "كوكتيل صوص", nameEn: "Cocktail Sauce", price: 0.00 }
+            { name: "فرنش صصوص", nameEn: "French Sauce", price: 0.00 }, { name: "صويا صصوص", nameEn: "Soya Sauce", price: 0.00 }, { name: "هاني ماسترد", nameEn: "Honey Mustard", price: 0.00 },
+            { name: "تارتار صصوص", nameEn: "Tartar Sauce", price: 0.00 }, { name: "باربكيو صصوص", nameEn: "BBQ Sauce", price: 0.00 }, { name: "كوكتيل صصوص", nameEn: "Cocktail Sauce", price: 0.00 }
         ];
         const saladAddons = [
             { name: "مشروم", nameEn: "Mushroom", price: 29.95 }, { name: "ذرة", nameEn: "Corn", price: 29.95 }, { name: "سمك", nameEn: "Fish", price: 74.95 },
@@ -1363,7 +1339,10 @@
                 successTitle: 'تم استلام طلبك بنجاح!',
                 successCloseBtn: 'إغلاق ومتابعة',
                 chatSendBtn: 'إرسال',
-                chatPlaceholder: 'اكتب رسالتك هنا...'
+                chatPlaceholder: 'اكتب رسالتك هنا...',
+                branchTitle: '📍 فرع مدينة نصر:',
+                branchDesc: 'شارع عباس العقاد - أمام الجامعة العمالية',
+                footerRights: 'جميع الحقوق محفوظة لـ Storia Coffee and Restaurant 2026 ©'
             },
             en: {
                 langBtn: 'AR',
@@ -1401,35 +1380,29 @@
                 successTitle: 'Order Received Successfully!',
                 successCloseBtn: 'Close & Continue',
                 chatSendBtn: 'Send',
-                chatPlaceholder: 'Type your message here...'
+                chatPlaceholder: 'Type your message here...',
+                branchTitle: '📍 Nasr City Branch:',
+                branchDesc: 'Abbas El Akkad St. - In front of Worker University',
+                footerRights: 'All Rights Reserved to Storia Coffee & Restaurant 2026 ©'
             }
         };
 
         function getLocalizedItemName(item) {
             if (!item) return '';
-            if (currentLang === 'en' && item.nameEn) return item.nameEn;
-            if (currentLang === 'ar' && item.nameAr) return item.nameAr;
+            if (currentLang === 'en') return item.nameEn || item.nameAr || item.name || '';
             return item.nameAr || item.nameEn || item.name || '';
         }
 
         function getLocalizedItemDesc(item) {
             if (!item) return '';
-            if (currentLang === 'en' && item.descEn) return item.descEn;
-            if (currentLang === 'ar' && item.descAr) return item.descAr;
+            if (currentLang === 'en') return item.descEn || item.descAr || item.desc || '';
             return item.descAr || item.descEn || item.desc || '';
         }
 
         function getCategoryCleanName(cat) {
             if (!cat) return '';
-            let rawCat = currentLang === 'en' ? (cat.catEn || cat.categoryRaw) : (cat.catAr || cat.categoryRaw);
-            let checkKey = rawCat.toLowerCase().trim();
-
-            for (let k in categoryNamesMap) {
-                if (checkKey.includes(k.toLowerCase()) || rawCat.includes(k)) {
-                    return categoryNamesMap[k][currentLang];
-                }
-            }
-            return rawCat;
+            if (currentLang === 'en') return cat.catEn || cat.catAr || cat.categoryRaw || '';
+            return cat.catAr || cat.catEn || cat.categoryRaw || '';
         }
 
         function toggleLanguage() {
@@ -1503,6 +1476,14 @@
             if (tChatSendBtn) tChatSendBtn.innerText = t.chatSendBtn;
             const chatInputField = document.getElementById('chatInputField');
             if (chatInputField) chatInputField.placeholder = t.chatPlaceholder;
+
+            const tBranchTitle = document.getElementById('t_branch_title');
+            if (tBranchTitle) tBranchTitle.innerText = t.branchTitle;
+            const tBranchDesc = document.getElementById('t_branch_desc');
+            if (tBranchDesc) tBranchDesc.innerText = t.branchDesc;
+
+            const tFooterRights = document.getElementById('t_footer_rights');
+            if (tFooterRights) tFooterRights.innerText = t.footerRights;
 
             setInitialOrderTypeUI(selectedOrderType);
         }
@@ -1725,46 +1706,35 @@
                 const lines = csvText.split(/\r?\n/).filter(line => line.trim() !== "");
                 if (lines.length < 2) return;
 
-                const headers = parseCSVLine(lines[0]).map(h => h.trim().toLowerCase());
-                
-                // البحث الذكي عن الأعمدة العربية والإنجليزية في الشيت
-                const catArIdx = headers.findIndex(h => h.includes('قسم') || h.includes('category') || h.includes('cat_ar'));
-                const catEnIdx = headers.findIndex(h => h.includes('category_en') || h.includes('قسم_en') || h.includes('cat_en'));
-                
-                const nameArIdx = headers.findIndex(h => h.includes('صنف') || h.includes('اسم') || h.includes('name') || h.includes('item') || h.includes('name_ar'));
-                const nameEnIdx = headers.findIndex(h => h.includes('name_en') || h.includes('item_en') || h.includes('english'));
-
-                const priceIdx = headers.findIndex(h => h.includes('سعر') || h.includes('price'));
-                
-                const descArIdx = headers.findIndex(h => h.includes('وصف') || h.includes('مكون') || h.includes('desc') || h.includes('desc_ar'));
-                const descEnIdx = headers.findIndex(h => h.includes('desc_en') || h.includes('وصف_en'));
-
-                const imgIdx = headers.findIndex(h => h.includes('صورة') || h.includes('صوره') || h.includes('img') || h.includes('image'));
-
                 const parsedMenu = [];
 
                 for (let i = 1; i < lines.length; i++) {
                     const row = parseCSVLine(lines[i]);
                     
-                    const catAr = (catArIdx >= 0 && row[catArIdx]) ? row[catArIdx].trim() : (row[0] || 'أصناف متنوعة').trim();
-                    const catEn = (catEnIdx >= 0 && row[catEnIdx]) ? row[catEnIdx].trim() : catAr;
+                    // قراءة الأعمدة بناءً على الترتيب الفعلي للشيت:
+                    // En: A=0 (Category), B=1 (Item Name), C=2 (Price), D=3 (Description)
+                    // Ar: Q=16 (القسم), R=17 (اسم الصنف), S=18 (السعر), T=19 (الوصف والمكونات)
+                    const catEn = (row[0] || '').trim();
+                    const nameEn = (row[1] || '').trim();
+                    const priceEn = (row[2] || '').trim();
+                    const descEn = (row[3] || '').trim();
 
-                    const nameAr = (nameArIdx >= 0 && row[nameArIdx]) ? row[nameArIdx].trim() : (row[1] || '').trim();
-                    const nameEn = (nameEnIdx >= 0 && row[nameEnIdx]) ? row[nameEnIdx].trim() : nameAr;
+                    const catAr = (row[16] || catEn || 'أصناف متنوعة').trim();
+                    const nameAr = (row[17] || nameEn || '').trim();
+                    const priceAr = (row[18] || priceEn || '0').trim();
+                    const descAr = (row[19] || descEn || '').trim();
 
                     if (!nameAr && !nameEn) continue;
 
-                    let price = (priceIdx >= 0 && row[priceIdx]) ? row[priceIdx].replace(/[^0-9.]/g, '') : '0';
-                    if (!price) price = '0';
-
-                    const descAr = (descArIdx >= 0 && row[descArIdx]) ? row[descArIdx].trim() : '';
-                    const descEn = (descEnIdx >= 0 && row[descEnIdx]) ? row[descEnIdx].trim() : descAr;
+                    let rawPrice = (priceAr || priceEn).replace(/[^0-9.]/g, '');
+                    let price = parseFloat(rawPrice) || 0;
 
                     const sheetRowNumber = i + 1;
                     let img = `images/${sheetRowNumber}.jpg`;
 
-                    if (imgIdx >= 0 && row[imgIdx] && row[imgIdx].trim() !== '') {
-                        let customImg = row[imgIdx].trim().replace(/^\[|\]$/g, '');
+                    // إذا كان هناك عمود صور في الشيت (عمود E مثلاً)
+                    if (row[4] && row[4].trim() !== '') {
+                        let customImg = row[4].trim().replace(/^\[|\]$/g, '');
                         if (customImg.startsWith('http') || customImg.startsWith('images/')) {
                             img = customImg;
                         } else {
@@ -1773,18 +1743,18 @@
                     }
 
                     let addons = null;
-                    const catLower = catAr.toLowerCase();
-                    if (catLower.includes("شورب") || catLower.includes("soup")) addons = soupAddons;
-                    else if (catLower.includes("مقبل") || catLower.includes("appetizer")) addons = appetizerAddons;
-                    else if (catLower.includes("سلط") || catLower.includes("salad")) addons = saladAddons;
-                    else if (catLower.includes("سندوتش") || catLower.includes("sandwich") || catLower.includes("burger")) addons = sandwichAddons;
-                    else if (catLower.includes("مكرون") || catLower.includes("باستا") || catLower.includes("pasta")) addons = pastaAddons;
-                    else if (catLower.includes("بيتزا") || catLower.includes("pizza")) addons = pizzaAddons;
-                    else if (catLower.includes("حلو") || catLower.includes("dessert") || catLower.includes("شيكولات")) addons = dessertAddons;
+                    const catCheck = (catAr + " " + catEn).toLowerCase();
+                    if (catCheck.includes("شورب") || catCheck.includes("soup")) addons = soupAddons;
+                    else if (catCheck.includes("مقبل") || catCheck.includes("appetizer")) addons = appetizerAddons;
+                    else if (catCheck.includes("سلط") || catCheck.includes("salad")) addons = saladAddons;
+                    else if (catCheck.includes("سندوتش") || catCheck.includes("sandwich") || catCheck.includes("burger")) addons = sandwichAddons;
+                    else if (catCheck.includes("مكرون") || catCheck.includes("باستا") || catCheck.includes("pasta") || catCheck.includes("macaroni")) addons = pastaAddons;
+                    else if (catCheck.includes("بيتزا") || catCheck.includes("pizza")) addons = pizzaAddons;
+                    else if (catCheck.includes("حلو") || catCheck.includes("dessert") || catCheck.includes("desert") || catCheck.includes("شيكولات")) addons = dessertAddons;
 
-                    let catObj = parsedMenu.find(c => c.catAr === catAr);
+                    let catObj = parsedMenu.find(c => c.catAr === catAr || (catEn && c.catEn === catEn));
                     if (!catObj) {
-                        catObj = { catAr: catAr, catEn: catEn, items: [] };
+                        catObj = { catAr: catAr, catEn: catEn || catAr, items: [] };
                         parsedMenu.push(catObj);
                     }
 
@@ -1795,7 +1765,7 @@
                         nameEn: nameEn,
                         descAr: descAr,
                         descEn: descEn,
-                        price: parseFloat(price) || 0,
+                        price: price,
                         img: img,
                         addons: addons
                     });
