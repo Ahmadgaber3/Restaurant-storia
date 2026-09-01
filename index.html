@@ -1230,82 +1230,170 @@
     <script>
         const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTsz0Q8FatsNvh7u2MGFmJpXDuXjC6HD23Vt1VlEnS2EX-dElZco3evuNUXKZSe3-rLmOabuU1NTiyO/pub?output=csv";
 
-        // قاموس ترجمة شامل لكافة أصناف الشيت
-        const comprehensiveDictionary = {
+        // قاموس ربط ثنائي دقيق بين الاسم الإنجليزي والاسم العربي
+        const itemDictionary = {
             // الشوربة - Soups
-            "شوربة بطاطس بالكريمة": "Creamy Potato Soup",
-            "شوربة مينستروني بالدجاج": "Minestrone Soup With Chicken",
-            "شوربة مينستروني بالد": "Minestrone Soup With Chicken",
-            "شوربة كريمة الدجاج": "Chicken Cream Soup",
-            "شوربة كريمة بالدجاج": "Chicken Cream Soup",
-            "شوربة بصل": "French Onion Soup",
-            "شوربة بصل فرنسية": "French Onion Soup",
-            "شوربة ستوريا": "Storia Special Soup",
-            "شوربة ستوريا المميزة": "Storia Special Soup",
-            "شوربة سي فود بالكريمة": "Seafood Cream Soup",
-            "شوربة سي فود بالكري": "Seafood Cream Soup",
-            "شوربة بروكلي": "Broccoli Cream Soup",
-            "شوربة بروكلي بالكريمة": "Broccoli Cream Soup",
-            "شوربة خضار": "Fresh Vegetables Soup",
-            "شوربة خضار مشكل": "Mixed Vegetables Soup",
-            "شوربة لسان عصفور": "Orzo Soup (Lesan Asfour)",
-            "شوربة لسان عصفور بالدجاج": "Chicken Orzo Soup",
-            "شوربة لسان عصفور ب": "Chicken Orzo Soup",
-            "شوربة كريمة بالمشروم": "Mushroom Cream Soup",
+            "creamy potato soup": { ar: "شوربة بطاطس بالكريمة", en: "Creamy Potato Soup" },
+            "شوربة بطاطس بالكريمة": { ar: "شوربة بطاطس بالكريمة", en: "Creamy Potato Soup" },
+            
+            "minestrone soup with chicken": { ar: "شوربة مينستروني بالدجاج", en: "Minestrone Soup With Chicken" },
+            "شوربة مينستروني بالدجاج": { ar: "شوربة مينستروني بالدجاج", en: "Minestrone Soup With Chicken" },
+            "شوربة مينستروني بالد": { ar: "شوربة مينستروني بالدجاج", en: "Minestrone Soup With Chicken" },
+
+            "chicken cream soup": { ar: "شوربة كريمة الدجاج", en: "Chicken Cream Soup" },
+            "شوربة كريمة الدجاج": { ar: "شوربة كريمة الدجاج", en: "Chicken Cream Soup" },
+            "شوربة كريمة بالدجاج": { ar: "شوربة كريمة الدجاج", en: "Chicken Cream Soup" },
+
+            "french onion soup": { ar: "شوربة بصل فرنسية", en: "French Onion Soup" },
+            "onion soup": { ar: "شوربة بصل فرنسية", en: "French Onion Soup" },
+            "شوربة بصل": { ar: "شوربة بصل فرنسية", en: "French Onion Soup" },
+            "شوربة بصل فرنسية": { ar: "شوربة بصل فرنسية", en: "French Onion Soup" },
+
+            "storia special soup": { ar: "شوربة ستوريا المميزة", en: "Storia Special Soup" },
+            "storia soup": { ar: "شوربة ستوريا المميزة", en: "Storia Special Soup" },
+            "شوربة ستوريا": { ar: "شوربة ستوريا المميزة", en: "Storia Special Soup" },
+
+            "seafood cream soup": { ar: "شوربة سي فود بالكريمة", en: "Seafood Cream Soup" },
+            "sea food cream soup": { ar: "شوربة سي فود بالكريمة", en: "Seafood Cream Soup" },
+            "شوربة سي فود بالكريمة": { ar: "شوربة سي فود بالكريمة", en: "Seafood Cream Soup" },
+            "شوربة سي فود بالكري": { ar: "شوربة سي فود بالكريمة", en: "Seafood Cream Soup" },
+
+            "broccoli cream soup": { ar: "شوربة بروكلي بالكريمة", en: "Broccoli Cream Soup" },
+            "broccoli soup": { ar: "شوربة بروكلي بالكريمة", en: "Broccoli Cream Soup" },
+            "شوربة بروكلي": { ar: "شوربة بروكلي بالكريمة", en: "Broccoli Cream Soup" },
+
+            "vegetables soup": { ar: "شوربة خضار مشكل", en: "Fresh Vegetables Soup" },
+            "fresh vegetables soup": { ar: "شوربة خضار مشكل", en: "Fresh Vegetables Soup" },
+            "شوربة خضار": { ar: "شوربة خضار مشكل", en: "Fresh Vegetables Soup" },
+
+            "lesan asfour soup": { ar: "شوربة لسان عصفور بالدجاج", en: "Chicken Orzo Soup" },
+            "orzo soup": { ar: "شوربة لسان عصفور بالدجاج", en: "Chicken Orzo Soup" },
+            "chicken orzo soup": { ar: "شوربة لسان عصفور بالدجاج", en: "Chicken Orzo Soup" },
+            "شوربة لسان عصفور": { ar: "شوربة لسان عصفور بالدجاج", en: "Chicken Orzo Soup" },
+            "شوربة لسان عصفور ب": { ar: "شوربة لسان عصفور بالدجاج", en: "Chicken Orzo Soup" },
+
+            "mushroom cream soup": { ar: "شوربة كريمة بالمشروم", en: "Mushroom Cream Soup" },
+            "شوربة كريمة بالمشروم": { ar: "شوربة كريمة بالمشروم", en: "Mushroom Cream Soup" },
 
             // المقبلات - Appetizers
-            "أصابع دجاج كريسبي": "Crispy Chicken Strips",
-            "تشيكن كريسبي ستربس": "Crispy Chicken Strips",
-            "بطاطس بالشيدر": "Cheddar Cheese Fries",
-            "بطاطس بصوص الشيدر": "Cheddar Cheese Fries",
-            "بطاطس بالشيدر مع دج": "Cheddar Fries with Chicken & Jalapeno",
-            "بطاطس بالشيدر مع دجاج وهلابينو": "Cheddar Fries with Chicken & Jalapeno",
-            "بطاطس شيدر بالفراخ والهلابينو": "Cheddar Fries with Chicken & Jalapeno",
-            "أصابع موتزاريلا مقلية": "Fried Mozzarella Sticks",
-            "أصابع الموزاريلا المقلية": "Fried Mozzarella Sticks",
-            "حلقات بصل مقرمشة": "Crispy Onion Rings",
-            "مشروم مقلي": "Fried Mushrooms",
-            "كاليماري مقلي": "Fried Calamari",
-            "كومبو سي فود مقلي": "Fried Seafood Combo",
-            "كومبو سي فود مقلي (ت": "Fried Seafood Combo",
-            "ستوريا كومبو مقبلات": "Storia Appetizers Combo",
-            "ستوريا كومبو مقبلات (": "Storia Appetizers Combo",
-            "بوب هوت دوج": "Popcorn Hot Dog",
-            "خبز بالثوم": "Garlic Bread",
-            "خبز بالثوم والجبنة": "Garlic Bread with Cheese",
-            "بطاطس مقلية": "French Fries",
+            "crispy chicken strips": { ar: "أصابع دجاج كريسبي", en: "Crispy Chicken Strips" },
+            "chicken crispy strips": { ar: "أصابع دجاج كريسبي", en: "Crispy Chicken Strips" },
+            "أصابع دجاج كريسبي": { ar: "أصابع دجاج كريسبي", en: "Crispy Chicken Strips" },
+
+            "cheddar fries": { ar: "بطاطس بالجبنة الشيدر", en: "Cheddar Cheese Fries" },
+            "cheddar cheese fries": { ar: "بطاطس بالجبنة الشيدر", en: "Cheddar Cheese Fries" },
+            "بطاطس بالشيدر": { ar: "بطاطس بالجبنة الشيدر", en: "Cheddar Cheese Fries" },
+
+            "cheddar fries with chicken & jalapeno": { ar: "بطاطس بالشيدر والدجاج والهلابينو", en: "Cheddar Fries with Chicken & Jalapeno" },
+            "بطاطس بالشيدر مع دج": { ar: "بطاطس بالشيدر والدجاج والهلابينو", en: "Cheddar Fries with Chicken & Jalapeno" },
+
+            "fried mozzarella sticks": { ar: "أصابع موتزاريلا مقلية", en: "Fried Mozzarella Sticks" },
+            "mozzarella sticks": { ar: "أصابع موتزاريلا مقلية", en: "Fried Mozzarella Sticks" },
+            "أصابع موتزاريلا مقلية": { ar: "أصابع موتزاريلا مقلية", en: "Fried Mozzarella Sticks" },
+
+            "crispy onion rings": { ar: "حلقات بصل مقرمشة", en: "Crispy Onion Rings" },
+            "onion rings": { ar: "حلقات بصل مقرمشة", en: "Crispy Onion Rings" },
+            "حلقات بصل مقرمشة": { ar: "حلقات بصل مقرمشة", en: "Crispy Onion Rings" },
+
+            "fried mushrooms": { ar: "مشروم مقلي مقرمش", en: "Fried Mushrooms" },
+            "مشروم مقلي": { ar: "مشروم مقلي مقرمش", en: "Fried Mushrooms" },
+
+            "fried calamari": { ar: "كاليماري مقلي مقرمش", en: "Fried Calamari" },
+            "كاليماري مقلي": { ar: "كاليماري مقلي مقرمش", en: "Fried Calamari" },
+
+            "fried seafood combo": { ar: "كومبو سي فود مقلي", en: "Fried Seafood Combo" },
+            "كومبو سي فود مقلي": { ar: "كومبو سي فود مقلي", en: "Fried Seafood Combo" },
+            "كومبو سي فود مقلي (ت": { ar: "كومبو سي فود مقلي", en: "Fried Seafood Combo" },
+
+            "storia appetizers combo": { ar: "ستوريا كومبو مقبلات", en: "Storia Appetizers Combo" },
+            "ستوريا كومبو مقبلات": { ar: "ستوريا كومبو مقبلات", en: "Storia Appetizers Combo" },
+            "ستوريا كومبو مقبلات (": { ar: "ستوريا كومبو مقبلات", en: "Storia Appetizers Combo" },
+
+            "popcorn hot dog": { ar: "بوب هوت دوج", en: "Popcorn Hot Dog" },
+            "بوب هوت دوج": { ar: "بوب هوت دوج", en: "Popcorn Hot Dog" },
+
+            "garlic bread": { ar: "خبز بالثوم المحمص", en: "Garlic Bread" },
+            "خبز بالثوم": { ar: "خبز بالثوم المحمص", en: "Garlic Bread" },
+
+            "garlic bread with cheese": { ar: "خبز بالثوم والجبنة الموزاريلا", en: "Garlic Bread with Cheese" },
+            "خبز بالثوم والجبنة": { ar: "خبز بالثوم والجبنة الموزاريلا", en: "Garlic Bread with Cheese" },
+
+            "french fries": { ar: "بطاطس مقلية مقرمشة", en: "French Fries" },
+            "بطاطس مقلية": { ar: "بطاطس مقلية مقرمشة", en: "French Fries" },
 
             // السلطات - Salads
-            "سلطة خضراء": "Green Salad",
-            "سلطة سيزر كلاسيك": "Classic Caesar Salad",
-            "سلطة سيزر بالدجاج": "Chicken Caesar Salad",
-            "سلطة يونانية": "Greek Salad",
-            "سلطة الشيف": "Chef Salad",
-            "سلطة جرجير (روكا)": "Rocca & Arugula Salad",
-            "سلطة جرجير": "Rocca Salad",
-            "سلطة مكرونة بالدجاج": "Chicken Pasta Salad",
-            "سلطة سي فود": "Seafood Salad",
-            "سلطة تونة": "Tuna Salad"
+            "green salad": { ar: "سلطة خضراء طازجة", en: "Fresh Green Salad" },
+            "سلطة خضراء": { ar: "سلطة خضراء طازجة", en: "Fresh Green Salad" },
+
+            "classic caesar salad": { ar: "سلطة سيزر كلاسيك", en: "Classic Caesar Salad" },
+            "caesar salad": { ar: "سلطة سيزر كلاسيك", en: "Classic Caesar Salad" },
+            "سلطة سيزر كلاسيك": { ar: "سلطة سيزر كلاسيك", en: "Classic Caesar Salad" },
+
+            "chicken caesar salad": { ar: "سلطة سيزر بالدجاج", en: "Chicken Caesar Salad" },
+            "سلطة سيزر بالدجاج": { ar: "سلطة سيزر بالدجاج", en: "Chicken Caesar Salad" },
+
+            "greek salad": { ar: "سلطة يونانية بالجبنة والزيتون", en: "Greek Salad" },
+            "سلطة يونانية": { ar: "سلطة يونانية بالجبنة والزيتون", en: "Greek Salad" },
+
+            "chef salad": { ar: "سلطة الشيف الخاصة", en: "Chef Salad" },
+            "سلطة الشيف": { ar: "سلطة الشيف الخاصة", en: "Chef Salad" },
+
+            "rocca salad": { ar: "سلطة جرجير (روكا)", en: "Rocca & Arugula Salad" },
+            "سلطة جرجير (روكا)": { ar: "سلطة جرجير (روكا)", en: "Rocca & Arugula Salad" },
+            "سلطة جرجير": { ar: "سلطة جرجير (روكا)", en: "Rocca & Arugula Salad" },
+
+            "chicken pasta salad": { ar: "سلطة مكرونة بالدجاج", en: "Chicken Pasta Salad" },
+            "سلطة مكرونة بالدجاج": { ar: "سلطة مكرونة بالدجاج", en: "Chicken Pasta Salad" },
+
+            "seafood salad": { ar: "سلطة سي فود مشكلة", en: "Seafood Salad" },
+            "سلطة سي فود": { ar: "سلطة سي فود مشكلة", en: "Seafood Salad" },
+
+            "tuna salad": { ar: "سلطة تونة طازجة", en: "Tuna Salad" },
+            "سلطة تونة": { ar: "سلطة تونة طازجة", en: "Tuna Salad" }
         };
 
-        const reverseDictionary = {};
-        for (const [ar, en] of Object.entries(comprehensiveDictionary)) {
-            reverseDictionary[en.toLowerCase().trim()] = ar;
-        }
+        // قاموس ترجمة الوصف
+        const descDictionary = {
+            "delicious creamy potato soup with sweet corn, seasoned with special": "شوربة بطاطس كريمية لذيذة مع الذرة الحلوة وتتبيلة ستوريا الخاصة",
+            "delicious creamy potato soup": "شوربة بطاطس كريمية لذيذة محضرة بأجود المكونات",
+            "fresh vegetables with pasta and parsley": "خضروات مشكلة طازجة مع الباستا الإيطالية والبقدونس",
+            "delicious cream soup with fresh chicken pieces and mushrooms": "شوربة كريمة شهية مع قطع صدور الدجاج الطازجة والمشروم",
+            "delicious onion soup served with toasted bread and mozzarella": "شوربة بصل فرنسية شهية تقدم مع التوست والموزاريلا",
+            "lentil soup blended with fine natural herbs and special": "شوربة عدس مميزة متبلة بأعشاب طبيعية ونكهة ستوريا",
+            "delicious cream soup with fresh shrimp and calamari with chef's": "شوربة كريمة فاخرة مع الجمبري والكاليماري والسي فود",
+            "fresh broccoli soup with rich cream": "شوربة بروكلي طازجة محضرة مع الكريمة الغنية اللذيذة",
+            "fresh mixed vegetables soup with mushrooms": "شوربة خضروات طازجة مشكلة مع قطع المشروم",
+            "orzo (lesan asfour) soup with fresh chicken pieces": "شوربة لسان عصفور شهية مع قطع الدجاج الطازجة",
+            "crispy chicken strips seasoned with unique spices": "أصابع صدور الدجاج المقرمشة بتتبيلة خاصة",
+            "crispy french fries topped with rich cheddar cheese sauce": "بطاطس مقرمشة مغطاة بصوص جبنة الشيدر الذائبة والغنية",
+            "french fries topped with cheddar sauce, chicken pieces, and spicy": "بطاطس مقلية مغطاة بجبنة الشيدر، قطع الدجاج، والهلابينو الحار"
+        };
 
         const categoryNamesMap = {
             "الشوربة": { ar: "الشوربة", en: "Soups" },
+            "soups": { ar: "الشوربة", en: "Soups" },
             "المقبلات": { ar: "المقبلات", en: "Appetizers" },
+            "appetizers": { ar: "المقبلات", en: "Appetizers" },
             "السلطات": { ar: "السلطات", en: "Salads" },
+            "salads": { ar: "السلطات", en: "Salads" },
             "السندوتشات": { ar: "السندوتشات والبرجر", en: "Sandwiches & Burgers" },
+            "sandwiches": { ar: "السندوتشات والبرجر", en: "Sandwiches & Burgers" },
             "المكرونة": { ar: "المكرونة والباستا", en: "Pasta" },
+            "pasta": { ar: "المكرونة والباستا", en: "Pasta" },
             "الفخارات": { ar: "الفخارات", en: "Fakhara Dishes" },
+            "fakhara": { ar: "الفخارات", en: "Fakhara Dishes" },
             "الفتة": { ar: "الفتة", en: "Fatteh" },
+            "fatteh": { ar: "الفتة", en: "Fatteh" },
             "الأطباق الرئيسية": { ar: "الأطباق الرئيسية", en: "Main Dishes" },
+            "main dishes": { ar: "الأطباق الرئيسية", en: "Main Dishes" },
             "البيتزا": { ar: "البيتزا", en: "Pizza" },
+            "pizza": { ar: "البيتزا", en: "Pizza" },
             "الحلويات": { ar: "الحلويات", en: "Desserts" },
+            "desserts": { ar: "الحلويات", en: "Desserts" },
             "المشروبات الساخنة": { ar: "المشروبات الساخنة", en: "Hot Drinks" },
-            "المشروبات الباردة": { ar: "المشروبات الباردة", en: "Cold Drinks" }
+            "hot drinks": { ar: "المشروبات الساخنة", en: "Hot Drinks" },
+            "المشروبات الباردة": { ar: "المشروبات الباردة", en: "Cold Drinks" },
+            "cold drinks": { ar: "المشروبات الباردة", en: "Cold Drinks" }
         };
 
         const soupAddons = [
@@ -1438,38 +1526,46 @@
         function getLocalizedItemName(item) {
             if (!item) return '';
             const raw = (typeof item === 'string' ? item : item.name).trim();
-            
-            if (typeof item === 'object') {
-                if (currentLang === 'en' && item.nameEn) return item.nameEn;
-                if (currentLang === 'ar' && item.nameAr) return item.nameAr;
-            }
+            const cleanKey = raw.toLowerCase().trim();
 
-            if (currentLang === 'en') {
-                return comprehensiveDictionary[raw] || raw;
-            } else {
-                return reverseDictionary[raw.toLowerCase()] || raw;
+            if (itemDictionary[cleanKey]) {
+                return itemDictionary[cleanKey][currentLang] || raw;
             }
+            if (itemDictionary[raw]) {
+                return itemDictionary[raw][currentLang] || raw;
+            }
+            return raw;
         }
 
         function getLocalizedItemDesc(item) {
             if (!item) return '';
-            if (typeof item === 'object') {
-                if (currentLang === 'en' && item.descEn) return item.descEn;
-                if (currentLang === 'ar' && item.descAr) return item.descAr;
-                return item.desc || '';
+            const desc = (typeof item === 'object' ? item.desc : item) || '';
+            if (!desc) return '';
+            const cleanKey = desc.toLowerCase().trim();
+
+            if (currentLang === 'ar') {
+                for (let k in descDictionary) {
+                    if (cleanKey.includes(k) || k.includes(cleanKey.substring(0, 20))) {
+                        return descDictionary[k];
+                    }
+                }
             }
-            return '';
+            return desc;
         }
 
         function getCategoryCleanName(catName) {
             if (!catName) return '';
-            const trimmed = catName.trim();
+            const cleanKey = catName.toLowerCase().trim();
             for (let k in categoryNamesMap) {
-                if (trimmed.includes(k)) {
+                if (cleanKey.includes(k)) {
                     return categoryNamesMap[k][currentLang];
                 }
             }
-            return trimmed;
+            if (currentLang === 'ar') {
+                return catName.replace(/[a-zA-Z\(\)]/g, '').trim() || catName;
+            } else {
+                return catName.replace(/[\u0600-\u06FF\(\)]/g, '').trim() || catName;
+            }
         }
 
         function toggleLanguage() {
@@ -1574,7 +1670,7 @@
                         showWelcomeModal();
                     }
                 }
-            }, 20);
+            }, 18);
         }
 
         function showWelcomeModal() {
@@ -1767,15 +1863,10 @@
 
                 const headers = parseCSVLine(lines[0]).map(h => h.trim().toLowerCase());
                 
-                const catIdx = headers.findIndex(h => h.includes('قسم') || h === 'category' || h.includes('category_ar'));
-                const catEnIdx = headers.findIndex(h => h.includes('category_en') || h.includes('قسم_en'));
-                
-                const nameIdx = headers.findIndex(h => h.includes('صنف') || h.includes('اسم') || h === 'item' || h === 'name' || h.includes('name_ar'));
-                const nameEnIdx = headers.findIndex(h => h.includes('name_en') || h.includes('item_en') || h.includes('english'));
-
+                const catIdx = headers.findIndex(h => h.includes('قسم') || h === 'category');
+                const nameIdx = headers.findIndex(h => h.includes('صنف') || h.includes('اسم') || h === 'item' || h === 'name');
                 const priceIdx = headers.findIndex(h => h.includes('سعر') || h.includes('price'));
                 const descIdx = headers.findIndex(h => h.includes('مكون') || h.includes('وصف') || h.includes('desc'));
-                const descEnIdx = headers.findIndex(h => h.includes('desc_en') || h.includes('وصف_en'));
                 const imgIdx = headers.findIndex(h => h.includes('صورة') || h.includes('صوره') || h.includes('img') || h.includes('image'));
 
                 const parsedMenu = [];
@@ -1785,9 +1876,6 @@
                     const rawCat = (row[catIdx >= 0 ? catIdx : 0] || 'أصناف متنوعة').trim();
                     const rawName = (row[nameIdx >= 0 ? nameIdx : 1] || '').trim();
                     if (!rawName) continue;
-
-                    const nameEn = (nameEnIdx >= 0 && row[nameEnIdx]) ? row[nameEnIdx].trim() : '';
-                    const descEn = (descEnIdx >= 0 && row[descEnIdx]) ? row[descEnIdx].trim() : '';
 
                     let price = (row[priceIdx >= 0 ? priceIdx : 2] || '0').replace(/[^0-9.]/g, '');
                     if (!price) price = '0';
@@ -1807,9 +1895,10 @@
                     }
 
                     let addons = null;
-                    if (rawCat.includes("شورب") || rawCat.toLowerCase().includes("soup")) addons = soupAddons;
-                    else if (rawCat.includes("مقبل") || rawCat.toLowerCase().includes("appetizer")) addons = appetizerAddons;
-                    else if (rawCat.includes("سلط") || rawCat.toLowerCase().includes("salad")) addons = saladAddons;
+                    const catLower = rawCat.toLowerCase();
+                    if (catLower.includes("شورب") || catLower.includes("soup")) addons = soupAddons;
+                    else if (catLower.includes("مقبل") || catLower.includes("appetizer")) addons = appetizerAddons;
+                    else if (catLower.includes("سلط") || catLower.includes("salad")) addons = saladAddons;
 
                     let catObj = parsedMenu.find(c => c.categoryRaw === rawCat);
                     if (!catObj) {
@@ -1821,12 +1910,8 @@
                         id: 'item_' + i + '_' + Math.random().toString(36).substr(2, 5),
                         sheetRow: sheetRowNumber,
                         name: rawName,
-                        nameAr: rawName,
-                        nameEn: nameEn || comprehensiveDictionary[rawName] || rawName,
                         price: parseFloat(price) || 0,
                         desc: desc,
-                        descAr: desc,
-                        descEn: descEn,
                         img: img,
                         addons: addons
                     });
@@ -1889,8 +1974,8 @@
                 const hasAddons = item.addons && item.addons.length > 0;
                 const cleanUnderscore = item.name.replace(/\s+/g, '_');
                 
-                const displayName = getLocalizedItemName(item);
-                const displayDesc = getLocalizedItemDesc(item);
+                const displayName = getLocalizedItemName(item.name);
+                const displayDesc = getLocalizedItemDesc(item.desc);
 
                 card.innerHTML = `
                     <div class="item-img-box" onclick="openImageLightbox(this.querySelector('img').src, '${displayName.replace(/'/g, "\\'")}', ${item.price})" title="${currentLang==='ar'?'اضغط لتكبير الصورة':'Click to view photo'}">
@@ -1925,12 +2010,11 @@
             const item = catData.items.find(i => i.id === itemId);
             if (!item) return;
             const t = translations[currentLang];
-            const displayName = getLocalizedItemName(item);
+            const displayName = getLocalizedItemName(item.name);
 
             const cartItem = {
                 cartId: 'c_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
                 id: item.id,
-                itemRef: item,
                 name: displayName,
                 rawName: item.name,
                 price: item.price,
@@ -1960,7 +2044,7 @@
             const item = catData.items.find(i => i.id === itemId);
             if (!item) return;
             const t = translations[currentLang];
-            const displayName = getLocalizedItemName(item);
+            const displayName = getLocalizedItemName(item.name);
 
             currentActiveItem = item;
             selectedAddonsMap = [];
@@ -2022,12 +2106,11 @@
             if (!currentActiveItem) return;
             let total = currentActiveItem.price;
             selectedAddonsMap.forEach(ad => { total += ad.price; });
-            const displayName = getLocalizedItemName(currentActiveItem);
+            const displayName = getLocalizedItemName(currentActiveItem.name);
 
             cart.push({
                 cartId: 'c_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
                 id: currentActiveItem.id,
-                itemRef: currentActiveItem,
                 name: displayName,
                 rawName: currentActiveItem.name,
                 price: total,
@@ -2085,7 +2168,7 @@
                 const itemEl = document.createElement('div');
                 itemEl.className = 'cart-item-card';
                 const addonsText = item.addons && item.addons.length > 0 ? item.addons.map(a => currentLang==='ar'?a.name:(a.nameEn||a.name)).join('، ') : '';
-                const displayName = item.itemRef ? getLocalizedItemName(item.itemRef) : (item.rawName ? getLocalizedItemName(item.rawName) : item.name);
+                const displayName = item.rawName ? getLocalizedItemName(item.rawName) : item.name;
 
                 itemEl.innerHTML = `
                     <img src="${item.img}" class="cart-item-img" alt="${displayName}" onerror="this.src='images/logooo.png'">
@@ -2136,7 +2219,7 @@
 
             const itemsArrayForLog = [];
             cart.forEach((item, i) => {
-                const displayName = item.itemRef ? getLocalizedItemName(item.itemRef) : (item.rawName ? getLocalizedItemName(item.rawName) : item.name);
+                const displayName = item.rawName ? getLocalizedItemName(item.rawName) : item.name;
                 let line = `${i + 1}. ${displayName}`;
                 if (item.addons && item.addons.length > 0) {
                     line += ` (+ ${currentLang==='ar'?'إضافات:':'Extras:'} ${item.addons.map(a => currentLang==='ar'?a.name:(a.nameEn||a.name)).join('، ')})`;
