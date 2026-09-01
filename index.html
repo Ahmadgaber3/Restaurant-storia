@@ -535,6 +535,10 @@
             from { transform: scale(0.92); opacity: 0; }
             to { transform: scale(1); opacity: 1; }
         }
+        @keyframes smoothFadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
         .simple-addons-header {
             display: flex;
             justify-content: space-between;
@@ -1204,6 +1208,7 @@
         </div>
     </div>
 
+    <!-- سكريبت الفايربيس وربطه مع النوافذ والتطبيقات -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, onSnapshot, addDoc, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -1224,13 +1229,29 @@
 
         window.db = db;
         window.firebaseModules = { doc, getDoc, setDoc, updateDoc, collection, onSnapshot, addDoc, deleteDoc, getDocs };
+        
+        // استماع للتغييرات المباشرة للأصناف والأرقام من الفايربيس
+        onSnapshot(doc(db, "storia_settings", "contacts"), (docSnap) => {
+            if (docSnap.exists()) {
+                window.restaurantInfo = docSnap.data();
+            }
+        });
+
+        onSnapshot(doc(db, "storia_settings", "item_status"), (docSnap) => {
+            if (docSnap.exists()) {
+                window.itemStatusMap = docSnap.data();
+                if (window.menuData && window.menuData.length > 0) {
+                    window.renderCategoryItems(window.currentActiveCatIndex || 0);
+                }
+            }
+        });
+
         window.dispatchEvent(new Event('firebase-ready'));
     </script>
 
     <script>
         const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTsz0Q8FatsNvh7u2MGFmJpXDuXjC6HD23Vt1VlEnS2EX-dElZco3evuNUXKZSe3-rLmOabuU1NTiyO/pub?output=csv";
 
-        // خريطة ترجمة الأقسام تلقائياً حسب لغة العرض
         const categoryNamesMap = {
             "الشوربة": { ar: "الشوربة", en: "Soups" },
             "soups": { ar: "الشوربة", en: "Soups" },
@@ -1310,8 +1331,8 @@
         let itemStatusMap = {}; 
         let currentActiveCatIndex = 0;
 
-        let currentActiveChatOrderId = null;
-        let currentChatUserType = 'admin'; 
+        let currentActiveChatOrderId = localStorage.getItem('storia_active_order_id') || null;
+        let currentChatUserType = 'client'; 
 
         let currentActiveItem = null;
         let selectedAddonsMap = [];
@@ -1415,6 +1436,10 @@
             }
         };
 
+        window.onload = function() {
+            initApp();
+        };
+
         function initApp() {
             startSplashScreen();
             applyLanguageUI();
@@ -1424,6 +1449,11 @@
                 document.body.classList.add('dark-mode');
                 document.getElementById('themeBtn').innerText = '☀️';
             }
+            if(activeUserPhone) {
+                document.getElementById('uPhone').value = activeUserPhone;
+                fetchUserLoyaltyPoints(activeUserPhone);
+            }
+            checkActiveClientOrder();
         }
 
         function toggleLanguage() {
@@ -1895,38 +1925,33 @@
 
         function handlePhoneInput(phone) {
             activeUserPhone = phone.trim();
+            localStorage.setItem('storia_user_phone', activeUserPhone);
             if (activeUserPhone.length >= 10) {
-                localStorage.setItem('storia_user_phone', activeUserPhone);
-                fetchUserPointsFromFirebase(activeUserPhone);
+                fetchUserLoyaltyPoints(activeUserPhone);
             }
         }
 
-        async function fetchUserPointsFromFirebase(phone) {
+        async function fetchUserLoyaltyPoints(phone) {
             if (!window.db) return;
             try {
-                const docRef = window.firebaseModules.doc(window.db, "loyalty_users", phone);
-                const docSnap = await window.firebaseModules.getDoc(docRef);
-
-                if (docSnap.exists()) {
-                    userLoyaltyPoints = docSnap.data().points || 0;
+                const docRef = window.firebaseModules.doc(window.db, "storia_loyalty", phone);
+                const snap = await window.firebaseModules.getDoc(docRef);
+                if (snap.exists()) {
+                    userLoyaltyPoints = snap.data().points || 0;
                 } else {
                     userLoyaltyPoints = 0;
                 }
                 document.getElementById('headerPointsBadge').innerText = userLoyaltyPoints;
                 document.getElementById('modalUserPoints').innerText = userLoyaltyPoints;
+                document.getElementById('modalUserPhoneDisplay').innerText = `رقم الحساب: ${phone}`;
+                renderLoyaltyRewards();
             } catch (e) {
-                console.error("Error fetching points:", e);
+                console.error("Error points fetch", e);
             }
         }
 
         function openLoyaltyModal() {
-            if (activeUserPhone) {
-                document.getElementById('modalUserPhoneDisplay').innerText = `رقم الحساب: ${activeUserPhone}`;
-                fetchUserPointsFromFirebase(activeUserPhone);
-            } else {
-                document.getElementById('modalUserPhoneDisplay').innerText = translations[currentLang].phonePlaceholder;
-            }
-            renderRewardsList();
+            renderLoyaltyRewards();
             document.getElementById('loyaltyModal').style.display = 'flex';
         }
 
@@ -1934,119 +1959,249 @@
             document.getElementById('loyaltyModal').style.display = 'none';
         }
 
-        function renderRewardsList() {
+        function renderLoyaltyRewards() {
             const container = document.getElementById('simpleRewardsList');
             container.innerHTML = '';
 
-            loyaltyRewards.forEach(rew => {
-                const rewTitle = currentLang === 'ar' ? rew.title : rew.titleEn;
-                const ptsUnit = translations[currentLang].ptsUnit;
-                const canRedeem = userLoyaltyPoints >= rew.cost;
+            loyaltyRewards.forEach(reward => {
+                const canRedeem = userLoyaltyPoints >= reward.cost;
+                const title = currentLang === 'ar' ? reward.title : reward.titleEn;
 
-                const row = document.createElement('div');
-                row.className = 'reward-item-row';
-                row.innerHTML = `
+                const div = document.createElement('div');
+                div.className = 'reward-item-row';
+                div.innerHTML = `
                     <div class="reward-item-info">
-                        <div class="reward-item-name">${rewTitle}</div>
-                        <div class="reward-item-cost">${rew.cost} ${ptsUnit}</div>
+                        <div class="reward-item-name">${title}</div>
+                        <div class="reward-item-cost">⭐ ${reward.cost} ${translations[currentLang].ptsUnit}</div>
                     </div>
-                    <button class="reward-redeem-btn" ${!canRedeem ? 'disabled' : ''} onclick="redeemReward('${rew.id}')">
-                        ${canRedeem ? 'استبدال 🎁' : 'غير كافٍ 🔒'}
+                    <button class="reward-redeem-btn" ${!canRedeem ? 'disabled' : ''} onclick="redeemReward('${reward.id}', ${reward.cost}, '${title.replace(/'/g, "\\'")}')">
+                        ${canRedeem ? 'استبدال' : 'نقاط غير كافية'}
                     </button>
                 `;
-                container.appendChild(row);
+                container.appendChild(div);
             });
         }
 
-        async function redeemReward(rewardId) {
-            const reward = loyaltyRewards.find(r => r.id === rewardId);
-            if (!reward || userLoyaltyPoints < reward.cost || !activeUserPhone) return;
+        async function redeemReward(rewardId, cost, title) {
+            if (!activeUserPhone) {
+                alert('يرجى كتابة رقم هاتفك في السلة أولاً لتفعيل نقاطك.');
+                return;
+            }
+            if (userLoyaltyPoints < cost) return;
 
-            userLoyaltyPoints -= reward.cost;
-            document.getElementById('headerPointsBadge').innerText = userLoyaltyPoints;
-            document.getElementById('modalUserPoints').innerText = userLoyaltyPoints;
-
-            try {
-                const docRef = window.firebaseModules.doc(window.db, "loyalty_users", activeUserPhone);
-                await window.firebaseModules.setDoc(docRef, { points: userLoyaltyPoints }, { merge: true });
-                alert(`تم استبدال ${reward.title} بنجاح! يسعدنا خدمتك.`);
-                renderRewardsList();
-            } catch (e) {
-                console.error("Redeem error:", e);
+            if (confirm(`هل أنت تأكد من استبدال ${cost} نقطة للحصول على "${title}"؟`)) {
+                userLoyaltyPoints -= cost;
+                await window.firebaseModules.setDoc(window.firebaseModules.doc(window.db, "storia_loyalty", activeUserPhone), {
+                    points: userLoyaltyPoints,
+                    updatedAt: new Date().toISOString()
+                });
+                
+                fetchUserLoyaltyPoints(activeUserPhone);
+                alert(`تم استبدال الهدية بنجاح! سيتم إضافتها لطلبك قادماً 🎉`);
             }
         }
 
-        function sendToWA() {
+        async function sendToWA() {
             const name = document.getElementById('uName').value.trim();
             const phone = document.getElementById('uPhone').value.trim();
             const addr = document.getElementById('uAddr').value.trim();
 
-            if (!name || !phone || !addr || cart.length === 0) {
-                alert('من فضلك أكمل جميع البيانات وأضف أصنافاً للسلة أولاً.');
+            if (!name || !phone || !addr) {
+                alert('من فضلك أكمل كافة البيانات المطلوب كتابتها للطلب!');
                 return;
             }
 
-            const earnedPoints = Math.floor(currentTotal);
-            const orderTypeLabel = selectedOrderType === 'delivery' ? '🛵 توصيل دليفري' : '🍽️ صالة / تيك اواي';
-
-            let msg = `*طلب جديد من تطبيق Storia Cafe* ☕✨\n`;
-            msg += `------------------------------------\n`;
-            msg += `👤 *الاسم:* ${name}\n`;
-            msg += `📱 *الهاتف:* ${phone}\n`;
-            msg += `📍 *النوع/العنوان:* ${orderTypeLabel} - ${addr}\n`;
-            msg += `------------------------------------\n`;
-            msg += `🛒 *الأصناف المطلوبة:*\n`;
-
-            cart.forEach(item => {
-                const itemName = item.nameAr;
-                const addonsText = (item.addons || []).map(a => a.name).join(' + ');
-                msg += `• ${itemName} (x${item.qty}) ${addonsText ? `[إضافات: ${addonsText}]` : ''}\n`;
-            });
-
-            msg += `------------------------------------\n`;
-            msg += `💰 *الإجمالي الكلي:* ${currentTotal.toFixed(2)} ج.م\n`;
-            msg += `🎁 *النقاط المكتسبة:* +${earnedPoints} نقطة\n`;
-
-            if (window.db) {
-                const docRef = window.firebaseModules.doc(window.db, "loyalty_users", phone);
-                window.firebaseModules.getDoc(docRef).then(snap => {
-                    const currentPts = snap.exists() ? (snap.data().points || 0) : 0;
-                    window.firebaseModules.setDoc(docRef, { points: currentPts + earnedPoints }, { merge: true });
-                });
+            if (cart.length === 0) {
+                alert('السلة فارغة!');
+                return;
             }
 
-            toggleCart(false);
-            showSuccessModal(earnedPoints);
+            const pointsEarned = Math.floor(currentTotal);
+            const orderId = 'STORIA_' + Math.floor(100000 + Math.random() * 900000);
 
-            const waPhone = restaurantInfo.orderPhone || '201014144144';
-            window.open(`https://wa.me/${waPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+            // حفظ الطلب في فايربيس
+            const orderPayload = {
+                orderId,
+                clientName: name,
+                clientPhone: phone,
+                address: addr,
+                type: selectedOrderType,
+                items: cart,
+                total: currentTotal,
+                pointsEarned,
+                createdAt: new Date().toISOString(),
+                status: 'pending'
+            };
+
+            try {
+                await window.firebaseModules.setDoc(window.firebaseModules.doc(window.db, "storia_orders", orderId), orderPayload);
+                
+                // تحديث نقاط العميل
+                const newPts = userLoyaltyPoints + pointsEarned;
+                await window.firebaseModules.setDoc(window.firebaseModules.doc(window.db, "storia_loyalty", phone), {
+                    points: newPts,
+                    updatedAt: new Date().toISOString()
+                });
+
+                userLoyaltyPoints = newPts;
+                currentActiveChatOrderId = orderId;
+                localStorage.setItem('storia_active_order_id', orderId);
+                checkActiveClientOrder();
+
+                // فتح الواتساب
+                let msg = `*طلب جديد من Storia Cafe & Restaurant* ☕🍕\n\n`;
+                msg += `📌 *رقم الأوردر:* #${orderId}\n`;
+                msg += `👤 *الاسم:* ${name}\n`;
+                msg += `📱 *الموبايل:* ${phone}\n`;
+                msg += `🛵 *نوع الاستلام:* ${selectedOrderType === 'delivery' ? 'توصيل دليفري' : 'صالة / تيك اواي'}\n`;
+                msg += `📍 *العنوان / الترابيزة:* ${addr}\n\n`;
+                msg += `📝 *تفاصيل الطلبات:*\n`;
+
+                cart.forEach((item, i) => {
+                    const addonsText = (item.addons || []).map(a => a.name).join(' + ');
+                    msg += `${i+1}. ${item.nameAr} (x${item.qty}) - ${(item.price * item.qty).toFixed(2)} ج.م\n`;
+                    if (addonsText) msg += `   └ إضافات: ${addonsText}\n`;
+                });
+
+                msg += `\n💵 *الإجمالي الكلي:* ${currentTotal.toFixed(2)} ج.م\n`;
+                msg += `🌟 *النقاط المكتسبة:* +${pointsEarned} نقطة\n`;
+
+                const waPhone = restaurantInfo.orderPhone || '201014144144';
+                window.open(`https://wa.me/${waPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+
+                toggleCart(false);
+                cart = [];
+                updateCartBadge();
+                renderCategoryItems(currentActiveCatIndex);
+
+                document.getElementById('successPointsPill').innerText = `🌟 +${pointsEarned} نقطة جديدة في رصيدك!`;
+                document.getElementById('successModal').style.display = 'flex';
+
+            } catch (err) {
+                console.error("Error creating order:", err);
+                alert('حدث خطأ أثناء تسجيل الطلب، يرجى المحاولة مجدداً.');
+            }
         }
 
-        function showSuccessModal(points) {
-            document.getElementById('successPointsPill').innerHTML = `<span>🌟 +${points} ${translations[currentLang].ptsUnit} جديدة في رصيدك!</span>`;
-            document.getElementById('successModal').style.display = 'flex';
+        function checkActiveClientOrder() {
+            const btn = document.getElementById('clientHeaderChatBtn');
+            if (currentActiveChatOrderId) {
+                btn.style.display = 'inline-flex';
+            } else {
+                btn.style.display = 'none';
+            }
         }
 
         function closeSuccessModal() {
             document.getElementById('successModal').style.display = 'none';
-            cart = [];
-            updateCartBadge();
-            renderCategoryItems(currentActiveCatIndex);
         }
 
+        function openClientChatFromSuccess() {
+            closeSuccessModal();
+            openClientHeaderChat();
+        }
+
+        function openClientHeaderChat() {
+            if (!currentActiveChatOrderId) return;
+            currentChatUserType = 'client';
+            document.getElementById('finishOrderBtn').style.display = 'inline-block';
+            document.getElementById('chatModal').style.display = 'flex';
+            subscribeToChatMessages(currentActiveChatOrderId);
+        }
+
+        function closeChatModal() {
+            document.getElementById('chatModal').style.display = 'none';
+        }
+
+        function dismissClientActiveOrder() {
+            if (confirm('هل تريد إنهاء متابعة هذا الطلب وحذف الشات من شاشتك؟')) {
+                currentActiveChatOrderId = null;
+                localStorage.removeItem('storia_active_order_id');
+                checkActiveClientOrder();
+                closeChatModal();
+            }
+        }
+
+        let chatUnsubscribe = null;
+        function subscribeToChatMessages(orderId) {
+            if (chatUnsubscribe) chatUnsubscribe();
+            
+            const area = document.getElementById('chatMessagesArea');
+            area.innerHTML = '<div style="text-align:center; padding:10px; font-size:0.8rem; color:var(--desc-text);">جاري تحميل المحادثة...</div>';
+
+            const docRef = window.firebaseModules.doc(window.db, "storia_chats", orderId);
+            chatUnsubscribe = window.firebaseModules.onSnapshot(docRef, (snap) => {
+                area.innerHTML = '';
+                if (snap.exists()) {
+                    const messages = snap.data().messages || [];
+                    messages.forEach(m => {
+                        const bubble = document.createElement('div');
+                        bubble.className = `chat-bubble ${m.sender}`;
+                        bubble.innerHTML = `
+                            ${m.text}
+                            <span class="chat-bubble-time">${m.time}</span>
+                        `;
+                        area.appendChild(bubble);
+                    });
+                    area.scrollTop = area.scrollHeight;
+                } else {
+                    area.innerHTML = '<div style="text-align:center; padding:10px; font-size:0.8rem; color:var(--desc-text);">ابدأ محادثتك المباشرة مع المطعم بخصوص طلبك ☕</div>';
+                }
+            });
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById('chatInputField');
+            const text = input.value.trim();
+            if (!text || !currentActiveChatOrderId) return;
+
+            const timeStr = new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+            const messageObj = {
+                sender: currentChatUserType,
+                text,
+                time: timeStr,
+                timestamp: Date.now()
+            };
+
+            input.value = '';
+            const docRef = window.firebaseModules.doc(window.db, "storia_chats", currentActiveChatOrderId);
+            const snap = await window.firebaseModules.getDoc(docRef);
+
+            if (snap.exists()) {
+                const currentMsgs = snap.data().messages || [];
+                await window.firebaseModules.updateDoc(docRef, {
+                    messages: [...currentMsgs, messageObj]
+                });
+            } else {
+                await window.firebaseModules.setDoc(docRef, {
+                    messages: [messageObj]
+                });
+            }
+        }
+
+        // لوحة التحكم والآدمن
         function openAdminPanel() {
             document.getElementById('adminModal').style.display = 'flex';
         }
-
         function closeAdminPanel() {
             document.getElementById('adminModal').style.display = 'none';
         }
 
-        function verifyAdminPassword() {
+        async function verifyAdminPassword() {
             const pass = document.getElementById('adminPassInput').value;
-            if (pass === 'storia2026') {
+            let realPass = 'storia2026';
+
+            try {
+                const snap = await window.firebaseModules.getDoc(window.firebaseModules.doc(window.db, "storia_settings", "admin"));
+                if (snap.exists() && snap.data().password) {
+                    realPass = snap.data().password;
+                }
+            } catch (e) {}
+
+            if (pass === realPass) {
                 document.getElementById('adminAuthView').style.display = 'none';
                 document.getElementById('adminDashboardView').style.display = 'block';
+                loadAdminData();
             } else {
                 alert('كلمة المرور غير صحيحة!');
             }
@@ -2055,12 +2210,136 @@
         function openFloatingModal(id) {
             document.getElementById(id).style.display = 'flex';
         }
-
         function closeFloatingModal(id) {
             document.getElementById(id).style.display = 'none';
         }
 
-        window.onload = initApp;
+        function loadAdminData() {
+            renderAdminItemsStatus();
+            listenAdminOrders();
+            document.getElementById('edit_nasr_order_phone').value = restaurantInfo.orderPhone || '';
+            document.getElementById('edit_nasr_display_phone1').value = restaurantInfo.displayPhone1 || '';
+            document.getElementById('edit_nasr_display_phone2').value = restaurantInfo.displayPhone2 || '';
+            document.getElementById('edit_nasr_complaint_phone').value = restaurantInfo.complaintPhone || '';
+        }
+
+        function renderAdminItemsStatus() {
+            const container = document.getElementById('adminItemsList');
+            container.innerHTML = '';
+
+            menuData.forEach(cat => {
+                cat.items.forEach(item => {
+                    const isAvailable = itemStatusMap[item.id] !== false;
+                    const div = document.createElement('div');
+                    div.style.cssText = "display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:1px solid var(--border-color);";
+                    div.innerHTML = `
+                        <span style="font-size:0.85rem; font-weight:700;">${item.nameAr}</span>
+                        <button onclick="toggleItemStatus('${item.id}', ${!isAvailable})" style="background:${isAvailable ? '#ef4444' : '#2e7d32'}; color:#fff; border:none; border-radius:8px; padding:4px 10px; font-weight:800; cursor:pointer;">
+                            ${isAvailable ? 'إيقاف 🛑' : 'تفعيل ✅'}
+                        </button>
+                    `;
+                    container.appendChild(div);
+                });
+            });
+        }
+
+        async function toggleItemStatus(itemId, newStatus) {
+            itemStatusMap[itemId] = newStatus;
+            await window.firebaseModules.setDoc(window.firebaseModules.doc(window.db, "storia_settings", "item_status"), itemStatusMap);
+            renderAdminItemsStatus();
+            renderCategoryItems(currentActiveCatIndex);
+        }
+
+        async function setAllItemsStatus(status) {
+            menuData.forEach(cat => {
+                cat.items.forEach(item => {
+                    itemStatusMap[item.id] = status;
+                });
+            });
+            await window.firebaseModules.setDoc(window.firebaseModules.doc(window.db, "storia_settings", "item_status"), itemStatusMap);
+            renderAdminItemsStatus();
+            renderCategoryItems(currentActiveCatIndex);
+        }
+
+        function listenAdminOrders() {
+            const container = document.getElementById('adminOrdersLogsList');
+            window.firebaseModules.onSnapshot(window.firebaseModules.collection(window.db, "storia_orders"), (snapshot) => {
+                container.innerHTML = '';
+                if (snapshot.empty) {
+                    container.innerHTML = 'لا توجد طلبات واردة حالياً.';
+                    return;
+                }
+                snapshot.forEach(docSnap => {
+                    const ord = docSnap.data();
+                    const card = document.createElement('div');
+                    card.style.cssText = "background:var(--bg); border:1px solid var(--border-color); border-radius:14px; padding:12px; margin-bottom:10px;";
+                    card.innerHTML = `
+                        <div style="font-weight:900; font-size:0.9rem; color:var(--accent);">طلب #${ord.orderId} - ${ord.clientName}</div>
+                        <div style="font-size:0.8rem; color:var(--desc-text);">📱 ${ord.clientPhone} | 📍 ${ord.address}</div>
+                        <div style="font-size:0.85rem; font-weight:800; margin-top:4px;">💰 الإجمالي: ${ord.total} ج.م</div>
+                        <button onclick="openAdminChat('${ord.orderId}')" style="background:#25D366; color:white; border:none; border-radius:8px; padding:6px 12px; font-weight:800; margin-top:8px; cursor:pointer;">💬 فتح الشات المباشر</button>
+                    `;
+                    container.appendChild(card);
+                });
+            });
+        }
+
+        function openAdminChat(orderId) {
+            currentActiveChatOrderId = orderId;
+            currentChatUserType = 'admin';
+            document.getElementById('finishOrderBtn').style.display = 'none';
+            document.getElementById('chatModal').style.display = 'flex';
+            subscribeToChatMessages(orderId);
+        }
+
+        async function saveContactsToFirebase() {
+            const data = {
+                orderPhone: document.getElementById('edit_nasr_order_phone').value.trim(),
+                displayPhone1: document.getElementById('edit_nasr_display_phone1').value.trim(),
+                displayPhone2: document.getElementById('edit_nasr_display_phone2').value.trim(),
+                complaintPhone: document.getElementById('edit_nasr_complaint_phone').value.trim()
+            };
+            await window.firebaseModules.setDoc(window.firebaseModules.doc(window.db, "storia_settings", "contacts"), data);
+            alert('تم حفظ أرقام التواصل بنجاح ✅');
+            closeFloatingModal('contactsModal');
+        }
+
+        async function adminSearchClientPoints() {
+            const phone = document.getElementById('adminLoyaltySearchPhone').value.trim();
+            if (!phone) return;
+
+            const snap = await window.firebaseModules.getDoc(window.firebaseModules.doc(window.db, "storia_loyalty", phone));
+            const pts = snap.exists() ? (snap.data().points || 0) : 0;
+
+            document.getElementById('adminClientCurrentPts').innerText = pts;
+            document.getElementById('adminClientNewPtsInput').value = pts;
+            document.getElementById('adminLoyaltyResultBox').style.display = 'block';
+        }
+
+        async function adminSaveClientPoints() {
+            const phone = document.getElementById('adminLoyaltySearchPhone').value.trim();
+            const newPts = parseInt(document.getElementById('adminClientNewPtsInput').value) || 0;
+
+            await window.firebaseModules.setDoc(window.firebaseModules.doc(window.db, "storia_loyalty", phone), {
+                points: newPts,
+                updatedAt: new Date().toISOString()
+            });
+
+            alert('تم تحديث نقاط العميل بنجاح ✅');
+            adminSearchClientPoints();
+        }
+
+        async function updateAdminPassword() {
+            const newPass = document.getElementById('newAdminPass').value.trim();
+            if (!newPass) return;
+
+            await window.firebaseModules.setDoc(window.firebaseModules.doc(window.db, "storia_settings", "admin"), {
+                password: newPass
+            });
+
+            alert('تم تغيير كلمة المرور بنجاح ✅');
+            closeFloatingModal('passwordModal');
+        }
     </script>
 </body>
 </html>
