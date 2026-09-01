@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Storia Restaurant & Cafe | Official Menu</title>
+    <title>Storia Restaurant & Cafe</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1b4d3e">
@@ -190,12 +190,10 @@
             box-shadow: 0 2px 6px var(--card-shadow);
             transition: transform 0.15s ease, background-color 0.2s ease;
             position: relative;
-            font-weight: 800;
+            font-weight: 900;
         }
         .lang-toggle {
             font-size: 0.82rem;
-            font-weight: 900;
-            letter-spacing: 0.5px;
             color: var(--accent);
             border-color: rgba(27, 77, 62, 0.3);
         }
@@ -228,7 +226,7 @@
             padding: 6px 14px 8px 14px;
             display: flex;
             align-items: center;
-            justify-content: flex-end;
+            justify-content: space-between;
             gap: 8px;
             border-top: 1px solid var(--border-color);
             background: var(--header-bg);
@@ -237,9 +235,8 @@
         .sub-actions-row {
             display: flex;
             align-items: center;
-            gap: 8px;
-            width: 100%;
             justify-content: space-between;
+            width: 100%;
         }
 
         .loyalty-sub-btn {
@@ -263,7 +260,6 @@
             font-weight: 900;
         }
 
-        /* زر شات الطلب المصغر الأنيق */
         .chat-sub-btn-mini {
             background: #25D366;
             color: white;
@@ -305,7 +301,7 @@
             flex-shrink: 0; 
             padding: 0 4px;
             cursor: pointer; 
-            max-width: 110px;
+            max-width: 120px;
         }
 
         .cat-img-box { 
@@ -368,7 +364,6 @@
             font-size: 2.2rem; 
             align-self: center;
             cursor: pointer;
-            position: relative;
         }
         .item-img-box img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.2s; }
         .item-img-box:hover img { transform: scale(1.05); }
@@ -480,7 +475,6 @@
             font-weight: 900;
         }
 
-        /* نافذة تكبير الصورة Lightbox */
         .image-lightbox-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(8px);
@@ -499,9 +493,7 @@
             width: 100%; height: 280px; background: #000;
             display: flex; align-items: center; justify-content: center;
         }
-        .image-lightbox-img-wrapper img {
-            width: 100%; height: 100%; object-fit: cover;
-        }
+        .image-lightbox-img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
         .image-lightbox-details {
             padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;
             background: var(--white);
@@ -618,7 +610,6 @@
 
         .submit-btn { background: var(--accent); color: white; border: none; padding: 18px; border-radius: 18px; width: 100%; font-weight: 800; cursor: pointer; font-size: 1rem; }
 
-        /* الكارت المحسن البارز لاحتساب النقاط بالسلة */
         .cart-points-card-pro {
             background: linear-gradient(135deg, rgba(27, 77, 62, 0.12) 0%, rgba(52, 132, 108, 0.18) 100%);
             border: 2px solid var(--accent);
@@ -638,49 +629,21 @@
             top: 0; right: 0; width: 6px; height: 100%;
             background: var(--accent);
         }
-        [dir="ltr"] .cart-points-card-pro::before {
-            right: auto; left: 0;
-        }
-        .cart-points-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        [dir="ltr"] .cart-points-card-pro::before { right: auto; left: 0; }
+        .cart-points-left { display: flex; align-items: center; gap: 10px; }
         .cart-points-icon-badge {
-            width: 42px;
-            height: 42px;
-            border-radius: 14px;
-            background: var(--accent);
-            color: #ffffff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-            box-shadow: 0 3px 8px rgba(27, 77, 62, 0.3);
+            width: 42px; height: 42px; border-radius: 14px;
+            background: var(--accent); color: #ffffff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem; box-shadow: 0 3px 8px rgba(27, 77, 62, 0.3);
         }
-        .cart-points-text-group {
-            display: flex;
-            flex-direction: column;
-        }
-        .cart-points-main-label {
-            font-size: 0.92rem;
-            font-weight: 900;
-            color: var(--main-text);
-            line-height: 1.2;
-        }
-        .cart-points-sub-label {
-            font-size: 0.72rem;
-            font-weight: 700;
-            color: var(--desc-text);
-            margin-top: 2px;
-        }
+        .cart-points-text-group { display: flex; flex-direction: column; }
+        .cart-points-main-label { font-size: 0.92rem; font-weight: 900; color: var(--main-text); line-height: 1.2; }
+        .cart-points-sub-label { font-size: 0.72rem; font-weight: 700; color: var(--desc-text); margin-top: 2px; }
         .cart-points-val-pill {
-            background: var(--accent);
-            color: #ffffff;
-            padding: 6px 14px;
-            border-radius: 25px;
-            font-size: 1rem;
-            font-weight: 900;
+            background: var(--accent); color: #ffffff;
+            padding: 6px 14px; border-radius: 25px;
+            font-size: 1rem; font-weight: 900;
             box-shadow: 0 3px 10px rgba(27, 77, 62, 0.3);
             white-space: nowrap;
         }
@@ -945,7 +908,6 @@
                     <span class="pts" id="headerPointsBadge">0</span>
                 </button>
 
-                <!-- زر شات الطلب المصغر الأنيق -->
                 <button class="chat-sub-btn-mini" id="clientHeaderChatBtn" onclick="openClientHeaderChat()" title="متابعة شات الأوردر">
                     <span>💬</span>
                 </button>
@@ -1200,7 +1162,6 @@
             <h2 style="margin-bottom: 20px;" id="t_cart_title">طلباتك</h2>
             <div id="cartItemsList"></div>
             
-            <!-- الكارت المحسن البارز لاحتساب النقاط بالسلة -->
             <div class="cart-points-card-pro">
                 <div class="cart-points-left">
                     <div class="cart-points-icon-badge">🎁</div>
@@ -1257,6 +1218,69 @@
 
     <script>
         const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTsz0Q8FatsNvh7u2MGFmJpXDuXjC6HD23Vt1VlEnS2EX-dElZco3evuNUXKZSe3-rLmOabuU1NTiyO/pub?output=csv";
+
+        const itemTranslations = {
+            "Creamy Potato Soup": "شوربة بطاطس بالكريمة",
+            "شوربة بطاطس بالكريمة": "Creamy Potato Soup",
+            "Vegetables Soup": "شوربة خضار",
+            "شوربة خضار": "Vegetables Soup",
+            "Lesan Asfour Soup": "شوربة لسان عصفور",
+            "شوربة لسان عصفور": "Lesan Asfour Soup",
+            "Minestrone Soup With Chicken": "شوربة مينستروني بالدجاج",
+            "شوربة مينستروني بالدجاج": "Minestrone Soup With Chicken",
+            "Chicken Cream Soup": "شوربة كريمة بالدجاج",
+            "شوربة كريمة بالدجاج": "Chicken Cream Soup",
+            "Mushroom Cream Soup": "شوربة كريمة بالمشروم",
+            "شوربة كريمة بالمشروم": "Mushroom Cream Soup",
+            "Onion Soup": "شوربة بصل فرنسية",
+            "شوربة بصل": "French Onion Soup",
+            "Sea Food Cream Soup": "شوربة سي فود بالكريمة",
+            "شوربة سي فود": "Seafood Cream Soup"
+        };
+
+        const categoryTranslations = {
+            "الشوربة": "Soups",
+            "شوربة": "Soups",
+            "Soups": "الشوربة",
+            "المقبلات": "Appetizers",
+            "مقبلات": "Appetizers",
+            "Appetizers": "المقبلات",
+            "السلطات": "Salads",
+            "سلطات": "Salads",
+            "Salads": "السلطات",
+            "السندوتشات": "Sandwiches",
+            "سندوتشات": "Sandwiches",
+            "Sandwiches": "السندوتشات",
+            "المكرونة": "Pasta",
+            "مكرونة": "Pasta",
+            "باستا": "Pasta",
+            "Pasta": "المكرونة",
+            "الفخارات": "Fakhara",
+            "فخارات": "Fakhara",
+            "Fakhara": "الفخارات",
+            "الفتة": "Fatteh",
+            "فتة": "Fatteh",
+            "Fatteh": "الفتة",
+            "الأطباق الرئيسية": "Main Dishes",
+            "اطباق رئيسية": "Main Dishes",
+            "رئيسي": "Main Dishes",
+            "Main Dishes": "الأطباق الرئيسية",
+            "البيتزا": "Pizza",
+            "بيتزا": "Pizza",
+            "Pizza": "البيتزا",
+            "الحلويات": "Desserts",
+            "حلويات": "Desserts",
+            "حلو": "Desserts",
+            "Desserts": "الحلويات",
+            "المشروبات الساخنة": "Hot Drinks",
+            "مشروبات ساخنة": "Hot Drinks",
+            "ساخن": "Hot Drinks",
+            "Hot Drinks": "المشروبات الساخنة",
+            "المشروبات الباردة": "Cold Drinks & Shakes",
+            "ميلك شيك وزبادي": "Milkshakes & Yogurt",
+            "Cold Drinks": "المشروبات الباردة",
+            "أصناف متنوعة": "Various Items"
+        };
 
         const soupAddons = [
             { name: "دجاج", nameEn: "Chicken", price: 64.95 }, { name: "مشروم", nameEn: "Mushroom", price: 29.95 }, { name: "ذرة", nameEn: "Corn", price: 29.95 },
@@ -1321,7 +1345,7 @@
             { id: 'rew_5', title: 'وجبة رئيسية أو مكس جريل 🥩', titleEn: 'Main Dish / Mix Grill 🥩', cost: 800 }
         ];
 
-        let currentLang = localStorage.getItem('storia_lang') || 'ar'; // 'ar' or 'en'
+        let currentLang = localStorage.getItem('storia_lang') || 'ar';
         let menuData = [];
         let cart = [];
         let currentTotal = 0; 
@@ -1343,38 +1367,6 @@
             displayPhone1: '0226702680', 
             displayPhone2: '01014144144',
             complaintPhone: '01014144144'
-        };
-
-        const categoryTranslations = {
-            "الشوربة": "Soups",
-            "شوربة": "Soups",
-            "المقبلات": "Appetizers",
-            "مقبلات": "Appetizers",
-            "السلطات": "Salads",
-            "سلطات": "Salads",
-            "السندوتشات": "Sandwiches",
-            "سندوتشات": "Sandwiches",
-            "المكرونة": "Pasta",
-            "مكرونة": "Pasta",
-            "باستا": "Pasta",
-            "الفخارات": "Fakhara",
-            "فخارات": "Fakhara",
-            "الفتة": "Fatteh",
-            "فتة": "Fatteh",
-            "الأطباق الرئيسية": "Main Dishes",
-            "اطباق رئيسية": "Main Dishes",
-            "رئيسي": "Main Dishes",
-            "البيتزا": "Pizza",
-            "بيتزا": "Pizza",
-            "الحلويات": "Desserts",
-            "حلويات": "Desserts",
-            "حلو": "Desserts",
-            "المشروبات الساخنة": "Hot Drinks",
-            "مشروبات ساخنة": "Hot Drinks",
-            "ساخن": "Hot Drinks",
-            "المشروبات الباردة": "Cold Drinks & Shakes",
-            "ميلك شيك وزبادي": "Milkshakes & Yogurt",
-            "أصناف متنوعة": "Various Items"
         };
 
         const translations = {
@@ -1460,9 +1452,24 @@
             }
         };
 
+        function getLocalizedItemName(rawName) {
+            if (!rawName) return '';
+            const trimmed = rawName.trim();
+            if (currentLang === 'ar') {
+                return itemTranslations[trimmed] && !/[\u0600-\u06FF]/.test(trimmed) ? itemTranslations[trimmed] : trimmed;
+            } else {
+                return itemTranslations[trimmed] && /[\u0600-\u06FF]/.test(trimmed) ? itemTranslations[trimmed] : trimmed;
+            }
+        }
+
         function getTranslatedCategory(catName) {
-            if (currentLang === 'ar') return catName;
-            return categoryTranslations[catName.trim()] || catName;
+            if (!catName) return '';
+            const trimmed = catName.trim();
+            if (currentLang === 'ar') {
+                return categoryTranslations[trimmed] && !/[\u0600-\u06FF]/.test(trimmed) ? categoryTranslations[trimmed] : trimmed;
+            } else {
+                return categoryTranslations[trimmed] && /[\u0600-\u06FF]/.test(trimmed) ? categoryTranslations[trimmed] : (categoryTranslations[trimmed] || trimmed);
+            }
         }
 
         function toggleLanguage() {
@@ -1881,9 +1888,10 @@
                 card.className = 'food-card' + (isEnabled ? '' : ' disabled-item');
                 const hasAddons = item.addons && item.addons.length > 0;
                 const cleanUnderscore = item.name.replace(/\s+/g, '_');
+                const displayName = getLocalizedItemName(item.name);
 
                 card.innerHTML = `
-                    <div class="item-img-box" onclick="openImageLightbox(this.querySelector('img').src, '${item.name.replace(/'/g, "\\'")}', ${item.price})" title="${currentLang==='ar'?'اضغط لتكبير الصورة':'Click to view photo'}">
+                    <div class="item-img-box" onclick="openImageLightbox(this.querySelector('img').src, '${displayName.replace(/'/g, "\\'")}', ${item.price})" title="${currentLang==='ar'?'اضغط لتكبير الصورة':'Click to view photo'}">
                         <img src="${item.img}" loading="lazy" alt="${item.name}" 
                              onerror="if(!this.dataset.step){this.dataset.step='1'; this.src='images/' + encodeURIComponent('${item.name}') + '.jpg';} 
                                       else if(this.dataset.step==='1'){this.dataset.step='2'; this.src='images/' + encodeURIComponent('${cleanUnderscore}') + '.jpg';} 
@@ -1892,7 +1900,7 @@
                     <div class="food-info">
                         <div>
                             <div class="food-header">
-                                <div class="food-name">${item.name}</div>
+                                <div class="food-name">${displayName}</div>
                                 <div class="food-price">${item.price.toFixed(2)} ${t.currency}</div>
                             </div>
                             ${item.desc ? `<div class="food-desc">${item.desc}</div>` : ''}
@@ -1915,11 +1923,12 @@
             const item = catData.items.find(i => i.id === itemId);
             if (!item) return;
             const t = translations[currentLang];
+            const displayName = getLocalizedItemName(item.name);
 
             const cartItem = {
                 cartId: 'c_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
                 id: item.id,
-                name: item.name,
+                name: displayName,
                 price: item.price,
                 img: item.img,
                 addons: []
@@ -1947,11 +1956,12 @@
             const item = catData.items.find(i => i.id === itemId);
             if (!item) return;
             const t = translations[currentLang];
+            const displayName = getLocalizedItemName(item.name);
 
             currentActiveItem = item;
             selectedAddonsMap = [];
 
-            document.getElementById('modalItemName').innerText = item.name;
+            document.getElementById('modalItemName').innerText = displayName;
             document.getElementById('modalItemBasePrice').innerText = item.price.toFixed(2) + ' ' + t.currency;
 
             const addonsListEl = document.getElementById('modalAddonsList');
@@ -2008,11 +2018,12 @@
             if (!currentActiveItem) return;
             let total = currentActiveItem.price;
             selectedAddonsMap.forEach(ad => { total += ad.price; });
+            const displayName = getLocalizedItemName(currentActiveItem.name);
 
             cart.push({
                 cartId: 'c_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
                 id: currentActiveItem.id,
-                name: currentActiveItem.name,
+                name: displayName,
                 price: total,
                 basePrice: currentActiveItem.price,
                 img: currentActiveItem.img,
@@ -2310,7 +2321,7 @@
         let adminSearchedPhone = '';
         async function adminSearchClientPoints() {
             const phone = document.getElementById('adminLoyaltySearchPhone').value.trim();
-            if (!phone) return alert('اكتب رقم الموبايل');
+            if (!phone) return alert(currentLang === 'ar' ? 'اكتب رقم الموبايل' : 'Enter mobile number');
             adminSearchedPhone = phone;
 
             if (window.db && window.firebaseModules) {
@@ -2329,7 +2340,7 @@
                 const { doc, setDoc } = window.firebaseModules;
                 await setDoc(doc(window.db, "loyalty_users", adminSearchedPhone), { points: newPts }, { merge: true });
                 document.getElementById('adminClientCurrentPts').innerText = newPts;
-                alert('تم تعديل رصيد العميل بنجاح!');
+                alert(currentLang === 'ar' ? 'تم تعديل رصيد العميل بنجاح!' : 'Client points balance updated successfully!');
             }
         }
 
@@ -2337,7 +2348,7 @@
             const phone = document.getElementById('edit_nasr_order_phone').value.trim();
             if (phone) {
                 restaurantInfo.orderPhone = phone;
-                alert('تم حفظ الأرقام بنجاح!');
+                alert(currentLang === 'ar' ? 'تم حفظ الأرقام بنجاح!' : 'Phone numbers saved successfully!');
                 closeFloatingModal('contactsModal');
             }
         }
@@ -2347,7 +2358,7 @@
             if (newP && window.db && window.firebaseModules) {
                 const { doc, setDoc } = window.firebaseModules;
                 await setDoc(doc(window.db, "settings", "admin_config"), { password: newP }, { merge: true });
-                alert('تم تحديث كلمة المرور بنجاح!');
+                alert(currentLang === 'ar' ? 'تم تحديث كلمة المرور بنجاح!' : 'Password updated successfully!');
                 closeFloatingModal('passwordModal');
             }
         }
