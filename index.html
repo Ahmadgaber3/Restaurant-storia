@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Storia Restaurant & Cafe | المنيو الرسمي</title>
+    <title>Storia Restaurant & Cafe | Official Menu</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1b4d3e">
@@ -149,6 +149,7 @@
             transform: translateY(-2px);
         }
         .welcome-choice-info { text-align: right; }
+        [dir="ltr"] .welcome-choice-info { text-align: left; }
         .welcome-choice-ar { font-size: 0.96rem; font-weight: 900; color: var(--main-text); }
         .welcome-choice-en { font-size: 0.76rem; font-weight: 700; color: var(--desc-text); }
         .welcome-choice-icon { font-size: 1.8rem; }
@@ -174,7 +175,7 @@
             gap: 8px;
         }
 
-        .theme-toggle, .admin-trigger-btn, .cart-trigger, .header-action-btn {
+        .theme-toggle, .lang-toggle, .admin-trigger-btn, .cart-trigger, .header-action-btn {
             width: 40px;
             height: 40px;
             background: var(--bg);
@@ -187,10 +188,18 @@
             border: 1px solid var(--border-color);
             color: var(--main-text);
             box-shadow: 0 2px 6px var(--card-shadow);
-            transition: transform 0.15s ease;
+            transition: transform 0.15s ease, background-color 0.2s ease;
             position: relative;
+            font-weight: 800;
         }
-        .theme-toggle:active, .admin-trigger-btn:active, .cart-trigger:active, .header-action-btn:active {
+        .lang-toggle {
+            font-size: 0.82rem;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+            color: var(--accent);
+            border-color: rgba(27, 77, 62, 0.3);
+        }
+        .theme-toggle:active, .lang-toggle:active, .admin-trigger-btn:active, .cart-trigger:active, .header-action-btn:active {
             transform: scale(0.92);
         }
 
@@ -591,6 +600,7 @@
 
         .restaurant-footer { padding: 30px 20px; text-align: center; background: var(--white); border-top: 1px solid var(--border-color); margin-top: 20px; }
         .branches-container { margin: 15px 0 10px 0; font-size: 0.82rem; color: var(--desc-text); text-align: right; background: var(--bg); padding: 12px; border-radius: 16px; border: 1px solid var(--border-color); }
+        [dir="ltr"] .branches-container { text-align: left; }
         .branch-item { margin-bottom: 8px; }
         .branch-item:last-child { margin-bottom: 0; }
         .branch-item strong { color: var(--accent); display: block; }
@@ -612,20 +622,72 @@
         .remove-btn { color: #ff3b30; font-weight: 800; font-size: 0.75rem; cursor: pointer; }
 
         .user-fields input { background: var(--bg); border: 1.5px solid var(--border-color); padding: 16px; border-radius: 14px; width: 100%; margin-bottom: 10px; color: var(--main-text); text-align: right; outline: none; font-size: 0.9rem; font-weight: 700; }
+        [dir="ltr"] .user-fields input { text-align: left; }
 
         .submit-btn { background: var(--accent); color: white; border: none; padding: 18px; border-radius: 18px; width: 100%; font-weight: 800; cursor: pointer; font-size: 1rem; }
 
-        .cart-points-preview {
-            background: linear-gradient(135deg, rgba(27, 77, 62, 0.12), rgba(82, 183, 154, 0.15));
-            border: 1.5px dashed var(--accent);
-            border-radius: 14px;
-            padding: 10px 14px;
-            margin-bottom: 12px;
+        /* الكارت المحسن البارز لاحتساب النقاط بالسلة */
+        .cart-points-card-pro {
+            background: linear-gradient(135deg, rgba(27, 77, 62, 0.12) 0%, rgba(52, 132, 108, 0.18) 100%);
+            border: 2px solid var(--accent);
+            border-radius: 18px;
+            padding: 14px 16px;
+            margin-bottom: 14px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            font-size: 0.84rem;
-            font-weight: 800;
+            box-shadow: 0 4px 15px rgba(27, 77, 62, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        .cart-points-card-pro::before {
+            content: '';
+            position: absolute;
+            top: 0; right: 0; width: 6px; height: 100%;
+            background: var(--accent);
+        }
+        .cart-points-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .cart-points-icon-badge {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            background: var(--accent);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            box-shadow: 0 3px 8px rgba(27, 77, 62, 0.3);
+        }
+        .cart-points-text-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .cart-points-main-label {
+            font-size: 0.92rem;
+            font-weight: 900;
+            color: var(--main-text);
+            line-height: 1.2;
+        }
+        .cart-points-sub-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--desc-text);
+            margin-top: 2px;
+        }
+        .cart-points-val-pill {
+            background: var(--accent);
+            color: #ffffff;
+            padding: 6px 14px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 900;
+            box-shadow: 0 3px 10px rgba(27, 77, 62, 0.3);
+            white-space: nowrap;
         }
 
         .success-modal {
@@ -784,6 +846,7 @@
         .floating-header h4 { font-size: 1.12rem; font-weight: 900; color: var(--accent); display: flex; align-items: center; gap: 6px; }
 
         .admin-custom-input-group { margin-bottom: 12px; text-align: right; }
+        [dir="ltr"] .admin-custom-input-group { text-align: left; }
         .admin-custom-input-group label { display: block; font-size: 0.82rem; font-weight: 800; color: var(--main-text); margin-bottom: 5px; }
         .admin-custom-input-group input { width: 100%; padding: 12px 14px; background: var(--bg); border: 1.5px solid var(--border-color); border-radius: 12px; font-size: 0.9rem; color: var(--main-text); outline: none; }
 
@@ -823,13 +886,13 @@
     <div class="welcome-order-type-modal" id="welcomeOrderModal">
         <div class="welcome-card">
             <img src="images/logooo.png" class="welcome-logo" alt="Storia Cafe" onerror="this.src='https://www.storia-eg.com/images/logo.png'">
-            <h2 class="welcome-title">مرحباً بك في ستوريا | Welcome</h2>
-            <p class="welcome-subtitle">من فضلك اختر طريقة استلام طلبك للمتابعة:</p>
+            <h2 class="welcome-title" id="t_welcome_title">مرحباً بك في ستوريا | Welcome</h2>
+            <p class="welcome-subtitle" id="t_welcome_sub">من فضلك اختر طريقة استلام طلبك للمتابعة:</p>
             
             <div class="welcome-buttons-grid">
                 <div class="welcome-choice-btn" onclick="selectInitialOrderType('delivery')">
                     <div class="welcome-choice-info">
-                        <div class="welcome-choice-ar">🛵 توصيل دليفري</div>
+                        <div class="welcome-choice-ar" id="t_welcome_del_ar">🛵 توصيل دليفري</div>
                         <div class="welcome-choice-en">Home Delivery</div>
                     </div>
                     <span class="welcome-choice-icon">🛵</span>
@@ -837,7 +900,7 @@
 
                 <div class="welcome-choice-btn" onclick="selectInitialOrderType('takeaway')">
                     <div class="welcome-choice-info">
-                        <div class="welcome-choice-ar">🍽️ صالة وتيك اواي</div>
+                        <div class="welcome-choice-ar" id="t_welcome_take_ar">🍽️ صالة وتيك اواي</div>
                         <div class="welcome-choice-en">Dine-in & Takeaway</div>
                     </div>
                     <span class="welcome-choice-icon">🍽️</span>
@@ -864,6 +927,7 @@
         <div class="header-top">
             <div class="header-right-actions">
                 <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="الوضع الليلي / النهاري">🌙</button>
+                <button class="lang-toggle" onclick="toggleLanguage()" id="langBtn" title="تبديل اللغة / Switch Language">EN</button>
                 <button class="admin-trigger-btn" onclick="openAdminPanel()" title="لوحة التحكم">⚙️</button>
             </div>
             
@@ -889,10 +953,10 @@
             <div class="sub-actions-row">
                 <button class="chat-sub-btn" id="clientHeaderChatBtn" onclick="openClientHeaderChat()" title="متابعة شات الأوردر">
                     <span>💬</span>
-                    <span>شات الطلب</span>
+                    <span id="t_chat_btn_text">شات الطلب</span>
                 </button>
                 <button class="loyalty-sub-btn" onclick="openLoyaltyModal()" title="محفظة نقاط المكافآت">
-                    <span>🎁 الهدايا</span>
+                    <span id="t_loyalty_btn_text">🎁 الهدايا</span>
                     <span class="pts" id="headerPointsBadge">0</span>
                 </button>
             </div>
@@ -906,17 +970,17 @@
     <div class="loyalty-modal" id="loyaltyModal" onclick="if(event.target===this) closeLoyaltyModal()">
         <div class="loyalty-box">
             <div class="loyalty-header">
-                <h3>🎁 محفظة مكافآت ستوريا</h3>
+                <h3 id="t_loyalty_title">🎁 محفظة مكافآت ستوريا</h3>
                 <button class="admin-close" onclick="closeLoyaltyModal()">✕</button>
             </div>
 
             <div class="loyalty-simple-card">
-                <div class="loyalty-card-lbl">رصيد نقاطك الحالي (1 ج.م = 1 نقطة)</div>
+                <div class="loyalty-card-lbl" id="t_loyalty_bal_lbl">رصيد نقاطك الحالي (1 ج.م = 1 نقطة)</div>
                 <div class="loyalty-card-num" id="modalUserPoints">0</div>
                 <div class="loyalty-card-phone" id="modalUserPhoneDisplay">أدخل رقم هاتفك في السلة لتجميع النقاط</div>
             </div>
 
-            <div style="font-size: 0.85rem; font-weight: 800; margin-bottom: 8px; color: var(--main-text);">استبدل نقاطك بهدايا مجانية فوراً:</div>
+            <div style="font-size: 0.85rem; font-weight: 800; margin-bottom: 8px; color: var(--main-text);" id="t_loyalty_redeem_lbl">استبدل نقاطك بهدايا مجانية فوراً:</div>
             <div id="simpleRewardsList"></div>
         </div>
     </div>
@@ -924,7 +988,7 @@
     <div class="simple-addons-modal" id="simpleAddonsModal" onclick="if(event.target===this) closeSimpleAddonsModal()">
         <div class="simple-addons-content">
             <div class="simple-addons-header">
-                <h3>تخصيص وإضافات الصنف</h3>
+                <h3 id="t_addons_title">تخصيص وإضافات الصنف</h3>
                 <button class="simple-addons-close" onclick="closeSimpleAddonsModal()">✕</button>
             </div>
             
@@ -933,15 +997,15 @@
                 <span class="simple-item-price" id="modalItemBasePrice">0.00 ج.م</span>
             </div>
 
-            <div style="font-size: 0.82rem; font-weight: 800; color: var(--desc-text); margin-bottom: 10px;">اختر الإضافات المطلوبة:</div>
+            <div style="font-size: 0.82rem; font-weight: 800; color: var(--desc-text); margin-bottom: 10px;" id="t_addons_sub">اختر الإضافات المطلوبة:</div>
             <div class="simple-addons-list" id="modalAddonsList"></div>
 
             <div class="simple-addons-footer">
                 <div class="simple-total-text">
-                    <span>الإجمالي الكلي:</span>
+                    <span id="t_addons_total_lbl">الإجمالي الكلي:</span>
                     <span id="modalTotalPrice">0.00 ج.م</span>
                 </div>
-                <button class="simple-confirm-btn" onclick="confirmSimpleAddonsOrder()">➕ إضافة بالـ Extras</button>
+                <button class="simple-confirm-btn" id="t_addons_confirm_btn" onclick="confirmSimpleAddonsOrder()">➕ إضافة بالـ Extras</button>
             </div>
         </div>
     </div>
@@ -953,7 +1017,7 @@
             <div class="success-icon-wrapper">
                 <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
             </div>
-            <h2 class="success-title">تم استلام طلبك بنجاح!</h2>
+            <h2 class="success-title" id="t_success_title">تم استلام طلبك بنجاح!</h2>
             
             <div class="points-earned-celebration-pill" id="successPointsPill">
                 <span>🌟 +0 نقطة جديدة في رصيدك!</span>
@@ -961,7 +1025,7 @@
 
             <p class="success-sub" id="successOrderText">جاري تجهيز طلبك، يمكنك التحدث مباشرة مع إدارة المطعم من الزر بالأسفل.</p>
             <button class="success-chat-btn" id="clientOpenChatBtn" onclick="openClientChatFromSuccess()">💬 شات وتواصل مع المطعم</button>
-            <button class="success-close-btn" onclick="closeSuccessModal()">إغلاق ومتابعة</button>
+            <button class="success-close-btn" id="t_success_close_btn" onclick="closeSuccessModal()">إغلاق ومتابعة</button>
         </div>
     </div>
 
@@ -980,7 +1044,7 @@
             <div class="chat-messages-area" id="chatMessagesArea"></div>
             <div class="chat-input-bar">
                 <input type="text" id="chatInputField" placeholder="اكتب رسالتك هنا..." onkeydown="if(event.key==='Enter') sendChatMessage()">
-                <button class="chat-send-btn" onclick="sendChatMessage()">إرسال</button>
+                <button class="chat-send-btn" id="t_chat_send_btn" onclick="sendChatMessage()">إرسال</button>
             </div>
         </div>
     </div>
@@ -1134,7 +1198,7 @@
 
     <footer class="restaurant-footer">
         <div class="branches-container" id="footerBranchesContainer"></div>
-        <p class="footer-rights">جميع الحقوق محفوظة لـ Storia Coffee and Restaurant 2026 ©</p>
+        <p class="footer-rights" id="t_footer_rights">جميع الحقوق محفوظة لـ Storia Coffee and Restaurant 2026 ©</p>
         <div class="dev-credit">
             Designed & Developed with Passion
             <a href="tel:01014144144">📞 info@storia-eg.com</a>
@@ -1143,21 +1207,28 @@
 
     <div class="modal" id="cartModal" onclick="if(event.target==this) toggleCart(false)">
         <div class="modal-content">
-            <h2 style="margin-bottom: 20px;">طلباتك</h2>
+            <h2 style="margin-bottom: 20px;" id="t_cart_title">طلباتك</h2>
             <div id="cartItemsList"></div>
             
-            <div class="cart-points-preview">
-                <span>🎁 النقاط المكتسبة من هذا الطلب:</span>
-                <span id="potentialPointsEarned" style="color: var(--accent); font-size: 0.95rem;">+0 نقطة</span>
+            <!-- الكارت المحسن البارز لاحتساب النقاط بالسلة -->
+            <div class="cart-points-card-pro">
+                <div class="cart-points-left">
+                    <div class="cart-points-icon-badge">🎁</div>
+                    <div class="cart-points-text-group">
+                        <span class="cart-points-main-label" id="t_cart_pts_main">نقاط ستوريا المكتسبة</span>
+                        <span class="cart-points-sub-label" id="t_cart_pts_sub">تضاف لرصيدك فور تأكيد الطلب</span>
+                    </div>
+                </div>
+                <div class="cart-points-val-pill" id="potentialPointsEarned">+0 نقطة</div>
             </div>
 
             <div style="margin: 10px 0 15px 0; padding: 15px; background: rgba(27, 77, 62, 0.08); border-radius: 18px; display: flex; flex-direction: column; gap: 6px;">
                 <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
-                    <span>مجموع الأصناف:</span>
+                    <span id="t_cart_subtotal_lbl">مجموع الأصناف:</span>
                     <span id="itemsSubtotalAmount">0 ج.م</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; border-top: 1px solid var(--border-color); padding-top: 6px;">
-                    <b>الإجمالي الكلي</b>
+                    <b id="t_cart_total_lbl">الإجمالي الكلي</b>
                     <b id="totalAmount">0 ج.م</b>
                 </div>
             </div>
@@ -1167,7 +1238,7 @@
                 <input type="tel" id="uPhone" placeholder="رقم الموبايل (لتجميع النقاط)" oninput="handlePhoneInput(this.value)">
                 <input type="text" id="uAddr" placeholder="العنوان بالتفصيل أو رقم الترابيزة">
             </div>
-            <button class="submit-btn" onclick="sendToWA()">تأكيد الطلب وتجميع النقاط 🛒</button>
+            <button class="submit-btn" id="t_cart_submit_btn" onclick="sendToWA()">تأكيد الطلب وتجميع النقاط 🛒</button>
         </div>
     </div>
 
@@ -1198,68 +1269,69 @@
         const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTsz0Q8FatsNvh7u2MGFmJpXDuXjC6HD23Vt1VlEnS2EX-dElZco3evuNUXKZSe3-rLmOabuU1NTiyO/pub?output=csv";
 
         const soupAddons = [
-            { name: "دجاج", price: 64.95 }, { name: "مشروم", price: 29.95 }, { name: "ذرة", price: 29.95 },
-            { name: "خضروات", price: 39.95 }, { name: "سمك", price: 74.95 }, { name: "جبنة موزاريلا", price: 29.95 },
-            { name: "عيش كريتون", price: 29.95 }
+            { name: "دجاج", nameEn: "Chicken", price: 64.95 }, { name: "مشروم", nameEn: "Mushroom", price: 29.95 }, { name: "ذرة", nameEn: "Corn", price: 29.95 },
+            { name: "خضروات", nameEn: "Vegetables", price: 39.95 }, { name: "سمك", nameEn: "Fish", price: 74.95 }, { name: "جبنة موزاريلا", nameEn: "Mozzarella Cheese", price: 29.95 },
+            { name: "عيش كريتون", nameEn: "Croutons", price: 29.95 }
         ];
         const appetizerAddons = [
-            { name: "فرنش", price: 0.00 }, { name: "صويا", price: 0.00 }, { name: "هاني ماستر", price: 0.00 },
-            { name: "ترتار", price: 0.00 }, { name: "باربكيو", price: 0.00 }, { name: "كوكتيل", price: 0.00 }
+            { name: "فرنش", nameEn: "French Sauce", price: 0.00 }, { name: "صويا", nameEn: "Soya Sauce", price: 0.00 }, { name: "هاني ماستر", nameEn: "Honey Mustard", price: 0.00 },
+            { name: "ترتار", nameEn: "Tartar Sauce", price: 0.00 }, { name: "باربكيو", nameEn: "BBQ Sauce", price: 0.00 }, { name: "كوكتيل", nameEn: "Cocktail Sauce", price: 0.00 }
         ];
         const saladAddons = [
-            { name: "مشروم", price: 29.95 }, { name: "ذرة", price: 29.95 }, { name: "سمك", price: 74.95 },
-            { name: "خضروات", price: 39.95 }, { name: "جبنة موزاريلا", price: 44.95 }, { name: "جبنة", price: 44.95 },
-            { name: "لحوم", price: 119.95 }, { name: "عيش كريتون", price: 29.95 }, { name: "خبز التورتيلا المقلى", price: 29.95 },
-            { name: "دجاج", price: 64.95 }, { name: "زيتون", price: 19.95 }
+            { name: "مشروم", nameEn: "Mushroom", price: 29.95 }, { name: "ذرة", nameEn: "Corn", price: 29.95 }, { name: "سمك", nameEn: "Fish", price: 74.95 },
+            { name: "خضروات", nameEn: "Vegetables", price: 39.95 }, { name: "جبنة موزاريلا", nameEn: "Mozzarella Cheese", price: 44.95 }, { name: "جبنة", nameEn: "Cheese", price: 44.95 },
+            { name: "لحوم", nameEn: "Meat", price: 119.95 }, { name: "عيش كريتون", nameEn: "Croutons", price: 29.95 }, { name: "خبز التورتيلا المقلى", nameEn: "Fried Tortilla Bread", price: 29.95 },
+            { name: "دجاج", nameEn: "Chicken", price: 64.95 }, { name: "زيتون", nameEn: "Olives", price: 19.95 }
         ];
         const sandwichAddons = [
-            { name: "بيض", price: 29.95 }, { name: "دجاج", price: 64.95 }, { name: "مشروم", price: 29.95 },
-            { name: "زيتون", price: 19.95 }, { name: "تركى مدخن", price: 48.95 }, { name: "beef مدخن", price: 48.95 },
-            { name: "خضروات", price: 39.95 }, { name: "جبنة موزاريلا", price: 44.95 }
+            { name: "بيض", nameEn: "Egg", price: 29.95 }, { name: "دجاج", nameEn: "Chicken", price: 64.95 }, { name: "مشروم", nameEn: "Mushroom", price: 29.95 },
+            { name: "زيتون", nameEn: "Olives", price: 19.95 }, { name: "تركى مدخن", nameEn: "Smoked Turkey", price: 48.95 }, { name: "beef مدخن", nameEn: "Smoked Beef", price: 48.95 },
+            { name: "خضروات", nameEn: "Vegetables", price: 39.95 }, { name: "جبنة موزاريلا", nameEn: "Mozzarella Cheese", price: 44.95 }
         ];
         const pastaAddons = [
-            { name: "صوص ريحان", price: 24.95 }, { name: "زيتون", price: 19.95 }, { name: "ذرة", price: 29.95 },
-            { name: "مشروم", price: 29.95 }, { name: "تركى مدخن", price: 48.95 }, { name: "لحوم", price: 119.95 },
-            { name: "beef مدخن", price: 48.95 }, { name: "خضروات", price: 39.95 }, { name: "جبنة موزاريلا", price: 44.95 },
-            { name: "سى فود", price: 119.95 }, { name: "دجاج", price: 64.95 }
+            { name: "صوص ريحان", nameEn: "Pesto Sauce", price: 24.95 }, { name: "زيتون", nameEn: "Olives", price: 19.95 }, { name: "ذرة", nameEn: "Corn", price: 29.95 },
+            { name: "مشروم", nameEn: "Mushroom", price: 29.95 }, { name: "تركى مدخن", nameEn: "Smoked Turkey", price: 48.95 }, { name: "لحوم", nameEn: "Meat", price: 119.95 },
+            { name: "beef مدخن", nameEn: "Smoked Beef", price: 48.95 }, { name: "خضروات", nameEn: "Vegetables", price: 39.95 }, { name: "جبنة موزاريلا", nameEn: "Mozzarella Cheese", price: 44.95 },
+            { name: "سى فود", nameEn: "Seafood", price: 119.95 }, { name: "دجاج", nameEn: "Chicken", price: 64.95 }
         ];
         const fakharaAddons = [
-            { name: "مشروم", price: 24.95 }, { name: "ذرة", price: 24.95 }, { name: "زيتون", price: 14.95 },
-            { name: "دجاج", price: 54.95 }, { name: "جبنة موزاريلا", price: 34.95 }, { name: "خضروات", price: 29.95 },
-            { name: "لحوم", price: 115.95 }, { name: "تركى مدخن", price: 39.95 }, { name: "beef مدخن", price: 39.95 }
+            { name: "مشروم", nameEn: "Mushroom", price: 24.95 }, { name: "ذرة", nameEn: "Corn", price: 24.95 }, { name: "زيتون", nameEn: "Olives", price: 14.95 },
+            { name: "دجاج", nameEn: "Chicken", price: 54.95 }, { name: "جبنة موزاريلا", nameEn: "Mozzarella Cheese", price: 34.95 }, { name: "خضروات", nameEn: "Vegetables", price: 29.95 },
+            { name: "لحوم", nameEn: "Meat", price: 115.95 }, { name: "تركى مدخن", nameEn: "Smoked Turkey", price: 39.95 }, { name: "beef مدخن", nameEn: "Smoked Beef", price: 39.95 }
         ];
         const fattehAddons = [
-            { name: "مشروم", price: 29.95 }, { name: "ذرة", price: 29.95 }, { name: "دجاج", price: 64.95 }, { name: "لحوم", price: 119.95 }
+            { name: "مشروم", nameEn: "Mushroom", price: 29.95 }, { name: "ذرة", nameEn: "Corn", price: 29.95 }, { name: "دجاج", nameEn: "Chicken", price: 64.95 }, { name: "لحوم", nameEn: "Meat", price: 119.95 }
         ];
         const mainDishesAddons = [
-            { name: "زيتون", price: 19.95 }, { name: "مشروم", price: 29.95 }, { name: "ذرة", price: 29.95 },
-            { name: "نصف برسيون مكرونة", price: 39.95 }, { name: "خضروات", price: 39.95 }, { name: "جبنة موزاريلا", price: 44.95 },
-            { name: "لحوم", price: 119.95 }, { name: "تركى مدخن", price: 48.95 }, { name: "beef مدخن", price: 48.95 },
-            { name: "سلامى مدخن", price: 48.95 }, { name: "دجاج", price: 64.95 }, { name: "سى فود", price: 119.95 }, { name: "خبز", price: 29.95 }
+            { name: "زيتون", nameEn: "Olives", price: 19.95 }, { name: "مشروم", nameEn: "Mushroom", price: 29.95 }, { name: "ذرة", nameEn: "Corn", price: 29.95 },
+            { name: "نصف برسيون مكرونة", nameEn: "Half Portion Pasta", price: 39.95 }, { name: "خضروات", nameEn: "Vegetables", price: 39.95 }, { name: "جبنة موزاريلا", nameEn: "Mozzarella Cheese", price: 44.95 },
+            { name: "لحوم", nameEn: "Meat", price: 119.95 }, { name: "تركى مدخن", nameEn: "Smoked Turkey", price: 48.95 }, { name: "beef مدخن", nameEn: "Smoked Beef", price: 48.95 },
+            { name: "سلامى مدخن", nameEn: "Smoked Salami", price: 48.95 }, { name: "دجاج", nameEn: "Chicken", price: 64.95 }, { name: "سى فود", nameEn: "Seafood", price: 119.95 }, { name: "خبز", nameEn: "Bread", price: 29.95 }
         ];
         const pizzaAddons = [
-            { name: "ذرة", price: 29.95 }, { name: "زيتون", price: 19.95 }, { name: "مشروم", price: 29.95 },
-            { name: "لحوم", price: 119.95 }, { name: "تركى مدخن", price: 48.95 }, { name: "beef مدخن", price: 48.95 },
-            { name: "سلامى مدخن", price: 48.95 }, { name: "دجاج", price: 64.95 }, { name: "سى فود", price: 119.95 },
-            { name: "خضروات", price: 44.95 }, { name: "جبنة موزاريلا", price: 44.95 }
+            { name: "ذرة", nameEn: "Corn", price: 29.95 }, { name: "زيتون", nameEn: "Olives", price: 19.95 }, { name: "مشروم", nameEn: "Mushroom", price: 29.95 },
+            { name: "لحوم", nameEn: "Meat", price: 119.95 }, { name: "تركى مدخن", nameEn: "Smoked Turkey", price: 48.95 }, { name: "beef مدخن", nameEn: "Smoked Beef", price: 48.95 },
+            { name: "سلامى مدخن", nameEn: "Smoked Salami", price: 48.95 }, { name: "دجاج", nameEn: "Chicken", price: 64.95 }, { name: "سى فود", nameEn: "Seafood", price: 119.95 },
+            { name: "خضروات", nameEn: "Vegetables", price: 44.95 }, { name: "جبنة موزاريلا", nameEn: "Mozzarella Cheese", price: 44.95 }
         ];
         const dessertAddons = [
-            { name: "فانيلا", price: 29.95 }, { name: "كريمة مخفوقة", price: 34.95 }, { name: "سيرب", price: 29.95 },
-            { name: "مكسرات", price: 44.95 }, { name: "فواكه", price: 49.95 }, { name: "عسل", price: 24.95 },
-            { name: "قطع الاوريو", price: 29.95 }, { name: "كراميل", price: 29.95 }, { name: "شيكولاته", price: 29.95 },
-            { name: "ايس كريم", price: 29.95 }, { name: "حليب", price: 29.95 }, { name: "بندق", price: 29.95 }
+            { name: "فانيلا", nameEn: "Vanilla", price: 29.95 }, { name: "كريمة مخفوقة", nameEn: "Whipped Cream", price: 34.95 }, { name: "سيرب", nameEn: "Syrup", price: 29.95 },
+            { name: "مكسرات", nameEn: "Nuts", price: 44.95 }, { name: "فواكه", nameEn: "Fruits", price: 49.95 }, { name: "عسل", nameEn: "Honey", price: 24.95 },
+            { name: "قطع الاوريو", nameEn: "Oreo Crumbles", price: 29.95 }, { name: "كراميل", nameEn: "Caramel", price: 29.95 }, { name: "شيكولاته", nameEn: "Chocolate", price: 29.95 },
+            { name: "ايس كريم", nameEn: "Ice Cream", price: 29.95 }, { name: "حليب", nameEn: "Milk", price: 29.95 }, { name: "بندق", nameEn: "Hazelnut", price: 29.95 }
         ];
         const hotDrinksAddons = dessertAddons;
         const milkshakeYogurtAddons = dessertAddons;
 
         const loyaltyRewards = [
-            { id: 'rew_1', title: 'قهوة اسبريسو / تركي ☕', cost: 100 },
-            { id: 'rew_2', title: 'مشروب موهيتو منعش 🍹', cost: 200 },
-            { id: 'rew_3', title: 'قطعة حلى / مولتن كيك 🍰', cost: 350 },
-            { id: 'rew_4', title: 'بيتزا وسط من اختيارك 🍕', cost: 500 },
-            { id: 'rew_5', title: 'وجبة رئيسية أو مكس جريل 🥩', cost: 800 }
+            { id: 'rew_1', title: 'قهوة اسبريسو / تركي ☕', titleEn: 'Espresso / Turkish Coffee ☕', cost: 100 },
+            { id: 'rew_2', title: 'مشروب موهيتو منعش 🍹', titleEn: 'Refreshing Mojito Drink 🍹', cost: 200 },
+            { id: 'rew_3', title: 'قطعة حلى / مولتن كيك 🍰', titleEn: 'Molten Cake / Dessert 🍰', cost: 350 },
+            { id: 'rew_4', title: 'بيتزا وسط من اختيارك 🍕', titleEn: 'Medium Pizza of Choice 🍕', cost: 500 },
+            { id: 'rew_5', title: 'وجبة رئيسية أو مكس جريل 🥩', titleEn: 'Main Dish / Mix Grill 🥩', cost: 800 }
         ];
 
+        let currentLang = localStorage.getItem('storia_lang') || 'ar'; // 'ar' or 'en'
         let menuData = [];
         let cart = [];
         let currentTotal = 0; 
@@ -1282,6 +1354,168 @@
             displayPhone2: '01014144144',
             complaintPhone: '01014144144'
         };
+
+        const translations = {
+            ar: {
+                langBtn: 'EN',
+                welcomeTitle: 'مرحباً بك في ستوريا | Welcome',
+                welcomeSub: 'من فضلك اختر طريقة استلام طلبك للمتابعة:',
+                delAr: '🛵 توصيل دليفري',
+                takeAr: '🍽️ صالة وتيك اواي',
+                delMode: 'دليفري | Delivery',
+                takeMode: 'صالة وتيك اواي | Dine-in',
+                chatBtnText: 'شات الطلب',
+                loyaltyBtnText: '🎁 الهدايا',
+                loyaltyTitle: '🎁 محفظة مكافآت ستوريا',
+                loyaltyBalLbl: 'رصيد نقاطك الحالي (1 ج.م = 1 نقطة)',
+                loyaltyRedeemLbl: 'استبدل نقاطك بهدايا مجانية فوراً:',
+                addonsTitle: 'تخصيص وإضافات الصنف',
+                addonsSub: 'اختر الإضافات المطلوبة:',
+                addonsTotalLbl: 'الإجمالي الكلي:',
+                addonsConfirmBtn: '➕ إضافة بالـ Extras',
+                addonsBtnLabel: '✨ الإضافات',
+                orderNowBtn: 'اطلب الان 🛒',
+                unavailableBtn: 'غير متوفر 🛑',
+                addedBtn: 'تم الإضافة ✓',
+                cartTitle: 'طلباتك',
+                cartPtsMain: 'نقاط ستوريا المكتسبة',
+                cartPtsSub: 'تضاف لرصيدك فور تأكيد الطلب',
+                ptsUnit: 'نقطة',
+                cartSubtotal: 'مجموع الأصناف:',
+                cartTotal: 'الإجمالي الكلي',
+                namePlaceholder: 'الاسم بالكامل',
+                phonePlaceholder: 'رقم الموبايل (لتجميع النقاط)',
+                addrPlaceholderDel: 'العنوان بالتفصيل',
+                addrPlaceholderTake: 'رقم الترابيزة أو ملاحظات الاستلام',
+                cartSubmitBtn: 'تأكيد الطلب وتجميع النقاط 🛒',
+                cartEmptyText: 'سلة الطلبات فارغة حالياً',
+                removeText: 'حذف ✕',
+                currency: 'ج.م',
+                free: 'مجاناً 🎁',
+                successTitle: 'تم استلام طلبك بنجاح!',
+                successCloseBtn: 'إغلاق ومتابعة',
+                chatSendBtn: 'إرسال',
+                chatPlaceholder: 'اكتب رسالتك هنا...'
+            },
+            en: {
+                langBtn: 'AR',
+                welcomeTitle: 'Welcome to Storia | مرحباً بك',
+                welcomeSub: 'Please choose your order fulfillment type:',
+                delAr: '🛵 Home Delivery',
+                takeAr: '🍽️ Dine-in & Takeaway',
+                delMode: 'Delivery | دليفري',
+                takeMode: 'Dine-in | صالة وتيك اواي',
+                chatBtnText: 'Order Chat',
+                loyaltyBtnText: '🎁 Rewards',
+                loyaltyTitle: '🎁 Storia Rewards Wallet',
+                loyaltyBalLbl: 'Current Points Balance (1 EGP = 1 Pt)',
+                loyaltyRedeemLbl: 'Redeem points for free items instantly:',
+                addonsTitle: 'Item Customization & Extras',
+                addonsSub: 'Choose your desired add-ons:',
+                addonsTotalLbl: 'Total Price:',
+                addonsConfirmBtn: '➕ Add with Extras',
+                addonsBtnLabel: '✨ Extras',
+                orderNowBtn: 'Order Now 🛒',
+                unavailableBtn: 'Unavailable 🛑',
+                addedBtn: 'Added ✓',
+                cartTitle: 'Your Order',
+                cartPtsMain: 'Earned Storia Points',
+                cartPtsSub: 'Added to your wallet upon checkout',
+                ptsUnit: 'Points',
+                cartSubtotal: 'Items Subtotal:',
+                cartTotal: 'Total Amount',
+                namePlaceholder: 'Full Name',
+                phonePlaceholder: 'Mobile Number (for rewards points)',
+                addrPlaceholderDel: 'Detailed Delivery Address',
+                addrPlaceholderTake: 'Table Number or Pickup Notes',
+                cartSubmitBtn: 'Confirm Order & Earn Points 🛒',
+                cartEmptyText: 'Your cart is currently empty',
+                removeText: 'Remove ✕',
+                currency: 'EGP',
+                free: 'Free 🎁',
+                successTitle: 'Order Received Successfully!',
+                successCloseBtn: 'Close & Continue',
+                chatSendBtn: 'Send',
+                chatPlaceholder: 'Type your message here...'
+            }
+        };
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            localStorage.setItem('storia_lang', currentLang);
+            applyLanguageSettings();
+            renderCategories();
+            renderMenu();
+            renderCartItems();
+            renderLoyaltyRewardsUI();
+        }
+
+        function applyLanguageSettings() {
+            const t = translations[currentLang];
+            document.documentElement.lang = currentLang;
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+
+            const langBtn = document.getElementById('langBtn');
+            if (langBtn) langBtn.innerText = t.langBtn;
+
+            const tWelcomeTitle = document.getElementById('t_welcome_title');
+            if (tWelcomeTitle) tWelcomeTitle.innerText = t.welcomeTitle;
+            const tWelcomeSub = document.getElementById('t_welcome_sub');
+            if (tWelcomeSub) tWelcomeSub.innerText = t.welcomeSub;
+
+            const tChatBtnText = document.getElementById('t_chat_btn_text');
+            if (tChatBtnText) tChatBtnText.innerText = t.chatBtnText;
+            const tLoyaltyBtnText = document.getElementById('t_loyalty_btn_text');
+            if (tLoyaltyBtnText) tLoyaltyBtnText.innerText = t.loyaltyBtnText;
+
+            const tLoyaltyTitle = document.getElementById('t_loyalty_title');
+            if (tLoyaltyTitle) tLoyaltyTitle.innerText = t.loyaltyTitle;
+            const tLoyaltyBalLbl = document.getElementById('t_loyalty_bal_lbl');
+            if (tLoyaltyBalLbl) tLoyaltyBalLbl.innerText = t.loyaltyBalLbl;
+            const tLoyaltyRedeemLbl = document.getElementById('t_loyalty_redeem_lbl');
+            if (tLoyaltyRedeemLbl) tLoyaltyRedeemLbl.innerText = t.loyaltyRedeemLbl;
+
+            const tAddonsTitle = document.getElementById('t_addons_title');
+            if (tAddonsTitle) tAddonsTitle.innerText = t.addonsTitle;
+            const tAddonsSub = document.getElementById('t_addons_sub');
+            if (tAddonsSub) tAddonsSub.innerText = t.addonsSub;
+            const tAddonsTotalLbl = document.getElementById('t_addons_total_lbl');
+            if (tAddonsTotalLbl) tAddonsTotalLbl.innerText = t.addonsTotalLbl;
+            const tAddonsConfirmBtn = document.getElementById('t_addons_confirm_btn');
+            if (tAddonsConfirmBtn) tAddonsConfirmBtn.innerText = t.addonsConfirmBtn;
+
+            const tCartTitle = document.getElementById('t_cart_title');
+            if (tCartTitle) tCartTitle.innerText = t.cartTitle;
+            const tCartPtsMain = document.getElementById('t_cart_pts_main');
+            if (tCartPtsMain) tCartPtsMain.innerText = t.cartPtsMain;
+            const tCartPtsSub = document.getElementById('t_cart_pts_sub');
+            if (tCartPtsSub) tCartPtsSub.innerText = t.cartPtsSub;
+
+            const tCartSubtotalLbl = document.getElementById('t_cart_subtotal_lbl');
+            if (tCartSubtotalLbl) tCartSubtotalLbl.innerText = t.cartSubtotal;
+            const tCartTotalLbl = document.getElementById('t_cart_total_lbl');
+            if (tCartTotalLbl) tCartTotalLbl.innerText = t.cartTotal;
+
+            const uName = document.getElementById('uName');
+            if (uName) uName.placeholder = t.namePlaceholder;
+            const uPhone = document.getElementById('uPhone');
+            if (uPhone) uPhone.placeholder = t.phonePlaceholder;
+
+            const tCartSubmitBtn = document.getElementById('t_cart_submit_btn');
+            if (tCartSubmitBtn) tCartSubmitBtn.innerText = t.cartSubmitBtn;
+
+            const tSuccessTitle = document.getElementById('t_success_title');
+            if (tSuccessTitle) tSuccessTitle.innerText = t.successTitle;
+            const tSuccessCloseBtn = document.getElementById('t_success_close_btn');
+            if (tSuccessCloseBtn) tSuccessCloseBtn.innerText = t.successCloseBtn;
+
+            const tChatSendBtn = document.getElementById('t_chat_send_btn');
+            if (tChatSendBtn) tChatSendBtn.innerText = t.chatSendBtn;
+            const chatInputField = document.getElementById('chatInputField');
+            if (chatInputField) chatInputField.placeholder = t.chatPlaceholder;
+
+            setInitialOrderTypeUI(selectedOrderType);
+        }
 
         function toggleTheme() {
             document.body.classList.toggle('dark-mode');
@@ -1307,7 +1541,6 @@
                     clearInterval(timer);
                     if (splashScreen) {
                         splashScreen.classList.add('splash-hidden');
-                        // إظهار نافذة الاختيار في كل مرة يتم فتح الأبلكيشن فيها
                         showWelcomeModal();
                     }
                 }
@@ -1328,28 +1561,29 @@
             const icon = document.getElementById('currentOrderModeIcon');
             const label = document.getElementById('currentOrderModeLabel');
             const addrInput = document.getElementById('uAddr');
+            const t = translations[currentLang];
 
             if (type === 'delivery') {
                 if (icon) icon.innerText = '🛵';
-                if (label) label.innerText = 'دليفري | Delivery';
-                if (addrInput) addrInput.placeholder = 'العنوان بالتفصيل';
+                if (label) label.innerText = t.delMode;
+                if (addrInput) addrInput.placeholder = t.addrPlaceholderDel;
             } else {
                 if (icon) icon.innerText = '🍽️';
-                if (label) label.innerText = 'صالة وتيك اواي | Dine-in';
-                if (addrInput) addrInput.placeholder = 'رقم الترابيزة أو ملاحظات الاستلام';
+                if (label) label.innerText = t.takeMode;
+                if (addrInput) addrInput.placeholder = t.addrPlaceholderTake;
             }
         }
 
-        // دوال تكبير الصورة (Lightbox)
         function openImageLightbox(imgSrc, itemName, itemPrice) {
             const modal = document.getElementById('imageLightboxModal');
             const imgEl = document.getElementById('lightboxImg');
             const titleEl = document.getElementById('lightboxTitle');
             const priceEl = document.getElementById('lightboxPrice');
+            const t = translations[currentLang];
 
             if (imgEl) imgEl.src = imgSrc;
             if (titleEl) titleEl.innerText = itemName;
-            if (priceEl) priceEl.innerText = itemPrice.toFixed(2) + ' ج.م';
+            if (priceEl) priceEl.innerText = itemPrice.toFixed(2) + ' ' + t.currency;
 
             if (modal) modal.style.display = 'flex';
         }
@@ -1360,6 +1594,7 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
+            applyLanguageSettings();
             startCreativeCounter();
             fetchMenuFromGoogleSheet();
             renderLoyaltyRewardsUI();
@@ -1385,7 +1620,7 @@
             localStorage.setItem('storia_user_phone', phone);
             
             const displayEl = document.getElementById('modalUserPhoneDisplay');
-            if (displayEl) displayEl.innerText = `حساب العميل: ${phone}`;
+            if (displayEl) displayEl.innerText = currentLang === 'ar' ? `حساب العميل: ${phone}` : `Customer Phone: ${phone}`;
 
             if (window.db && window.firebaseModules) {
                 try {
@@ -1411,18 +1646,22 @@
             const listEl = document.getElementById('simpleRewardsList');
             if (!listEl) return;
             listEl.innerHTML = '';
+            const t = translations[currentLang];
 
             loyaltyRewards.forEach(r => {
                 const canRedeem = userLoyaltyPoints >= r.cost;
                 const row = document.createElement('div');
                 row.className = 'reward-item-row';
+                const rewardTitle = currentLang === 'ar' ? r.title : (r.titleEn || r.title);
+                const redeemBtnText = canRedeem ? (currentLang === 'ar' ? 'استبدال 🎁' : 'Redeem 🎁') : (currentLang === 'ar' ? 'غير كافٍ' : 'Not enough');
+
                 row.innerHTML = `
                     <div class="reward-item-info">
-                        <div class="reward-item-name">${r.title}</div>
-                        <div class="reward-item-cost">✨ ${r.cost} نقطة</div>
+                        <div class="reward-item-name">${rewardTitle}</div>
+                        <div class="reward-item-cost">✨ ${r.cost} ${t.ptsUnit}</div>
                     </div>
                     <button class="reward-redeem-btn" ${!canRedeem ? 'disabled' : ''} onclick="redeemRewardItem('${r.id}')">
-                        ${canRedeem ? 'استبدال 🎁' : 'غير كافٍ'}
+                        ${redeemBtnText}
                     </button>
                 `;
                 listEl.appendChild(row);
@@ -1432,8 +1671,9 @@
         async function redeemRewardItem(rewardId) {
             const r = loyaltyRewards.find(x => x.id === rewardId);
             if (!r || userLoyaltyPoints < r.cost) return;
+            const rewardTitle = currentLang === 'ar' ? r.title : (r.titleEn || r.title);
 
-            if (confirm(`استبدال ${r.cost} نقطة والحصول على (${r.title}) مجاناً؟`)) {
+            if (confirm(currentLang === 'ar' ? `استبدال ${r.cost} نقطة والحصول على (${rewardTitle}) مجاناً؟` : `Redeem ${r.cost} points for (${rewardTitle}) for free?`)) {
                 const newBalance = userLoyaltyPoints - r.cost;
                 updatePointsBadge(newBalance);
 
@@ -1447,7 +1687,7 @@
                 cart.push({
                     cartId: 'c_gift_' + Date.now(),
                     id: r.id,
-                    name: `🎁 [هدية مكافأة]: ${r.title}`,
+                    name: currentLang === 'ar' ? `🎁 [هدية مكافأة]: ${rewardTitle}` : `🎁 [Gift Reward]: ${rewardTitle}`,
                     price: 0.00,
                     img: 'images/logooo.png',
                     addons: []
@@ -1493,10 +1733,9 @@
 
         async function fetchMenuFromGoogleSheet() {
             try {
-                // منع التخزين المؤقت لجلب أي تحديث فوري
                 const freshUrl = GOOGLE_SHEET_CSV_URL + (GOOGLE_SHEET_CSV_URL.includes('?') ? '&' : '?') + '_t=' + Date.now() + '&nocache=' + Math.random();
                 const response = await fetch(freshUrl);
-                if (!response.ok) throw new Error("فشل في تحميل شيت جوجل");
+                if (!response.ok) throw new Error("Failed to fetch google sheet");
                 
                 const csvText = await response.text();
                 const lines = csvText.split(/\r?\n/).filter(line => line.trim() !== "");
@@ -1522,14 +1761,10 @@
                     if (!price) price = '0';
 
                     const desc = (descIdx >= 0 && row[descIdx]) ? row[descIdx] : '';
-                    
-                    // رقم الصف الفعلي في شيت جوجل (الصف 2 هو الصنف الأول، الصف 3 هو الصنف الثاني...)
                     const sheetRowNumber = i + 1;
 
-                    // المسار الأساسي يعتمد أولاً على رقم صف الشيت مباشرة
                     let img = `images/${sheetRowNumber}.jpg`;
 
-                    // إذا كان الشيت مكتوب فيه رابط مخصص أو اسم مخصص
                     if (imgIdx >= 0 && row[imgIdx] && row[imgIdx].trim() !== '') {
                         let customImg = row[imgIdx].trim().replace(/^\[|\]$/g, '');
                         if (customImg.startsWith('http') || customImg.startsWith('images/')) {
@@ -1540,18 +1775,18 @@
                     }
 
                     let addons = null;
-                    if (category.includes("شورب")) addons = soupAddons;
-                    else if (category.includes("مقبل")) addons = appetizerAddons;
-                    else if (category.includes("سلط")) addons = saladAddons;
-                    else if (category.includes("سندوتش")) addons = sandwichAddons;
-                    else if (category.includes("مكرون") || category.includes("باستا")) addons = pastaAddons;
-                    else if (category.includes("فخار")) addons = fakharaAddons;
-                    else if (category.includes("فته") || category.includes("فتة")) addons = fattehAddons;
-                    else if (category.includes("رئيس")) addons = mainDishesAddons;
-                    else if (category.includes("بيتزا")) addons = pizzaAddons;
-                    else if (category.includes("حلو")) addons = dessertAddons;
-                    else if (category.includes("ساخن")) addons = hotDrinksAddons;
-                    else if (category.includes("ميلك") || category.includes("زبادي")) addons = milkshakeYogurtAddons;
+                    if (category.includes("شورب") || category.toLowerCase().includes("soup")) addons = soupAddons;
+                    else if (category.includes("مقبل") || category.toLowerCase().includes("appetizer")) addons = appetizerAddons;
+                    else if (category.includes("سلط") || category.toLowerCase().includes("salad")) addons = saladAddons;
+                    else if (category.includes("سندوتش") || category.toLowerCase().includes("sandwich")) addons = sandwichAddons;
+                    else if (category.includes("مكرون") || category.includes("باستا") || category.toLowerCase().includes("pasta")) addons = pastaAddons;
+                    else if (category.includes("فخار") || category.toLowerCase().includes("fakhara")) addons = fakharaAddons;
+                    else if (category.includes("فته") || category.includes("فتة") || category.toLowerCase().includes("fatteh")) addons = fattehAddons;
+                    else if (category.includes("رئيس") || category.toLowerCase().includes("main")) addons = mainDishesAddons;
+                    else if (category.includes("بيتزا") || category.toLowerCase().includes("pizza")) addons = pizzaAddons;
+                    else if (category.includes("حلو") || category.toLowerCase().includes("dessert")) addons = dessertAddons;
+                    else if (category.includes("ساخن") || category.toLowerCase().includes("hot")) addons = hotDrinksAddons;
+                    else if (category.includes("ميلك") || category.includes("زبادي") || category.toLowerCase().includes("shake")) addons = milkshakeYogurtAddons;
 
                     let catObj = parsedMenu.find(c => c.category === category);
                     if (!catObj) {
@@ -1576,7 +1811,7 @@
                     renderMenu();
                 }
             } catch (err) {
-                console.error("خطأ المنيو:", err);
+                console.error("Error loading menu:", err);
             }
         }
 
@@ -1615,6 +1850,7 @@
             const menuList = document.getElementById('menuList');
             if (!menuList) return;
             menuList.innerHTML = '';
+            const t = translations[currentLang];
 
             const activeCatData = currentActiveCategory 
                 ? menuData.find(c => c.category === currentActiveCategory) 
@@ -1627,11 +1863,10 @@
                 const card = document.createElement('div');
                 card.className = 'food-card' + (isEnabled ? '' : ' disabled-item');
                 const hasAddons = item.addons && item.addons.length > 0;
-
                 const cleanUnderscore = item.name.replace(/\s+/g, '_');
 
                 card.innerHTML = `
-                    <div class="item-img-box" onclick="openImageLightbox(this.querySelector('img').src, '${item.name.replace(/'/g, "\\'")}', ${item.price})" title="اضغط لتكبير الصورة">
+                    <div class="item-img-box" onclick="openImageLightbox(this.querySelector('img').src, '${item.name.replace(/'/g, "\\'")}', ${item.price})" title="${currentLang==='ar'?'اضغط لتكبير الصورة':'Click to view photo'}">
                         <img src="${item.img}" loading="lazy" alt="${item.name}" 
                              onerror="if(!this.dataset.step){this.dataset.step='1'; this.src='images/' + encodeURIComponent('${item.name}') + '.jpg';} 
                                       else if(this.dataset.step==='1'){this.dataset.step='2'; this.src='images/' + encodeURIComponent('${cleanUnderscore}') + '.jpg';} 
@@ -1641,14 +1876,14 @@
                         <div>
                             <div class="food-header">
                                 <div class="food-name">${item.name}</div>
-                                <div class="food-price">${item.price.toFixed(2)} ج.م</div>
+                                <div class="food-price">${item.price.toFixed(2)} ${t.currency}</div>
                             </div>
                             ${item.desc ? `<div class="food-desc">${item.desc}</div>` : ''}
                         </div>
                         <div class="card-actions-box">
-                            ${hasAddons ? `<button class="mini-addons-btn" onclick="openSimpleAddonsModal('${item.id}', '${activeCatData.category}')">✨ الإضافات</button>` : ''}
+                            ${hasAddons ? `<button class="mini-addons-btn" onclick="openSimpleAddonsModal('${item.id}', '${activeCatData.category}')">${t.addonsBtnLabel}</button>` : ''}
                             <button class="order-btn" id="btn_${item.id}" ${!isEnabled ? 'disabled' : ''} onclick="addToCartDirect('${item.id}', '${activeCatData.category}')">
-                                ${isEnabled ? 'اطلب الان 🛒' : 'غير متوفر 🛑'}
+                                ${isEnabled ? t.orderNowBtn : t.unavailableBtn}
                             </button>
                         </div>
                     </div>
@@ -1662,6 +1897,7 @@
             if (!catData) return;
             const item = catData.items.find(i => i.id === itemId);
             if (!item) return;
+            const t = translations[currentLang];
 
             const cartItem = {
                 cartId: 'c_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
@@ -1679,7 +1915,7 @@
             const btn = document.getElementById('btn_' + itemId);
             if (btn) {
                 const origText = btn.innerHTML;
-                btn.innerHTML = 'تم الإضافة ✓';
+                btn.innerHTML = t.addedBtn;
                 btn.classList.add('added');
                 setTimeout(() => {
                     btn.innerHTML = origText;
@@ -1693,12 +1929,13 @@
             if (!catData) return;
             const item = catData.items.find(i => i.id === itemId);
             if (!item) return;
+            const t = translations[currentLang];
 
             currentActiveItem = item;
             selectedAddonsMap = [];
 
             document.getElementById('modalItemName').innerText = item.name;
-            document.getElementById('modalItemBasePrice').innerText = item.price.toFixed(2) + ' ج.م';
+            document.getElementById('modalItemBasePrice').innerText = item.price.toFixed(2) + ' ' + t.currency;
 
             const addonsListEl = document.getElementById('modalAddonsList');
             addonsListEl.innerHTML = '';
@@ -1708,12 +1945,13 @@
                     const row = document.createElement('div');
                     row.className = 'simple-addon-item';
                     row.onclick = () => toggleAddonSelection(idx, ad, row);
+                    const adName = currentLang === 'ar' ? ad.name : (ad.nameEn || ad.name);
                     row.innerHTML = `
                         <div class="simple-addon-left">
                             <div class="custom-check-circ">✓</div>
-                            <span>${ad.name}</span>
+                            <span>${adName}</span>
                         </div>
-                        <div class="simple-addon-price">${ad.price > 0 ? '+' + ad.price.toFixed(2) + ' ج.م' : 'مجاناً'}</div>
+                        <div class="simple-addon-price">${ad.price > 0 ? '+' + ad.price.toFixed(2) + ' ' + t.currency : t.free}</div>
                     `;
                     addonsListEl.appendChild(row);
                 });
@@ -1739,7 +1977,8 @@
             if (!currentActiveItem) return;
             let total = currentActiveItem.price;
             selectedAddonsMap.forEach(ad => { total += ad.price; });
-            document.getElementById('modalTotalPrice').innerText = total.toFixed(2) + ' ج.م';
+            const t = translations[currentLang];
+            document.getElementById('modalTotalPrice').innerText = total.toFixed(2) + ' ' + t.currency;
         }
 
         function closeSimpleAddonsModal() {
@@ -1797,12 +2036,13 @@
             if (!listEl) return;
             listEl.innerHTML = '';
             currentTotal = 0;
+            const t = translations[currentLang];
 
             if (cart.length === 0) {
-                listEl.innerHTML = '<div style="text-align: center; color: var(--desc-text); padding: 20px 0; font-weight: 700;">سلة الطلبات فارغة حالياً</div>';
-                document.getElementById('itemsSubtotalAmount').innerText = '0 ج.م';
-                document.getElementById('totalAmount').innerText = '0 ج.م';
-                document.getElementById('potentialPointsEarned').innerText = '+0 نقطة';
+                listEl.innerHTML = `<div style="text-align: center; color: var(--desc-text); padding: 20px 0; font-weight: 700;">${t.cartEmptyText}</div>`;
+                document.getElementById('itemsSubtotalAmount').innerText = '0 ' + t.currency;
+                document.getElementById('totalAmount').innerText = '0 ' + t.currency;
+                document.getElementById('potentialPointsEarned').innerText = '+0 ' + t.ptsUnit;
                 return;
             }
 
@@ -1810,23 +2050,23 @@
                 currentTotal += item.price;
                 const itemEl = document.createElement('div');
                 itemEl.className = 'cart-item-card';
-                const addonsText = item.addons && item.addons.length > 0 ? item.addons.map(a => a.name).join('، ') : '';
+                const addonsText = item.addons && item.addons.length > 0 ? item.addons.map(a => currentLang==='ar'?a.name:(a.nameEn||a.name)).join('، ') : '';
 
                 itemEl.innerHTML = `
                     <img src="${item.img}" class="cart-item-img" alt="${item.name}" onerror="this.src='images/logooo.png'">
                     <div class="cart-item-info">
                         <div class="cart-item-name">${item.name}</div>
-                        ${addonsText ? `<div class="cart-item-addons-text">+ إضافات: ${addonsText}</div>` : ''}
-                        <span class="cart-item-price">${item.price > 0 ? item.price.toFixed(2) + ' ج.م' : 'مجاناً 🎁'}</span>
+                        ${addonsText ? `<div class="cart-item-addons-text">+ ${currentLang==='ar'?'إضافات:':'Extras:'} ${addonsText}</div>` : ''}
+                        <span class="cart-item-price">${item.price > 0 ? item.price.toFixed(2) + ' ' + t.currency : t.free}</span>
                     </div>
-                    <div class="remove-btn" onclick="removeFromCart(${idx})">حذف ✕</div>
+                    <div class="remove-btn" onclick="removeFromCart(${idx})">${t.removeText}</div>
                 `;
                 listEl.appendChild(itemEl);
             });
 
-            document.getElementById('itemsSubtotalAmount').innerText = currentTotal.toFixed(2) + ' ج.م';
-            document.getElementById('totalAmount').innerText = currentTotal.toFixed(2) + ' ج.م';
-            document.getElementById('potentialPointsEarned').innerText = `+${Math.floor(currentTotal)} نقطة`;
+            document.getElementById('itemsSubtotalAmount').innerText = currentTotal.toFixed(2) + ' ' + t.currency;
+            document.getElementById('totalAmount').innerText = currentTotal.toFixed(2) + ' ' + t.currency;
+            document.getElementById('potentialPointsEarned').innerText = `+${Math.floor(currentTotal)} ${t.ptsUnit}`;
         }
 
         function removeFromCart(idx) {
@@ -1839,39 +2079,40 @@
             const name = document.getElementById('uName').value.trim();
             const phone = document.getElementById('uPhone').value.trim();
             const addr = document.getElementById('uAddr').value.trim();
+            const t = translations[currentLang];
 
             if (!name || !phone) {
-                alert('يرجى كتابة الاسم ورقم الموبايل لإكمال الطلب وحفظ نقاطك');
+                alert(currentLang === 'ar' ? 'يرجى كتابة الاسم ورقم الموبايل لإكمال الطلب وحفظ نقاطك' : 'Please enter your full name and phone number to complete the order');
                 return;
             }
             if (cart.length === 0) return;
 
             const earnedPts = Math.floor(currentTotal);
-            const modeText = selectedOrderType === 'delivery' ? 'دليفري توصيل 🛵' : 'صالة / تيك اواي 🍽️';
+            const modeText = selectedOrderType === 'delivery' ? (currentLang==='ar'?'دليفري توصيل 🛵':'Home Delivery 🛵') : (currentLang==='ar'?'صالة / تيك اواي 🍽️':'Dine-in / Takeaway 🍽️');
 
             let orderText = `*طلب جديد من Storia Cafe & Restaurant*\n`;
             orderText += `------------------------------------\n`;
-            orderText += `*الاسم:* ${name}\n`;
-            orderText += `*الموبايل:* ${phone}\n`;
-            orderText += `*نوع الطلب:* ${modeText}\n`;
-            if (addr) orderText += `*العنوان / التفاصيل:* ${addr}\n`;
+            orderText += `*${currentLang==='ar'?'الاسم:':'Name:'}* ${name}\n`;
+            orderText += `*${currentLang==='ar'?'الموبايل:':'Phone:'}* ${phone}\n`;
+            orderText += `*${currentLang==='ar'?'نوع الطلب:':'Order Type:'}* ${modeText}\n`;
+            if (addr) orderText += `*${currentLang==='ar'?'العنوان / التفاصيل:':'Address / Notes:'}* ${addr}\n`;
             orderText += `------------------------------------\n`;
-            orderText += `*تفاصيل الطلبات:*\n`;
+            orderText += `*${currentLang==='ar'?'تفاصيل الطلبات:':'Order Details:'}*\n`;
 
             const itemsArrayForLog = [];
             cart.forEach((item, i) => {
                 let line = `${i + 1}. ${item.name}`;
                 if (item.addons && item.addons.length > 0) {
-                    line += ` (+ إضافات: ${item.addons.map(a => a.name).join('، ')})`;
+                    line += ` (+ ${currentLang==='ar'?'إضافات:':'Extras:'} ${item.addons.map(a => currentLang==='ar'?a.name:(a.nameEn||a.name)).join('، ')})`;
                 }
-                line += ` - ${item.price > 0 ? item.price.toFixed(2) + ' ج.م' : 'مجاناً 🎁'}`;
+                line += ` - ${item.price > 0 ? item.price.toFixed(2) + ' ' + t.currency : t.free}`;
                 orderText += `${line}\n`;
                 itemsArrayForLog.push(line);
             });
 
             orderText += `------------------------------------\n`;
-            orderText += `*الإجمالي الكلي:* ${currentTotal.toFixed(2)} ج.م\n`;
-            orderText += `*🎁 النقاط المكتسبة:* +${earnedPts} نقطة\n`;
+            orderText += `*${currentLang==='ar'?'الإجمالي الكلي:':'Total Amount:'}* ${currentTotal.toFixed(2)} ${t.currency}\n`;
+            orderText += `*🎁 ${currentLang==='ar'?'النقاط المكتسبة:':'Earned Points:'}* +${earnedPts} ${t.ptsUnit}\n`;
 
             try {
                 if (window.db && window.firebaseModules) {
@@ -1900,7 +2141,7 @@
                     updatePointsBadge(currentPts);
                 }
             } catch(e) {
-                console.error("خطأ حفظ:", e);
+                console.error("Error saving order:", e);
             }
 
             toggleCart(false);
@@ -1908,7 +2149,7 @@
             const waPhone = restaurantInfo.orderPhone || '201014144144';
             window.open(`https://wa.me/${waPhone}?text=${encodeURIComponent(orderText)}`, '_blank');
 
-            document.getElementById('successPointsPill').innerHTML = `<span>🌟 +${earnedPts} نقطة جديدة أضيفت لرصيدك!</span>`;
+            document.getElementById('successPointsPill').innerHTML = `<span>🌟 +${earnedPts} ${currentLang==='ar'?'نقطة جديدة أضيفت لرصيدك!':'new points added to your balance!'}</span>`;
             document.getElementById('successModal').style.display = 'flex';
             triggerEmojiCelebration();
 
@@ -1926,7 +2167,7 @@
             const activeOrderId = localStorage.getItem('storia_active_order_id');
             const activeUserName = localStorage.getItem('storia_active_user_name') || 'العميل';
             if (activeOrderId) openChatModal(activeOrderId, 'client', activeUserName);
-            else alert('لا يوجد طلب نشط حالياً للمتابعة');
+            else alert(currentLang === 'ar' ? 'لا يوجد طلب نشط حالياً للمتابعة' : 'No active order found to track');
         }
 
         function openClientChatFromSuccess() {
@@ -1935,7 +2176,7 @@
         }
 
         function dismissClientActiveOrder() {
-            if (confirm('هل أنت متأكد من إنهاء المتابعة؟')) {
+            if (confirm(currentLang === 'ar' ? 'هل أنت متأكد من إنهاء المتابعة؟' : 'Are you sure you want to end order tracking?')) {
                 localStorage.removeItem('storia_active_order_id');
                 const btn = document.getElementById('clientHeaderChatBtn');
                 if (btn) btn.style.display = 'none';
@@ -1950,8 +2191,8 @@
             const modal = document.getElementById('chatModal');
             const finishBtn = document.getElementById('finishOrderBtn');
             
-            document.getElementById('chatTitle').innerText = `شات الطلب #${orderId.substr(0, 5)}`;
-            document.getElementById('chatSub').innerText = userType === 'admin' ? `العميل: ${clientName}` : 'محادثة مباشرة مع المطعم';
+            document.getElementById('chatTitle').innerText = `${currentLang==='ar'?'شات الطلب':'Order Chat'} #${orderId.substr(0, 5)}`;
+            document.getElementById('chatSub').innerText = userType === 'admin' ? `${currentLang==='ar'?'العميل:':'Customer:'} ${clientName}` : (currentLang==='ar'?'محادثة مباشرة مع المطعم':'Live Chat with Restaurant');
 
             if (finishBtn) finishBtn.style.display = userType === 'client' ? 'block' : 'none';
 
@@ -1980,13 +2221,13 @@
                     msgs.forEach(m => {
                         const bub = document.createElement('div');
                         bub.className = 'chat-bubble ' + (m.sender === 'admin' ? 'admin' : 'client');
-                        const timeStr = m.timestamp ? new Date(m.timestamp).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }) : '';
+                        const timeStr = m.timestamp ? new Date(m.timestamp).toLocaleTimeString(currentLang==='ar'?'ar-EG':'en-US', { hour: '2-digit', minute: '2-digit' }) : '';
                         bub.innerHTML = `<div>${m.text}</div><span class="chat-bubble-time">${timeStr}</span>`;
                         area.appendChild(bub);
                     });
                     area.scrollTop = area.scrollHeight;
                 } else {
-                    area.innerHTML = '<div style="text-align:center; font-size:0.8rem; color:var(--desc-text); margin-top:20px;">ابدأ المحادثة الآن...</div>';
+                    area.innerHTML = `<div style="text-align:center; font-size:0.8rem; color:var(--desc-text); margin-top:20px;">${currentLang==='ar'?'ابدأ المحادثة الآن...':'Start conversation...'}</div>`;
                 }
             });
         }
