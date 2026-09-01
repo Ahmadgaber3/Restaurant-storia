@@ -215,7 +215,7 @@
         }
         .header-logo { width: 100%; height: 100%; border-radius: 10px; object-fit: contain; }
 
-        /* شريط الوظائف السريع (نقاط المكافآت + الشات + نوع الطلب) تحت الهيدر */
+        /* شريط الوظائف والمكافآت والشات المنظم تحت الهيدر */
         .sub-header-bar {
             width: 100%;
             padding: 6px 14px 8px 14px;
@@ -755,6 +755,18 @@
         .pass-form input { width: 100%; padding: 14px; border-radius: 14px; border: 1px solid var(--border-color); background: var(--bg); color: var(--main-text); margin-bottom: 12px; font-size: 0.95rem; text-align: center; }
         .pass-form button { width: 100%; padding: 14px; border-radius: 14px; border: none; background: var(--accent); color: white; font-weight: 800; cursor: pointer; }
 
+        .order-card-custom { background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 18px; padding: 14px; margin-bottom: 16px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06); }
+        .order-custom-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .order-user-name-box { font-size: 0.98rem; font-weight: 900; color: #0f172a; display: flex; align-items: center; gap: 6px; }
+        .order-delete-btn-circ { width: 26px; height: 26px; background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 900; cursor: pointer; }
+        .order-contact-sub { font-size: 0.80rem; color: #64748b; font-weight: 700; margin-bottom: 10px; }
+        .order-items-box-custom { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 12px; margin-bottom: 12px; }
+        .order-items-list-custom { list-style: none; padding: 0; margin: 0; }
+        .order-items-list-custom li { font-size: 0.80rem; font-weight: 800; color: #334155; line-height: 1.6; }
+        .order-custom-footer { display: flex; justify-content: space-between; align-items: center; }
+        .order-total-price-custom { font-size: 0.95rem; font-weight: 900; color: #dc2626; }
+        .order-chat-btn-custom { background: var(--accent); color: #ffffff; border: none; border-radius: 10px; padding: 7px 14px; font-weight: 800; font-size: 0.82rem; cursor: pointer; }
+
         /* Chat Live Modal */
         .chat-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 6000; display: none; justify-content: center; align-items: center; padding: 14px; }
         .chat-box-card { background: var(--white); width: 100%; max-width: 440px; height: 80vh; border-radius: 24px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5); animation: smoothFadeIn 0.25s ease-out; border: 1px solid var(--border-color); }
@@ -1102,7 +1114,7 @@
         </div>
     </footer>
 
-    <!-- سلة الطلبات (تم حذف خيار دليفري وتيك اواي من هنا) -->
+    <!-- سلة الطلبات -->
     <div class="modal" id="cartModal" onclick="if(event.target==this) toggleCart(false)">
         <div class="modal-content">
             <h2 style="margin-bottom: 20px;">طلباتك</h2>
@@ -1158,7 +1170,8 @@
     </script>
 
     <script>
-        const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTnQY_CtB_RYZQmR6AMh1YtKXngxkouZc8annSVpPaoSh1-ZjmXpHSGWbXL9p791ARv4xunlF7akopY/pub?output=csv";
+        // الرابط الجديد لشيت جوجل الخاص بك
+        const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTsz0Q8FatsNvh7u2MGFmJpXDuXjC6HD23Vt1VlEnS2EX-dElZco3evuNUXKZSe3-rLmOabuU1NTiyO/pub?output=csv";
 
         // قوائم الإضافات الكاملة
         const soupAddons = [
@@ -1465,7 +1478,7 @@
                 const nameIdx = headers.findIndex(h => h.includes('صنف') || h.includes('اسم') || h.includes('item') || h.includes('name'));
                 const priceIdx = headers.findIndex(h => h.includes('سعر') || h.includes('price'));
                 const descIdx = headers.findIndex(h => h.includes('مكون') || h.includes('وصف') || h.includes('desc'));
-                const imgIdx = headers.findIndex(h => h.includes('صورة') || h.includes('img'));
+                const imgIdx = headers.findIndex(h => h.includes('صورة') || h.includes('img') || h.includes('image'));
 
                 const parsedMenu = [];
 
