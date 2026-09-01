@@ -1219,68 +1219,82 @@
     <script>
         const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTsz0Q8FatsNvh7u2MGFmJpXDuXjC6HD23Vt1VlEnS2EX-dElZco3evuNUXKZSe3-rLmOabuU1NTiyO/pub?output=csv";
 
-        const itemTranslations = {
-            "Creamy Potato Soup": "شوربة بطاطس بالكريمة",
-            "شوربة بطاطس بالكريمة": "Creamy Potato Soup",
-            "Vegetables Soup": "شوربة خضار",
-            "شوربة خضار": "Vegetables Soup",
-            "Lesan Asfour Soup": "شوربة لسان عصفور",
-            "شوربة لسان عصفور": "Lesan Asfour Soup",
-            "Minestrone Soup With Chicken": "شوربة مينستروني بالدجاج",
-            "شوربة مينستروني بالدجاج": "Minestrone Soup With Chicken",
-            "Chicken Cream Soup": "شوربة كريمة بالدجاج",
-            "شوربة كريمة بالدجاج": "Chicken Cream Soup",
-            "Mushroom Cream Soup": "شوربة كريمة بالمشروم",
-            "شوربة كريمة بالمشروم": "Mushroom Cream Soup",
-            "Onion Soup": "شوربة بصل فرنسية",
-            "شوربة بصل": "French Onion Soup",
-            "Sea Food Cream Soup": "شوربة سي فود بالكريمة",
-            "شوربة سي فود": "Seafood Cream Soup"
+        // قاموس ترجمة الأسماء
+        const itemNamesDictionary = {
+            "Creamy Potato Soup": { ar: "شوربة بطاطس بالكريمة", en: "Creamy Potato Soup" },
+            "شوربة بطاطس بالكريمة": { ar: "شوربة بطاطس بالكريمة", en: "Creamy Potato Soup" },
+            "Vegetables Soup": { ar: "شوربة خضار مشكل", en: "Vegetables Soup" },
+            "شوربة خضار": { ar: "شوربة خضار مشكل", en: "Vegetables Soup" },
+            "Lesan Asfour Soup": { ar: "شوربة لسان عصفور", en: "Lesan Asfour Soup" },
+            "شوربة لسان عصفور": { ar: "شوربة لسان عصفور", en: "Lesan Asfour Soup" },
+            "Minestrone Soup With Chicken": { ar: "شوربة مينستروني بالدجاج", en: "Minestrone Soup With Chicken" },
+            "شوربة مينستروني بالدجاج": { ar: "شوربة مينستروني بالدجاج", en: "Minestrone Soup With Chicken" },
+            "Chicken Cream Soup": { ar: "شوربة كريمة بالدجاج", en: "Chicken Cream Soup" },
+            "شوربة كريمة بالدجاج": { ar: "شوربة كريمة بالدجاج", en: "Chicken Cream Soup" },
+            "Mushroom Cream Soup": { ar: "شوربة كريمة بالمشروم", en: "Mushroom Cream Soup" },
+            "شوربة كريمة بالمشروم": { ar: "شوربة كريمة بالمشروم", en: "Mushroom Cream Soup" },
+            "Onion Soup": { ar: "شوربة بصل فرنسية", en: "French Onion Soup" },
+            "شوربة بصل": { ar: "شوربة بصل فرنسية", en: "French Onion Soup" },
+            "شوربة بصل فرنسية": { ar: "شوربة بصل فرنسية", en: "French Onion Soup" },
+            "Sea Food Cream Soup": { ar: "شوربة سي فود بالكريمة", en: "Seafood Cream Soup" },
+            "شوربة سي فود بالكريمة": { ar: "شوربة سي فود بالكريمة", en: "Seafood Cream Soup" },
+            "Storia Soup": { ar: "شوربة ستوريا المميزة", en: "Storia Special Soup" },
+            "شوربة ستوريا": { ar: "شوربة ستوريا المميزة", en: "Storia Special Soup" },
+            "Broccoli Soup": { ar: "شوربة بروكلي بالكريمة", en: "Creamy Broccoli Soup" },
+            "شوربة بروكلي": { ar: "شوربة بروكلي بالكريمة", en: "Creamy Broccoli Soup" }
         };
 
-        const categoryTranslations = {
-            "الشوربة": "Soups",
-            "شوربة": "Soups",
-            "Soups": "الشوربة",
-            "المقبلات": "Appetizers",
-            "مقبلات": "Appetizers",
-            "Appetizers": "المقبلات",
-            "السلطات": "Salads",
-            "سلطات": "Salads",
-            "Salads": "السلطات",
-            "السندوتشات": "Sandwiches",
-            "سندوتشات": "Sandwiches",
-            "Sandwiches": "السندوتشات",
-            "المكرونة": "Pasta",
-            "مكرونة": "Pasta",
-            "باستا": "Pasta",
-            "Pasta": "المكرونة",
-            "الفخارات": "Fakhara",
-            "فخارات": "Fakhara",
-            "Fakhara": "الفخارات",
-            "الفتة": "Fatteh",
-            "فتة": "Fatteh",
-            "Fatteh": "الفتة",
-            "الأطباق الرئيسية": "Main Dishes",
-            "اطباق رئيسية": "Main Dishes",
-            "رئيسي": "Main Dishes",
-            "Main Dishes": "الأطباق الرئيسية",
-            "البيتزا": "Pizza",
-            "بيتزا": "Pizza",
-            "Pizza": "البيتزا",
-            "الحلويات": "Desserts",
-            "حلويات": "Desserts",
-            "حلو": "Desserts",
-            "Desserts": "الحلويات",
-            "المشروبات الساخنة": "Hot Drinks",
-            "مشروبات ساخنة": "Hot Drinks",
-            "ساخن": "Hot Drinks",
-            "Hot Drinks": "المشروبات الساخنة",
-            "المشروبات الباردة": "Cold Drinks & Shakes",
-            "ميلك شيك وزبادي": "Milkshakes & Yogurt",
-            "Cold Drinks": "المشروبات الباردة",
-            "أصناف متنوعة": "Various Items"
+        // قاموس ترجمة الوصف
+        const itemDescDictionary = {
+            "Delicious onion soup served with toasted bread and mozzarella": {
+                ar: "شوربة بصل فرنسية شهية تقدم مع التوست المحمص والموزاريلا الذائبة",
+                en: "Delicious onion soup served with toasted bread and melted mozzarella"
+            },
+            "Lentil soup blended with fine natural herbs and special": {
+                ar: "شوربة عدس مميزة متبلة بأعشاب طبيعية ونكهة ستوريا الخاصة",
+                en: "Lentil soup blended with fine natural herbs and special spices"
+            },
+            "Delicious cream soup with fresh shrimp and calamari with chef's": {
+                ar: "شوربة كريمة غنية مع الجمبري الطازج والكاليماري بخلطة الشيف",
+                en: "Delicious cream soup with fresh shrimp and calamari with chef's special touch"
+            },
+            "Fresh broccoli soup with rich cream": {
+                ar: "شوربة بروكلي طازجة محضرة مع الكريمة الغنية اللذيذة",
+                en: "Fresh broccoli soup with rich delicious cream"
+            },
+            "Fresh mixed vegetables soup with mushrooms": {
+                ar: "شوربة خضروات طازجة مشكلة مع قطع المشروم",
+                en: "Fresh mixed vegetables soup with mushrooms"
+            },
+            "Orzo (Lesan Asfour) soup with fresh chicken pieces": {
+                ar: "شوربة لسان عصفور تقليدية مع قطع الدجاج الطازجة",
+                en: "Orzo (Lesan Asfour) soup with fresh chicken pieces"
+            },
+            "Rich and smooth creamy potato soup": {
+                ar: "شوربة بطاطس كريمية ناعمة وغنية بالنكهات اللذيذة",
+                en: "Rich and smooth creamy potato soup"
+            }
         };
+
+        // استخراج اسم القسم النظيف
+        function parseCleanCategory(rawCat) {
+            if (!rawCat) return { ar: "أصناف متنوعة", en: "Various Items" };
+            let cat = rawCat.trim();
+            if (cat.includes("شورب") || cat.toLowerCase().includes("soup")) return { ar: "الشوربة", en: "Soups" };
+            if (cat.includes("مقبل") || cat.toLowerCase().includes("appetizer")) return { ar: "المقبلات", en: "Appetizers" };
+            if (cat.includes("سلط") || cat.toLowerCase().includes("salad")) return { ar: "السلطات", en: "Salads" };
+            if (cat.includes("سندوتش") || cat.toLowerCase().includes("sandwich")) return { ar: "السندوتشات", en: "Sandwiches" };
+            if (cat.includes("مكرون") || cat.includes("باستا") || cat.toLowerCase().includes("pasta")) return { ar: "المكرونة", en: "Pasta" };
+            if (cat.includes("فخار") || cat.toLowerCase().includes("fakhara")) return { ar: "الفخارات", en: "Fakhara" };
+            if (cat.includes("فت") || cat.toLowerCase().includes("fatteh")) return { ar: "الفتة", en: "Fatteh" };
+            if (cat.includes("رئيس") || cat.toLowerCase().includes("main")) return { ar: "الأطباق الرئيسية", en: "Main Dishes" };
+            if (cat.includes("بيتزا") || cat.toLowerCase().includes("pizza")) return { ar: "البيتزا", en: "Pizza" };
+            if (cat.includes("حلو") || cat.toLowerCase().includes("dessert")) return { ar: "الحلويات", en: "Desserts" };
+            if (cat.includes("ساخن") || cat.toLowerCase().includes("hot")) return { ar: "المشروبات الساخنة", en: "Hot Drinks" };
+            if (cat.includes("بارد") || cat.includes("ميلك") || cat.includes("زبادي") || cat.toLowerCase().includes("shake")) return { ar: "المشروبات والسموزي", en: "Drinks & Shakes" };
+            
+            return { ar: cat.replace(/[a-zA-Z\(\)]/g, '').trim() || cat, en: cat.replace(/[\u0600-\u06FF\(\)]/g, '').trim() || cat };
+        }
 
         const soupAddons = [
             { name: "دجاج", nameEn: "Chicken", price: 64.95 }, { name: "مشروم", nameEn: "Mushroom", price: 29.95 }, { name: "ذرة", nameEn: "Corn", price: 29.95 },
@@ -1351,7 +1365,7 @@
         let currentTotal = 0; 
         let selectedOrderType = 'delivery';
         let itemStatusMap = {}; 
-        let currentActiveCategory = null;
+        let currentActiveCategoryKey = null;
 
         let currentActiveChatOrderId = null;
         let currentChatUserType = 'admin'; 
@@ -1455,21 +1469,19 @@
         function getLocalizedItemName(rawName) {
             if (!rawName) return '';
             const trimmed = rawName.trim();
-            if (currentLang === 'ar') {
-                return itemTranslations[trimmed] && !/[\u0600-\u06FF]/.test(trimmed) ? itemTranslations[trimmed] : trimmed;
-            } else {
-                return itemTranslations[trimmed] && /[\u0600-\u06FF]/.test(trimmed) ? itemTranslations[trimmed] : trimmed;
+            if (itemNamesDictionary[trimmed]) {
+                return itemNamesDictionary[trimmed][currentLang];
             }
+            return trimmed;
         }
 
-        function getTranslatedCategory(catName) {
-            if (!catName) return '';
-            const trimmed = catName.trim();
-            if (currentLang === 'ar') {
-                return categoryTranslations[trimmed] && !/[\u0600-\u06FF]/.test(trimmed) ? categoryTranslations[trimmed] : trimmed;
-            } else {
-                return categoryTranslations[trimmed] && /[\u0600-\u06FF]/.test(trimmed) ? categoryTranslations[trimmed] : (categoryTranslations[trimmed] || trimmed);
+        function getLocalizedItemDesc(rawDesc) {
+            if (!rawDesc) return '';
+            const trimmed = rawDesc.trim();
+            if (itemDescDictionary[trimmed]) {
+                return itemDescDictionary[trimmed][currentLang];
             }
+            return trimmed;
         }
 
         function toggleLanguage() {
@@ -1777,7 +1789,8 @@
 
                 for (let i = 1; i < lines.length; i++) {
                     const row = parseCSVLine(lines[i]);
-                    const category = row[catIdx >= 0 ? catIdx : 0] || 'أصناف متنوعة';
+                    const rawCat = row[catIdx >= 0 ? catIdx : 0] || 'أصناف متنوعة';
+                    const catData = parseCleanCategory(rawCat);
                     const rawName = (row[nameIdx >= 0 ? nameIdx : 1] || '').trim();
                     if (!rawName) continue;
 
@@ -1799,22 +1812,22 @@
                     }
 
                     let addons = null;
-                    if (category.includes("شورب") || category.toLowerCase().includes("soup")) addons = soupAddons;
-                    else if (category.includes("مقبل") || category.toLowerCase().includes("appetizer")) addons = appetizerAddons;
-                    else if (category.includes("سلط") || category.toLowerCase().includes("salad")) addons = saladAddons;
-                    else if (category.includes("سندوتش") || category.toLowerCase().includes("sandwich")) addons = sandwichAddons;
-                    else if (category.includes("مكرون") || category.includes("باستا") || category.toLowerCase().includes("pasta")) addons = pastaAddons;
-                    else if (category.includes("فخار") || category.toLowerCase().includes("fakhara")) addons = fakharaAddons;
-                    else if (category.includes("فته") || category.includes("فتة") || category.toLowerCase().includes("fatteh")) addons = fattehAddons;
-                    else if (category.includes("رئيس") || category.toLowerCase().includes("main")) addons = mainDishesAddons;
-                    else if (category.includes("بيتزا") || category.toLowerCase().includes("pizza")) addons = pizzaAddons;
-                    else if (category.includes("حلو") || category.toLowerCase().includes("dessert")) addons = dessertAddons;
-                    else if (category.includes("ساخن") || category.toLowerCase().includes("hot")) addons = hotDrinksAddons;
-                    else if (category.includes("ميلك") || category.includes("زبادي") || category.toLowerCase().includes("shake")) addons = milkshakeYogurtAddons;
+                    if (rawCat.includes("شورب") || rawCat.toLowerCase().includes("soup")) addons = soupAddons;
+                    else if (rawCat.includes("مقبل") || rawCat.toLowerCase().includes("appetizer")) addons = appetizerAddons;
+                    else if (rawCat.includes("سلط") || rawCat.toLowerCase().includes("salad")) addons = saladAddons;
+                    else if (rawCat.includes("سندوتش") || rawCat.toLowerCase().includes("sandwich")) addons = sandwichAddons;
+                    else if (rawCat.includes("مكرون") || rawCat.includes("باستا") || rawCat.toLowerCase().includes("pasta")) addons = pastaAddons;
+                    else if (rawCat.includes("فخار") || rawCat.toLowerCase().includes("fakhara")) addons = fakharaAddons;
+                    else if (rawCat.includes("فت") || rawCat.toLowerCase().includes("fatteh")) addons = fattehAddons;
+                    else if (rawCat.includes("رئيس") || rawCat.toLowerCase().includes("main")) addons = mainDishesAddons;
+                    else if (rawCat.includes("بيتزا") || rawCat.toLowerCase().includes("pizza")) addons = pizzaAddons;
+                    else if (rawCat.includes("حلو") || rawCat.toLowerCase().includes("dessert")) addons = dessertAddons;
+                    else if (rawCat.includes("ساخن") || rawCat.toLowerCase().includes("hot")) addons = hotDrinksAddons;
+                    else if (rawCat.includes("بارد") || rawCat.includes("ميلك") || rawCat.includes("زبادي") || rawCat.toLowerCase().includes("shake")) addons = milkshakeYogurtAddons;
 
-                    let catObj = parsedMenu.find(c => c.category === category);
+                    let catObj = parsedMenu.find(c => c.categoryKey === catData.en);
                     if (!catObj) {
-                        catObj = { category: category, items: [] };
+                        catObj = { categoryKey: catData.en, categoryAr: catData.ar, categoryEn: catData.en, items: [] };
                         parsedMenu.push(catObj);
                     }
 
@@ -1852,10 +1865,10 @@
                 const imgBox = document.createElement('div');
                 imgBox.className = 'cat-img-box';
                 const firstItemImg = cat.items && cat.items[0] ? cat.items[0].img : 'images/logooo.png';
-                imgBox.innerHTML = `<img src="${firstItemImg}" alt="${cat.category}" onerror="this.src='images/logooo.png'">`;
+                imgBox.innerHTML = `<img src="${firstItemImg}" alt="${cat.categoryEn}" onerror="this.src='images/logooo.png'">`;
 
                 const label = document.createElement('span');
-                label.innerText = getTranslatedCategory(cat.category);
+                label.innerText = currentLang === 'ar' ? cat.categoryAr : cat.categoryEn;
 
                 itemEl.appendChild(imgBox);
                 itemEl.appendChild(label);
@@ -1866,7 +1879,7 @@
         function selectCategory(idx, el) {
             document.querySelectorAll('.cat-item').forEach(c => c.classList.remove('active'));
             if (el) el.classList.add('active');
-            currentActiveCategory = menuData[idx] ? menuData[idx].category : null;
+            currentActiveCategoryKey = menuData[idx] ? menuData[idx].categoryKey : null;
             renderMenu();
         }
 
@@ -1876,8 +1889,8 @@
             menuList.innerHTML = '';
             const t = translations[currentLang];
 
-            const activeCatData = currentActiveCategory 
-                ? menuData.find(c => c.category === currentActiveCategory) 
+            const activeCatData = currentActiveCategoryKey 
+                ? menuData.find(c => c.categoryKey === currentActiveCategoryKey) 
                 : menuData[0];
 
             if (!activeCatData) return;
@@ -1888,7 +1901,9 @@
                 card.className = 'food-card' + (isEnabled ? '' : ' disabled-item');
                 const hasAddons = item.addons && item.addons.length > 0;
                 const cleanUnderscore = item.name.replace(/\s+/g, '_');
+                
                 const displayName = getLocalizedItemName(item.name);
+                const displayDesc = getLocalizedItemDesc(item.desc);
 
                 card.innerHTML = `
                     <div class="item-img-box" onclick="openImageLightbox(this.querySelector('img').src, '${displayName.replace(/'/g, "\\'")}', ${item.price})" title="${currentLang==='ar'?'اضغط لتكبير الصورة':'Click to view photo'}">
@@ -1903,11 +1918,11 @@
                                 <div class="food-name">${displayName}</div>
                                 <div class="food-price">${item.price.toFixed(2)} ${t.currency}</div>
                             </div>
-                            ${item.desc ? `<div class="food-desc">${item.desc}</div>` : ''}
+                            ${displayDesc ? `<div class="food-desc">${displayDesc}</div>` : ''}
                         </div>
                         <div class="card-actions-box">
-                            ${hasAddons ? `<button class="mini-addons-btn" onclick="openSimpleAddonsModal('${item.id}', '${activeCatData.category}')">${t.addonsBtnLabel}</button>` : ''}
-                            <button class="order-btn" id="btn_${item.id}" ${!isEnabled ? 'disabled' : ''} onclick="addToCartDirect('${item.id}', '${activeCatData.category}')">
+                            ${hasAddons ? `<button class="mini-addons-btn" onclick="openSimpleAddonsModal('${item.id}', '${activeCatData.categoryKey}')">${t.addonsBtnLabel}</button>` : ''}
+                            <button class="order-btn" id="btn_${item.id}" ${!isEnabled ? 'disabled' : ''} onclick="addToCartDirect('${item.id}', '${activeCatData.categoryKey}')">
                                 ${isEnabled ? t.orderNowBtn : t.unavailableBtn}
                             </button>
                         </div>
@@ -1917,8 +1932,8 @@
             });
         }
 
-        function addToCartDirect(itemId, catName) {
-            const catData = menuData.find(c => c.category === catName);
+        function addToCartDirect(itemId, catKey) {
+            const catData = menuData.find(c => c.categoryKey === catKey);
             if (!catData) return;
             const item = catData.items.find(i => i.id === itemId);
             if (!item) return;
@@ -1929,6 +1944,7 @@
                 cartId: 'c_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
                 id: item.id,
                 name: displayName,
+                rawName: item.name,
                 price: item.price,
                 img: item.img,
                 addons: []
@@ -1950,8 +1966,8 @@
             }
         }
 
-        function openSimpleAddonsModal(itemId, catName) {
-            const catData = menuData.find(c => c.category === catName);
+        function openSimpleAddonsModal(itemId, catKey) {
+            const catData = menuData.find(c => c.categoryKey === catKey);
             if (!catData) return;
             const item = catData.items.find(i => i.id === itemId);
             if (!item) return;
@@ -2024,6 +2040,7 @@
                 cartId: 'c_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
                 id: currentActiveItem.id,
                 name: displayName,
+                rawName: currentActiveItem.name,
                 price: total,
                 basePrice: currentActiveItem.price,
                 img: currentActiveItem.img,
@@ -2079,11 +2096,12 @@
                 const itemEl = document.createElement('div');
                 itemEl.className = 'cart-item-card';
                 const addonsText = item.addons && item.addons.length > 0 ? item.addons.map(a => currentLang==='ar'?a.name:(a.nameEn||a.name)).join('، ') : '';
+                const displayName = item.rawName ? getLocalizedItemName(item.rawName) : item.name;
 
                 itemEl.innerHTML = `
-                    <img src="${item.img}" class="cart-item-img" alt="${item.name}" onerror="this.src='images/logooo.png'">
+                    <img src="${item.img}" class="cart-item-img" alt="${displayName}" onerror="this.src='images/logooo.png'">
                     <div class="cart-item-info">
-                        <div class="cart-item-name">${item.name}</div>
+                        <div class="cart-item-name">${displayName}</div>
                         ${addonsText ? `<div class="cart-item-addons-text">+ ${currentLang==='ar'?'إضافات:':'Extras:'} ${addonsText}</div>` : ''}
                         <span class="cart-item-price">${item.price > 0 ? item.price.toFixed(2) + ' ' + t.currency : t.free}</span>
                     </div>
@@ -2129,7 +2147,8 @@
 
             const itemsArrayForLog = [];
             cart.forEach((item, i) => {
-                let line = `${i + 1}. ${item.name}`;
+                const displayName = item.rawName ? getLocalizedItemName(item.rawName) : item.name;
+                let line = `${i + 1}. ${displayName}`;
                 if (item.addons && item.addons.length > 0) {
                     line += ` (+ ${currentLang==='ar'?'إضافات:':'Extras:'} ${item.addons.map(a => currentLang==='ar'?a.name:(a.nameEn||a.name)).join('، ')})`;
                 }
@@ -2321,7 +2340,7 @@
         let adminSearchedPhone = '';
         async function adminSearchClientPoints() {
             const phone = document.getElementById('adminLoyaltySearchPhone').value.trim();
-            if (!phone) return alert(currentLang === 'ar' ? 'اكتب رقم الموبايل' : 'Enter mobile number');
+            if (!phone) return alert('اكتب رقم الموبايل');
             adminSearchedPhone = phone;
 
             if (window.db && window.firebaseModules) {
