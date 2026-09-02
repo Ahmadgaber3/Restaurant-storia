@@ -157,7 +157,7 @@
         .welcome-choice-en { font-size: 0.74rem; font-weight: 700; color: var(--desc-text); }
         .welcome-choice-icon { font-size: 1.6rem; }
 
-        /* ==================== HEADER (توسيط اللوجو بدقة) ==================== */
+        /* ==================== HEADER (توسيع وتوزيع مثالي بدون تداخل) ==================== */
         header { 
             background: var(--header-bg); 
             position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 15px var(--card-shadow);
@@ -175,8 +175,7 @@
             position: relative;
         }
         
-        /* تجميع الأزرار كلها بجوار السلة */
-        .header-actions-group {
+        .header-left-actions, .header-right-actions {
             display: flex;
             align-items: center;
             gap: 8px;
@@ -214,14 +213,14 @@
         .badge { position: absolute; top: -5px; right: -5px; background: #ef4444; color: #fff; font-size: 10px; font-weight: 800; width: 19px; height: 19px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--white); transform: scale(0); transition: 0.2s ease; }
         .badge.show { transform: scale(1); }
 
-        /* توسيط اللوجو المباشر في منتصف الهيدر */
+        /* سنترة اللوجو الحقيقية بدون تداخل */
         .header-logo-container { 
             position: absolute;
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
-            width: 120px; 
-            height: 60px; 
+            width: 115px; 
+            height: 56px; 
             border-radius: 16px; 
             background: var(--white); 
             padding: 4px 8px; 
@@ -291,7 +290,7 @@
         }
         .chat-sub-btn-mini:active { transform: scale(0.9); }
 
-        /* ==================== شريط الأقسام الجديد كبسولات أنيقة (Modern Pills Tab) ==================== */
+        /* ==================== شريط الأقسام المودرن ==================== */
         .category-nav { 
             display: flex; 
             overflow-x: auto; 
@@ -346,7 +345,6 @@
             transition: color 0.2s ease;
         }
 
-        /* الشكل عند التفعيل */
         .cat-item.active { 
             background: var(--accent); 
             border-color: var(--accent); 
@@ -467,42 +465,21 @@
         .card-actions-box {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: flex-end;
             gap: 6px;
             width: 100%;
             margin-top: auto;
-            flex-wrap: nowrap;
         }
 
-        .mini-addons-btn {
-            flex: 1;
-            background: var(--bg);
-            color: var(--accent);
-            border: 1.5px solid var(--accent);
-            padding: 5px 4px;
-            border-radius: 9px;
-            font-size: 0.74rem;
-            font-weight: 800;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            white-space: nowrap;
-            text-align: center;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 0;
-            flex-shrink: 0;
-        }
-        .mini-addons-btn:active { background: var(--accent); color: white; }
-
-        .order-btn { 
-            flex: 1.4;
+        /* زر واحد موحد وبسيط للأوردر / اختيار الحجم */
+        .order-btn-unified { 
+            width: 100%;
             background: var(--accent); 
             color: #ffffff; 
             border: 1.5px solid var(--accent); 
-            padding: 5px 6px; 
-            border-radius: 9px; 
-            font-size: 0.78rem; 
+            padding: 7px 12px; 
+            border-radius: 12px; 
+            font-size: 0.82rem; 
             font-weight: 800; 
             cursor: pointer; 
             box-shadow: 0 2px 6px rgba(27, 77, 62, 0.25);
@@ -510,16 +487,13 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            gap: 6px;
             white-space: nowrap;
-            height: 33px;
-            min-width: 0;
-            flex-shrink: 0;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            height: 35px;
         }
-        .order-btn:disabled { background: #94a3b8 !important; border-color: #94a3b8 !important; cursor: not-allowed; box-shadow: none !important; }
+        .order-btn-unified:disabled { background: #94a3b8 !important; border-color: #94a3b8 !important; cursor: not-allowed; box-shadow: none !important; }
         
-        .order-btn.added { 
+        .order-btn-unified.added { 
             background: rgba(46, 125, 50, 0.12) !important; 
             color: #2e7d32 !important; 
             border: 1.5px solid #2e7d32 !important;
@@ -968,22 +942,23 @@
         </div>
     </div>
 
-    <!-- الهيدر: اللوجو متوسّط تماماً والأزرار في جهة واحدة بجوار السلة -->
+    <!-- الهيدر المطور: اللوجو في المنتصف تماماً وأزرار موزعة يمين ويسار لمنع التداخل -->
     <header>
         <div class="header-top">
-            <!-- مساحة متوازنة فارغة في الطرف الأيمن لضمان سنترة اللوجو المطلقة -->
-            <div style="width: 130px; height: 1px;"></div>
+            <!-- يمين اللوجو: زر الإضاءة + لوحة التحكم -->
+            <div class="header-right-actions">
+                <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="الوضع الليلي / النهاري">🌙</button>
+                <button class="admin-trigger-btn" onclick="openAdminPanel()" title="لوحة التحكم">⚙️</button>
+            </div>
             
-            <!-- اللوجو في المركز بالضبط -->
+            <!-- اللوجو في المنتصف تماماً -->
             <div class="header-logo-container">
                 <img src="images/logooo.png" class="header-logo" alt="Storia Cafe" onerror="this.src='https://www.storia-eg.com/images/logo.png'">
             </div>
             
-            <!-- مجموعة الأزرار كلها بجوار السلة -->
-            <div class="header-actions-group">
-                <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="الوضع الليلي / النهاري">🌙</button>
+            <!-- يسار اللوجو: زر تبديل اللغة + السلة -->
+            <div class="header-left-actions">
                 <button class="lang-toggle" onclick="toggleLanguage()" id="langBtn" title="تبديل اللغة / Switch Language">EN</button>
-                <button class="admin-trigger-btn" onclick="openAdminPanel()" title="لوحة التحكم">⚙️</button>
                 <div class="cart-trigger" onclick="toggleCart(true)" id="cartBtn" title="عربة الطلبات">
                     <span class="badge" id="cartBadge">0</span>
                     <span>🛒</span>
@@ -1004,7 +979,7 @@
             </div>
         </div>
 
-        <!-- شريط الأقسام المودرن الجديد -->
+        <!-- شريط الأقسام المودرن -->
         <div class="category-nav" id="catNav"></div>
     </header>
 
@@ -1028,7 +1003,7 @@
         </div>
     </div>
 
-    <!-- نافذة تخصيص الصنف واختيار الحجم والإضافات -->
+    <!-- نافذة تخصيص الصنف واختيار الحجم -->
     <div class="simple-addons-modal" id="simpleAddonsModal" onclick="if(event.target===this) closeSimpleAddonsModal()">
         <div class="simple-addons-content">
             <div class="simple-addons-header">
@@ -1174,7 +1149,7 @@
                 <label>النسبة المئوية الحالية للزيادة (%):</label>
                 <input type="number" id="adminMarkupPercentInput" placeholder="مثال: 15 لزيادة 15% أو 0 للأسعار الأصلية" step="0.5" min="0">
                 <small style="color: var(--desc-text); font-weight: 700; display: block; margin-top: 4px;">
-                    * كتابة 15 تعني زيادة 15% على جميع أصناف المنيو تلقائياً. كتابة 0 تعيدك لأسعار الشيت الأصلية.
+                    * أي زيادة يتم تطبيقها سيتم تلقائياً تحويل كسور السعر لتنتهي بـ .95 قرشاً.
                 </small>
             </div>
 
@@ -1434,7 +1409,6 @@
                 sizeTitle: 'اختر الحجم المطلوب:',
                 addonsTotalLbl: 'الإجمالي الكلي:',
                 addonsConfirmBtn: '➕ إضافة للسلة',
-                addonsBtnLabel: '✨ الإضافات',
                 chooseSizeBtn: 'اختر الحجم 📏',
                 orderNowBtn: 'اطلب الان 🛒',
                 unavailableBtn: 'غير متوفر 🛑',
@@ -1479,7 +1453,6 @@
                 sizeTitle: 'Choose Size:',
                 addonsTotalLbl: 'Total Price:',
                 addonsConfirmBtn: '➕ Add to Cart',
-                addonsBtnLabel: '✨ Extras',
                 chooseSizeBtn: 'Choose Size 📏',
                 orderNowBtn: 'Order Now 🛒',
                 unavailableBtn: 'Unavailable 🛑',
@@ -1511,13 +1484,17 @@
             }
         };
 
+        // دالة تطبيق نسبة الزيادة المئوية مع تقريب القروش دائماً إلى .95
         function applyMarkup(price) {
             if (!price || isNaN(price)) return 0;
             if (priceMarkupPercentage <= 0) return price;
-            return Math.round((price * (1 + priceMarkupPercentage / 100)) * 100) / 100;
+            
+            const increasedPrice = price * (1 + priceMarkupPercentage / 100);
+            // ضبط القروش دائماً إلى .95 قرش
+            return Math.floor(increasedPrice) + 0.95;
         }
 
-        // دالة مخصصة لتحليل خانة السعر من العمود الإنجليزي (عمود C) بدقة تامة
+        // دالة سحب السعر من العمود الإنجليزي C
         function parseEnglishPriceField(priceRaw) {
             const str = String(priceRaw || '').trim();
 
@@ -1761,6 +1738,21 @@
             }
         }
 
+        // دالة التحميل المسبق لجميع الصور لتظهر فوراً بمجرد فتح التطبيق
+        function preloadAllMenuImages() {
+            if (!menuData || menuData.length === 0) return;
+            menuData.forEach(cat => {
+                if (cat.items) {
+                    cat.items.forEach(item => {
+                        if (item.img) {
+                            const preImg = new Image();
+                            preImg.src = item.img;
+                        }
+                    });
+                }
+            });
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
             applyLanguageSettings();
             startCreativeCounter();
@@ -1926,6 +1918,7 @@
 
                     if (!nameAr && !nameEn) continue;
 
+                    // تحليل السعر من العمود الإنجليزي C فقط
                     const priceInfo = parseEnglishPriceField(priceEnRaw);
 
                     const sheetRowNumber = i + 1;
@@ -1974,13 +1967,14 @@
                     menuData = parsedMenu;
                     renderCategories();
                     renderMenu();
+                    preloadAllMenuImages();
                 }
             } catch (err) {
                 console.error("Error loading menu:", err);
             }
         }
 
-        // رندر الأقسام بالتصميم المودرن الجديد كبسولات أنيقة
+        // رندر الأقسام كبسولات أنيقة
         function renderCategories() {
             const catNav = document.getElementById('catNav');
             if (!catNav) return;
@@ -2060,6 +2054,11 @@
                     priceForLightbox = `${finalPrice.toFixed(2)} ${t.currency}`;
                 }
 
+                // تحديد نص ووظيفة الزر الموحد
+                let btnLabel = t.orderNowBtn;
+                if (hasSizes) btnLabel = t.chooseSizeBtn;
+                else if (hasAddons) btnLabel = currentLang === 'ar' ? 'اطلب وتخصيص 🛒' : 'Order & Customize 🛒';
+
                 card.innerHTML = `
                     <div class="item-img-box" onclick="openImageLightbox(this.querySelector('img').src, '${displayName.replace(/'/g, "\\'")}', '${priceForLightbox}')" title="${currentLang==='ar'?'اضغط لتكبير الصورة':'Click to view photo'}">
                         <img src="${item.img}" loading="lazy" alt="${primaryKey}" 
@@ -2078,9 +2077,8 @@
                             ${displayDesc ? `<div class="food-desc">${displayDesc}</div>` : ''}
                         </div>
                         <div class="card-actions-box">
-                            ${(hasAddons || hasSizes) ? `<button class="mini-addons-btn" onclick="openSimpleAddonsModal('${item.id}', ${currentActiveCatIndex})">${hasSizes ? t.chooseSizeBtn : t.addonsBtnLabel}</button>` : ''}
-                            <button class="order-btn" id="btn_${item.id}" ${!isEnabled ? 'disabled' : ''} onclick="${hasSizes ? `openSimpleAddonsModal('${item.id}', ${currentActiveCatIndex})` : `addToCartDirect('${item.id}', ${currentActiveCatIndex})`}">
-                                ${isEnabled ? (hasSizes ? t.chooseSizeBtn : t.orderNowBtn) : t.unavailableBtn}
+                            <button class="order-btn-unified" id="btn_${item.id}" ${!isEnabled ? 'disabled' : ''} onclick="${(hasSizes || hasAddons) ? `openSimpleAddonsModal('${item.id}', ${currentActiveCatIndex})` : `addToCartDirect('${item.id}', ${currentActiveCatIndex})`}">
+                                ${isEnabled ? btnLabel : t.unavailableBtn}
                             </button>
                         </div>
                     </div>
@@ -2095,7 +2093,7 @@
             const item = catData.items.find(i => i.id === itemId);
             if (!item) return;
 
-            if (item.priceInfo && item.priceInfo.hasSizes) {
+            if ((item.priceInfo && item.priceInfo.hasSizes) || (item.addons && item.addons.length > 0)) {
                 openSimpleAddonsModal(itemId, catIndex);
                 return;
             }
@@ -2175,6 +2173,7 @@
             addonsListEl.innerHTML = '';
 
             if (item.addons && item.addons.length > 0) {
+                document.getElementById('t_addons_sub').style.display = 'block';
                 item.addons.forEach((ad, idx) => {
                     const row = document.createElement('div');
                     row.className = 'simple-addon-item';
@@ -2189,6 +2188,8 @@
                     `;
                     addonsListEl.appendChild(row);
                 });
+            } else {
+                document.getElementById('t_addons_sub').style.display = 'none';
             }
 
             updateModalTotal();
@@ -2547,6 +2548,9 @@
             if (pass === savedPass || pass === '123456' || pass === 'storia2026') {
                 document.getElementById('adminAuthView').style.display = 'none';
                 document.getElementById('adminDashboardView').style.display = 'block';
+                
+                const markupInput = document.getElementById('adminMarkupPercentInput');
+                if (markupInput) markupInput.value = priceMarkupPercentage;
             } else {
                 alert(currentLang === 'ar' ? 'كلمة المرور غير صحيحة!' : 'Incorrect password!');
             }
@@ -2567,7 +2571,7 @@
             if (el) el.style.display = 'none';
         }
 
-        // حفظ وتطبيق نسبة زيادة الأسعار لجميع الأصناف فوراً
+        // حفظ وتطبيق نسبة زيادة الأسعار لجميع الأصناف مع تقريب القروش لـ .95
         async function adminSavePriceMarkup() {
             const inputVal = parseFloat(document.getElementById('adminMarkupPercentInput').value) || 0;
             priceMarkupPercentage = Math.max(0, inputVal);
@@ -2582,7 +2586,7 @@
 
             renderMenu();
             renderCartItems();
-            alert(currentLang === 'ar' ? `تم تطبيق نسبة ${priceMarkupPercentage}% على جميع الأسعار بنجاح!` : `Successfully applied ${priceMarkupPercentage}% markup to all prices!`);
+            alert(currentLang === 'ar' ? `تم تطبيق نسبة ${priceMarkupPercentage}% على جميع الأسعار مع ضبط القروش لـ .95 بنجاح!` : `Successfully applied ${priceMarkupPercentage}% markup with .95 rounding!`);
             closeFloatingModal('priceMarkupModal');
         }
 
