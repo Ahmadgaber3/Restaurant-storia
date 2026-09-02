@@ -157,37 +157,42 @@
         .welcome-choice-en { font-size: 0.74rem; font-weight: 700; color: var(--desc-text); }
         .welcome-choice-icon { font-size: 1.6rem; }
 
+        /* ==================== HEADER (توسيط اللوجو بدقة) ==================== */
         header { 
             background: var(--header-bg); 
             position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 15px var(--card-shadow);
             display: flex; flex-direction: column; align-items: center;
             padding: 8px 0 0 0;
         }
+        
         .header-top { 
             width: 100%; 
             display: flex; 
             align-items: center; 
             justify-content: space-between; 
             padding: 0 16px;
-            min-height: 80px;
+            min-height: 75px;
+            position: relative;
         }
         
-        .header-left-actions, .header-right-actions {
+        /* تجميع الأزرار كلها بجوار السلة */
+        .header-actions-group {
             display: flex;
             align-items: center;
             gap: 8px;
+            z-index: 2;
         }
 
-        .theme-toggle, .lang-toggle, .admin-trigger-btn, .cart-trigger, .header-action-btn {
-            width: 40px;
-            height: 40px;
+        .theme-toggle, .lang-toggle, .admin-trigger-btn, .cart-trigger {
+            width: 38px;
+            height: 38px;
             background: var(--bg);
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 1.15rem;
+            font-size: 1.05rem;
             border: 1px solid var(--border-color);
             color: var(--main-text);
             box-shadow: 0 2px 6px var(--card-shadow);
@@ -196,11 +201,11 @@
             font-weight: 900;
         }
         .lang-toggle {
-            font-size: 0.82rem;
+            font-size: 0.80rem;
             color: var(--accent);
             border-color: rgba(27, 77, 62, 0.3);
         }
-        .theme-toggle:active, .lang-toggle:active, .admin-trigger-btn:active, .cart-trigger:active, .header-action-btn:active {
+        .theme-toggle:active, .lang-toggle:active, .admin-trigger-btn:active, .cart-trigger:active {
             transform: scale(0.92);
         }
 
@@ -209,9 +214,14 @@
         .badge { position: absolute; top: -5px; right: -5px; background: #ef4444; color: #fff; font-size: 10px; font-weight: 800; width: 19px; height: 19px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--white); transform: scale(0); transition: 0.2s ease; }
         .badge.show { transform: scale(1); }
 
+        /* توسيط اللوجو المباشر في منتصف الهيدر */
         .header-logo-container { 
-            width: 125px; 
-            height: 65px; 
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 120px; 
+            height: 60px; 
             border-radius: 16px; 
             background: var(--white); 
             padding: 4px 8px; 
@@ -221,6 +231,7 @@
             align-items: center; 
             justify-content: center; 
             border: 2px solid var(--accent); 
+            z-index: 1;
         }
         .header-logo { width: 100%; height: 100%; border-radius: 10px; object-fit: contain; }
 
@@ -280,12 +291,13 @@
         }
         .chat-sub-btn-mini:active { transform: scale(0.9); }
 
+        /* ==================== شريط الأقسام الجديد كبسولات أنيقة (Modern Pills Tab) ==================== */
         .category-nav { 
             display: flex; 
             overflow-x: auto; 
             white-space: nowrap; 
             padding: 10px 14px; 
-            gap: 16px; 
+            gap: 10px; 
             scrollbar-width: none; 
             background: var(--header-bg); 
             width: 100%; 
@@ -297,44 +309,58 @@
         .category-nav::-webkit-scrollbar { display: none; }
 
         .cat-item { 
-            display: flex; 
-            flex-direction: column; 
+            display: inline-flex; 
             align-items: center; 
-            min-width: max-content; 
-            flex-shrink: 0; 
-            padding: 0 4px;
+            gap: 8px;
+            padding: 7px 14px 7px 8px;
+            border-radius: 30px;
+            background: var(--bg);
+            border: 1.5px solid var(--border-color);
             cursor: pointer; 
-            max-width: 120px;
+            flex-shrink: 0;
+            transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+            user-select: none;
+            box-shadow: 0 2px 6px var(--card-shadow);
         }
 
         .cat-img-box { 
-            width: 54px; 
-            height: 54px; 
-            border-radius: 16px; 
+            width: 32px; 
+            height: 32px; 
+            border-radius: 50%; 
             background: #e0e0e0; 
             overflow: hidden; 
-            border: 2.5px solid transparent; 
-            transition: 0.2s; 
+            border: 1.5px solid var(--border-color); 
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            flex-shrink: 0;
+            transition: transform 0.2s ease;
         }
         .cat-img-box img { width: 100%; height: 100%; object-fit: cover; }
-        .cat-item.active .cat-img-box { border-color: var(--accent); transform: scale(1.04); }
 
         .cat-item span { 
-            font-size: 0.78rem; 
-            font-weight: 700; 
+            font-size: 0.82rem; 
+            font-weight: 800; 
             color: var(--desc-text); 
-            margin-top: 5px; 
             white-space: nowrap;
-            text-align: center;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            width: 100%;
+            transition: color 0.2s ease;
         }
-        .cat-item.active span { color: var(--accent); font-weight: 900; }
+
+        /* الشكل عند التفعيل */
+        .cat-item.active { 
+            background: var(--accent); 
+            border-color: var(--accent); 
+            transform: scale(1.03); 
+            box-shadow: 0 4px 14px rgba(27, 77, 62, 0.3);
+        }
+        .cat-item.active span { 
+            color: #ffffff; 
+            font-weight: 900; 
+        }
+        .cat-item.active .cat-img-box {
+            border-color: #ffffff;
+            transform: scale(1.1);
+        }
         
         .menu-list { padding: 12px 14px; max-width: 600px; margin: auto; }
         
@@ -942,19 +968,22 @@
         </div>
     </div>
 
+    <!-- الهيدر: اللوجو متوسّط تماماً والأزرار في جهة واحدة بجوار السلة -->
     <header>
         <div class="header-top">
-            <div class="header-right-actions">
-                <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="الوضع الليلي / النهاري">🌙</button>
-                <button class="lang-toggle" onclick="toggleLanguage()" id="langBtn" title="تبديل اللغة / Switch Language">EN</button>
-                <button class="admin-trigger-btn" onclick="openAdminPanel()" title="لوحة التحكم">⚙️</button>
-            </div>
+            <!-- مساحة متوازنة فارغة في الطرف الأيمن لضمان سنترة اللوجو المطلقة -->
+            <div style="width: 130px; height: 1px;"></div>
             
+            <!-- اللوجو في المركز بالضبط -->
             <div class="header-logo-container">
                 <img src="images/logooo.png" class="header-logo" alt="Storia Cafe" onerror="this.src='https://www.storia-eg.com/images/logo.png'">
             </div>
             
-            <div class="header-left-actions">
+            <!-- مجموعة الأزرار كلها بجوار السلة -->
+            <div class="header-actions-group">
+                <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="الوضع الليلي / النهاري">🌙</button>
+                <button class="lang-toggle" onclick="toggleLanguage()" id="langBtn" title="تبديل اللغة / Switch Language">EN</button>
+                <button class="admin-trigger-btn" onclick="openAdminPanel()" title="لوحة التحكم">⚙️</button>
                 <div class="cart-trigger" onclick="toggleCart(true)" id="cartBtn" title="عربة الطلبات">
                     <span class="badge" id="cartBadge">0</span>
                     <span>🛒</span>
@@ -975,6 +1004,7 @@
             </div>
         </div>
 
+        <!-- شريط الأقسام المودرن الجديد -->
         <div class="category-nav" id="catNav"></div>
     </header>
 
@@ -1121,7 +1151,7 @@
                         <div class="card-subtitle">تعديل رقم واتساب والأرقام</div>
                     </div>
 
-                    <div class="admin-nav-card" onclick="openFloatingModal('passwordModal')">
+                    <div class="admin-nav-card" onclick="openFloatingModal('passwordModal')" style="grid-column: span 2;">
                         <div class="card-badge-num gray">4</div>
                         <div class="card-avatar-box">👨‍💼</div>
                         <div class="card-title">تغيير كلمة المرور</div>
@@ -1481,7 +1511,6 @@
             }
         };
 
-        // دالة تطبيق نسبة الزيادة المئوية على السعر
         function applyMarkup(price) {
             if (!price || isNaN(price)) return 0;
             if (priceMarkupPercentage <= 0) return price;
@@ -1495,15 +1524,12 @@
             let pLarge = 0;
             let pMedium = 0;
 
-            // نمط استخراج Large
             const lMatch = str.match(/Large\s*:\s*([0-9.]+)/i);
             if (lMatch) pLarge = parseFloat(lMatch[1]) || 0;
 
-            // نمط استخراج Medium
             const mMatch = str.match(/Medium\s*:\s*([0-9.]+)/i);
             if (mMatch) pMedium = parseFloat(mMatch[1]) || 0;
 
-            // لو مكتوبين بنظام سطرين وفيهم أرقام
             if (!pLarge && !pMedium && str.toLowerCase().includes('large') && str.toLowerCase().includes('medium')) {
                 const nums = str.match(/[1-9]\d*(?:\.\d+)?/g);
                 if (nums && nums.length >= 2) {
@@ -1523,7 +1549,6 @@
                 };
             }
 
-            // سعر مفرد
             const cleanNum = (str.match(/[1-9]\d*(?:\.\d+)?/) || [])[0];
             const finalVal = parseFloat(cleanNum) || 0;
 
@@ -1890,14 +1915,6 @@
                 for (let i = 1; i < lines.length; i++) {
                     const row = parseCSVLine(lines[i]);
                     
-                    // السحب المباشر:
-                    // عمود A (0) = القسم بالإنجليزي
-                    // عمود B (1) = اسم الصنف بالإنجليزي
-                    // عمود C (2) = السعر بالإنجليزي (المصدر الحصري للأسعار)
-                    // عمود D (3) = الوصف بالإنجليزي
-                    // عمود Q (16) = القسم بالعربي
-                    // عمود R (17) = اسم الصنف بالعربي
-                    // عمود T (19) = الوصف بالعربي
                     const catEn = (row[0] || '').trim();
                     const nameEn = (row[1] || '').trim();
                     const priceEnRaw = (row[2] || '').trim();
@@ -1909,7 +1926,6 @@
 
                     if (!nameAr && !nameEn) continue;
 
-                    // تحليل السعر من العمود الإنجليزي C فقط
                     const priceInfo = parseEnglishPriceField(priceEnRaw);
 
                     const sheetRowNumber = i + 1;
@@ -1964,6 +1980,7 @@
             }
         }
 
+        // رندر الأقسام بالتصميم المودرن الجديد كبسولات أنيقة
         function renderCategories() {
             const catNav = document.getElementById('catNav');
             if (!catNav) return;
@@ -1998,7 +2015,10 @@
         function selectCategory(idx, el) {
             currentActiveCatIndex = idx;
             document.querySelectorAll('.cat-item').forEach(c => c.classList.remove('active'));
-            if (el) el.classList.add('active');
+            if (el) {
+                el.classList.add('active');
+                el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
             renderMenu();
         }
 
@@ -2527,10 +2547,6 @@
             if (pass === savedPass || pass === '123456' || pass === 'storia2026') {
                 document.getElementById('adminAuthView').style.display = 'none';
                 document.getElementById('adminDashboardView').style.display = 'block';
-                
-                // إظهار نسبة الزيادة الحالية في حقل الإدخال
-                const markupInput = document.getElementById('adminMarkupPercentInput');
-                if (markupInput) markupInput.value = priceMarkupPercentage;
             } else {
                 alert(currentLang === 'ar' ? 'كلمة المرور غير صحيحة!' : 'Incorrect password!');
             }
@@ -2538,7 +2554,13 @@
 
         function openFloatingModal(id) {
             const el = document.getElementById(id);
-            if (el) el.style.display = 'flex';
+            if (el) {
+                if (id === 'priceMarkupModal') {
+                    const inp = document.getElementById('adminMarkupPercentInput');
+                    if (inp) inp.value = priceMarkupPercentage;
+                }
+                el.style.display = 'flex';
+            }
         }
         function closeFloatingModal(id) {
             const el = document.getElementById(id);
