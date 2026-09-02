@@ -411,6 +411,20 @@
         }
         [dir="ltr"] .food-price { margin-right: 0; margin-left: 4px; }
         
+        .food-price.multi-sizes-badge {
+            font-size: 0.75rem;
+            line-height: 1.25;
+            text-align: right;
+            background: rgba(27, 77, 62, 0.08);
+            border: 1px solid rgba(27, 77, 62, 0.2);
+            padding: 3px 6px;
+            border-radius: 8px;
+            white-space: normal;
+        }
+        [dir="ltr"] .food-price.multi-sizes-badge {
+            text-align: left;
+        }
+
         .food-desc { 
             font-size: 0.73rem; 
             color: var(--desc-text); 
@@ -511,7 +525,7 @@
             background: var(--white);
         }
         .image-lightbox-title { font-size: 1.1rem; font-weight: 900; color: var(--main-text); }
-        .image-lightbox-price { font-size: 1.1rem; font-weight: 900; color: var(--accent); }
+        .image-lightbox-price { font-size: 1rem; font-weight: 900; color: var(--accent); }
         .image-lightbox-close {
             position: absolute; top: 12px; left: 12px;
             background: rgba(0, 0, 0, 0.6); color: #fff;
@@ -563,6 +577,41 @@
         }
         .simple-item-name { font-weight: 800; font-size: 0.92rem; color: var(--main-text); }
         .simple-item-price { font-weight: 900; color: var(--accent); font-size: 0.92rem; }
+
+        .size-selection-box {
+            background: rgba(27, 77, 62, 0.06);
+            border: 1.5px solid var(--accent);
+            border-radius: 14px;
+            padding: 12px;
+            margin-bottom: 14px;
+        }
+        .size-selection-title {
+            font-size: 0.82rem; font-weight: 800; color: var(--accent); margin-bottom: 8px;
+        }
+        .size-options-grid {
+            display: flex; gap: 8px;
+        }
+        .size-opt-btn {
+            flex: 1;
+            padding: 9px 8px;
+            border-radius: 10px;
+            border: 1.5px solid var(--border-color);
+            background: var(--white);
+            color: var(--main-text);
+            cursor: pointer;
+            font-weight: 800;
+            font-size: 0.82rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            transition: all 0.15s ease;
+        }
+        .size-opt-btn.active {
+            border-color: var(--accent);
+            background: var(--accent);
+            color: #ffffff;
+        }
 
         .simple-addons-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
         .simple-addon-item {
@@ -948,10 +997,11 @@
         </div>
     </div>
 
+    <!-- نافذة تخصيص الصنف واختيار الحجم والإضافات -->
     <div class="simple-addons-modal" id="simpleAddonsModal" onclick="if(event.target===this) closeSimpleAddonsModal()">
         <div class="simple-addons-content">
             <div class="simple-addons-header">
-                <h3 id="t_addons_title">تخصيص وإضافات الصنف</h3>
+                <h3 id="t_addons_title">تخصيص الصنف والحجم</h3>
                 <button class="simple-addons-close" onclick="closeSimpleAddonsModal()">✕</button>
             </div>
             
@@ -960,7 +1010,13 @@
                 <span class="simple-item-price" id="modalItemBasePrice">0.00 ج.م</span>
             </div>
 
-            <div style="font-size: 0.82rem; font-weight: 800; color: var(--desc-text); margin-bottom: 10px;" id="t_addons_sub">اختر الإضافات المطلوبة:</div>
+            <!-- خيارات الأحجام (تظهر فقط للأصناف ذات الحجمين مثل المكرونات والبرجر) -->
+            <div class="size-selection-box" id="modalSizesContainer" style="display: none;">
+                <div class="size-selection-title" id="t_size_title">اختر الحجم المطلوب:</div>
+                <div class="size-options-grid" id="modalSizesGrid"></div>
+            </div>
+
+            <div style="font-size: 0.82rem; font-weight: 800; color: var(--desc-text); margin-bottom: 10px;" id="t_addons_sub">اختر الإضافات المطلوبة (اختياري):</div>
             <div class="simple-addons-list" id="modalAddonsList"></div>
 
             <div class="simple-addons-footer">
@@ -968,7 +1024,7 @@
                     <span id="t_addons_total_lbl">الإجمالي الكلي:</span>
                     <span id="modalTotalPrice">0.00 ج.م</span>
                 </div>
-                <button class="simple-confirm-btn" id="t_addons_confirm_btn" onclick="confirmSimpleAddonsOrder()">➕ إضافة بالـ Extras</button>
+                <button class="simple-confirm-btn" id="t_addons_confirm_btn" onclick="confirmSimpleAddonsOrder()">➕ إضافة للسلة</button>
             </div>
         </div>
     </div>
@@ -1291,6 +1347,7 @@
 
         let currentActiveItem = null;
         let selectedAddonsMap = [];
+        let selectedItemSizeKey = null; // للحجم المختار في الأصناف ذات الحجمين (L أو M)
 
         let userLoyaltyPoints = 0;
         let activeUserPhone = localStorage.getItem('storia_user_phone') || '';
@@ -1313,11 +1370,13 @@
                 loyaltyTitle: '🎁 محفظة مكافآت ستوريا',
                 loyaltyBalLbl: 'رصيد نقاطك الحالي (1 ج.م = 1 نقطة)',
                 loyaltyRedeemLbl: 'استبدل نقاطك بهدايا مجانية فوراً:',
-                addonsTitle: 'تخصيص وإضافات الصنف',
-                addonsSub: 'اختر الإضافات المطلوبة:',
+                addonsTitle: 'تخصيص الصنف والحجم',
+                addonsSub: 'اختر الإضافات المطلوبة (اختياري):',
+                sizeTitle: 'اختر الحجم المطلوب:',
                 addonsTotalLbl: 'الإجمالي الكلي:',
-                addonsConfirmBtn: '➕ إضافة بالـ Extras',
+                addonsConfirmBtn: '➕ إضافة للسلة',
                 addonsBtnLabel: '✨ الإضافات',
+                chooseSizeBtn: 'اختر الحجم 📏',
                 orderNowBtn: 'اطلب الان 🛒',
                 unavailableBtn: 'غير متوفر 🛑',
                 addedBtn: 'تم الإضافة ✓',
@@ -1342,7 +1401,9 @@
                 chatPlaceholder: 'اكتب رسالتك هنا...',
                 branchTitle: '📍 فرع مدينة نصر:',
                 branchDesc: 'شارع عباس العقاد - أمام الجامعة العمالية',
-                footerRights: 'جميع الحقوق محفوظة لـ Storia Coffee and Restaurant 2026 ©'
+                footerRights: 'جميع الحقوق محفوظة لـ Storia Coffee and Restaurant 2026 ©',
+                sizeLarge: 'كبير (L)',
+                sizeMedium: 'وسط (M)'
             },
             en: {
                 langBtn: 'AR',
@@ -1354,11 +1415,13 @@
                 loyaltyTitle: '🎁 Storia Rewards Wallet',
                 loyaltyBalLbl: 'Current Points Balance (1 EGP = 1 Pt)',
                 loyaltyRedeemLbl: 'Redeem points for free items instantly:',
-                addonsTitle: 'Item Customization & Extras',
-                addonsSub: 'Choose your desired add-ons:',
+                addonsTitle: 'Item Size & Customization',
+                addonsSub: 'Choose your desired add-ons (Optional):',
+                sizeTitle: 'Choose Size:',
                 addonsTotalLbl: 'Total Price:',
-                addonsConfirmBtn: '➕ Add with Extras',
+                addonsConfirmBtn: '➕ Add to Cart',
                 addonsBtnLabel: '✨ Extras',
+                chooseSizeBtn: 'Choose Size 📏',
                 orderNowBtn: 'Order Now 🛒',
                 unavailableBtn: 'Unavailable 🛑',
                 addedBtn: 'Added ✓',
@@ -1383,9 +1446,59 @@
                 chatPlaceholder: 'Type your message here...',
                 branchTitle: '📍 Nasr City Branch:',
                 branchDesc: 'Abbas El Akkad St. - In front of Worker University',
-                footerRights: 'All Rights Reserved to Storia Coffee & Restaurant 2026 ©'
+                footerRights: 'All Rights Reserved to Storia Coffee & Restaurant 2026 ©',
+                sizeLarge: 'Large (L)',
+                sizeMedium: 'Medium (M)'
             }
         };
+
+        // دالة تحليل ومعالجة الأسعار المتعددة (Large / Medium)
+        function parseItemPrice(priceStr) {
+            const raw = String(priceStr || '').trim();
+            
+            // تحقق إذا كان النص يحتوي على Large و Medium أو كبير و وسط
+            const isMulti = /large|medium|كبير|وسط|\//i.test(raw);
+            
+            if (isMulti) {
+                let pLarge = 0;
+                let pMedium = 0;
+
+                // استخراج سعر Large
+                const matchL = raw.match(/(?:Large|كبير)\s*:\s*([0-9.]+)/i);
+                if (matchL) pLarge = parseFloat(matchL[1]) || 0;
+
+                // استخراج سعر Medium
+                const matchM = raw.match(/(?:Medium|وسط)\s*:\s*([0-9.]+)/i);
+                if (matchM) pMedium = parseFloat(matchM[1]) || 0;
+
+                // لو لم يطابق النمط تماماً وكان مفصولاً بـ /
+                if (!pLarge && !pMedium && raw.includes('/')) {
+                    const parts = raw.split('/');
+                    const num1 = (parts[0].match(/[0-9.]+/) || [])[0];
+                    const num2 = (parts[1].match(/[0-9.]+/) || [])[0];
+                    pLarge = parseFloat(num1) || 0;
+                    pMedium = parseFloat(num2) || 0;
+                }
+
+                return {
+                    hasSizes: true,
+                    sizes: {
+                        large: pLarge,
+                        medium: pMedium
+                    },
+                    defaultPrice: pLarge || pMedium || 0,
+                    rawStr: raw
+                };
+            }
+
+            const cleanNum = parseFloat(raw.replace(/[^0-9.]/g, '')) || 0;
+            return {
+                hasSizes: false,
+                sizes: null,
+                defaultPrice: cleanNum,
+                rawStr: raw
+            };
+        }
 
         function getLocalizedItemName(item) {
             if (!item) return '';
@@ -1442,6 +1555,8 @@
             if (tAddonsTitle) tAddonsTitle.innerText = t.addonsTitle;
             const tAddonsSub = document.getElementById('t_addons_sub');
             if (tAddonsSub) tAddonsSub.innerText = t.addonsSub;
+            const tSizeTitle = document.getElementById('t_size_title');
+            if (tSizeTitle) tSizeTitle.innerText = t.sizeTitle;
             const tAddonsTotalLbl = document.getElementById('t_addons_total_lbl');
             if (tAddonsTotalLbl) tAddonsTotalLbl.innerText = t.addonsTotalLbl;
             const tAddonsConfirmBtn = document.getElementById('t_addons_confirm_btn');
@@ -1539,16 +1654,15 @@
             }
         }
 
-        function openImageLightbox(imgSrc, itemName, itemPrice) {
+        function openImageLightbox(imgSrc, itemName, priceText) {
             const modal = document.getElementById('imageLightboxModal');
             const imgEl = document.getElementById('lightboxImg');
             const titleEl = document.getElementById('lightboxTitle');
             const priceEl = document.getElementById('lightboxPrice');
-            const t = translations[currentLang];
 
             if (imgEl) imgEl.src = imgSrc;
             if (titleEl) titleEl.innerText = itemName;
-            if (priceEl) priceEl.innerText = itemPrice.toFixed(2) + ' ' + t.currency;
+            if (priceEl) priceEl.innerText = priceText;
 
             if (modal) modal.style.display = 'flex';
         }
@@ -1558,7 +1672,7 @@
             if (modal) modal.style.display = 'none';
         }
 
-        // دالة المحاولات الذكية للصور بكل الأسماء والصيغ الممكنة
+        // دالة المحاولات الذكية للصور
         function handleSmartImageFallback(imgElement) {
             const step = parseInt(imgElement.dataset.step || '0', 10);
             const rowNum = imgElement.dataset.row || '';
@@ -1568,7 +1682,6 @@
             const nameArUnderscore = nameAr.replace(/\s+/g, '_');
             const nameEnUnderscore = nameEn.replace(/\s+/g, '_');
 
-            // قائمة بالمسارات التي سيتم تجربتها بالترتيب
             const attempts = [
                 `images/${rowNum}.jpg`,
                 `images/${rowNum}.png`,
@@ -1686,6 +1799,7 @@
                     id: r.id,
                     name: currentLang === 'ar' ? `🎁 [هدية مكافأة]: ${rewardTitle}` : `🎁 [Gift Reward]: ${rewardTitle}`,
                     price: 0.00,
+                    sizeLabel: '',
                     img: 'images/logooo.png',
                     addons: []
                 });
@@ -1748,23 +1862,22 @@
                     // Ar: Q=16 (القسم), R=17 (اسم الصنف), S=18 (السعر), T=19 (الوصف والمكونات)
                     const catEn = (row[0] || '').trim();
                     const nameEn = (row[1] || '').trim();
-                    const priceEn = (row[2] || '').trim();
+                    const priceEnRaw = (row[2] || '').trim();
                     const descEn = (row[3] || '').trim();
 
                     const catAr = (row[16] || catEn || 'أصناف متنوعة').trim();
                     const nameAr = (row[17] || nameEn || '').trim();
-                    const priceAr = (row[18] || priceEn || '0').trim();
+                    const priceArRaw = (row[18] || priceEnRaw || '0').trim();
                     const descAr = (row[19] || descEn || '').trim();
 
                     if (!nameAr && !nameEn) continue;
 
-                    let rawPrice = (priceAr || priceEn).replace(/[^0-9.]/g, '');
-                    let price = parseFloat(rawPrice) || 0;
+                    // معالجة الأسعار (سواء رقم عادي أو سعرين Large / Medium)
+                    const priceInfo = parseItemPrice(priceArRaw || priceEnRaw);
 
                     const sheetRowNumber = i + 1;
                     let img = `images/${sheetRowNumber}.jpg`;
 
-                    // إذا كان هناك رابط خارجي أو مسار صورة مخصص
                     if (row[4] && row[4].trim() !== '') {
                         let customImg = row[4].trim().replace(/^\[|\]$/g, '');
                         if (customImg.startsWith('http') || customImg.startsWith('images/')) {
@@ -1797,7 +1910,8 @@
                         nameEn: nameEn,
                         descAr: descAr,
                         descEn: descEn,
-                        price: price,
+                        priceInfo: priceInfo,
+                        price: priceInfo.defaultPrice,
                         img: img,
                         addons: addons
                     });
@@ -1866,12 +1980,31 @@
                 const card = document.createElement('div');
                 card.className = 'food-card' + (isEnabled ? '' : ' disabled-item');
                 const hasAddons = item.addons && item.addons.length > 0;
+                const hasSizes = item.priceInfo && item.priceInfo.hasSizes;
                 
                 const displayName = getLocalizedItemName(item);
                 const displayDesc = getLocalizedItemDesc(item);
 
+                // تجهيز نص عرض السعر
+                let priceDisplayHTML = '';
+                let priceForLightbox = '';
+                if (hasSizes) {
+                    const lPrice = item.priceInfo.sizes.large;
+                    const mPrice = item.priceInfo.sizes.medium;
+                    if (currentLang === 'ar') {
+                        priceDisplayHTML = `<div class="food-price multi-sizes-badge">كبير: ${lPrice.toFixed(2)}<br>وسط: ${mPrice.toFixed(2)} ${t.currency}</div>`;
+                        priceForLightbox = `كبير: ${lPrice.toFixed(2)} ج.م | وسط: ${mPrice.toFixed(2)} ج.م`;
+                    } else {
+                        priceDisplayHTML = `<div class="food-price multi-sizes-badge">L: ${lPrice.toFixed(2)}<br>M: ${mPrice.toFixed(2)} ${t.currency}</div>`;
+                        priceForLightbox = `L: ${lPrice.toFixed(2)} EGP | M: ${mPrice.toFixed(2)} EGP`;
+                    }
+                } else {
+                    priceDisplayHTML = `<div class="food-price">${item.price.toFixed(2)} ${t.currency}</div>`;
+                    priceForLightbox = `${item.price.toFixed(2)} ${t.currency}`;
+                }
+
                 card.innerHTML = `
-                    <div class="item-img-box" onclick="openImageLightbox(this.querySelector('img').src, '${displayName.replace(/'/g, "\\'")}', ${item.price})" title="${currentLang==='ar'?'اضغط لتكبير الصورة':'Click to view photo'}">
+                    <div class="item-img-box" onclick="openImageLightbox(this.querySelector('img').src, '${displayName.replace(/'/g, "\\'")}', '${priceForLightbox}')" title="${currentLang==='ar'?'اضغط لتكبير الصورة':'Click to view photo'}">
                         <img src="${item.img}" loading="lazy" alt="${primaryKey}" 
                              data-row="${item.sheetRow}" 
                              data-ar="${item.nameAr || ''}" 
@@ -1883,14 +2016,14 @@
                         <div>
                             <div class="food-header">
                                 <div class="food-name">${displayName}</div>
-                                <div class="food-price">${item.price.toFixed(2)} ${t.currency}</div>
+                                ${priceDisplayHTML}
                             </div>
                             ${displayDesc ? `<div class="food-desc">${displayDesc}</div>` : ''}
                         </div>
                         <div class="card-actions-box">
-                            ${hasAddons ? `<button class="mini-addons-btn" onclick="openSimpleAddonsModal('${item.id}', ${currentActiveCatIndex})">${t.addonsBtnLabel}</button>` : ''}
-                            <button class="order-btn" id="btn_${item.id}" ${!isEnabled ? 'disabled' : ''} onclick="addToCartDirect('${item.id}', ${currentActiveCatIndex})">
-                                ${isEnabled ? t.orderNowBtn : t.unavailableBtn}
+                            ${(hasAddons || hasSizes) ? `<button class="mini-addons-btn" onclick="openSimpleAddonsModal('${item.id}', ${currentActiveCatIndex})">${hasSizes ? t.chooseSizeBtn : t.addonsBtnLabel}</button>` : ''}
+                            <button class="order-btn" id="btn_${item.id}" ${!isEnabled ? 'disabled' : ''} onclick="${hasSizes ? `openSimpleAddonsModal('${item.id}', ${currentActiveCatIndex})` : `addToCartDirect('${item.id}', ${currentActiveCatIndex})`}">
+                                ${isEnabled ? (hasSizes ? t.chooseSizeBtn : t.orderNowBtn) : t.unavailableBtn}
                             </button>
                         </div>
                     </div>
@@ -1904,6 +2037,13 @@
             if (!catData) return;
             const item = catData.items.find(i => i.id === itemId);
             if (!item) return;
+
+            // إذا كان الصنف له حجمين، نوجهه لنافذة الاختيار
+            if (item.priceInfo && item.priceInfo.hasSizes) {
+                openSimpleAddonsModal(itemId, catIndex);
+                return;
+            }
+
             const t = translations[currentLang];
             const displayName = getLocalizedItemName(item);
 
@@ -1914,6 +2054,7 @@
                 name: displayName,
                 rawName: item.nameAr || item.nameEn,
                 price: item.price,
+                sizeLabel: '',
                 img: item.img,
                 addons: []
             };
@@ -1946,7 +2087,33 @@
             selectedAddonsMap = [];
 
             document.getElementById('modalItemName').innerText = displayName;
-            document.getElementById('modalItemBasePrice').innerText = item.price.toFixed(2) + ' ' + t.currency;
+
+            // ضبط صندوق اختيار الحجم
+            const sizesContainer = document.getElementById('modalSizesContainer');
+            const sizesGrid = document.getElementById('modalSizesGrid');
+            sizesGrid.innerHTML = '';
+
+            if (item.priceInfo && item.priceInfo.hasSizes) {
+                sizesContainer.style.display = 'block';
+                selectedItemSizeKey = 'large'; // الافتراضي كبير L
+
+                const sizes = [
+                    { key: 'large', label: t.sizeLarge, price: item.priceInfo.sizes.large },
+                    { key: 'medium', label: t.sizeMedium, price: item.priceInfo.sizes.medium }
+                ];
+
+                sizes.forEach(s => {
+                    const btn = document.createElement('button');
+                    btn.className = `size-opt-btn ${selectedItemSizeKey === s.key ? 'active' : ''}`;
+                    btn.id = `size_btn_${s.key}`;
+                    btn.onclick = () => selectItemSize(s.key);
+                    btn.innerHTML = `<span>${s.label}</span><small style="opacity:0.9;">${s.price.toFixed(2)} ${t.currency}</small>`;
+                    sizesGrid.appendChild(btn);
+                });
+            } else {
+                sizesContainer.style.display = 'none';
+                selectedItemSizeKey = null;
+            }
 
             const addonsListEl = document.getElementById('modalAddonsList');
             addonsListEl.innerHTML = '';
@@ -1972,6 +2139,14 @@
             document.getElementById('simpleAddonsModal').style.display = 'flex';
         }
 
+        function selectItemSize(sizeKey) {
+            selectedItemSizeKey = sizeKey;
+            document.querySelectorAll('.size-opt-btn').forEach(b => b.classList.remove('active'));
+            const activeBtn = document.getElementById(`size_btn_${sizeKey}`);
+            if (activeBtn) activeBtn.classList.add('active');
+            updateModalTotal();
+        }
+
         function toggleAddonSelection(idx, addon, rowEl) {
             const existingIdx = selectedAddonsMap.findIndex(a => a.name === addon.name);
             if (existingIdx >= 0) {
@@ -1986,9 +2161,17 @@
 
         function updateModalTotal() {
             if (!currentActiveItem) return;
-            let total = currentActiveItem.price;
-            selectedAddonsMap.forEach(ad => { total += ad.price; });
             const t = translations[currentLang];
+
+            let basePrice = currentActiveItem.price;
+            if (currentActiveItem.priceInfo && currentActiveItem.priceInfo.hasSizes && selectedItemSizeKey) {
+                basePrice = currentActiveItem.priceInfo.sizes[selectedItemSizeKey];
+            }
+
+            let total = basePrice;
+            selectedAddonsMap.forEach(ad => { total += ad.price; });
+
+            document.getElementById('modalItemBasePrice').innerText = basePrice.toFixed(2) + ' ' + t.currency;
             document.getElementById('modalTotalPrice').innerText = total.toFixed(2) + ' ' + t.currency;
         }
 
@@ -1996,11 +2179,22 @@
             document.getElementById('simpleAddonsModal').style.display = 'none';
             currentActiveItem = null;
             selectedAddonsMap = [];
+            selectedItemSizeKey = null;
         }
 
         function confirmSimpleAddonsOrder() {
             if (!currentActiveItem) return;
-            let total = currentActiveItem.price;
+            const t = translations[currentLang];
+
+            let basePrice = currentActiveItem.price;
+            let sizeLabelText = '';
+
+            if (currentActiveItem.priceInfo && currentActiveItem.priceInfo.hasSizes && selectedItemSizeKey) {
+                basePrice = currentActiveItem.priceInfo.sizes[selectedItemSizeKey];
+                sizeLabelText = selectedItemSizeKey === 'large' ? t.sizeLarge : t.sizeMedium;
+            }
+
+            let total = basePrice;
             selectedAddonsMap.forEach(ad => { total += ad.price; });
             const displayName = getLocalizedItemName(currentActiveItem);
 
@@ -2010,8 +2204,9 @@
                 itemRef: currentActiveItem,
                 name: displayName,
                 rawName: currentActiveItem.nameAr || currentActiveItem.nameEn,
+                sizeLabel: sizeLabelText,
                 price: total,
-                basePrice: currentActiveItem.price,
+                basePrice: basePrice,
                 img: currentActiveItem.img,
                 addons: [...selectedAddonsMap]
             });
@@ -2066,11 +2261,12 @@
                 itemEl.className = 'cart-item-card';
                 const addonsText = item.addons && item.addons.length > 0 ? item.addons.map(a => currentLang==='ar'?a.name:(a.nameEn||a.name)).join('، ') : '';
                 const displayName = item.itemRef ? getLocalizedItemName(item.itemRef) : item.name;
+                const sizeBadge = item.sizeLabel ? ` <span style="font-size:0.75rem; color:var(--accent); font-weight:800;">(${item.sizeLabel})</span>` : '';
 
                 itemEl.innerHTML = `
                     <img src="${item.img}" class="cart-item-img" alt="${displayName}" onerror="this.src='images/logooo.png'">
                     <div class="cart-item-info">
-                        <div class="cart-item-name">${displayName}</div>
+                        <div class="cart-item-name">${displayName}${sizeBadge}</div>
                         ${addonsText ? `<div class="cart-item-addons-text">+ ${currentLang==='ar'?'إضافات:':'Extras:'} ${addonsText}</div>` : ''}
                         <span class="cart-item-price">${item.price > 0 ? item.price.toFixed(2) + ' ' + t.currency : t.free}</span>
                     </div>
@@ -2117,7 +2313,8 @@
             const itemsArrayForLog = [];
             cart.forEach((item, i) => {
                 const displayName = item.itemRef ? getLocalizedItemName(item.itemRef) : item.name;
-                let line = `${i + 1}. ${displayName}`;
+                const sizeStr = item.sizeLabel ? ` [${item.sizeLabel}]` : '';
+                let line = `${i + 1}. ${displayName}${sizeStr}`;
                 if (item.addons && item.addons.length > 0) {
                     line += ` (+ ${currentLang==='ar'?'إضافات:':'Extras:'} ${item.addons.map(a => currentLang==='ar'?a.name:(a.nameEn||a.name)).join('، ')})`;
                 }
