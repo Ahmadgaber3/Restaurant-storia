@@ -157,7 +157,6 @@
         .welcome-choice-en { font-size: 0.74rem; font-weight: 700; color: var(--desc-text); }
         .welcome-choice-icon { font-size: 1.6rem; }
 
-        /* ==================== HEADER (توسيع وتوزيع مثالي بدون تداخل) ==================== */
         header { 
             background: var(--header-bg); 
             position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 15px var(--card-shadow);
@@ -213,7 +212,6 @@
         .badge { position: absolute; top: -5px; right: -5px; background: #ef4444; color: #fff; font-size: 10px; font-weight: 800; width: 19px; height: 19px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--white); transform: scale(0); transition: 0.2s ease; }
         .badge.show { transform: scale(1); }
 
-        /* سنترة اللوجو الحقيقية بدون تداخل */
         .header-logo-container { 
             position: absolute;
             left: 50%;
@@ -290,7 +288,6 @@
         }
         .chat-sub-btn-mini:active { transform: scale(0.9); }
 
-        /* ==================== شريط الأقسام المودرن ==================== */
         .category-nav { 
             display: flex; 
             overflow-x: auto; 
@@ -465,21 +462,43 @@
         .card-actions-box {
             display: flex;
             align-items: center;
-            justify-content: flex-end;
+            justify-content: space-between;
             gap: 6px;
             width: 100%;
             margin-top: auto;
+            flex-wrap: nowrap;
         }
 
-        /* زر واحد موحد وبسيط للأوردر / اختيار الحجم */
-        .order-btn-unified { 
-            width: 100%;
+        .mini-addons-btn {
+            flex: 1;
+            background: var(--bg);
+            color: var(--accent);
+            border: 1.5px solid var(--accent);
+            padding: 5px 4px;
+            border-radius: 9px;
+            font-size: 0.74rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 0;
+            flex-shrink: 0;
+            height: 33px;
+        }
+        .mini-addons-btn:active { background: var(--accent); color: white; }
+
+        .order-btn { 
+            flex: 1.4;
             background: var(--accent); 
             color: #ffffff; 
             border: 1.5px solid var(--accent); 
-            padding: 7px 12px; 
-            border-radius: 12px; 
-            font-size: 0.82rem; 
+            padding: 5px 6px; 
+            border-radius: 9px; 
+            font-size: 0.78rem; 
             font-weight: 800; 
             cursor: pointer; 
             box-shadow: 0 2px 6px rgba(27, 77, 62, 0.25);
@@ -487,13 +506,28 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
             white-space: nowrap;
-            height: 35px;
+            height: 33px;
+            min-width: 0;
+            flex-shrink: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
-        .order-btn-unified:disabled { background: #94a3b8 !important; border-color: #94a3b8 !important; cursor: not-allowed; box-shadow: none !important; }
+        .order-btn:disabled { background: #94a3b8 !important; border-color: #94a3b8 !important; cursor: not-allowed; box-shadow: none !important; }
+
+        /* زر بسيط وهادئ لاختيار الحجم */
+        .order-btn.size-select-style {
+            background: #ffffff;
+            color: var(--accent);
+            border: 1.5px solid var(--accent);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        .order-btn.size-select-style:active {
+            background: var(--accent);
+            color: #ffffff;
+        }
         
-        .order-btn-unified.added { 
+        .order-btn.added { 
             background: rgba(46, 125, 50, 0.12) !important; 
             color: #2e7d32 !important; 
             border: 1.5px solid #2e7d32 !important;
@@ -902,7 +936,6 @@
         </div>
     </div>
 
-    <!-- نافذة اختيار طريقة الاستلام -->
     <div class="welcome-order-type-modal" id="welcomeOrderModal">
         <div class="welcome-card">
             <h2 class="welcome-title" id="t_welcome_title">مرحباً بك في ستوريا | Welcome</h2>
@@ -928,7 +961,6 @@
         </div>
     </div>
 
-    <!-- نافذة تكبير الصورة (Lightbox) -->
     <div class="image-lightbox-modal" id="imageLightboxModal" onclick="if(event.target===this) closeImageLightbox()">
         <div class="image-lightbox-content">
             <button class="image-lightbox-close" onclick="closeImageLightbox()">✕</button>
@@ -942,10 +974,10 @@
         </div>
     </div>
 
-    <!-- الهيدر المطور: اللوجو في المنتصف تماماً وأزرار موزعة يمين ويسار لمنع التداخل -->
+    <!-- الهيدر المطور: اللوجو متوسّط تماماً وتوزيع الأزرار يمين ويسار لمنع التداخل -->
     <header>
         <div class="header-top">
-            <!-- يمين اللوجو: زر الإضاءة + لوحة التحكم -->
+            <!-- يمين اللوجو: زر الإضاءة + زر لوحة التحكم -->
             <div class="header-right-actions">
                 <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="الوضع الليلي / النهاري">🌙</button>
                 <button class="admin-trigger-btn" onclick="openAdminPanel()" title="لوحة التحكم">⚙️</button>
@@ -956,7 +988,7 @@
                 <img src="images/logooo.png" class="header-logo" alt="Storia Cafe" onerror="this.src='https://www.storia-eg.com/images/logo.png'">
             </div>
             
-            <!-- يسار اللوجو: زر تبديل اللغة + السلة -->
+            <!-- يسار اللوجو: زر تبديل اللغة + سلة الطلبات -->
             <div class="header-left-actions">
                 <button class="lang-toggle" onclick="toggleLanguage()" id="langBtn" title="تبديل اللغة / Switch Language">EN</button>
                 <div class="cart-trigger" onclick="toggleCart(true)" id="cartBtn" title="عربة الطلبات">
@@ -979,7 +1011,6 @@
             </div>
         </div>
 
-        <!-- شريط الأقسام المودرن -->
         <div class="category-nav" id="catNav"></div>
     </header>
 
@@ -1409,7 +1440,8 @@
                 sizeTitle: 'اختر الحجم المطلوب:',
                 addonsTotalLbl: 'الإجمالي الكلي:',
                 addonsConfirmBtn: '➕ إضافة للسلة',
-                chooseSizeBtn: 'اختر الحجم 📏',
+                addonsBtnLabel: '✨ الإضافات',
+                chooseSizeBtn: 'اختيار الحجم 📏',
                 orderNowBtn: 'اطلب الان 🛒',
                 unavailableBtn: 'غير متوفر 🛑',
                 addedBtn: 'تم الإضافة ✓',
@@ -1453,7 +1485,8 @@
                 sizeTitle: 'Choose Size:',
                 addonsTotalLbl: 'Total Price:',
                 addonsConfirmBtn: '➕ Add to Cart',
-                chooseSizeBtn: 'Choose Size 📏',
+                addonsBtnLabel: '✨ Extras',
+                chooseSizeBtn: 'Select Size 📏',
                 orderNowBtn: 'Order Now 🛒',
                 unavailableBtn: 'Unavailable 🛑',
                 addedBtn: 'Added ✓',
@@ -1484,17 +1517,14 @@
             }
         };
 
-        // دالة تطبيق نسبة الزيادة المئوية مع تقريب القروش دائماً إلى .95
         function applyMarkup(price) {
             if (!price || isNaN(price)) return 0;
             if (priceMarkupPercentage <= 0) return price;
             
             const increasedPrice = price * (1 + priceMarkupPercentage / 100);
-            // ضبط القروش دائماً إلى .95 قرش
             return Math.floor(increasedPrice) + 0.95;
         }
 
-        // دالة سحب السعر من العمود الإنجليزي C
         function parseEnglishPriceField(priceRaw) {
             const str = String(priceRaw || '').trim();
 
@@ -1738,7 +1768,6 @@
             }
         }
 
-        // دالة التحميل المسبق لجميع الصور لتظهر فوراً بمجرد فتح التطبيق
         function preloadAllMenuImages() {
             if (!menuData || menuData.length === 0) return;
             menuData.forEach(cat => {
@@ -1918,7 +1947,6 @@
 
                     if (!nameAr && !nameEn) continue;
 
-                    // تحليل السعر من العمود الإنجليزي C فقط
                     const priceInfo = parseEnglishPriceField(priceEnRaw);
 
                     const sheetRowNumber = i + 1;
@@ -1974,7 +2002,6 @@
             }
         }
 
-        // رندر الأقسام كبسولات أنيقة
         function renderCategories() {
             const catNav = document.getElementById('catNav');
             if (!catNav) return;
@@ -2054,10 +2081,25 @@
                     priceForLightbox = `${finalPrice.toFixed(2)} ${t.currency}`;
                 }
 
-                // تحديد نص ووظيفة الزر الموحد
-                let btnLabel = t.orderNowBtn;
-                if (hasSizes) btnLabel = t.chooseSizeBtn;
-                else if (hasAddons) btnLabel = currentLang === 'ar' ? 'اطلب وتخصيص 🛒' : 'Order & Customize 🛒';
+                // زر الإضافات المستقل + زر الطلب أو اختيار الحجم
+                let actionButtonsHTML = '';
+                if (hasAddons) {
+                    actionButtonsHTML += `<button class="mini-addons-btn" onclick="openSimpleAddonsModal('${item.id}', ${currentActiveCatIndex})">${t.addonsBtnLabel}</button>`;
+                }
+
+                if (hasSizes) {
+                    actionButtonsHTML += `
+                        <button class="order-btn size-select-style" id="btn_${item.id}" ${!isEnabled ? 'disabled' : ''} onclick="openSimpleAddonsModal('${item.id}', ${currentActiveCatIndex})">
+                            ${isEnabled ? t.chooseSizeBtn : t.unavailableBtn}
+                        </button>
+                    `;
+                } else {
+                    actionButtonsHTML += `
+                        <button class="order-btn" id="btn_${item.id}" ${!isEnabled ? 'disabled' : ''} onclick="addToCartDirect('${item.id}', ${currentActiveCatIndex})">
+                            ${isEnabled ? t.orderNowBtn : t.unavailableBtn}
+                        </button>
+                    `;
+                }
 
                 card.innerHTML = `
                     <div class="item-img-box" onclick="openImageLightbox(this.querySelector('img').src, '${displayName.replace(/'/g, "\\'")}', '${priceForLightbox}')" title="${currentLang==='ar'?'اضغط لتكبير الصورة':'Click to view photo'}">
@@ -2077,9 +2119,7 @@
                             ${displayDesc ? `<div class="food-desc">${displayDesc}</div>` : ''}
                         </div>
                         <div class="card-actions-box">
-                            <button class="order-btn-unified" id="btn_${item.id}" ${!isEnabled ? 'disabled' : ''} onclick="${(hasSizes || hasAddons) ? `openSimpleAddonsModal('${item.id}', ${currentActiveCatIndex})` : `addToCartDirect('${item.id}', ${currentActiveCatIndex})`}">
-                                ${isEnabled ? btnLabel : t.unavailableBtn}
-                            </button>
+                            ${actionButtonsHTML}
                         </div>
                     </div>
                 `;
@@ -2093,7 +2133,7 @@
             const item = catData.items.find(i => i.id === itemId);
             if (!item) return;
 
-            if ((item.priceInfo && item.priceInfo.hasSizes) || (item.addons && item.addons.length > 0)) {
+            if (item.priceInfo && item.priceInfo.hasSizes) {
                 openSimpleAddonsModal(itemId, catIndex);
                 return;
             }
@@ -2571,7 +2611,6 @@
             if (el) el.style.display = 'none';
         }
 
-        // حفظ وتطبيق نسبة زيادة الأسعار لجميع الأصناف مع تقريب القروش لـ .95
         async function adminSavePriceMarkup() {
             const inputVal = parseFloat(document.getElementById('adminMarkupPercentInput').value) || 0;
             priceMarkupPercentage = Math.max(0, inputVal);
