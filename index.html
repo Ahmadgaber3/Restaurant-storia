@@ -491,7 +491,6 @@
         }
         .mini-addons-btn:active { background: var(--accent); color: white; }
 
-        /* زر اطلب الان واختيار الحجم كلاهما باللون الأخضر المميز وبتصميم موحد وبسيط */
         .order-btn { 
             flex: 1.4;
             background: var(--accent); 
@@ -516,6 +515,17 @@
         }
         .order-btn:disabled { background: #94a3b8 !important; border-color: #94a3b8 !important; cursor: not-allowed; box-shadow: none !important; }
 
+        .order-btn.size-select-style {
+            background: #ffffff;
+            color: var(--accent);
+            border: 1.5px solid var(--accent);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        .order-btn.size-select-style:active {
+            background: var(--accent);
+            color: #ffffff;
+        }
+        
         .order-btn.added { 
             background: rgba(46, 125, 50, 0.12) !important; 
             color: #2e7d32 !important; 
@@ -560,7 +570,7 @@
             z-index: 10;
         }
 
-        /* نافذة اختيار الحجم فقط (صغيرة وبسيطة) */
+        /* نافذة اختيار الحجم البسيطة والصغيرة */
         .size-only-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.65); z-index: 3800; display: none;
@@ -687,36 +697,35 @@
             font-size: 0.9rem; cursor: pointer; box-shadow: 0 4px 12px rgba(27, 77, 62, 0.25);
         }
 
-        /* ==================== FOOTER (مطابق للصورة تماماً) ==================== */
-        .restaurant-footer { 
-            padding: 26px 20px 30px 20px; 
-            text-align: center; 
-            background: var(--white); 
-            border-top: 1px solid var(--border-color); 
-            margin-top: 20px; 
+        /* ==================== نافذة "تمت الإضافة للسلة" البسيطة والمصغرة ==================== */
+        .toast-added-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(3px);
+            z-index: 9500; display: none; justify-content: center; align-items: center;
+            padding: 16px;
         }
-        .footer-rights { 
-            font-size: 0.92rem; 
-            color: var(--main-text); 
-            font-weight: 800; 
-            margin-bottom: 4px; 
+        .toast-added-card {
+            background: var(--white); width: 100%; max-width: 290px;
+            border-radius: 22px; padding: 22px 16px; text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+            animation: smoothFadeIn 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+            display: flex; flex-direction: column; align-items: center;
+            border: 1px solid var(--border-color);
         }
-        .dev-credit { 
-            font-size: 0.88rem; 
-            color: #475569; 
-            font-weight: 800; 
-            margin-bottom: 4px;
+        .toast-icon-circle {
+            width: 55px; height: 55px; background: rgba(46, 125, 50, 0.12);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            margin-bottom: 10px; border: 2px solid #2e7d32;
         }
-        .dev-phone {
-            color: var(--accent); 
-            text-decoration: none; 
-            display: inline-flex; 
-            align-items: center;
-            gap: 4px;
-            font-size: 0.90rem;
-            font-weight: 900;
-            direction: ltr;
+        .toast-icon-circle svg { width: 28px; height: 28px; fill: #2e7d32; }
+        .toast-added-title {
+            font-size: 1.05rem; font-weight: 900; color: var(--main-text); margin-bottom: 4px;
         }
+
+        .restaurant-footer { padding: 30px 20px; text-align: center; background: var(--white); border-top: 1px solid var(--border-color); margin-top: 20px; }
+        .footer-rights { font-size: 0.92rem; color: var(--main-text); font-weight: 800; margin-bottom: 4px; }
+        .dev-credit { font-size: 0.88rem; color: #475569; font-weight: 800; margin-bottom: 4px; }
+        .dev-phone { color: var(--accent); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; font-size: 0.90rem; font-weight: 900; direction: ltr; }
 
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.65); z-index: 2000; display: none; justify-content: center; align-items: flex-end; }
         .modal-content { background: var(--white); width: 100%; max-width: 500px; padding: 25px; border-radius: 30px 30px 0 0; max-height: 90vh; overflow-y: auto; color: var(--main-text); animation: smoothSlideUp 0.2s ease-out; }
@@ -1060,12 +1069,12 @@
                 <div class="loyalty-card-phone" id="modalUserPhoneDisplay">أدخل رقم هاتفك في السلة لتجميع النقاط</div>
             </div>
 
-            <div style="font-size: 0.85rem; font-weight: 800; margin-bottom: 8px; color: var(--main-text);" id="t_loyalty_redeem_lbl">استبدل نقاطك بهدايا مجانية فوراً:</div>
+            <div style="font-size: 0.85rem; font-weight: 800; margin-bottom: 8px; color: var(--main-text);" id="t_loyalty_red_lbl">استبدل نقاطك بهدايا مجانية فوراً:</div>
             <div id="simpleRewardsList"></div>
         </div>
     </div>
 
-    <!-- نافذة اختيار الحجم فقط (منفصلة وبسيطة وسريعة) -->
+    <!-- نافذة اختيار الحجم فقط (منفصلة وبسيطة) -->
     <div class="size-only-modal" id="sizeOnlyModal" onclick="if(event.target===this) closeSizeOnlyModal()">
         <div class="size-only-content">
             <div class="size-only-header">
@@ -1105,6 +1114,16 @@
                 </div>
                 <button class="simple-confirm-btn" id="t_addons_confirm_btn" onclick="confirmSimpleAddonsOrder()">➕ إضافة للسلة</button>
             </div>
+        </div>
+    </div>
+
+    <!-- نافذة "تمت الإضافة للسلة" البسيطة والمصغرة -->
+    <div class="toast-added-modal" id="toastAddedModal">
+        <div class="toast-added-card">
+            <div class="toast-icon-circle">
+                <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+            </div>
+            <div class="toast-added-title" id="t_toast_added">تمت الإضافة للسلة بنجاح!</div>
         </div>
     </div>
 
@@ -1321,7 +1340,7 @@
         </div>
     </div>
 
-    <!-- الفوتر المعدل بنفس شكل الصورة تماماً -->
+    <!-- الفوتر المعدل بدقة ليتطابق مع طلبك والصورة -->
     <footer class="restaurant-footer">
         <p class="footer-rights" id="t_footer_rights">جميع الحقوق محفوظة لـ ستوريا 2026 ©</p>
         <div class="dev-credit">Designed by eng / Ahmed Jaber</div>
@@ -1726,7 +1745,7 @@
                         showWelcomeModal();
                     }
                 }
-            }, 18);
+            }, 10); // زيادة السرعة الفائقة لعداد التحميل
         }
 
         function showWelcomeModal() {
@@ -1798,6 +1817,7 @@
             }
         }
 
+        // دالة التحميل المسبق الفوري والفائق لجميع الصور في الكاش
         function preloadAllMenuImages() {
             if (!menuData || menuData.length === 0) return;
             menuData.forEach(cat => {
@@ -1935,6 +1955,16 @@
             }
         }
 
+        // نافذة "تمت الإضافة للسلة" المصغرة السريعة
+        function showToastAddedNotification() {
+            const modal = document.getElementById('toastAddedModal');
+            if (!modal) return;
+            modal.style.display = 'flex';
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 1200); // تختفي تلقائياً بعد 1.2 ثانية
+        }
+
         function parseCSVLine(line) {
             const result = [];
             let insideQuote = false;
@@ -2025,7 +2055,7 @@
                     menuData = parsedMenu;
                     renderCategories();
                     renderMenu();
-                    preloadAllMenuImages();
+                    preloadAllMenuImages(); // بدء التحميل المسبق الفوري
                 }
             } catch (err) {
                 console.error("Error loading menu:", err);
@@ -2111,7 +2141,6 @@
                     priceForLightbox = `${finalPrice.toFixed(2)} ${t.currency}`;
                 }
 
-                // بناء أزرار الكارت
                 let actionButtonsHTML = '';
                 if (hasAddons) {
                     actionButtonsHTML += `<button class="mini-addons-btn" onclick="openSimpleAddonsModal('${item.id}', ${currentActiveCatIndex})">${t.addonsBtnLabel}</button>`;
@@ -2119,7 +2148,7 @@
 
                 if (hasSizes) {
                     actionButtonsHTML += `
-                        <button class="order-btn" id="btn_${item.id}" ${!isEnabled ? 'disabled' : ''} onclick="openSizeOnlyModal('${item.id}', ${currentActiveCatIndex})">
+                        <button class="order-btn size-select-style" id="btn_${item.id}" ${!isEnabled ? 'disabled' : ''} onclick="openSizeOnlyModal('${item.id}', ${currentActiveCatIndex})">
                             ${isEnabled ? t.chooseSizeBtn : t.unavailableBtn}
                         </button>
                     `;
@@ -2187,20 +2216,10 @@
             cart.push(cartItem);
             updateCartBadge();
             animateCartBtn();
-            
-            const btn = document.getElementById('btn_' + itemId);
-            if (btn) {
-                const origText = btn.innerHTML;
-                btn.innerHTML = t.addedBtn;
-                btn.classList.add('added');
-                setTimeout(() => {
-                    btn.innerHTML = origText;
-                    btn.classList.remove('added');
-                }, 1000);
-            }
+            showToastAddedNotification(); // إظهار الرسالة المصغرة
         }
 
-        // ==================== نافذة اختيار الحجم فقط (صغيرة وبسيطة وسريعة) ====================
+        // نافذة اختيار الحجم البسيطة فقط
         function openSizeOnlyModal(itemId, catIndex) {
             const catData = menuData[catIndex];
             if (!catData) return;
@@ -2210,7 +2229,7 @@
             const displayName = getLocalizedItemName(item);
 
             currentActiveItem = item;
-            selectedItemSizeKey = 'large'; // الافتراضي كبير L
+            selectedItemSizeKey = 'large';
 
             document.getElementById('sizeOnlyItemName').innerText = displayName;
 
@@ -2267,9 +2286,9 @@
             updateCartBadge();
             animateCartBtn();
             closeSizeOnlyModal();
+            showToastAddedNotification(); // إظهار الرسالة المصغرة
         }
 
-        // ==================== نافذة الإضافات المستقلة ====================
         function openSimpleAddonsModal(itemId, catIndex) {
             const catData = menuData[catIndex];
             if (!catData) return;
@@ -2363,6 +2382,7 @@
             updateCartBadge();
             animateCartBtn();
             closeSimpleAddonsModal();
+            showToastAddedNotification(); // إظهار الرسالة المصغرة
         }
 
         function updateCartBadge() {
