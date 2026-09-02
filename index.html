@@ -1558,6 +1558,38 @@
             if (modal) modal.style.display = 'none';
         }
 
+        // دالة المحاولات الذكية للصور بكل الأسماء والصيغ الممكنة
+        function handleSmartImageFallback(imgElement) {
+            const step = parseInt(imgElement.dataset.step || '0', 10);
+            const rowNum = imgElement.dataset.row || '';
+            const nameAr = imgElement.dataset.ar || '';
+            const nameEn = imgElement.dataset.en || '';
+            
+            const nameArUnderscore = nameAr.replace(/\s+/g, '_');
+            const nameEnUnderscore = nameEn.replace(/\s+/g, '_');
+
+            // قائمة بالمسارات التي سيتم تجربتها بالترتيب
+            const attempts = [
+                `images/${rowNum}.jpg`,
+                `images/${rowNum}.png`,
+                `images/${encodeURIComponent(nameAr)}.jpg`,
+                `images/${encodeURIComponent(nameAr)}.png`,
+                `images/${encodeURIComponent(nameArUnderscore)}.jpg`,
+                `images/${encodeURIComponent(nameEn)}.jpg`,
+                `images/${encodeURIComponent(nameEn)}.png`,
+                `images/${encodeURIComponent(nameEnUnderscore)}.jpg`,
+                `images/${encodeURIComponent(nameEnUnderscore)}.png`,
+                'images/logooo.png'
+            ];
+
+            if (step < attempts.length) {
+                imgElement.dataset.step = step + 1;
+                imgElement.src = attempts[step];
+            } else {
+                imgElement.src = 'images/logooo.png';
+            }
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
             applyLanguageSettings();
             startCreativeCounter();
@@ -1732,7 +1764,7 @@
                     const sheetRowNumber = i + 1;
                     let img = `images/${sheetRowNumber}.jpg`;
 
-                    // إذا كان هناك عمود صور في الشيت (عمود E مثلاً)
+                    // إذا كان هناك رابط خارجي أو مسار صورة مخصص
                     if (row[4] && row[4].trim() !== '') {
                         let customImg = row[4].trim().replace(/^\[|\]$/g, '');
                         if (customImg.startsWith('http') || customImg.startsWith('images/')) {
@@ -1793,8 +1825,15 @@
 
                 const imgBox = document.createElement('div');
                 imgBox.className = 'cat-img-box';
-                const firstItemImg = cat.items && cat.items[0] ? cat.items[0].img : 'images/logooo.png';
-                imgBox.innerHTML = `<img src="${firstItemImg}" alt="${cat.catAr}" onerror="this.src='images/logooo.png'">`;
+                const firstItem = cat.items && cat.items[0] ? cat.items[0] : null;
+                const firstItemImg = firstItem ? firstItem.img : 'images/logooo.png';
+                const rowNum = firstItem ? firstItem.sheetRow : '';
+                const arName = firstItem ? firstItem.nameAr : '';
+                const enName = firstItem ? firstItem.nameEn : '';
+
+                imgBox.innerHTML = `<img src="${firstItemImg}" alt="${cat.catAr}" 
+                    data-row="${rowNum}" data-ar="${arName}" data-en="${enName}" data-step="0"
+                    onerror="handleSmartImageFallback(this)">`;
 
                 const label = document.createElement('span');
                 label.innerText = getCategoryCleanName(cat);
@@ -1827,7 +1866,6 @@
                 const card = document.createElement('div');
                 card.className = 'food-card' + (isEnabled ? '' : ' disabled-item');
                 const hasAddons = item.addons && item.addons.length > 0;
-                const cleanUnderscore = primaryKey.replace(/\s+/g, '_');
                 
                 const displayName = getLocalizedItemName(item);
                 const displayDesc = getLocalizedItemDesc(item);
@@ -1835,9 +1873,11 @@
                 card.innerHTML = `
                     <div class="item-img-box" onclick="openImageLightbox(this.querySelector('img').src, '${displayName.replace(/'/g, "\\'")}', ${item.price})" title="${currentLang==='ar'?'اضغط لتكبير الصورة':'Click to view photo'}">
                         <img src="${item.img}" loading="lazy" alt="${primaryKey}" 
-                             onerror="if(!this.dataset.step){this.dataset.step='1'; this.src='images/' + encodeURIComponent('${primaryKey}') + '.jpg';} 
-                                      else if(this.dataset.step==='1'){this.dataset.step='2'; this.src='images/' + encodeURIComponent('${cleanUnderscore}') + '.jpg';} 
-                                      else {this.src='images/logooo.png';}">
+                             data-row="${item.sheetRow}" 
+                             data-ar="${item.nameAr || ''}" 
+                             data-en="${item.nameEn || ''}" 
+                             data-step="0"
+                             onerror="handleSmartImageFallback(this)">
                     </div>
                     <div class="food-info">
                         <div>
