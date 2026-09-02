@@ -876,7 +876,7 @@
         .pass-form button { width: 100%; padding: 14px; border-radius: 14px; border: none; background: var(--accent); color: white; font-weight: 800; cursor: pointer; }
 
         .chat-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 6000; display: none; justify-content: center; align-items: center; padding: 14px; }
-        .chat-box-card { background: var(--white); width: 100%; max-width: 440px; height: 80vh; border-radius: 24px; display: flex-direction: column; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5); animation: smoothFadeIn 0.25s ease-out; border: 1px solid var(--border-color); }
+        .chat-box-card { background: var(--white); width: 100%; max-width: 440px; height: 80vh; border-radius: 24px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5); animation: smoothFadeIn 0.25s ease-out; border: 1px solid var(--border-color); }
         .chat-header { background: var(--accent); color: white; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; }
         .chat-header-info { display: flex; flex-direction: column; }
         .chat-header-title { font-size: 0.95rem; font-weight: 900; }
@@ -902,7 +902,6 @@
         </div>
     </div>
 
-    <!-- نافذة اختيار طريقة الاستلام -->
     <div class="welcome-order-type-modal" id="welcomeOrderModal">
         <div class="welcome-card">
             <h2 class="welcome-title" id="t_welcome_title">مرحباً بك في ستوريا | Welcome</h2>
@@ -928,7 +927,6 @@
         </div>
     </div>
 
-    <!-- نافذة تكبير الصورة (Lightbox) -->
     <div class="image-lightbox-modal" id="imageLightboxModal" onclick="if(event.target===this) closeImageLightbox()">
         <div class="image-lightbox-content">
             <button class="image-lightbox-close" onclick="closeImageLightbox()">✕</button>
@@ -998,7 +996,7 @@
         </div>
     </div>
 
-    <!-- نافذة تخصيص الصنف واختيار الحجم والإضافات -->
+    <!-- نافذة اختيار الحجم والإضافات -->
     <div class="simple-addons-modal" id="simpleAddonsModal" onclick="if(event.target===this) closeSimpleAddonsModal()">
         <div class="simple-addons-content">
             <div class="simple-addons-header">
@@ -1011,7 +1009,7 @@
                 <span class="simple-item-price" id="modalItemBasePrice">0.00 ج.م</span>
             </div>
 
-            <!-- خيارات الأحجام (تظهر فقط للأصناف ذات الحجمين) -->
+            <!-- خيارات الأحجام (Large / Medium) -->
             <div class="size-selection-box" id="modalSizesContainer" style="display: none;">
                 <div class="size-selection-title" id="t_size_title">اختر الحجم المطلوب:</div>
                 <div class="size-options-grid" id="modalSizesGrid"></div>
@@ -1403,8 +1401,8 @@
                 branchTitle: '📍 فرع مدينة نصر:',
                 branchDesc: 'شارع عباس العقاد - أمام الجامعة العمالية',
                 footerRights: 'جميع الحقوق محفوظة لـ Storia Coffee and Restaurant 2026 ©',
-                sizeLarge: 'كبير (L)',
-                sizeMedium: 'وسط (M)'
+                sizeLarge: 'كبير (Large)',
+                sizeMedium: 'وسط (Medium)'
             },
             en: {
                 langBtn: 'AR',
@@ -1453,47 +1451,57 @@
             }
         };
 
-        // دالة كشف الأسعار الثنائية (Large & Medium) في المكرونة والبرجر
-        function parseItemPrice(priceStr) {
-            const raw = String(priceStr || '').trim();
-            const isMulti = /large|medium|كبير|وسط|\//i.test(raw);
-            
+        // دالة كشف الأسعار ومعالجة الأخطاء الذكية لتفادي قراءة الـ 200 جرام كسعر
+        function parseItemPrice(priceStr, nameStr = '') {
+            let raw = String(priceStr || '').trim();
+            const combinedText = (raw + ' ' + nameStr).toLowerCase();
+
+            // فحص هل الصنف يحتوي على حجمين (كبير ووسط / Large و Medium)
+            const isMulti = /large|medium|كبير|وسط|\/|\\/.test(combinedText);
+
             if (isMulti) {
                 let pLarge = 0;
                 let pMedium = 0;
 
-                const matchL = raw.match(/(?:Large|كبير)\s*:\s*([0-9.]+)/i);
-                if (matchL) pLarge = parseFloat(matchL[1]) || 0;
-
-                const matchM = raw.match(/(?:Medium|وسط)\s*:\s*([0-9.]+)/i);
-                if (matchM) pMedium = parseFloat(matchM[1]) || 0;
-
-                if (!pLarge && !pMedium && raw.includes('/')) {
-                    const parts = raw.split('/');
-                    const num1 = (parts[0].match(/[0-9.]+/) || [])[0];
-                    const num2 = (parts[1].match(/[0-9.]+/) || [])[0];
-                    pLarge = parseFloat(num1) || 0;
-                    pMedium = parseFloat(num2) || 0;
+                // استخراج الأرقام العشرية الصالحة فوق 10 جنيه (تتجاهل وزن 200g أو 0.20)
+                const numbers = [];
+                const regex = /(?:^|[^\d.])([1-9]\d{1,3}(?:\.\d{1,2})?)(?:[^\d.]|$)/g;
+                let m;
+                while ((m = regex.exec(raw)) !== null) {
+                    const val = parseFloat(m[1]);
+                    if (val >= 10 && val <= 2000) numbers.push(val);
                 }
 
-                if (pLarge || pMedium) {
+                if (numbers.length >= 2) {
+                    // الرقم الأكبر يكون Large والأصغر Medium
+                    pLarge = Math.max(numbers[0], numbers[1]);
+                    pMedium = Math.min(numbers[0], numbers[1]);
+                } else if (numbers.length === 1) {
+                    pLarge = numbers[0];
+                    pMedium = numbers[0];
+                }
+
+                if (pLarge > 0 && pMedium > 0 && pLarge !== pMedium) {
                     return {
                         hasSizes: true,
-                        sizes: {
-                            large: pLarge || pMedium,
-                            medium: pMedium || pLarge
-                        },
-                        defaultPrice: pLarge || pMedium || 0,
+                        sizes: { large: pLarge, medium: pMedium },
+                        defaultPrice: pLarge,
                         rawStr: raw
                     };
                 }
             }
 
-            const cleanNum = parseFloat(raw.replace(/[^0-9.]/g, '')) || 0;
+            // لو صنف عادي برقم واحد: نستخرج الرقم الحقيقي للسعر
+            const matchValid = raw.match(/([1-9]\d{1,3}(?:\.\d{1,2})?)/);
+            let finalPrice = matchValid ? parseFloat(matchValid[1]) : 0;
+
+            // إذا كان الرقم أقل من 1 جنيه بسبب خطأ فواصل، يتم إصلاحه
+            if (finalPrice > 0 && finalPrice < 1) finalPrice = finalPrice * 1000;
+
             return {
                 hasSizes: false,
                 sizes: null,
-                defaultPrice: cleanNum,
+                defaultPrice: finalPrice,
                 rawStr: raw
             };
         }
@@ -1854,9 +1862,7 @@
                 for (let i = 1; i < lines.length; i++) {
                     const row = parseCSVLine(lines[i]);
                     
-                    // قراءة الأعمدة بالترتيب الفعلي
-                    // En: A=0 (Category), B=1 (Item Name), C=2 (Price), D=3 (Description)
-                    // Ar: Q=16 (القسم), R=17 (اسم الصنف), S=18 (السعر), T=19 (الوصف والمكونات)
+                    // قراءة الأعمدة بدقة
                     const catEn = (row[0] || '').trim();
                     const nameEn = (row[1] || '').trim();
                     const priceEnRaw = (row[2] || '').trim();
@@ -1869,8 +1875,8 @@
 
                     if (!nameAr && !nameEn) continue;
 
-                    // تحليل السعر (سواء حجم واحد أو حجمين L و M)
-                    const priceInfo = parseItemPrice(priceArRaw || priceEnRaw);
+                    // تحليل السعر الدقيق
+                    const priceInfo = parseItemPrice(priceArRaw || priceEnRaw, nameAr || nameEn);
 
                     const sheetRowNumber = i + 1;
                     let img = `images/${sheetRowNumber}.jpg`;
