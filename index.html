@@ -491,6 +491,7 @@
         }
         .mini-addons-btn:active { background: var(--accent); color: white; }
 
+        /* زر اطلب الان واختيار الحجم كلاهما باللون الأخضر المميز وبتصميم موحد وبسيط */
         .order-btn { 
             flex: 1.4;
             background: var(--accent); 
@@ -515,18 +516,6 @@
         }
         .order-btn:disabled { background: #94a3b8 !important; border-color: #94a3b8 !important; cursor: not-allowed; box-shadow: none !important; }
 
-        /* زر بسيط وهادئ لاختيار الحجم */
-        .order-btn.size-select-style {
-            background: #ffffff;
-            color: var(--accent);
-            border: 1.5px solid var(--accent);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-        }
-        .order-btn.size-select-style:active {
-            background: var(--accent);
-            color: #ffffff;
-        }
-        
         .order-btn.added { 
             background: rgba(46, 125, 50, 0.12) !important; 
             color: #2e7d32 !important; 
@@ -570,6 +559,26 @@
             font-size: 1.1rem; font-weight: 900; cursor: pointer;
             z-index: 10;
         }
+
+        /* نافذة اختيار الحجم فقط (صغيرة وبسيطة) */
+        .size-only-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.65); z-index: 3800; display: none;
+            justify-content: center; align-items: center;
+            padding: 16px;
+            backdrop-filter: blur(4px);
+        }
+        .size-only-content {
+            background: var(--white); width: 100%; max-width: 360px;
+            border-radius: 24px; padding: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            animation: floatFadeIn 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+            border: 1px solid var(--border-color);
+        }
+        .size-only-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 14px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;
+        }
+        .size-only-header h3 { font-size: 1.05rem; font-weight: 900; color: var(--accent); }
 
         .simple-addons-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -628,18 +637,18 @@
         }
         .size-opt-btn {
             flex: 1;
-            padding: 9px 8px;
-            border-radius: 10px;
+            padding: 10px 8px;
+            border-radius: 12px;
             border: 1.5px solid var(--border-color);
             background: var(--white);
             color: var(--main-text);
             cursor: pointer;
             font-weight: 800;
-            font-size: 0.82rem;
+            font-size: 0.84rem;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2px;
+            gap: 3px;
             transition: all 0.15s ease;
         }
         .size-opt-btn.active {
@@ -678,16 +687,36 @@
             font-size: 0.9rem; cursor: pointer; box-shadow: 0 4px 12px rgba(27, 77, 62, 0.25);
         }
 
-        .restaurant-footer { padding: 30px 20px; text-align: center; background: var(--white); border-top: 1px solid var(--border-color); margin-top: 20px; }
-        .branches-container { margin: 15px 0 10px 0; font-size: 0.82rem; color: var(--desc-text); text-align: right; background: var(--bg); padding: 12px; border-radius: 16px; border: 1px solid var(--border-color); }
-        [dir="ltr"] .branches-container { text-align: left; }
-        .branch-item { margin-bottom: 8px; }
-        .branch-item:last-child { margin-bottom: 0; }
-        .branch-item strong { color: var(--accent); display: block; }
-        
-        .footer-rights { font-size: 0.8rem; color: var(--main-text); font-weight: 600; margin-bottom: 5px; }
-        .dev-credit { font-size: 0.85rem; color: var(--desc-text); font-weight: 700; }
-        .dev-credit a { color: var(--accent); text-decoration: none; display: block; margin-top: 3px; }
+        /* ==================== FOOTER (مطابق للصورة تماماً) ==================== */
+        .restaurant-footer { 
+            padding: 26px 20px 30px 20px; 
+            text-align: center; 
+            background: var(--white); 
+            border-top: 1px solid var(--border-color); 
+            margin-top: 20px; 
+        }
+        .footer-rights { 
+            font-size: 0.92rem; 
+            color: var(--main-text); 
+            font-weight: 800; 
+            margin-bottom: 4px; 
+        }
+        .dev-credit { 
+            font-size: 0.88rem; 
+            color: #475569; 
+            font-weight: 800; 
+            margin-bottom: 4px;
+        }
+        .dev-phone {
+            color: var(--accent); 
+            text-decoration: none; 
+            display: inline-flex; 
+            align-items: center;
+            gap: 4px;
+            font-size: 0.90rem;
+            font-weight: 900;
+            direction: ltr;
+        }
 
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.65); z-index: 2000; display: none; justify-content: center; align-items: flex-end; }
         .modal-content { background: var(--white); width: 100%; max-width: 500px; padding: 25px; border-radius: 30px 30px 0 0; max-height: 90vh; overflow-y: auto; color: var(--main-text); animation: smoothSlideUp 0.2s ease-out; }
@@ -936,6 +965,7 @@
         </div>
     </div>
 
+    <!-- نافذة اختيار طريقة الاستلام -->
     <div class="welcome-order-type-modal" id="welcomeOrderModal">
         <div class="welcome-card">
             <h2 class="welcome-title" id="t_welcome_title">مرحباً بك في ستوريا | Welcome</h2>
@@ -961,6 +991,7 @@
         </div>
     </div>
 
+    <!-- نافذة تكبير الصورة (Lightbox) -->
     <div class="image-lightbox-modal" id="imageLightboxModal" onclick="if(event.target===this) closeImageLightbox()">
         <div class="image-lightbox-content">
             <button class="image-lightbox-close" onclick="closeImageLightbox()">✕</button>
@@ -1034,23 +1065,34 @@
         </div>
     </div>
 
-    <!-- نافذة تخصيص الصنف واختيار الحجم -->
+    <!-- نافذة اختيار الحجم فقط (منفصلة وبسيطة وسريعة) -->
+    <div class="size-only-modal" id="sizeOnlyModal" onclick="if(event.target===this) closeSizeOnlyModal()">
+        <div class="size-only-content">
+            <div class="size-only-header">
+                <h3 id="sizeOnlyItemName">اختيار الحجم</h3>
+                <button class="simple-addons-close" onclick="closeSizeOnlyModal()">✕</button>
+            </div>
+            
+            <div class="size-selection-box" style="margin-bottom: 16px;">
+                <div class="size-selection-title" id="t_size_only_title">اختر الحجم المطلوب:</div>
+                <div class="size-options-grid" id="sizeOnlyGrid"></div>
+            </div>
+
+            <button class="simple-confirm-btn" style="width: 100%;" id="t_size_only_btn" onclick="confirmSizeOnlySelection()">🛒 تأكيد وإضافة للسلة</button>
+        </div>
+    </div>
+
+    <!-- نافذة الإضافات المستقلة -->
     <div class="simple-addons-modal" id="simpleAddonsModal" onclick="if(event.target===this) closeSimpleAddonsModal()">
         <div class="simple-addons-content">
             <div class="simple-addons-header">
-                <h3 id="t_addons_title">تخصيص الصنف والحجم</h3>
+                <h3 id="t_addons_title">إضافات وتخصيص الصنف</h3>
                 <button class="simple-addons-close" onclick="closeSimpleAddonsModal()">✕</button>
             </div>
             
             <div class="simple-item-summary">
                 <span class="simple-item-name" id="modalItemName">اسم الصنف</span>
                 <span class="simple-item-price" id="modalItemBasePrice">0.00 ج.م</span>
-            </div>
-
-            <!-- خيارات الأحجام (Large / Medium) -->
-            <div class="size-selection-box" id="modalSizesContainer" style="display: none;">
-                <div class="size-selection-title" id="t_size_title">اختر الحجم المطلوب:</div>
-                <div class="size-options-grid" id="modalSizesGrid"></div>
             </div>
 
             <div style="font-size: 0.82rem; font-weight: 800; color: var(--desc-text); margin-bottom: 10px;" id="t_addons_sub">اختر الإضافات المطلوبة (اختياري):</div>
@@ -1279,18 +1321,11 @@
         </div>
     </div>
 
+    <!-- الفوتر المعدل بنفس شكل الصورة تماماً -->
     <footer class="restaurant-footer">
-        <div class="branches-container" id="footerBranchesContainer">
-            <div class="branch-item">
-                <strong id="t_branch_title">📍 فرع مدينة نصر:</strong>
-                <span id="t_branch_desc">شارع عباس العقاد - أمام الجامعة العمالية</span>
-            </div>
-        </div>
-        <p class="footer-rights" id="t_footer_rights">جميع الحقوق محفوظة لـ Storia Coffee and Restaurant 2026 ©</p>
-        <div class="dev-credit">
-            Designed & Developed by أحمد جابر
-            <a href="tel:01014144144">📞 info@storia-eg.com</a>
-        </div>
+        <p class="footer-rights" id="t_footer_rights">جميع الحقوق محفوظة لـ ستوريا 2026 ©</p>
+        <div class="dev-credit">Designed by eng / Ahmed Jaber</div>
+        <a href="tel:01030252806" class="dev-phone">01030252806 📞</a>
     </footer>
 
     <div class="modal" id="cartModal" onclick="if(event.target==this) toggleCart(false)">
@@ -1412,7 +1447,7 @@
 
         let currentActiveItem = null;
         let selectedAddonsMap = [];
-        let selectedItemSizeKey = null;
+        let selectedItemSizeKey = 'large';
 
         let userLoyaltyPoints = 0;
         let activeUserPhone = localStorage.getItem('storia_user_phone') || '';
@@ -1435,7 +1470,7 @@
                 loyaltyTitle: '🎁 محفظة مكافآت ستوريا',
                 loyaltyBalLbl: 'رصيد نقاطك الحالي (1 ج.م = 1 نقطة)',
                 loyaltyRedeemLbl: 'استبدل نقاطك بهدايا مجانية فوراً:',
-                addonsTitle: 'تخصيص الصنف والحجم',
+                addonsTitle: 'إضافات وتخصيص الصنف',
                 addonsSub: 'اختر الإضافات المطلوبة (اختياري):',
                 sizeTitle: 'اختر الحجم المطلوب:',
                 addonsTotalLbl: 'الإجمالي الكلي:',
@@ -1464,11 +1499,10 @@
                 successCloseBtn: 'إغلاق ومتابعة',
                 chatSendBtn: 'إرسال',
                 chatPlaceholder: 'اكتب رسالتك هنا...',
-                branchTitle: '📍 فرع مدينة نصر:',
-                branchDesc: 'شارع عباس العقاد - أمام الجامعة العمالية',
-                footerRights: 'جميع الحقوق محفوظة لـ Storia Coffee and Restaurant 2026 ©',
+                footerRights: 'جميع الحقوق محفوظة لـ ستوريا 2026 ©',
                 sizeLarge: 'كبير (Large)',
-                sizeMedium: 'وسط (Medium)'
+                sizeMedium: 'وسط (Medium)',
+                sizeConfirmBtn: '🛒 تأكيد وإضافة للسلة'
             },
             en: {
                 langBtn: 'AR',
@@ -1480,7 +1514,7 @@
                 loyaltyTitle: '🎁 Storia Rewards Wallet',
                 loyaltyBalLbl: 'Current Points Balance (1 EGP = 1 Pt)',
                 loyaltyRedeemLbl: 'Redeem points for free items instantly:',
-                addonsTitle: 'Item Size & Customization',
+                addonsTitle: 'Item Add-ons & Customization',
                 addonsSub: 'Choose your desired add-ons (Optional):',
                 sizeTitle: 'Choose Size:',
                 addonsTotalLbl: 'Total Price:',
@@ -1509,11 +1543,10 @@
                 successCloseBtn: 'Close & Continue',
                 chatSendBtn: 'Send',
                 chatPlaceholder: 'Type your message here...',
-                branchTitle: '📍 Nasr City Branch:',
-                branchDesc: 'Abbas El Akkad St. - In front of Worker University',
-                footerRights: 'All Rights Reserved to Storia Coffee & Restaurant 2026 ©',
+                footerRights: 'All Rights Reserved to Storia 2026 ©',
                 sizeLarge: 'Large (L)',
-                sizeMedium: 'Medium (M)'
+                sizeMedium: 'Medium (M)',
+                sizeConfirmBtn: '🛒 Confirm & Add to Cart'
             }
         };
 
@@ -1614,15 +1647,17 @@
             if (tLoyaltyTitle) tLoyaltyTitle.innerText = t.loyaltyTitle;
             const tLoyaltyBalLbl = document.getElementById('t_loyalty_bal_lbl');
             if (tLoyaltyBalLbl) tLoyaltyBalLbl.innerText = t.loyaltyBalLbl;
-            const tLoyaltyRedeemLbl = document.getElementById('t_loyalty_redeem_lbl');
+            const tLoyaltyRedeemLbl = document.getElementById('t_loyalty_red_lbl');
             if (tLoyaltyRedeemLbl) tLoyaltyRedeemLbl.innerText = t.loyaltyRedeemLbl;
 
             const tAddonsTitle = document.getElementById('t_addons_title');
             if (tAddonsTitle) tAddonsTitle.innerText = t.addonsTitle;
             const tAddonsSub = document.getElementById('t_addons_sub');
             if (tAddonsSub) tAddonsSub.innerText = t.addonsSub;
-            const tSizeTitle = document.getElementById('t_size_title');
-            if (tSizeTitle) tSizeTitle.innerText = t.sizeTitle;
+            const tSizeOnlyTitle = document.getElementById('t_size_only_title');
+            if (tSizeOnlyTitle) tSizeOnlyTitle.innerText = t.sizeTitle;
+            const tSizeOnlyBtn = document.getElementById('t_size_only_btn');
+            if (tSizeOnlyBtn) tSizeOnlyBtn.innerText = t.sizeConfirmBtn;
             const tAddonsTotalLbl = document.getElementById('t_addons_total_lbl');
             if (tAddonsTotalLbl) tAddonsTotalLbl.innerText = t.addonsTotalLbl;
             const tAddonsConfirmBtn = document.getElementById('t_addons_confirm_btn');
@@ -1657,11 +1692,6 @@
             if (tChatSendBtn) tChatSendBtn.innerText = t.chatSendBtn;
             const chatInputField = document.getElementById('chatInputField');
             if (chatInputField) chatInputField.placeholder = t.chatPlaceholder;
-
-            const tBranchTitle = document.getElementById('t_branch_title');
-            if (tBranchTitle) tBranchTitle.innerText = t.branchTitle;
-            const tBranchDesc = document.getElementById('t_branch_desc');
-            if (tBranchDesc) tBranchDesc.innerText = t.branchDesc;
 
             const tFooterRights = document.getElementById('t_footer_rights');
             if (tFooterRights) tFooterRights.innerText = t.footerRights;
@@ -2081,7 +2111,7 @@
                     priceForLightbox = `${finalPrice.toFixed(2)} ${t.currency}`;
                 }
 
-                // زر الإضافات المستقل + زر الطلب أو اختيار الحجم
+                // بناء أزرار الكارت
                 let actionButtonsHTML = '';
                 if (hasAddons) {
                     actionButtonsHTML += `<button class="mini-addons-btn" onclick="openSimpleAddonsModal('${item.id}', ${currentActiveCatIndex})">${t.addonsBtnLabel}</button>`;
@@ -2089,7 +2119,7 @@
 
                 if (hasSizes) {
                     actionButtonsHTML += `
-                        <button class="order-btn size-select-style" id="btn_${item.id}" ${!isEnabled ? 'disabled' : ''} onclick="openSimpleAddonsModal('${item.id}', ${currentActiveCatIndex})">
+                        <button class="order-btn" id="btn_${item.id}" ${!isEnabled ? 'disabled' : ''} onclick="openSizeOnlyModal('${item.id}', ${currentActiveCatIndex})">
                             ${isEnabled ? t.chooseSizeBtn : t.unavailableBtn}
                         </button>
                     `;
@@ -2134,7 +2164,7 @@
             if (!item) return;
 
             if (item.priceInfo && item.priceInfo.hasSizes) {
-                openSimpleAddonsModal(itemId, catIndex);
+                openSizeOnlyModal(itemId, catIndex);
                 return;
             }
 
@@ -2170,6 +2200,76 @@
             }
         }
 
+        // ==================== نافذة اختيار الحجم فقط (صغيرة وبسيطة وسريعة) ====================
+        function openSizeOnlyModal(itemId, catIndex) {
+            const catData = menuData[catIndex];
+            if (!catData) return;
+            const item = catData.items.find(i => i.id === itemId);
+            if (!item || !item.priceInfo || !item.priceInfo.hasSizes) return;
+            const t = translations[currentLang];
+            const displayName = getLocalizedItemName(item);
+
+            currentActiveItem = item;
+            selectedItemSizeKey = 'large'; // الافتراضي كبير L
+
+            document.getElementById('sizeOnlyItemName').innerText = displayName;
+
+            const grid = document.getElementById('sizeOnlyGrid');
+            grid.innerHTML = '';
+
+            const sizes = [
+                { key: 'large', label: t.sizeLarge, price: applyMarkup(item.priceInfo.sizes.large) },
+                { key: 'medium', label: t.sizeMedium, price: applyMarkup(item.priceInfo.sizes.medium) }
+            ];
+
+            sizes.forEach(s => {
+                const btn = document.createElement('button');
+                btn.className = `size-opt-btn ${selectedItemSizeKey === s.key ? 'active' : ''}`;
+                btn.id = `size_only_btn_${s.key}`;
+                btn.onclick = () => {
+                    selectedItemSizeKey = s.key;
+                    document.querySelectorAll('#sizeOnlyGrid .size-opt-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                };
+                btn.innerHTML = `<span>${s.label}</span><b style="color:${selectedItemSizeKey === s.key ? '#fff' : 'var(--accent)'}; font-size:0.95rem;">${s.price.toFixed(2)} ${t.currency}</b>`;
+                grid.appendChild(btn);
+            });
+
+            document.getElementById('sizeOnlyModal').style.display = 'flex';
+        }
+
+        function closeSizeOnlyModal() {
+            document.getElementById('sizeOnlyModal').style.display = 'none';
+            currentActiveItem = null;
+        }
+
+        function confirmSizeOnlySelection() {
+            if (!currentActiveItem) return;
+            const t = translations[currentLang];
+
+            const basePrice = applyMarkup(currentActiveItem.priceInfo.sizes[selectedItemSizeKey]);
+            const sizeLabelText = selectedItemSizeKey === 'large' ? t.sizeLarge : t.sizeMedium;
+            const displayName = getLocalizedItemName(currentActiveItem);
+
+            cart.push({
+                cartId: 'c_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+                id: currentActiveItem.id,
+                itemRef: currentActiveItem,
+                name: displayName,
+                rawName: currentActiveItem.nameAr || currentActiveItem.nameEn,
+                sizeLabel: sizeLabelText,
+                price: basePrice,
+                basePrice: basePrice,
+                img: currentActiveItem.img,
+                addons: []
+            });
+
+            updateCartBadge();
+            animateCartBtn();
+            closeSizeOnlyModal();
+        }
+
+        // ==================== نافذة الإضافات المستقلة ====================
         function openSimpleAddonsModal(itemId, catIndex) {
             const catData = menuData[catIndex];
             if (!catData) return;
@@ -2183,37 +2283,10 @@
 
             document.getElementById('modalItemName').innerText = displayName;
 
-            const sizesContainer = document.getElementById('modalSizesContainer');
-            const sizesGrid = document.getElementById('modalSizesGrid');
-            sizesGrid.innerHTML = '';
-
-            if (item.priceInfo && item.priceInfo.hasSizes) {
-                sizesContainer.style.display = 'block';
-                selectedItemSizeKey = 'large';
-
-                const sizes = [
-                    { key: 'large', label: t.sizeLarge, price: applyMarkup(item.priceInfo.sizes.large) },
-                    { key: 'medium', label: t.sizeMedium, price: applyMarkup(item.priceInfo.sizes.medium) }
-                ];
-
-                sizes.forEach(s => {
-                    const btn = document.createElement('button');
-                    btn.className = `size-opt-btn ${selectedItemSizeKey === s.key ? 'active' : ''}`;
-                    btn.id = `size_btn_${s.key}`;
-                    btn.onclick = () => selectItemSize(s.key);
-                    btn.innerHTML = `<span>${s.label}</span><small style="opacity:0.9;">${s.price.toFixed(2)} ${t.currency}</small>`;
-                    sizesGrid.appendChild(btn);
-                });
-            } else {
-                sizesContainer.style.display = 'none';
-                selectedItemSizeKey = null;
-            }
-
             const addonsListEl = document.getElementById('modalAddonsList');
             addonsListEl.innerHTML = '';
 
             if (item.addons && item.addons.length > 0) {
-                document.getElementById('t_addons_sub').style.display = 'block';
                 item.addons.forEach((ad, idx) => {
                     const row = document.createElement('div');
                     row.className = 'simple-addon-item';
@@ -2228,20 +2301,10 @@
                     `;
                     addonsListEl.appendChild(row);
                 });
-            } else {
-                document.getElementById('t_addons_sub').style.display = 'none';
             }
 
             updateModalTotal();
             document.getElementById('simpleAddonsModal').style.display = 'flex';
-        }
-
-        function selectItemSize(sizeKey) {
-            selectedItemSizeKey = sizeKey;
-            document.querySelectorAll('.size-opt-btn').forEach(b => b.classList.remove('active'));
-            const activeBtn = document.getElementById(`size_btn_${sizeKey}`);
-            if (activeBtn) activeBtn.classList.add('active');
-            updateModalTotal();
         }
 
         function toggleAddonSelection(idx, addon, rowEl) {
@@ -2261,9 +2324,6 @@
             const t = translations[currentLang];
 
             let basePrice = currentActiveItem.price;
-            if (currentActiveItem.priceInfo && currentActiveItem.priceInfo.hasSizes && selectedItemSizeKey) {
-                basePrice = currentActiveItem.priceInfo.sizes[selectedItemSizeKey];
-            }
             basePrice = applyMarkup(basePrice);
 
             let total = basePrice;
@@ -2277,22 +2337,12 @@
             document.getElementById('simpleAddonsModal').style.display = 'none';
             currentActiveItem = null;
             selectedAddonsMap = [];
-            selectedItemSizeKey = null;
         }
 
         function confirmSimpleAddonsOrder() {
             if (!currentActiveItem) return;
-            const t = translations[currentLang];
 
-            let basePrice = currentActiveItem.price;
-            let sizeLabelText = '';
-
-            if (currentActiveItem.priceInfo && currentActiveItem.priceInfo.hasSizes && selectedItemSizeKey) {
-                basePrice = currentActiveItem.priceInfo.sizes[selectedItemSizeKey];
-                sizeLabelText = selectedItemSizeKey === 'large' ? t.sizeLarge : t.sizeMedium;
-            }
-            basePrice = applyMarkup(basePrice);
-
+            let basePrice = applyMarkup(currentActiveItem.price);
             let total = basePrice;
             selectedAddonsMap.forEach(ad => { total += ad.price; });
             const displayName = getLocalizedItemName(currentActiveItem);
@@ -2303,7 +2353,7 @@
                 itemRef: currentActiveItem,
                 name: displayName,
                 rawName: currentActiveItem.nameAr || currentActiveItem.nameEn,
-                sizeLabel: sizeLabelText,
+                sizeLabel: '',
                 price: total,
                 basePrice: basePrice,
                 img: currentActiveItem.img,
