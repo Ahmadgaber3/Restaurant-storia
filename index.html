@@ -433,35 +433,26 @@
             flex-wrap: nowrap;
         }
 
-        /* زر الإضافات/اختيار الحجم بنفس ستايل زر اطلب الآن الأخضر تماماً */
         .mini-addons-btn {
             flex: 1;
-            background: var(--accent);
-            color: #ffffff;
+            background: var(--bg);
+            color: var(--accent);
             border: 1.5px solid var(--accent);
-            padding: 5px 6px;
+            padding: 5px 4px;
             border-radius: 9px;
-            font-size: 0.78rem;
+            font-size: 0.74rem;
             font-weight: 800;
             cursor: pointer;
-            box-shadow: 0 2px 6px rgba(27, 77, 62, 0.25);
-            transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+            transition: all 0.15s ease;
             white-space: nowrap;
             text-align: center;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            height: 33px;
             min-width: 0;
             flex-shrink: 0;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
-        .mini-addons-btn:active { 
-            background: var(--accent-hover); 
-            border-color: var(--accent-hover);
-            transform: scale(0.97);
-        }
+        .mini-addons-btn:active { background: var(--accent); color: white; }
 
         .order-btn { 
             flex: 1.4;
@@ -1503,23 +1494,6 @@
             document.getElementById('themeBtn').innerText = isDark ? '☀️' : '🌙';
         }
 
-        // دالة التحميل المسبق لكافة الصور
-        function preloadAllMenuImages(menu) {
-            if (!menu || !menu.length) return;
-            const loadedUrls = new Set();
-            menu.forEach(cat => {
-                if (cat.items && cat.items.length) {
-                    cat.items.forEach(item => {
-                        if (item.img && !loadedUrls.has(item.img)) {
-                            loadedUrls.add(item.img);
-                            const preImg = new Image();
-                            preImg.src = item.img;
-                        }
-                    });
-                }
-            });
-        }
-
         let isCounterRunning = false;
         function startCreativeCounter() {
             if (isCounterRunning) return;
@@ -1529,8 +1503,6 @@
             const barFill = document.getElementById('progressBarFill');
             const splashScreen = document.getElementById('splash-screen');
             let count = 0;
-
-            // 100 خطوة * 40 مللي ثانية = 4000 مللي ثانية (4 ثوانٍ بالتمام والكمال)
             const timer = setInterval(() => {
                 count++;
                 if (count <= 100) {
@@ -1543,7 +1515,7 @@
                         showWelcomeModal();
                     }
                 }
-            }, 40);
+            }, 18);
         }
 
         function showWelcomeModal() {
@@ -1586,6 +1558,7 @@
             if (modal) modal.style.display = 'none';
         }
 
+        // دالة المحاولات الذكية للصور بكل الأسماء والصيغ الممكنة
         function handleSmartImageFallback(imgElement) {
             const step = parseInt(imgElement.dataset.step || '0', 10);
             const rowNum = imgElement.dataset.row || '';
@@ -1595,6 +1568,7 @@
             const nameArUnderscore = nameAr.replace(/\s+/g, '_');
             const nameEnUnderscore = nameEn.replace(/\s+/g, '_');
 
+            // قائمة بالمسارات التي سيتم تجربتها بالترتيب
             const attempts = [
                 `images/${rowNum}.jpg`,
                 `images/${rowNum}.png`,
@@ -1769,6 +1743,9 @@
                 for (let i = 1; i < lines.length; i++) {
                     const row = parseCSVLine(lines[i]);
                     
+                    // قراءة الأعمدة بناءً على الترتيب الفعلي للشيت:
+                    // En: A=0 (Category), B=1 (Item Name), C=2 (Price), D=3 (Description)
+                    // Ar: Q=16 (القسم), R=17 (اسم الصنف), S=18 (السعر), T=19 (الوصف والمكونات)
                     const catEn = (row[0] || '').trim();
                     const nameEn = (row[1] || '').trim();
                     const priceEn = (row[2] || '').trim();
@@ -1787,6 +1764,7 @@
                     const sheetRowNumber = i + 1;
                     let img = `images/${sheetRowNumber}.jpg`;
 
+                    // إذا كان هناك رابط خارجي أو مسار صورة مخصص
                     if (row[4] && row[4].trim() !== '') {
                         let customImg = row[4].trim().replace(/^\[|\]$/g, '');
                         if (customImg.startsWith('http') || customImg.startsWith('images/')) {
@@ -1827,7 +1805,6 @@
 
                 if (parsedMenu.length > 0) {
                     menuData = parsedMenu;
-                    preloadAllMenuImages(menuData);
                     renderCategories();
                     renderMenu();
                 }
