@@ -310,22 +310,18 @@
         .cat-img-box { 
             width: 54px; 
             height: 54px; 
-            border-radius: 18px; 
-            background: var(--bg); 
+            border-radius: 16px; 
+            background: #e0e0e0; 
             overflow: hidden; 
-            border: 2px solid var(--border-color); 
-            transition: all 0.2s ease; 
+            border: 2.5px solid transparent; 
+            transition: 0.2s; 
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.7rem;
-            box-shadow: 0 2px 8px var(--card-shadow);
+            font-size: 1.5rem;
         }
-        .cat-item.active .cat-img-box { 
-            border-color: var(--accent); 
-            background: rgba(27, 77, 62, 0.12);
-            transform: scale(1.08); 
-        }
+        .cat-img-box img { width: 100%; height: 100%; object-fit: cover; }
+        .cat-item.active .cat-img-box { border-color: var(--accent); transform: scale(1.04); }
 
         .cat-item span { 
             font-size: 0.78rem; 
@@ -437,22 +433,24 @@
             flex-wrap: nowrap;
         }
 
+        /* زر الإضافات/اختيار الحجم بنفس ستايل زر اطلب الآن الأخضر تماماً */
         .mini-addons-btn {
             flex: 1;
-            background: var(--accent); 
-            color: #ffffff; 
-            border: 1.5px solid var(--accent); 
-            padding: 5px 6px; 
-            border-radius: 9px; 
-            font-size: 0.78rem; 
-            font-weight: 800; 
-            cursor: pointer; 
+            background: var(--accent);
+            color: #ffffff;
+            border: 1.5px solid var(--accent);
+            padding: 5px 6px;
+            border-radius: 9px;
+            font-size: 0.78rem;
+            font-weight: 800;
+            cursor: pointer;
             box-shadow: 0 2px 6px rgba(27, 77, 62, 0.25);
-            transition: all 0.2s ease; 
+            transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+            white-space: nowrap;
+            text-align: center;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            white-space: nowrap;
             height: 33px;
             min-width: 0;
             flex-shrink: 0;
@@ -462,7 +460,7 @@
         .mini-addons-btn:active { 
             background: var(--accent-hover); 
             border-color: var(--accent-hover);
-            transform: scale(0.96); 
+            transform: scale(0.97);
         }
 
         .order-btn { 
@@ -1328,7 +1326,7 @@
                 addonsSub: 'اختر الإضافات المطلوبة:',
                 addonsTotalLbl: 'الإجمالي الكلي:',
                 addonsConfirmBtn: '➕ إضافة بالـ Extras',
-                addonsBtnLabel: '✨ الإضافات / الحجم',
+                addonsBtnLabel: '✨ الإضافات',
                 orderNowBtn: 'اطلب الان 🛒',
                 unavailableBtn: 'غير متوفر 🛑',
                 addedBtn: 'تم الإضافة ✓',
@@ -1369,7 +1367,7 @@
                 addonsSub: 'Choose your desired add-ons:',
                 addonsTotalLbl: 'Total Price:',
                 addonsConfirmBtn: '➕ Add with Extras',
-                addonsBtnLabel: '✨ Extras / Size',
+                addonsBtnLabel: '✨ Extras',
                 orderNowBtn: 'Order Now 🛒',
                 unavailableBtn: 'Unavailable 🛑',
                 addedBtn: 'Added ✓',
@@ -1414,25 +1412,6 @@
             if (!cat) return '';
             if (currentLang === 'en') return cat.catEn || cat.catAr || cat.categoryRaw || '';
             return cat.catAr || cat.catEn || cat.categoryRaw || '';
-        }
-
-        // دالة لاختيار الإيموجي المناسب لكل قسم تلقائياً
-        function getCategoryEmoji(cat) {
-            const str = ((cat.catAr || '') + ' ' + (cat.catEn || '')).toLowerCase();
-            if (str.includes('شورب') || str.includes('soup')) return '🥣';
-            if (str.includes('سلط') || str.includes('salad')) return '🥗';
-            if (str.includes('مقبل') || str.includes('appetizer')) return '🍟';
-            if (str.includes('سندوتش') || str.includes('sandwich') || str.includes('برجر') || str.includes('burger')) return '🥪';
-            if (str.includes('مكرون') || str.includes('باستا') || str.includes('pasta')) return '🍝';
-            if (str.includes('بيتزا') || str.includes('pizza')) return '🍕';
-            if (str.includes('حلو') || str.includes('dessert') || str.includes('كيك') || str.includes('cake')) return '🍰';
-            if (str.includes('قهو') || str.includes('coffee') || str.includes('اسبريسو')) return '☕';
-            if (str.includes('عصير') || str.includes('juice') || str.includes('كوكتيل') || str.includes('cocktail') || str.includes('مشروب')) return '🍹';
-            if (str.includes('لحم') || str.includes('ستيك') || str.includes('meat') || str.includes('steak') || str.includes('مشوي')) return '🥩';
-            if (str.includes('دجاج') || str.includes('فراخ') || str.includes('chicken')) return '🍗';
-            if (str.includes('سمك') || str.includes('سي فود') || str.includes('fish') || str.includes('seafood')) return '🦐';
-            if (str.includes('فطار') || str.includes('breakfast')) return '🍳';
-            return '🍽️';
         }
 
         function toggleLanguage() {
@@ -1524,7 +1503,23 @@
             document.getElementById('themeBtn').innerText = isDark ? '☀️' : '🌙';
         }
 
-        // عداد مدته 4 ثوانٍ بالضبط (4000ms)
+        // دالة التحميل المسبق لكافة الصور
+        function preloadAllMenuImages(menu) {
+            if (!menu || !menu.length) return;
+            const loadedUrls = new Set();
+            menu.forEach(cat => {
+                if (cat.items && cat.items.length) {
+                    cat.items.forEach(item => {
+                        if (item.img && !loadedUrls.has(item.img)) {
+                            loadedUrls.add(item.img);
+                            const preImg = new Image();
+                            preImg.src = item.img;
+                        }
+                    });
+                }
+            });
+        }
+
         let isCounterRunning = false;
         function startCreativeCounter() {
             if (isCounterRunning) return;
@@ -1533,31 +1528,22 @@
             const counterEl = document.getElementById('loadPercentage');
             const barFill = document.getElementById('progressBarFill');
             const splashScreen = document.getElementById('splash-screen');
-            const duration = 4000; // 4 ثوانٍ بالتمام والكمال
-            const startTime = performance.now();
+            let count = 0;
 
-            function updateCounter(currentTime) {
-                const elapsed = currentTime - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                const count = Math.floor(progress * 100);
-
-                if (counterEl) counterEl.innerText = count;
-                if (barFill) barFill.style.width = count + '%';
-
-                if (progress < 1) {
-                    requestAnimationFrame(updateCounter);
+            // 100 خطوة * 40 مللي ثانية = 4000 مللي ثانية (4 ثوانٍ بالتمام والكمال)
+            const timer = setInterval(() => {
+                count++;
+                if (count <= 100) {
+                    if (counterEl) counterEl.innerText = count;
+                    if (barFill) barFill.style.width = count + '%';
                 } else {
-                    if (counterEl) counterEl.innerText = 100;
-                    if (barFill) barFill.style.width = '100%';
-                    setTimeout(() => {
-                        if (splashScreen) {
-                            splashScreen.classList.add('splash-hidden');
-                            showWelcomeModal();
-                        }
-                    }, 100);
+                    clearInterval(timer);
+                    if (splashScreen) {
+                        splashScreen.classList.add('splash-hidden');
+                        showWelcomeModal();
+                    }
                 }
-            }
-            requestAnimationFrame(updateCounter);
+            }, 40);
         }
 
         function showWelcomeModal() {
@@ -1600,7 +1586,6 @@
             if (modal) modal.style.display = 'none';
         }
 
-        // دالة المحاولات الذكية للصور بكل الأسماء والصيغ الممكنة
         function handleSmartImageFallback(imgElement) {
             const step = parseInt(imgElement.dataset.step || '0', 10);
             const rowNum = imgElement.dataset.row || '';
@@ -1629,20 +1614,6 @@
             } else {
                 imgElement.src = 'images/logooo.png';
             }
-        }
-
-        // دالة التحميل المسبق لجميع الصور لضمان جاهزيتها خلال الـ 4 ثوانٍ
-        function preloadAllMenuImages(menu) {
-            menu.forEach(cat => {
-                if (cat.items) {
-                    cat.items.forEach(item => {
-                        if (item.img) {
-                            const preImg = new Image();
-                            preImg.src = item.img;
-                        }
-                    });
-                }
-            });
         }
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -1856,16 +1827,15 @@
 
                 if (parsedMenu.length > 0) {
                     menuData = parsedMenu;
+                    preloadAllMenuImages(menuData);
                     renderCategories();
                     renderMenu();
-                    preloadAllMenuImages(parsedMenu); // تحميل كل الصور مسبقاً
                 }
             } catch (err) {
                 console.error("Error loading menu:", err);
             }
         }
 
-        // تعديل الأقسام لتكون إيموجيهات بدلاً من الصور
         function renderCategories() {
             const catNav = document.getElementById('catNav');
             if (!catNav) return;
@@ -1878,7 +1848,15 @@
 
                 const imgBox = document.createElement('div');
                 imgBox.className = 'cat-img-box';
-                imgBox.innerHTML = `<span>${getCategoryEmoji(cat)}</span>`;
+                const firstItem = cat.items && cat.items[0] ? cat.items[0] : null;
+                const firstItemImg = firstItem ? firstItem.img : 'images/logooo.png';
+                const rowNum = firstItem ? firstItem.sheetRow : '';
+                const arName = firstItem ? firstItem.nameAr : '';
+                const enName = firstItem ? firstItem.nameEn : '';
+
+                imgBox.innerHTML = `<img src="${firstItemImg}" alt="${cat.catAr}" 
+                    data-row="${rowNum}" data-ar="${arName}" data-en="${enName}" data-step="0"
+                    onerror="handleSmartImageFallback(this)">`;
 
                 const label = document.createElement('span');
                 label.innerText = getCategoryCleanName(cat);
