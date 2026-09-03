@@ -163,34 +163,31 @@
             display: flex; flex-direction: column; align-items: center;
             padding: 8px 0 0 0;
         }
-        
         .header-top { 
             width: 100%; 
             display: flex; 
             align-items: center; 
             justify-content: space-between; 
             padding: 0 16px;
-            min-height: 75px;
-            position: relative;
+            min-height: 80px;
         }
         
         .header-left-actions, .header-right-actions {
             display: flex;
             align-items: center;
             gap: 8px;
-            z-index: 2;
         }
 
-        .theme-toggle, .lang-toggle, .admin-trigger-btn, .cart-trigger {
-            width: 38px;
-            height: 38px;
+        .theme-toggle, .lang-toggle, .admin-trigger-btn, .cart-trigger, .header-action-btn {
+            width: 40px;
+            height: 40px;
             background: var(--bg);
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 1.05rem;
+            font-size: 1.15rem;
             border: 1px solid var(--border-color);
             color: var(--main-text);
             box-shadow: 0 2px 6px var(--card-shadow);
@@ -199,11 +196,11 @@
             font-weight: 900;
         }
         .lang-toggle {
-            font-size: 0.80rem;
+            font-size: 0.82rem;
             color: var(--accent);
             border-color: rgba(27, 77, 62, 0.3);
         }
-        .theme-toggle:active, .lang-toggle:active, .admin-trigger-btn:active, .cart-trigger:active {
+        .theme-toggle:active, .lang-toggle:active, .admin-trigger-btn:active, .cart-trigger:active, .header-action-btn:active {
             transform: scale(0.92);
         }
 
@@ -213,12 +210,8 @@
         .badge.show { transform: scale(1); }
 
         .header-logo-container { 
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            width: 115px; 
-            height: 56px; 
+            width: 125px; 
+            height: 65px; 
             border-radius: 16px; 
             background: var(--white); 
             padding: 4px 8px; 
@@ -228,7 +221,6 @@
             align-items: center; 
             justify-content: center; 
             border: 2px solid var(--accent); 
-            z-index: 1;
         }
         .header-logo { width: 100%; height: 100%; border-radius: 10px; object-fit: contain; }
 
@@ -293,7 +285,7 @@
             overflow-x: auto; 
             white-space: nowrap; 
             padding: 10px 14px; 
-            gap: 10px; 
+            gap: 16px; 
             scrollbar-width: none; 
             background: var(--header-bg); 
             width: 100%; 
@@ -305,57 +297,48 @@
         .category-nav::-webkit-scrollbar { display: none; }
 
         .cat-item { 
-            display: inline-flex; 
+            display: flex; 
+            flex-direction: column; 
             align-items: center; 
-            gap: 8px;
-            padding: 7px 14px 7px 8px;
-            border-radius: 30px;
-            background: var(--bg);
-            border: 1.5px solid var(--border-color);
+            min-width: max-content; 
+            flex-shrink: 0; 
+            padding: 0 4px;
             cursor: pointer; 
-            flex-shrink: 0;
-            transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-            user-select: none;
-            box-shadow: 0 2px 6px var(--card-shadow);
+            max-width: 120px;
         }
 
         .cat-img-box { 
-            width: 32px; 
-            height: 32px; 
-            border-radius: 50%; 
-            background: #e0e0e0; 
+            width: 54px; 
+            height: 54px; 
+            border-radius: 18px; 
+            background: var(--bg); 
             overflow: hidden; 
-            border: 1.5px solid var(--border-color); 
+            border: 2px solid var(--border-color); 
+            transition: all 0.2s ease; 
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-shrink: 0;
-            transition: transform 0.2s ease;
+            font-size: 1.7rem;
+            box-shadow: 0 2px 8px var(--card-shadow);
         }
-        .cat-img-box img { width: 100%; height: 100%; object-fit: cover; }
+        .cat-item.active .cat-img-box { 
+            border-color: var(--accent); 
+            background: rgba(27, 77, 62, 0.12);
+            transform: scale(1.08); 
+        }
 
         .cat-item span { 
-            font-size: 0.82rem; 
-            font-weight: 800; 
+            font-size: 0.78rem; 
+            font-weight: 700; 
             color: var(--desc-text); 
+            margin-top: 5px; 
             white-space: nowrap;
-            transition: color 0.2s ease;
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
         }
-
-        .cat-item.active { 
-            background: var(--accent); 
-            border-color: var(--accent); 
-            transform: scale(1.03); 
-            box-shadow: 0 4px 14px rgba(27, 77, 62, 0.3);
-        }
-        .cat-item.active span { 
-            color: #ffffff; 
-            font-weight: 900; 
-        }
-        .cat-item.active .cat-img-box {
-            border-color: #ffffff;
-            transform: scale(1.1);
-        }
+        .cat-item.active span { color: var(--accent); font-weight: 900; }
         
         .menu-list { padding: 12px 14px; max-width: 600px; margin: auto; }
         
@@ -432,21 +415,6 @@
         }
         [dir="ltr"] .food-price { margin-right: 0; margin-left: 4px; }
         
-        .food-price.multi-sizes-badge {
-            font-size: 0.74rem;
-            line-height: 1.35;
-            text-align: right;
-            background: rgba(27, 77, 62, 0.08);
-            border: 1px solid rgba(27, 77, 62, 0.2);
-            padding: 3px 8px;
-            border-radius: 8px;
-            white-space: normal;
-            font-weight: 900;
-        }
-        [dir="ltr"] .food-price.multi-sizes-badge {
-            text-align: left;
-        }
-
         .food-desc { 
             font-size: 0.73rem; 
             color: var(--desc-text); 
@@ -471,25 +439,31 @@
 
         .mini-addons-btn {
             flex: 1;
-            background: var(--bg);
-            color: var(--accent);
-            border: 1.5px solid var(--accent);
-            padding: 5px 4px;
-            border-radius: 9px;
-            font-size: 0.74rem;
-            font-weight: 800;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            white-space: nowrap;
-            text-align: center;
+            background: var(--accent); 
+            color: #ffffff; 
+            border: 1.5px solid var(--accent); 
+            padding: 5px 6px; 
+            border-radius: 9px; 
+            font-size: 0.78rem; 
+            font-weight: 800; 
+            cursor: pointer; 
+            box-shadow: 0 2px 6px rgba(27, 77, 62, 0.25);
+            transition: all 0.2s ease; 
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            white-space: nowrap;
+            height: 33px;
             min-width: 0;
             flex-shrink: 0;
-            height: 33px;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
-        .mini-addons-btn:active { background: var(--accent); color: white; }
+        .mini-addons-btn:active { 
+            background: var(--accent-hover); 
+            border-color: var(--accent-hover);
+            transform: scale(0.96); 
+        }
 
         .order-btn { 
             flex: 1.4;
@@ -514,17 +488,6 @@
             text-overflow: ellipsis;
         }
         .order-btn:disabled { background: #94a3b8 !important; border-color: #94a3b8 !important; cursor: not-allowed; box-shadow: none !important; }
-
-        .order-btn.size-select-style {
-            background: #ffffff;
-            color: var(--accent);
-            border: 1.5px solid var(--accent);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-        }
-        .order-btn.size-select-style:active {
-            background: var(--accent);
-            color: #ffffff;
-        }
         
         .order-btn.added { 
             background: rgba(46, 125, 50, 0.12) !important; 
@@ -559,7 +522,7 @@
             background: var(--white);
         }
         .image-lightbox-title { font-size: 1.1rem; font-weight: 900; color: var(--main-text); }
-        .image-lightbox-price { font-size: 1rem; font-weight: 900; color: var(--accent); }
+        .image-lightbox-price { font-size: 1.1rem; font-weight: 900; color: var(--accent); }
         .image-lightbox-close {
             position: absolute; top: 12px; left: 12px;
             background: rgba(0, 0, 0, 0.6); color: #fff;
@@ -569,26 +532,6 @@
             font-size: 1.1rem; font-weight: 900; cursor: pointer;
             z-index: 10;
         }
-
-        /* نافذة اختيار الحجم البسيطة والصغيرة */
-        .size-only-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.65); z-index: 3800; display: none;
-            justify-content: center; align-items: center;
-            padding: 16px;
-            backdrop-filter: blur(4px);
-        }
-        .size-only-content {
-            background: var(--white); width: 100%; max-width: 360px;
-            border-radius: 24px; padding: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-            animation: floatFadeIn 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-            border: 1px solid var(--border-color);
-        }
-        .size-only-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 14px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;
-        }
-        .size-only-header h3 { font-size: 1.05rem; font-weight: 900; color: var(--accent); }
 
         .simple-addons-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -632,41 +575,6 @@
         .simple-item-name { font-weight: 800; font-size: 0.92rem; color: var(--main-text); }
         .simple-item-price { font-weight: 900; color: var(--accent); font-size: 0.92rem; }
 
-        .size-selection-box {
-            background: rgba(27, 77, 62, 0.06);
-            border: 1.5px solid var(--accent);
-            border-radius: 14px;
-            padding: 12px;
-            margin-bottom: 14px;
-        }
-        .size-selection-title {
-            font-size: 0.82rem; font-weight: 800; color: var(--accent); margin-bottom: 8px;
-        }
-        .size-options-grid {
-            display: flex; gap: 8px;
-        }
-        .size-opt-btn {
-            flex: 1;
-            padding: 10px 8px;
-            border-radius: 12px;
-            border: 1.5px solid var(--border-color);
-            background: var(--white);
-            color: var(--main-text);
-            cursor: pointer;
-            font-weight: 800;
-            font-size: 0.84rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 3px;
-            transition: all 0.15s ease;
-        }
-        .size-opt-btn.active {
-            border-color: var(--accent);
-            background: var(--accent);
-            color: #ffffff;
-        }
-
         .simple-addons-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
         .simple-addon-item {
             display: flex; justify-content: space-between; align-items: center;
@@ -697,35 +605,16 @@
             font-size: 0.9rem; cursor: pointer; box-shadow: 0 4px 12px rgba(27, 77, 62, 0.25);
         }
 
-        /* ==================== نافذة "تمت الإضافة للسلة" البسيطة والمصغرة ==================== */
-        .toast-added-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(3px);
-            z-index: 9500; display: none; justify-content: center; align-items: center;
-            padding: 16px;
-        }
-        .toast-added-card {
-            background: var(--white); width: 100%; max-width: 290px;
-            border-radius: 22px; padding: 22px 16px; text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
-            animation: smoothFadeIn 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-            display: flex; flex-direction: column; align-items: center;
-            border: 1px solid var(--border-color);
-        }
-        .toast-icon-circle {
-            width: 55px; height: 55px; background: rgba(46, 125, 50, 0.12);
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            margin-bottom: 10px; border: 2px solid #2e7d32;
-        }
-        .toast-icon-circle svg { width: 28px; height: 28px; fill: #2e7d32; }
-        .toast-added-title {
-            font-size: 1.05rem; font-weight: 900; color: var(--main-text); margin-bottom: 4px;
-        }
-
         .restaurant-footer { padding: 30px 20px; text-align: center; background: var(--white); border-top: 1px solid var(--border-color); margin-top: 20px; }
-        .footer-rights { font-size: 0.92rem; color: var(--main-text); font-weight: 800; margin-bottom: 4px; }
-        .dev-credit { font-size: 0.88rem; color: #475569; font-weight: 800; margin-bottom: 4px; }
-        .dev-phone { color: var(--accent); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; font-size: 0.90rem; font-weight: 900; direction: ltr; }
+        .branches-container { margin: 15px 0 10px 0; font-size: 0.82rem; color: var(--desc-text); text-align: right; background: var(--bg); padding: 12px; border-radius: 16px; border: 1px solid var(--border-color); }
+        [dir="ltr"] .branches-container { text-align: left; }
+        .branch-item { margin-bottom: 8px; }
+        .branch-item:last-child { margin-bottom: 0; }
+        .branch-item strong { color: var(--accent); display: block; }
+        
+        .footer-rights { font-size: 0.8rem; color: var(--main-text); font-weight: 600; margin-bottom: 5px; }
+        .dev-credit { font-size: 0.85rem; color: var(--desc-text); font-weight: 700; }
+        .dev-credit a { color: var(--accent); text-decoration: none; display: block; margin-top: 3px; }
 
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.65); z-index: 2000; display: none; justify-content: center; align-items: flex-end; }
         .modal-content { background: var(--white); width: 100%; max-width: 500px; padding: 25px; border-radius: 30px 30px 0 0; max-height: 90vh; overflow-y: auto; color: var(--main-text); animation: smoothSlideUp 0.2s ease-out; }
@@ -1014,23 +903,19 @@
         </div>
     </div>
 
-    <!-- الهيدر المطور: اللوجو متوسّط تماماً وتوزيع الأزرار يمين ويسار لمنع التداخل -->
     <header>
         <div class="header-top">
-            <!-- يمين اللوجو: زر الإضاءة + زر لوحة التحكم -->
             <div class="header-right-actions">
                 <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="الوضع الليلي / النهاري">🌙</button>
+                <button class="lang-toggle" onclick="toggleLanguage()" id="langBtn" title="تبديل اللغة / Switch Language">EN</button>
                 <button class="admin-trigger-btn" onclick="openAdminPanel()" title="لوحة التحكم">⚙️</button>
             </div>
             
-            <!-- اللوجو في المنتصف تماماً -->
             <div class="header-logo-container">
                 <img src="images/logooo.png" class="header-logo" alt="Storia Cafe" onerror="this.src='https://www.storia-eg.com/images/logo.png'">
             </div>
             
-            <!-- يسار اللوجو: زر تبديل اللغة + سلة الطلبات -->
             <div class="header-left-actions">
-                <button class="lang-toggle" onclick="toggleLanguage()" id="langBtn" title="تبديل اللغة / Switch Language">EN</button>
                 <div class="cart-trigger" onclick="toggleCart(true)" id="cartBtn" title="عربة الطلبات">
                     <span class="badge" id="cartBadge">0</span>
                     <span>🛒</span>
@@ -1069,33 +954,15 @@
                 <div class="loyalty-card-phone" id="modalUserPhoneDisplay">أدخل رقم هاتفك في السلة لتجميع النقاط</div>
             </div>
 
-            <div style="font-size: 0.85rem; font-weight: 800; margin-bottom: 8px; color: var(--main-text);" id="t_loyalty_red_lbl">استبدل نقاطك بهدايا مجانية فوراً:</div>
+            <div style="font-size: 0.85rem; font-weight: 800; margin-bottom: 8px; color: var(--main-text);" id="t_loyalty_redeem_lbl">استبدل نقاطك بهدايا مجانية فوراً:</div>
             <div id="simpleRewardsList"></div>
         </div>
     </div>
 
-    <!-- نافذة اختيار الحجم فقط (منفصلة وبسيطة) -->
-    <div class="size-only-modal" id="sizeOnlyModal" onclick="if(event.target===this) closeSizeOnlyModal()">
-        <div class="size-only-content">
-            <div class="size-only-header">
-                <h3 id="sizeOnlyItemName">اختيار الحجم</h3>
-                <button class="simple-addons-close" onclick="closeSizeOnlyModal()">✕</button>
-            </div>
-            
-            <div class="size-selection-box" style="margin-bottom: 16px;">
-                <div class="size-selection-title" id="t_size_only_title">اختر الحجم المطلوب:</div>
-                <div class="size-options-grid" id="sizeOnlyGrid"></div>
-            </div>
-
-            <button class="simple-confirm-btn" style="width: 100%;" id="t_size_only_btn" onclick="confirmSizeOnlySelection()">🛒 تأكيد وإضافة للسلة</button>
-        </div>
-    </div>
-
-    <!-- نافذة الإضافات المستقلة -->
     <div class="simple-addons-modal" id="simpleAddonsModal" onclick="if(event.target===this) closeSimpleAddonsModal()">
         <div class="simple-addons-content">
             <div class="simple-addons-header">
-                <h3 id="t_addons_title">إضافات وتخصيص الصنف</h3>
+                <h3 id="t_addons_title">تخصيص وإضافات الصنف</h3>
                 <button class="simple-addons-close" onclick="closeSimpleAddonsModal()">✕</button>
             </div>
             
@@ -1104,7 +971,7 @@
                 <span class="simple-item-price" id="modalItemBasePrice">0.00 ج.م</span>
             </div>
 
-            <div style="font-size: 0.82rem; font-weight: 800; color: var(--desc-text); margin-bottom: 10px;" id="t_addons_sub">اختر الإضافات المطلوبة (اختياري):</div>
+            <div style="font-size: 0.82rem; font-weight: 800; color: var(--desc-text); margin-bottom: 10px;" id="t_addons_sub">اختر الإضافات المطلوبة:</div>
             <div class="simple-addons-list" id="modalAddonsList"></div>
 
             <div class="simple-addons-footer">
@@ -1112,18 +979,8 @@
                     <span id="t_addons_total_lbl">الإجمالي الكلي:</span>
                     <span id="modalTotalPrice">0.00 ج.م</span>
                 </div>
-                <button class="simple-confirm-btn" id="t_addons_confirm_btn" onclick="confirmSimpleAddonsOrder()">➕ إضافة للسلة</button>
+                <button class="simple-confirm-btn" id="t_addons_confirm_btn" onclick="confirmSimpleAddonsOrder()">➕ إضافة بالـ Extras</button>
             </div>
-        </div>
-    </div>
-
-    <!-- نافذة "تمت الإضافة للسلة" البسيطة والمصغرة -->
-    <div class="toast-added-modal" id="toastAddedModal">
-        <div class="toast-added-card">
-            <div class="toast-icon-circle">
-                <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-            </div>
-            <div class="toast-added-title" id="t_toast_added">تمت الإضافة للسلة بنجاح!</div>
         </div>
     </div>
 
@@ -1183,13 +1040,6 @@
 
             <div id="adminDashboardView" style="display: none;">
                 <div class="admin-cards-grid">
-                    <div class="admin-nav-card" onclick="openFloatingModal('priceMarkupModal')">
-                        <div class="card-badge-num">📈</div>
-                        <div class="card-avatar-box">💵</div>
-                        <div class="card-title">نسبة زيادة الأسعار</div>
-                        <div class="card-subtitle">تعديل نسبة مئوية لجميع الأصناف</div>
-                    </div>
-
                     <div class="admin-nav-card" onclick="openFloatingModal('loyaltyAdminModal')">
                         <div class="card-badge-num">🎁</div>
                         <div class="card-avatar-box">👑</div>
@@ -1226,26 +1076,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- نافذة التحكم في نسبة زيادة الأسعار -->
-    <div class="floating-sub-modal" id="priceMarkupModal" onclick="if(event.target==this) closeFloatingModal('priceMarkupModal')">
-        <div class="floating-card-box">
-            <div class="floating-header">
-                <h4>📈 تعديل نسبة زيادة الأسعار</h4>
-                <button class="admin-close" onclick="closeFloatingModal('priceMarkupModal')">✕</button>
-            </div>
-            
-            <div class="admin-custom-input-group">
-                <label>النسبة المئوية الحالية للزيادة (%):</label>
-                <input type="number" id="adminMarkupPercentInput" placeholder="مثال: 15 لزيادة 15% أو 0 للأسعار الأصلية" step="0.5" min="0">
-                <small style="color: var(--desc-text); font-weight: 700; display: block; margin-top: 4px;">
-                    * أي زيادة يتم تطبيقها سيتم تلقائياً تحويل كسور السعر لتنتهي بـ .95 قرشاً.
-                </small>
-            </div>
-
-            <button class="admin-save-btn" onclick="adminSavePriceMarkup()">💾 تطبيق وتحديث الأسعار فوراً</button>
         </div>
     </div>
 
@@ -1340,11 +1170,18 @@
         </div>
     </div>
 
-    <!-- الفوتر المعدل بدقة ليتطابق مع طلبك والصورة -->
     <footer class="restaurant-footer">
-        <p class="footer-rights" id="t_footer_rights">جميع الحقوق محفوظة لـ ستوريا 2026 ©</p>
-        <div class="dev-credit">Designed by eng / Ahmed Jaber</div>
-        <a href="tel:01030252806" class="dev-phone">01030252806 📞</a>
+        <div class="branches-container" id="footerBranchesContainer">
+            <div class="branch-item">
+                <strong id="t_branch_title">📍 فرع مدينة نصر:</strong>
+                <span id="t_branch_desc">شارع عباس العقاد - أمام الجامعة العمالية</span>
+            </div>
+        </div>
+        <p class="footer-rights" id="t_footer_rights">جميع الحقوق محفوظة لـ Storia Coffee and Restaurant 2026 ©</p>
+        <div class="dev-credit">
+            Designed & Developed by أحمد جابر
+            <a href="tel:01014144144">📞 info@storia-eg.com</a>
+        </div>
     </footer>
 
     <div class="modal" id="cartModal" onclick="if(event.target==this) toggleCart(false)">
@@ -1453,7 +1290,6 @@
         ];
 
         let currentLang = localStorage.getItem('storia_lang') || 'ar';
-        let priceMarkupPercentage = parseFloat(localStorage.getItem('storia_price_markup') || '0') || 0;
         let menuData = [];
         let cart = [];
         let currentTotal = 0; 
@@ -1466,7 +1302,6 @@
 
         let currentActiveItem = null;
         let selectedAddonsMap = [];
-        let selectedItemSizeKey = 'large';
 
         let userLoyaltyPoints = 0;
         let activeUserPhone = localStorage.getItem('storia_user_phone') || '';
@@ -1489,13 +1324,11 @@
                 loyaltyTitle: '🎁 محفظة مكافآت ستوريا',
                 loyaltyBalLbl: 'رصيد نقاطك الحالي (1 ج.م = 1 نقطة)',
                 loyaltyRedeemLbl: 'استبدل نقاطك بهدايا مجانية فوراً:',
-                addonsTitle: 'إضافات وتخصيص الصنف',
-                addonsSub: 'اختر الإضافات المطلوبة (اختياري):',
-                sizeTitle: 'اختر الحجم المطلوب:',
+                addonsTitle: 'تخصيص وإضافات الصنف',
+                addonsSub: 'اختر الإضافات المطلوبة:',
                 addonsTotalLbl: 'الإجمالي الكلي:',
-                addonsConfirmBtn: '➕ إضافة للسلة',
-                addonsBtnLabel: '✨ الإضافات',
-                chooseSizeBtn: 'اختيار الحجم 📏',
+                addonsConfirmBtn: '➕ إضافة بالـ Extras',
+                addonsBtnLabel: '✨ الإضافات / الحجم',
                 orderNowBtn: 'اطلب الان 🛒',
                 unavailableBtn: 'غير متوفر 🛑',
                 addedBtn: 'تم الإضافة ✓',
@@ -1518,10 +1351,9 @@
                 successCloseBtn: 'إغلاق ومتابعة',
                 chatSendBtn: 'إرسال',
                 chatPlaceholder: 'اكتب رسالتك هنا...',
-                footerRights: 'جميع الحقوق محفوظة لـ ستوريا 2026 ©',
-                sizeLarge: 'كبير (Large)',
-                sizeMedium: 'وسط (Medium)',
-                sizeConfirmBtn: '🛒 تأكيد وإضافة للسلة'
+                branchTitle: '📍 فرع مدينة نصر:',
+                branchDesc: 'شارع عباس العقاد - أمام الجامعة العمالية',
+                footerRights: 'جميع الحقوق محفوظة لـ Storia Coffee and Restaurant 2026 ©'
             },
             en: {
                 langBtn: 'AR',
@@ -1533,13 +1365,11 @@
                 loyaltyTitle: '🎁 Storia Rewards Wallet',
                 loyaltyBalLbl: 'Current Points Balance (1 EGP = 1 Pt)',
                 loyaltyRedeemLbl: 'Redeem points for free items instantly:',
-                addonsTitle: 'Item Add-ons & Customization',
-                addonsSub: 'Choose your desired add-ons (Optional):',
-                sizeTitle: 'Choose Size:',
+                addonsTitle: 'Item Customization & Extras',
+                addonsSub: 'Choose your desired add-ons:',
                 addonsTotalLbl: 'Total Price:',
-                addonsConfirmBtn: '➕ Add to Cart',
-                addonsBtnLabel: '✨ Extras',
-                chooseSizeBtn: 'Select Size 📏',
+                addonsConfirmBtn: '➕ Add with Extras',
+                addonsBtnLabel: '✨ Extras / Size',
                 orderNowBtn: 'Order Now 🛒',
                 unavailableBtn: 'Unavailable 🛑',
                 addedBtn: 'Added ✓',
@@ -1562,61 +1392,11 @@
                 successCloseBtn: 'Close & Continue',
                 chatSendBtn: 'Send',
                 chatPlaceholder: 'Type your message here...',
-                footerRights: 'All Rights Reserved to Storia 2026 ©',
-                sizeLarge: 'Large (L)',
-                sizeMedium: 'Medium (M)',
-                sizeConfirmBtn: '🛒 Confirm & Add to Cart'
+                branchTitle: '📍 Nasr City Branch:',
+                branchDesc: 'Abbas El Akkad St. - In front of Worker University',
+                footerRights: 'All Rights Reserved to Storia Coffee & Restaurant 2026 ©'
             }
         };
-
-        function applyMarkup(price) {
-            if (!price || isNaN(price)) return 0;
-            if (priceMarkupPercentage <= 0) return price;
-            
-            const increasedPrice = price * (1 + priceMarkupPercentage / 100);
-            return Math.floor(increasedPrice) + 0.95;
-        }
-
-        function parseEnglishPriceField(priceRaw) {
-            const str = String(priceRaw || '').trim();
-
-            let pLarge = 0;
-            let pMedium = 0;
-
-            const lMatch = str.match(/Large\s*:\s*([0-9.]+)/i);
-            if (lMatch) pLarge = parseFloat(lMatch[1]) || 0;
-
-            const mMatch = str.match(/Medium\s*:\s*([0-9.]+)/i);
-            if (mMatch) pMedium = parseFloat(mMatch[1]) || 0;
-
-            if (!pLarge && !pMedium && str.toLowerCase().includes('large') && str.toLowerCase().includes('medium')) {
-                const nums = str.match(/[1-9]\d*(?:\.\d+)?/g);
-                if (nums && nums.length >= 2) {
-                    pLarge = parseFloat(nums[0]) || 0;
-                    pMedium = parseFloat(nums[1]) || 0;
-                }
-            }
-
-            if (pLarge > 0 && pMedium > 0) {
-                return {
-                    hasSizes: true,
-                    sizes: {
-                        large: pLarge,
-                        medium: pMedium
-                    },
-                    defaultPrice: pLarge
-                };
-            }
-
-            const cleanNum = (str.match(/[1-9]\d*(?:\.\d+)?/) || [])[0];
-            const finalVal = parseFloat(cleanNum) || 0;
-
-            return {
-                hasSizes: false,
-                sizes: null,
-                defaultPrice: finalVal
-            };
-        }
 
         function getLocalizedItemName(item) {
             if (!item) return '';
@@ -1634,6 +1414,25 @@
             if (!cat) return '';
             if (currentLang === 'en') return cat.catEn || cat.catAr || cat.categoryRaw || '';
             return cat.catAr || cat.catEn || cat.categoryRaw || '';
+        }
+
+        // دالة لاختيار الإيموجي المناسب لكل قسم تلقائياً
+        function getCategoryEmoji(cat) {
+            const str = ((cat.catAr || '') + ' ' + (cat.catEn || '')).toLowerCase();
+            if (str.includes('شورب') || str.includes('soup')) return '🥣';
+            if (str.includes('سلط') || str.includes('salad')) return '🥗';
+            if (str.includes('مقبل') || str.includes('appetizer')) return '🍟';
+            if (str.includes('سندوتش') || str.includes('sandwich') || str.includes('برجر') || str.includes('burger')) return '🥪';
+            if (str.includes('مكرون') || str.includes('باستا') || str.includes('pasta')) return '🍝';
+            if (str.includes('بيتزا') || str.includes('pizza')) return '🍕';
+            if (str.includes('حلو') || str.includes('dessert') || str.includes('كيك') || str.includes('cake')) return '🍰';
+            if (str.includes('قهو') || str.includes('coffee') || str.includes('اسبريسو')) return '☕';
+            if (str.includes('عصير') || str.includes('juice') || str.includes('كوكتيل') || str.includes('cocktail') || str.includes('مشروب')) return '🍹';
+            if (str.includes('لحم') || str.includes('ستيك') || str.includes('meat') || str.includes('steak') || str.includes('مشوي')) return '🥩';
+            if (str.includes('دجاج') || str.includes('فراخ') || str.includes('chicken')) return '🍗';
+            if (str.includes('سمك') || str.includes('سي فود') || str.includes('fish') || str.includes('seafood')) return '🦐';
+            if (str.includes('فطار') || str.includes('breakfast')) return '🍳';
+            return '🍽️';
         }
 
         function toggleLanguage() {
@@ -1666,17 +1465,13 @@
             if (tLoyaltyTitle) tLoyaltyTitle.innerText = t.loyaltyTitle;
             const tLoyaltyBalLbl = document.getElementById('t_loyalty_bal_lbl');
             if (tLoyaltyBalLbl) tLoyaltyBalLbl.innerText = t.loyaltyBalLbl;
-            const tLoyaltyRedeemLbl = document.getElementById('t_loyalty_red_lbl');
+            const tLoyaltyRedeemLbl = document.getElementById('t_loyalty_redeem_lbl');
             if (tLoyaltyRedeemLbl) tLoyaltyRedeemLbl.innerText = t.loyaltyRedeemLbl;
 
             const tAddonsTitle = document.getElementById('t_addons_title');
             if (tAddonsTitle) tAddonsTitle.innerText = t.addonsTitle;
             const tAddonsSub = document.getElementById('t_addons_sub');
             if (tAddonsSub) tAddonsSub.innerText = t.addonsSub;
-            const tSizeOnlyTitle = document.getElementById('t_size_only_title');
-            if (tSizeOnlyTitle) tSizeOnlyTitle.innerText = t.sizeTitle;
-            const tSizeOnlyBtn = document.getElementById('t_size_only_btn');
-            if (tSizeOnlyBtn) tSizeOnlyBtn.innerText = t.sizeConfirmBtn;
             const tAddonsTotalLbl = document.getElementById('t_addons_total_lbl');
             if (tAddonsTotalLbl) tAddonsTotalLbl.innerText = t.addonsTotalLbl;
             const tAddonsConfirmBtn = document.getElementById('t_addons_confirm_btn');
@@ -1712,6 +1507,11 @@
             const chatInputField = document.getElementById('chatInputField');
             if (chatInputField) chatInputField.placeholder = t.chatPlaceholder;
 
+            const tBranchTitle = document.getElementById('t_branch_title');
+            if (tBranchTitle) tBranchTitle.innerText = t.branchTitle;
+            const tBranchDesc = document.getElementById('t_branch_desc');
+            if (tBranchDesc) tBranchDesc.innerText = t.branchDesc;
+
             const tFooterRights = document.getElementById('t_footer_rights');
             if (tFooterRights) tFooterRights.innerText = t.footerRights;
 
@@ -1724,6 +1524,7 @@
             document.getElementById('themeBtn').innerText = isDark ? '☀️' : '🌙';
         }
 
+        // عداد مدته 4 ثوانٍ بالضبط (4000ms)
         let isCounterRunning = false;
         function startCreativeCounter() {
             if (isCounterRunning) return;
@@ -1732,20 +1533,31 @@
             const counterEl = document.getElementById('loadPercentage');
             const barFill = document.getElementById('progressBarFill');
             const splashScreen = document.getElementById('splash-screen');
-            let count = 0;
-            const timer = setInterval(() => {
-                count++;
-                if (count <= 100) {
-                    if (counterEl) counterEl.innerText = count;
-                    if (barFill) barFill.style.width = count + '%';
+            const duration = 4000; // 4 ثوانٍ بالتمام والكمال
+            const startTime = performance.now();
+
+            function updateCounter(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const count = Math.floor(progress * 100);
+
+                if (counterEl) counterEl.innerText = count;
+                if (barFill) barFill.style.width = count + '%';
+
+                if (progress < 1) {
+                    requestAnimationFrame(updateCounter);
                 } else {
-                    clearInterval(timer);
-                    if (splashScreen) {
-                        splashScreen.classList.add('splash-hidden');
-                        showWelcomeModal();
-                    }
+                    if (counterEl) counterEl.innerText = 100;
+                    if (barFill) barFill.style.width = '100%';
+                    setTimeout(() => {
+                        if (splashScreen) {
+                            splashScreen.classList.add('splash-hidden');
+                            showWelcomeModal();
+                        }
+                    }, 100);
                 }
-            }, 10); // زيادة السرعة الفائقة لعداد التحميل
+            }
+            requestAnimationFrame(updateCounter);
         }
 
         function showWelcomeModal() {
@@ -1769,15 +1581,16 @@
             }
         }
 
-        function openImageLightbox(imgSrc, itemName, priceText) {
+        function openImageLightbox(imgSrc, itemName, itemPrice) {
             const modal = document.getElementById('imageLightboxModal');
             const imgEl = document.getElementById('lightboxImg');
             const titleEl = document.getElementById('lightboxTitle');
             const priceEl = document.getElementById('lightboxPrice');
+            const t = translations[currentLang];
 
             if (imgEl) imgEl.src = imgSrc;
             if (titleEl) titleEl.innerText = itemName;
-            if (priceEl) priceEl.innerText = priceText;
+            if (priceEl) priceEl.innerText = itemPrice.toFixed(2) + ' ' + t.currency;
 
             if (modal) modal.style.display = 'flex';
         }
@@ -1787,6 +1600,7 @@
             if (modal) modal.style.display = 'none';
         }
 
+        // دالة المحاولات الذكية للصور بكل الأسماء والصيغ الممكنة
         function handleSmartImageFallback(imgElement) {
             const step = parseInt(imgElement.dataset.step || '0', 10);
             const rowNum = imgElement.dataset.row || '';
@@ -1817,10 +1631,9 @@
             }
         }
 
-        // دالة التحميل المسبق الفوري والفائق لجميع الصور في الكاش
-        function preloadAllMenuImages() {
-            if (!menuData || menuData.length === 0) return;
-            menuData.forEach(cat => {
+        // دالة التحميل المسبق لجميع الصور لضمان جاهزيتها خلال الـ 4 ثوانٍ
+        function preloadAllMenuImages(menu) {
+            menu.forEach(cat => {
                 if (cat.items) {
                     cat.items.forEach(item => {
                         if (item.img) {
@@ -1928,7 +1741,6 @@
                     id: r.id,
                     name: currentLang === 'ar' ? `🎁 [هدية مكافأة]: ${rewardTitle}` : `🎁 [Gift Reward]: ${rewardTitle}`,
                     price: 0.00,
-                    sizeLabel: '',
                     img: 'images/logooo.png',
                     addons: []
                 });
@@ -1953,16 +1765,6 @@
                 el.style.animationDelay = (Math.random() * 0.4) + 's';
                 area.appendChild(el);
             }
-        }
-
-        // نافذة "تمت الإضافة للسلة" المصغرة السريعة
-        function showToastAddedNotification() {
-            const modal = document.getElementById('toastAddedModal');
-            if (!modal) return;
-            modal.style.display = 'flex';
-            setTimeout(() => {
-                modal.style.display = 'none';
-            }, 1200); // تختفي تلقائياً بعد 1.2 ثانية
         }
 
         function parseCSVLine(line) {
@@ -1998,16 +1800,18 @@
                     
                     const catEn = (row[0] || '').trim();
                     const nameEn = (row[1] || '').trim();
-                    const priceEnRaw = (row[2] || '').trim();
+                    const priceEn = (row[2] || '').trim();
                     const descEn = (row[3] || '').trim();
 
                     const catAr = (row[16] || catEn || 'أصناف متنوعة').trim();
                     const nameAr = (row[17] || nameEn || '').trim();
+                    const priceAr = (row[18] || priceEn || '0').trim();
                     const descAr = (row[19] || descEn || '').trim();
 
                     if (!nameAr && !nameEn) continue;
 
-                    const priceInfo = parseEnglishPriceField(priceEnRaw);
+                    let rawPrice = (priceAr || priceEn).replace(/[^0-9.]/g, '');
+                    let price = parseFloat(rawPrice) || 0;
 
                     const sheetRowNumber = i + 1;
                     let img = `images/${sheetRowNumber}.jpg`;
@@ -2044,8 +1848,7 @@
                         nameEn: nameEn,
                         descAr: descAr,
                         descEn: descEn,
-                        priceInfo: priceInfo,
-                        price: priceInfo.defaultPrice,
+                        price: price,
                         img: img,
                         addons: addons
                     });
@@ -2055,13 +1858,14 @@
                     menuData = parsedMenu;
                     renderCategories();
                     renderMenu();
-                    preloadAllMenuImages(); // بدء التحميل المسبق الفوري
+                    preloadAllMenuImages(parsedMenu); // تحميل كل الصور مسبقاً
                 }
             } catch (err) {
                 console.error("Error loading menu:", err);
             }
         }
 
+        // تعديل الأقسام لتكون إيموجيهات بدلاً من الصور
         function renderCategories() {
             const catNav = document.getElementById('catNav');
             if (!catNav) return;
@@ -2074,15 +1878,7 @@
 
                 const imgBox = document.createElement('div');
                 imgBox.className = 'cat-img-box';
-                const firstItem = cat.items && cat.items[0] ? cat.items[0] : null;
-                const firstItemImg = firstItem ? firstItem.img : 'images/logooo.png';
-                const rowNum = firstItem ? firstItem.sheetRow : '';
-                const arName = firstItem ? firstItem.nameAr : '';
-                const enName = firstItem ? firstItem.nameEn : '';
-
-                imgBox.innerHTML = `<img src="${firstItemImg}" alt="${cat.catAr}" 
-                    data-row="${rowNum}" data-ar="${arName}" data-en="${enName}" data-step="0"
-                    onerror="handleSmartImageFallback(this)">`;
+                imgBox.innerHTML = `<span>${getCategoryEmoji(cat)}</span>`;
 
                 const label = document.createElement('span');
                 label.innerText = getCategoryCleanName(cat);
@@ -2096,10 +1892,7 @@
         function selectCategory(idx, el) {
             currentActiveCatIndex = idx;
             document.querySelectorAll('.cat-item').forEach(c => c.classList.remove('active'));
-            if (el) {
-                el.classList.add('active');
-                el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-            }
+            if (el) el.classList.add('active');
             renderMenu();
         }
 
@@ -2118,50 +1911,12 @@
                 const card = document.createElement('div');
                 card.className = 'food-card' + (isEnabled ? '' : ' disabled-item');
                 const hasAddons = item.addons && item.addons.length > 0;
-                const hasSizes = item.priceInfo && item.priceInfo.hasSizes;
                 
                 const displayName = getLocalizedItemName(item);
                 const displayDesc = getLocalizedItemDesc(item);
 
-                let priceDisplayHTML = '';
-                let priceForLightbox = '';
-                if (hasSizes) {
-                    const lPrice = applyMarkup(item.priceInfo.sizes.large);
-                    const mPrice = applyMarkup(item.priceInfo.sizes.medium);
-                    if (currentLang === 'ar') {
-                        priceDisplayHTML = `<div class="food-price multi-sizes-badge">كبير: ${lPrice.toFixed(2)}<br>وسط: ${mPrice.toFixed(2)} ${t.currency}</div>`;
-                        priceForLightbox = `كبير: ${lPrice.toFixed(2)} ج.م | وسط: ${mPrice.toFixed(2)} ج.م`;
-                    } else {
-                        priceDisplayHTML = `<div class="food-price multi-sizes-badge">L: ${lPrice.toFixed(2)}<br>M: ${mPrice.toFixed(2)} ${t.currency}</div>`;
-                        priceForLightbox = `L: ${lPrice.toFixed(2)} EGP | M: ${mPrice.toFixed(2)} EGP`;
-                    }
-                } else {
-                    const finalPrice = applyMarkup(item.price);
-                    priceDisplayHTML = `<div class="food-price">${finalPrice.toFixed(2)} ${t.currency}</div>`;
-                    priceForLightbox = `${finalPrice.toFixed(2)} ${t.currency}`;
-                }
-
-                let actionButtonsHTML = '';
-                if (hasAddons) {
-                    actionButtonsHTML += `<button class="mini-addons-btn" onclick="openSimpleAddonsModal('${item.id}', ${currentActiveCatIndex})">${t.addonsBtnLabel}</button>`;
-                }
-
-                if (hasSizes) {
-                    actionButtonsHTML += `
-                        <button class="order-btn size-select-style" id="btn_${item.id}" ${!isEnabled ? 'disabled' : ''} onclick="openSizeOnlyModal('${item.id}', ${currentActiveCatIndex})">
-                            ${isEnabled ? t.chooseSizeBtn : t.unavailableBtn}
-                        </button>
-                    `;
-                } else {
-                    actionButtonsHTML += `
-                        <button class="order-btn" id="btn_${item.id}" ${!isEnabled ? 'disabled' : ''} onclick="addToCartDirect('${item.id}', ${currentActiveCatIndex})">
-                            ${isEnabled ? t.orderNowBtn : t.unavailableBtn}
-                        </button>
-                    `;
-                }
-
                 card.innerHTML = `
-                    <div class="item-img-box" onclick="openImageLightbox(this.querySelector('img').src, '${displayName.replace(/'/g, "\\'")}', '${priceForLightbox}')" title="${currentLang==='ar'?'اضغط لتكبير الصورة':'Click to view photo'}">
+                    <div class="item-img-box" onclick="openImageLightbox(this.querySelector('img').src, '${displayName.replace(/'/g, "\\'")}', ${item.price})" title="${currentLang==='ar'?'اضغط لتكبير الصورة':'Click to view photo'}">
                         <img src="${item.img}" loading="lazy" alt="${primaryKey}" 
                              data-row="${item.sheetRow}" 
                              data-ar="${item.nameAr || ''}" 
@@ -2173,12 +1928,15 @@
                         <div>
                             <div class="food-header">
                                 <div class="food-name">${displayName}</div>
-                                ${priceDisplayHTML}
+                                <div class="food-price">${item.price.toFixed(2)} ${t.currency}</div>
                             </div>
                             ${displayDesc ? `<div class="food-desc">${displayDesc}</div>` : ''}
                         </div>
                         <div class="card-actions-box">
-                            ${actionButtonsHTML}
+                            ${hasAddons ? `<button class="mini-addons-btn" onclick="openSimpleAddonsModal('${item.id}', ${currentActiveCatIndex})">${t.addonsBtnLabel}</button>` : ''}
+                            <button class="order-btn" id="btn_${item.id}" ${!isEnabled ? 'disabled' : ''} onclick="addToCartDirect('${item.id}', ${currentActiveCatIndex})">
+                                ${isEnabled ? t.orderNowBtn : t.unavailableBtn}
+                            </button>
                         </div>
                     </div>
                 `;
@@ -2191,15 +1949,8 @@
             if (!catData) return;
             const item = catData.items.find(i => i.id === itemId);
             if (!item) return;
-
-            if (item.priceInfo && item.priceInfo.hasSizes) {
-                openSizeOnlyModal(itemId, catIndex);
-                return;
-            }
-
             const t = translations[currentLang];
             const displayName = getLocalizedItemName(item);
-            const markedPrice = applyMarkup(item.price);
 
             const cartItem = {
                 cartId: 'c_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
@@ -2207,8 +1958,7 @@
                 itemRef: item,
                 name: displayName,
                 rawName: item.nameAr || item.nameEn,
-                price: markedPrice,
-                sizeLabel: '',
+                price: item.price,
                 img: item.img,
                 addons: []
             };
@@ -2216,77 +1966,17 @@
             cart.push(cartItem);
             updateCartBadge();
             animateCartBtn();
-            showToastAddedNotification(); // إظهار الرسالة المصغرة
-        }
-
-        // نافذة اختيار الحجم البسيطة فقط
-        function openSizeOnlyModal(itemId, catIndex) {
-            const catData = menuData[catIndex];
-            if (!catData) return;
-            const item = catData.items.find(i => i.id === itemId);
-            if (!item || !item.priceInfo || !item.priceInfo.hasSizes) return;
-            const t = translations[currentLang];
-            const displayName = getLocalizedItemName(item);
-
-            currentActiveItem = item;
-            selectedItemSizeKey = 'large';
-
-            document.getElementById('sizeOnlyItemName').innerText = displayName;
-
-            const grid = document.getElementById('sizeOnlyGrid');
-            grid.innerHTML = '';
-
-            const sizes = [
-                { key: 'large', label: t.sizeLarge, price: applyMarkup(item.priceInfo.sizes.large) },
-                { key: 'medium', label: t.sizeMedium, price: applyMarkup(item.priceInfo.sizes.medium) }
-            ];
-
-            sizes.forEach(s => {
-                const btn = document.createElement('button');
-                btn.className = `size-opt-btn ${selectedItemSizeKey === s.key ? 'active' : ''}`;
-                btn.id = `size_only_btn_${s.key}`;
-                btn.onclick = () => {
-                    selectedItemSizeKey = s.key;
-                    document.querySelectorAll('#sizeOnlyGrid .size-opt-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                };
-                btn.innerHTML = `<span>${s.label}</span><b style="color:${selectedItemSizeKey === s.key ? '#fff' : 'var(--accent)'}; font-size:0.95rem;">${s.price.toFixed(2)} ${t.currency}</b>`;
-                grid.appendChild(btn);
-            });
-
-            document.getElementById('sizeOnlyModal').style.display = 'flex';
-        }
-
-        function closeSizeOnlyModal() {
-            document.getElementById('sizeOnlyModal').style.display = 'none';
-            currentActiveItem = null;
-        }
-
-        function confirmSizeOnlySelection() {
-            if (!currentActiveItem) return;
-            const t = translations[currentLang];
-
-            const basePrice = applyMarkup(currentActiveItem.priceInfo.sizes[selectedItemSizeKey]);
-            const sizeLabelText = selectedItemSizeKey === 'large' ? t.sizeLarge : t.sizeMedium;
-            const displayName = getLocalizedItemName(currentActiveItem);
-
-            cart.push({
-                cartId: 'c_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
-                id: currentActiveItem.id,
-                itemRef: currentActiveItem,
-                name: displayName,
-                rawName: currentActiveItem.nameAr || currentActiveItem.nameEn,
-                sizeLabel: sizeLabelText,
-                price: basePrice,
-                basePrice: basePrice,
-                img: currentActiveItem.img,
-                addons: []
-            });
-
-            updateCartBadge();
-            animateCartBtn();
-            closeSizeOnlyModal();
-            showToastAddedNotification(); // إظهار الرسالة المصغرة
+            
+            const btn = document.getElementById('btn_' + itemId);
+            if (btn) {
+                const origText = btn.innerHTML;
+                btn.innerHTML = t.addedBtn;
+                btn.classList.add('added');
+                setTimeout(() => {
+                    btn.innerHTML = origText;
+                    btn.classList.remove('added');
+                }, 1000);
+            }
         }
 
         function openSimpleAddonsModal(itemId, catIndex) {
@@ -2301,6 +1991,7 @@
             selectedAddonsMap = [];
 
             document.getElementById('modalItemName').innerText = displayName;
+            document.getElementById('modalItemBasePrice').innerText = item.price.toFixed(2) + ' ' + t.currency;
 
             const addonsListEl = document.getElementById('modalAddonsList');
             addonsListEl.innerHTML = '';
@@ -2340,15 +2031,9 @@
 
         function updateModalTotal() {
             if (!currentActiveItem) return;
-            const t = translations[currentLang];
-
-            let basePrice = currentActiveItem.price;
-            basePrice = applyMarkup(basePrice);
-
-            let total = basePrice;
+            let total = currentActiveItem.price;
             selectedAddonsMap.forEach(ad => { total += ad.price; });
-
-            document.getElementById('modalItemBasePrice').innerText = basePrice.toFixed(2) + ' ' + t.currency;
+            const t = translations[currentLang];
             document.getElementById('modalTotalPrice').innerText = total.toFixed(2) + ' ' + t.currency;
         }
 
@@ -2360,9 +2045,7 @@
 
         function confirmSimpleAddonsOrder() {
             if (!currentActiveItem) return;
-
-            let basePrice = applyMarkup(currentActiveItem.price);
-            let total = basePrice;
+            let total = currentActiveItem.price;
             selectedAddonsMap.forEach(ad => { total += ad.price; });
             const displayName = getLocalizedItemName(currentActiveItem);
 
@@ -2372,9 +2055,8 @@
                 itemRef: currentActiveItem,
                 name: displayName,
                 rawName: currentActiveItem.nameAr || currentActiveItem.nameEn,
-                sizeLabel: '',
                 price: total,
-                basePrice: basePrice,
+                basePrice: currentActiveItem.price,
                 img: currentActiveItem.img,
                 addons: [...selectedAddonsMap]
             });
@@ -2382,7 +2064,6 @@
             updateCartBadge();
             animateCartBtn();
             closeSimpleAddonsModal();
-            showToastAddedNotification(); // إظهار الرسالة المصغرة
         }
 
         function updateCartBadge() {
@@ -2430,12 +2111,11 @@
                 itemEl.className = 'cart-item-card';
                 const addonsText = item.addons && item.addons.length > 0 ? item.addons.map(a => currentLang==='ar'?a.name:(a.nameEn||a.name)).join('، ') : '';
                 const displayName = item.itemRef ? getLocalizedItemName(item.itemRef) : item.name;
-                const sizeBadge = item.sizeLabel ? ` <span style="font-size:0.75rem; color:var(--accent); font-weight:800;">(${item.sizeLabel})</span>` : '';
 
                 itemEl.innerHTML = `
                     <img src="${item.img}" class="cart-item-img" alt="${displayName}" onerror="this.src='images/logooo.png'">
                     <div class="cart-item-info">
-                        <div class="cart-item-name">${displayName}${sizeBadge}</div>
+                        <div class="cart-item-name">${displayName}</div>
                         ${addonsText ? `<div class="cart-item-addons-text">+ ${currentLang==='ar'?'إضافات:':'Extras:'} ${addonsText}</div>` : ''}
                         <span class="cart-item-price">${item.price > 0 ? item.price.toFixed(2) + ' ' + t.currency : t.free}</span>
                     </div>
@@ -2482,8 +2162,7 @@
             const itemsArrayForLog = [];
             cart.forEach((item, i) => {
                 const displayName = item.itemRef ? getLocalizedItemName(item.itemRef) : item.name;
-                const sizeStr = item.sizeLabel ? ` [${item.sizeLabel}]` : '';
-                let line = `${i + 1}. ${displayName}${sizeStr}`;
+                let line = `${i + 1}. ${displayName}`;
                 if (item.addons && item.addons.length > 0) {
                     line += ` (+ ${currentLang==='ar'?'إضافات:':'Extras:'} ${item.addons.map(a => currentLang==='ar'?a.name:(a.nameEn||a.name)).join('، ')})`;
                 }
@@ -2658,9 +2337,6 @@
             if (pass === savedPass || pass === '123456' || pass === 'storia2026') {
                 document.getElementById('adminAuthView').style.display = 'none';
                 document.getElementById('adminDashboardView').style.display = 'block';
-                
-                const markupInput = document.getElementById('adminMarkupPercentInput');
-                if (markupInput) markupInput.value = priceMarkupPercentage;
             } else {
                 alert(currentLang === 'ar' ? 'كلمة المرور غير صحيحة!' : 'Incorrect password!');
             }
@@ -2668,35 +2344,11 @@
 
         function openFloatingModal(id) {
             const el = document.getElementById(id);
-            if (el) {
-                if (id === 'priceMarkupModal') {
-                    const inp = document.getElementById('adminMarkupPercentInput');
-                    if (inp) inp.value = priceMarkupPercentage;
-                }
-                el.style.display = 'flex';
-            }
+            if (el) el.style.display = 'flex';
         }
         function closeFloatingModal(id) {
             const el = document.getElementById(id);
             if (el) el.style.display = 'none';
-        }
-
-        async function adminSavePriceMarkup() {
-            const inputVal = parseFloat(document.getElementById('adminMarkupPercentInput').value) || 0;
-            priceMarkupPercentage = Math.max(0, inputVal);
-            localStorage.setItem('storia_price_markup', priceMarkupPercentage);
-
-            if (window.db && window.firebaseModules) {
-                try {
-                    const { doc, setDoc } = window.firebaseModules;
-                    await setDoc(doc(window.db, "settings", "price_config"), { markupPercent: priceMarkupPercentage }, { merge: true });
-                } catch(e) {}
-            }
-
-            renderMenu();
-            renderCartItems();
-            alert(currentLang === 'ar' ? `تم تطبيق نسبة ${priceMarkupPercentage}% على جميع الأسعار مع ضبط القروش لـ .95 بنجاح!` : `Successfully applied ${priceMarkupPercentage}% markup with .95 rounding!`);
-            closeFloatingModal('priceMarkupModal');
         }
 
         let adminSearchedPhone = '';
