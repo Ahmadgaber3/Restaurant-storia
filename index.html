@@ -157,7 +157,7 @@
         .welcome-choice-en { font-size: 0.74rem; font-weight: 700; color: var(--desc-text); }
         .welcome-choice-icon { font-size: 1.6rem; }
 
-        /* شريط تثبيت التطبيق السفلي الأنيق */
+        /* شريط تثبيت التطبيق السفلي */
         .bottom-install-bar {
             position: fixed;
             bottom: 15px;
@@ -272,7 +272,7 @@
             align-items: center; 
             justify-content: space-between; 
             padding: 0 16px;
-            min-height: 75px;
+            min-height: 120px;
             position: relative;
         }
         
@@ -314,16 +314,17 @@
         .badge { position: absolute; top: -5px; right: -5px; background: #ef4444; color: #fff; font-size: 10px; font-weight: 800; width: 19px; height: 19px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--white); transform: scale(0); transition: 0.2s ease; }
         .badge.show { transform: scale(1); }
 
+        /* اللوجو الداخلي مربع وكبير 105 × 105 */
         .header-logo-container { 
             position: absolute;
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
-            width: 115px; 
-            height: 56px; 
-            border-radius: 16px; 
+            width: 105px; 
+            height: 105px; 
+            border-radius: 20px; 
             background: var(--white); 
-            padding: 4px 8px; 
+            padding: 6px; 
             box-shadow: 0 4px 15px var(--card-shadow); 
             overflow: hidden; 
             display: flex; 
@@ -332,7 +333,7 @@
             border: 2px solid var(--accent); 
             z-index: 1;
         }
-        .header-logo { width: 100%; height: 100%; border-radius: 10px; object-fit: contain; }
+        .header-logo { width: 100%; height: 100%; border-radius: 14px; object-fit: contain; }
 
         .sub-header-bar {
             width: 100%;
@@ -1156,6 +1157,7 @@
                 <button class="admin-trigger-btn" onclick="openAdminPanel()" title="لوحة التحكم">⚙️</button>
             </div>
             
+            <!-- اللوجو مربع وكبير 105 × 105 ومضبوط تماماً في المنتصف -->
             <div class="header-logo-container">
                 <img src="images/logooo.png" class="header-logo" alt="Storia Cafe" onerror="this.src='https://www.storia-eg.com/images/logo.png'">
             </div>
@@ -1699,7 +1701,6 @@
             }
         };
 
-        // تسجيل Service Worker لمنع التهنيج
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
@@ -1708,7 +1709,6 @@
             });
         }
 
-        // استقبال حدث التثبيت للاندرويد
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
@@ -1811,15 +1811,14 @@
             return cat.catAr || cat.catEn || cat.categoryRaw || '';
         }
 
-        // دالة فلترة الأقسام بناءً على نوع الطلب (إخفاء قسم الشيشة عند اختيار دليفري)
         function getFilteredCategories() {
             if (selectedOrderType === 'takeaway') {
-                return menuData; // إظهار كل الأقسام بما فيها الشيشة في الصالة
+                return menuData;
             }
             return menuData.filter(cat => {
                 const checkStr = ((cat.catAr || '') + ' ' + (cat.catEn || '')).toLowerCase();
                 const isShisha = checkStr.includes('شيش') || checkStr.includes('شيشه') || checkStr.includes('شيشة') || checkStr.includes('shisha') || checkStr.includes('hookah');
-                return !isShisha; // استبعاد الشيشة في الدليفري
+                return !isShisha;
             });
         }
 
@@ -1911,6 +1910,7 @@
             document.getElementById('themeBtn').innerText = isDark ? '☀️' : '🌙';
         }
 
+        // ضبط العداد ليعد في 4 ثوانٍ كاملة بالضبط
         let isCounterRunning = false;
         function startCreativeCounter() {
             if (isCounterRunning) return;
@@ -1920,6 +1920,8 @@
             const barFill = document.getElementById('progressBarFill');
             const splashScreen = document.getElementById('splash-screen');
             let count = 0;
+            
+            // 40ms * 100 = 4000ms = 4 ثوانٍ بالتمام
             const timer = setInterval(() => {
                 count++;
                 if (count <= 100) {
@@ -1932,7 +1934,7 @@
                         showWelcomeModal();
                     }
                 }
-            }, 8);
+            }, 40);
         }
 
         function showWelcomeModal() {
@@ -1944,7 +1946,6 @@
             setInitialOrderTypeUI(type);
             document.getElementById('welcomeOrderModal').style.display = 'none';
 
-            // إظهار زر التثبيت السفلي داخل الأبلكيشن بهدوء
             if (deferredPrompt || (isIosDevice() && !window.navigator.standalone)) {
                 const bar = document.getElementById('bottomInstallBar');
                 if (bar) bar.style.display = 'flex';
@@ -2014,6 +2015,7 @@
             }
         }
 
+        // تحميل وتخزين مسبق لكل الصور أثناء الـ 4 ثواني الأولى لتظهر فوراً عند انتهاء العداد
         function preloadAllMenuImages() {
             if (!menuData || menuData.length === 0) return;
             menuData.forEach(cat => {
