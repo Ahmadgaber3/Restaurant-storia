@@ -157,7 +157,6 @@
         .welcome-choice-en { font-size: 0.74rem; font-weight: 700; color: var(--desc-text); }
         .welcome-choice-icon { font-size: 1.6rem; }
 
-        /* شريط تثبيت التطبيق السفلي */
         .bottom-install-bar {
             position: fixed;
             bottom: 15px;
@@ -232,7 +231,6 @@
             padding: 0 4px;
         }
 
-        /* نافذة تعليمات الآيفون */
         .ios-install-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px);
@@ -314,7 +312,6 @@
         .badge { position: absolute; top: -5px; right: -5px; background: #ef4444; color: #fff; font-size: 10px; font-weight: 800; width: 19px; height: 19px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--white); transform: scale(0); transition: 0.2s ease; }
         .badge.show { transform: scale(1); }
 
-        /* اللوجو الداخلي مربع وكبير 105 × 105 */
         .header-logo-container { 
             position: absolute;
             left: 50%;
@@ -1065,6 +1062,27 @@
         .chat-input-bar { padding: 10px 14px; background: var(--white); border-top: 1px solid var(--border-color); display: flex; gap: 8px; align-items: center; }
         .chat-input-bar input { flex: 1; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--bg); color: var(--main-text); font-size: 0.88rem; outline: none; }
         .chat-send-btn { background: var(--accent); color: white; border: none; padding: 10px 16px; border-radius: 12px; font-weight: 800; cursor: pointer; }
+
+        /* ستايل كروت الطلبات والأصناف داخل لوحة الإدارة */
+        .admin-order-card {
+            background: var(--bg); border: 1px solid var(--border-color);
+            border-radius: 14px; padding: 12px; margin-bottom: 10px;
+        }
+        .admin-order-header {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--border-color); padding-bottom: 6px; margin-bottom: 6px;
+        }
+        .admin-item-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 8px 10px; border-bottom: 1px solid var(--border-color);
+            background: var(--white); border-radius: 10px; margin-bottom: 6px;
+        }
+        .status-toggle-btn {
+            padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 0.75rem;
+            cursor: pointer; border: none;
+        }
+        .status-toggle-btn.on { background: #dcfce7; color: #15803d; }
+        .status-toggle-btn.off { background: #fee2e2; color: #b91c1c; }
     </style>
 </head>
 <body>
@@ -1102,7 +1120,7 @@
         </div>
     </div>
 
-    <!-- شريط تثبيت التطبيق السفلي (يظهر داخل التطبيق بعد اختيار الصالة أو الدليفري) -->
+    <!-- شريط تثبيت التطبيق السفلي -->
     <div class="bottom-install-bar" id="bottomInstallBar">
         <div class="bottom-install-info">
             <img src="images/logooo.png" alt="Storia App" onerror="this.src='images/logooo.png'">
@@ -1117,7 +1135,7 @@
         </div>
     </div>
 
-    <!-- نافذة شرح التثبيت لمستخدمي الآيفون -->
+    <!-- نافذة شرح التثبيت للآيفون -->
     <div class="ios-install-modal" id="iosInstallModal" onclick="if(event.target===this) closeIosInstallModal()">
         <div class="ios-install-card">
             <h3 class="ios-install-title">تثبيت التطبيق على الآيفون 🍏</h3>
@@ -1157,7 +1175,7 @@
                 <button class="admin-trigger-btn" onclick="openAdminPanel()" title="لوحة التحكم">⚙️</button>
             </div>
             
-            <!-- اللوجو مربع وكبير 105 × 105 ومضبوط تماماً في المنتصف -->
+            <!-- اللوجو مربع كبير 105 × 105 -->
             <div class="header-logo-container">
                 <img src="images/logooo.png" class="header-logo" alt="Storia Cafe" onerror="this.src='https://www.storia-eg.com/images/logo.png'">
             </div>
@@ -1207,7 +1225,7 @@
         </div>
     </div>
 
-    <!-- نافذة اختيار الحجم فقط (منفصلة وبسيطة) -->
+    <!-- نافذة اختيار الحجم فقط -->
     <div class="size-only-modal" id="sizeOnlyModal" onclick="if(event.target===this) closeSizeOnlyModal()">
         <div class="size-only-content">
             <div class="size-only-header">
@@ -1453,7 +1471,7 @@
                 <h4>📜 الطلبات الواردة (Live)</h4>
                 <button class="admin-close" onclick="closeFloatingModal('logsModal')">✕</button>
             </div>
-            <div id="adminOrdersLogsList">لا توجد طلبات مسجلة حتى الآن.</div>
+            <div id="adminOrdersLogsList">جاري تحميل الطلبات...</div>
         </div>
     </div>
 
@@ -1515,7 +1533,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, onSnapshot, addDoc, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, onSnapshot, addDoc, deleteDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyAUwDoxvhwCWb3FUtpA2NwmP7qBm5eYOuE",
@@ -1532,7 +1550,7 @@
         const db = getFirestore(app);
 
         window.db = db;
-        window.firebaseModules = { doc, getDoc, setDoc, updateDoc, collection, onSnapshot, addDoc, deleteDoc, getDocs };
+        window.firebaseModules = { doc, getDoc, setDoc, updateDoc, collection, onSnapshot, addDoc, deleteDoc, getDocs, query, orderBy };
         window.dispatchEvent(new Event('firebase-ready'));
     </script>
 
@@ -1910,7 +1928,6 @@
             document.getElementById('themeBtn').innerText = isDark ? '☀️' : '🌙';
         }
 
-        // ضبط العداد ليعد في 4 ثوانٍ كاملة بالضبط
         let isCounterRunning = false;
         function startCreativeCounter() {
             if (isCounterRunning) return;
@@ -1921,7 +1938,6 @@
             const splashScreen = document.getElementById('splash-screen');
             let count = 0;
             
-            // 40ms * 100 = 4000ms = 4 ثوانٍ بالتمام
             const timer = setInterval(() => {
                 count++;
                 if (count <= 100) {
@@ -1934,7 +1950,7 @@
                         showWelcomeModal();
                     }
                 }
-            }, 40);
+            }, 40); // 4 ثوانٍ كاملة
         }
 
         function showWelcomeModal() {
@@ -2015,7 +2031,6 @@
             }
         }
 
-        // تحميل وتخزين مسبق لكل الصور أثناء الـ 4 ثواني الأولى لتظهر فوراً عند انتهاء العداد
         function preloadAllMenuImages() {
             if (!menuData || menuData.length === 0) return;
             menuData.forEach(cat => {
@@ -2870,6 +2885,10 @@
                 
                 const markupInput = document.getElementById('adminMarkupPercentInput');
                 if (markupInput) markupInput.value = priceMarkupPercentage;
+
+                // بدء الاستماع للطلبات الواردة والأصناف فور فتح اللوحة
+                listenToOrdersLogs();
+                loadItemsStatusFromFirebase();
             } else {
                 alert(currentLang === 'ar' ? 'كلمة المرور غير صحيحة!' : 'Incorrect password!');
             }
@@ -2882,12 +2901,150 @@
                     const inp = document.getElementById('adminMarkupPercentInput');
                     if (inp) inp.value = priceMarkupPercentage;
                 }
+                if (id === 'statusModal') {
+                    renderAdminItemsList();
+                }
                 el.style.display = 'flex';
             }
         }
         function closeFloatingModal(id) {
             const el = document.getElementById(id);
             if (el) el.style.display = 'none';
+        }
+
+        // دالة عرض ومراقبة الطلبات الواردة مباشرة من فايربيز
+        let ordersUnsubscribe = null;
+        function listenToOrdersLogs() {
+            if (!window.db || !window.firebaseModules) return;
+            const { collection, onSnapshot, query, orderBy } = window.firebaseModules;
+            if (ordersUnsubscribe) ordersUnsubscribe();
+
+            const q = query(collection(window.db, "orders"), orderBy("timestamp", "desc"));
+            ordersUnsubscribe = onSnapshot(q, (snapshot) => {
+                const logsEl = document.getElementById('adminOrdersLogsList');
+                if (!logsEl) return;
+                logsEl.innerHTML = '';
+
+                if (snapshot.empty) {
+                    logsEl.innerHTML = '<div style="text-align:center; padding:20px 0; color:var(--desc-text); font-weight:700;">لا توجد طلبات مسجلة حتى الآن.</div>';
+                    return;
+                }
+
+                snapshot.forEach((d) => {
+                    const ord = d.data();
+                    const card = document.createElement('div');
+                    card.className = 'admin-order-card';
+                    const timeStr = ord.timestamp ? new Date(ord.timestamp).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }) : '';
+                    
+                    card.innerHTML = `
+                        <div class="admin-order-header">
+                            <div>
+                                <b style="color:var(--accent); font-size:0.95rem;">${ord.userName || 'بدون اسم'}</b>
+                                <span style="font-size:0.75rem; color:var(--desc-text); display:block;">📞 ${ord.userPhone || ''} | ${timeStr}</span>
+                            </div>
+                            <span style="font-weight:900; color:#1b4d3e;">${ord.totalPrice ? ord.totalPrice.toFixed(2) : 0} ج.م</span>
+                        </div>
+                        <div style="font-size:0.75rem; margin-bottom:8px; line-height:1.4;">
+                            ${(ord.items || []).join('<br>')}
+                        </div>
+                        ${ord.userAddr ? `<div style="font-size:0.75rem; color:#b91c1c; margin-bottom:8px;">📍 ${ord.userAddr}</div>` : ''}
+                        <div style="display:flex; gap:6px;">
+                            <button style="flex:1; background:#25D366; color:#fff; border:none; padding:6px; border-radius:8px; font-weight:800; cursor:pointer;" onclick="openChatModal('${d.id}', 'admin', '${(ord.userName||'العميل').replace(/'/g, "\\'")}')">💬 فتح الشات</button>
+                            <button style="background:#ef4444; color:#fff; border:none; padding:6px 12px; border-radius:8px; font-weight:800; cursor:pointer;" onclick="deleteOrderRecord('${d.id}')">حذف ✕</button>
+                        </div>
+                    `;
+                    logsEl.appendChild(card);
+                });
+            }, (err) => {
+                console.error("Orders listener error:", err);
+                const logsEl = document.getElementById('adminOrdersLogsList');
+                if (logsEl) logsEl.innerHTML = '<div style="color:red; text-align:center;">حدث خطأ في صلاحيات فايربيز، يرجى مراجعة Rules.</div>';
+            });
+        }
+
+        async function deleteOrderRecord(orderId) {
+            if (confirm("هل أنت متأكد من حذف هذا الطلب نهائياً؟")) {
+                if (window.db && window.firebaseModules) {
+                    const { doc, deleteDoc } = window.firebaseModules;
+                    await deleteDoc(doc(window.db, "orders", orderId));
+                }
+            }
+        }
+
+        // جلب حالة إيقاف/تشغيل الأصناف من فايربيز
+        async function loadItemsStatusFromFirebase() {
+            if (window.db && window.firebaseModules) {
+                try {
+                    const { doc, getDoc } = window.firebaseModules;
+                    const snap = await getDoc(doc(window.db, "settings", "items_status"));
+                    if (snap.exists()) {
+                        itemStatusMap = snap.data() || {};
+                        renderMenu();
+                    }
+                } catch(e) {}
+            }
+        }
+
+        // عرض قائمة الأصناف للتحكم فيها
+        function renderAdminItemsList() {
+            const listEl = document.getElementById('adminItemsList');
+            if (!listEl) return;
+            listEl.innerHTML = '';
+
+            let allItems = [];
+            menuData.forEach(cat => {
+                if (cat.items) allItems = allItems.concat(cat.items);
+            });
+
+            if (allItems.length === 0) {
+                listEl.innerHTML = '<div style="text-align:center; padding:10px;">لا توجد أصناف محملة حتى الآن.</div>';
+                return;
+            }
+
+            allItems.forEach(item => {
+                const key = item.nameAr || item.nameEn;
+                const isEnabled = itemStatusMap[key] !== false;
+                const row = document.createElement('div');
+                row.className = 'admin-item-row';
+                row.innerHTML = `
+                    <span style="font-size:0.85rem; font-weight:800;">${getLocalizedItemName(item)}</span>
+                    <button class="status-toggle-btn ${isEnabled ? 'on' : 'off'}" onclick="toggleSingleItemStatus('${key.replace(/'/g, "\\'")}')">
+                        ${isEnabled ? 'متاح ✅' : 'معطل 🛑'}
+                    </button>
+                `;
+                listEl.appendChild(row);
+            });
+        }
+
+        async function toggleSingleItemStatus(itemKey) {
+            const currentState = itemStatusMap[itemKey] !== false;
+            itemStatusMap[itemKey] = !currentState;
+            await saveItemsStatusToFirebase();
+            renderAdminItemsList();
+            renderMenu();
+        }
+
+        async function setAllItemsStatus(status) {
+            menuData.forEach(cat => {
+                if (cat.items) {
+                    cat.items.forEach(i => {
+                        const key = i.nameAr || i.nameEn;
+                        itemStatusMap[key] = status;
+                    });
+                }
+            });
+            await saveItemsStatusToFirebase();
+            renderAdminItemsList();
+            renderMenu();
+        }
+
+        async function saveItemsStatusToFirebase() {
+            if (window.db && window.firebaseModules) {
+                try {
+                    const { doc, setDoc } = window.firebaseModules;
+                    await setDoc(doc(window.db, "settings", "items_status"), itemStatusMap, { merge: true });
+                } catch(e) {}
+            }
         }
 
         async function adminSavePriceMarkup() {
