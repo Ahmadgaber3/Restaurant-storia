@@ -59,16 +59,16 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        /* شريط تثبيت التطبيق أعلى الهيدر */
+        /* شريط تثبيت التطبيق أعلى الشاشة بتصميم أنيق وغير متداخل */
         .pwa-install-banner {
             background: linear-gradient(135deg, #1b4d3e 0%, #153e32 100%);
             color: #ffffff;
             padding: 8px 16px;
-            display: flex;
+            display: none;
             align-items: center;
             justify-content: space-between;
             gap: 10px;
-            z-index: 1001;
+            z-index: 999;
             position: relative;
             box-shadow: 0 2px 10px rgba(0,0,0,0.15);
             animation: smoothFadeIn 0.3s ease-out;
@@ -205,10 +205,11 @@
         
         .splash-hidden { transform: translateY(-100%); opacity: 0; pointer-events: none; }
 
+        /* نافذة اختيار طريقة الاستلام كما كانت تماماً */
         .welcome-order-type-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15, 20, 18, 0.85); backdrop-filter: blur(8px);
-            z-index: 8000; display: none; justify-content: center; align-items: center;
+            z-index: 9500; display: none; justify-content: center; align-items: center;
             padding: 16px;
         }
         .welcome-card {
@@ -724,7 +725,7 @@
             font-size: 0.82rem; font-weight: 800; color: var(--accent); margin-bottom: 8px;
         }
         .size-options-grid {
-            display: flex; gap: 8px;
+            display: flex gap: 8px;
         }
         .size-opt-btn {
             flex: 1;
@@ -781,7 +782,7 @@
         .toast-added-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(3px);
-            z-index: 9500; display: none; justify-content: center; align-items: center;
+            z-index: 9600; display: none; justify-content: center; align-items: center;
             padding: 16px;
         }
         .toast-added-card {
@@ -1028,7 +1029,7 @@
         .pass-form button { width: 100%; padding: 14px; border-radius: 14px; border: none; background: var(--accent); color: white; font-weight: 800; cursor: pointer; }
 
         .chat-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 6000; display: none; justify-content: center; align-items: center; padding: 14px; }
-        .chat-box-card { background: var(--white); width: 100%; max-width: 440px; height: 80vh; border-radius: 24px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5); animation: smoothFadeIn 0.25s ease-out; border: 1px solid var(--border-color); }
+        .chat-box-card { background: var(--white); width: 100%; max-width: 440px; height: 80vh; border-radius: 24px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); animation: smoothFadeIn 0.25s ease-out; border: 1px solid var(--border-color); }
         .chat-header { background: var(--accent); color: white; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; }
         .chat-header-info { display: flex; flex-direction: column; }
         .chat-header-title { font-size: 0.95rem; font-weight: 900; }
@@ -1047,8 +1048,8 @@
 </head>
 <body>
 
-    <!-- شريط تثبيت التطبيق أعلى الشاشة -->
-    <div class="pwa-install-banner" id="pwaInstallBanner" style="display: none;">
+    <!-- شريط تثبيت التطبيق أعلى الشاشة (يظهر فقط بعد أن يختار العميل نوع الطلب حتى لا يشوه الدخلة) -->
+    <div class="pwa-install-banner" id="pwaInstallBanner">
         <div class="pwa-install-info">
             <span>📲</span>
             <div id="t_pwa_text">تثبيت تطبيق ستوريا على هاتفك لتصفح أسرع وبدون إنترنت!</div>
@@ -1078,6 +1079,7 @@
         </div>
     </div>
 
+    <!-- شاشة السبلاش الأصلية الفخمة للدخلة -->
     <div id="splash-screen">
         <div class="loader-content">
             <div class="loading-bar"><span id="progressBarFill"></span></div>
@@ -1085,7 +1087,7 @@
         </div>
     </div>
 
-    <!-- نافذة اختيار طريقة الاستلام -->
+    <!-- نافذة اختيار طريقة الاستلام الأصلية التي تفتح فور انتهاء التحميل -->
     <div class="welcome-order-type-modal" id="welcomeOrderModal">
         <div class="welcome-card">
             <h2 class="welcome-title" id="t_welcome_title">مرحباً بك في ستوريا | Welcome</h2>
@@ -1181,7 +1183,7 @@
         </div>
     </div>
 
-    <!-- نافذة اختيار الحجم فقط -->
+    <!-- نافذة اختيار الحجم فقط (منفصلة وبسيطة) -->
     <div class="size-only-modal" id="sizeOnlyModal" onclick="if(event.target===this) closeSizeOnlyModal()">
         <div class="size-only-content">
             <div class="size-only-header">
@@ -1575,7 +1577,7 @@
         let userLoyaltyPoints = 0;
         let activeUserPhone = localStorage.getItem('storia_user_phone') || '';
 
-        let deferredPrompt = null; // للتثبيت التلقائي لـ PWA
+        let deferredPrompt = null;
 
         let restaurantInfo = { 
             orderPhone: '201014144144', 
@@ -1679,7 +1681,6 @@
             }
         };
 
-        // تسجيل Service Worker للتطبيق السريع ومنع التهنيج
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
@@ -1688,15 +1689,11 @@
             });
         }
 
-        // التقاط حدث تثبيت الـ PWA للأندرويد
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            const banner = document.getElementById('pwaInstallBanner');
-            if (banner) banner.style.display = 'flex';
         });
 
-        // فحص هل المستخدم على iOS ومحتاج نافذة التثبيت الخاصة به
         function isIosDevice() {
             return /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase()) && !window.navigator.standalone;
         }
@@ -1793,7 +1790,6 @@
             return cat.catAr || cat.catEn || cat.categoryRaw || '';
         }
 
-        // فلترة قسم الشيشة بحيث يظهر بالصالة فقط
         function getFilteredCategories() {
             if (selectedOrderType === 'takeaway') {
                 return menuData;
@@ -1916,24 +1912,29 @@
                     clearInterval(timer);
                     if (splashScreen) {
                         splashScreen.classList.add('splash-hidden');
-                        showWelcomeModal();
+                        showWelcomeModal(); // ظهور نافذة اختيار الدليفري أو الصالة فوراً
                     }
                 }
             }, 8);
         }
 
         function showWelcomeModal() {
-            document.getElementById('welcomeOrderModal').style.display = 'flex';
-            if (isIosDevice() && !window.navigator.standalone) {
-                const banner = document.getElementById('pwaInstallBanner');
-                if (banner) banner.style.display = 'flex';
-            }
+            // الدخلة الأصلية تفتح نافذة الاختيار بوضوح وبدون أي شريط يغطيها
+            const welcomeModal = document.getElementById('welcomeOrderModal');
+            if (welcomeModal) welcomeModal.style.display = 'flex';
         }
 
         function selectInitialOrderType(type) {
             selectedOrderType = type;
             setInitialOrderTypeUI(type);
             document.getElementById('welcomeOrderModal').style.display = 'none';
+
+            // بعد أن يختار العميل وتكتمل الدخلة بسلام، نُظهر شريط التثبيت إذا كان متاحاً
+            if (deferredPrompt || (isIosDevice() && !window.navigator.standalone)) {
+                const banner = document.getElementById('pwaInstallBanner');
+                if (banner) banner.style.display = 'flex';
+            }
+
             currentActiveCatIndex = 0;
             renderCategories();
             renderMenu();
