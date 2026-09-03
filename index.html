@@ -49,40 +49,25 @@
             font-family: 'Plus Jakarta Sans', 'Cairo', sans-serif;
         }
 
-        html, body {
-            width: 100%;
-            height: 100%;
-            overflow-x: hidden;
-        }
-
         body { 
             background-color: var(--bg); 
             color: var(--main-text); 
             line-height: 1.6; 
+            overflow-x: hidden; 
             padding-bottom: 90px; 
-            -webkit-overflow-scrolling: touch;
         }
 
-        /* شاشة البداية الأصلية بكامل الشاشة تماماً ومنع أي فراغ أبيض */
         #splash-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            width: 100vw;
-            height: 100vh;
-            background-image: radial-gradient(circle, rgba(27, 77, 62, 0.15) 0%, rgba(0, 0, 0, 0.15) 100%), url('images/splash-bg.jpg');
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: radial-gradient(circle, rgba(27, 77, 62, 0.2) 0%, rgba(0, 0, 0, 0.2) 100%), url('images/splash-bg.jpg');
             background-size: cover;
             background-position: center center;
             background-repeat: no-repeat;
-            background-color: #e5e5dc;
-            z-index: 99999;
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-            padding: 0 20px 85px 20px;
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease-out;
+            z-index: 9999;
+            display: flex; justify-content: center; align-items: flex-end;
+            padding: 0 20px 90px 20px;
+            transition: 0.6s ease-out;
+            filter: brightness(105%) contrast(100%);
         }
         
         .loader-content { 
@@ -92,7 +77,8 @@
             align-items: center;
             justify-content: center;
             width: 100%;
-            max-width: 340px;
+            max-width: 360px;
+            padding: 0 15px;
         }
 
         .loading-bar { 
@@ -100,11 +86,11 @@
             max-width: 260px; 
             height: 8px; 
             background: rgba(0, 0, 0, 0.15); 
-            margin: 0 auto 12px auto; 
+            margin: 0 auto 15px auto; 
             border-radius: 10px; 
             overflow: hidden; 
             position: relative; 
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
         .loading-bar span { 
             display: block; 
@@ -112,54 +98,41 @@
             height: 100%; 
             background: var(--accent); 
             border-radius: 10px;
-            transition: width 0.03s linear;
+            transition: width 0.04s linear;
         }
         
         .creative-counter {
-            font-size: 1.25rem;
+            font-size: 1.3rem;
             font-weight: 900;
             color: #ffffff;
             background: rgba(0, 0, 0, 0.75);
-            padding: 8px 24px;
+            padding: 10px 24px;
             border-radius: 35px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 4px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
             border: 1.5px solid rgba(255, 255, 255, 0.4);
-            direction: ltr;
+            letter-spacing: 0.5px;
         }
         .creative-counter span {
             color: #52b79a;
             font-variant-numeric: tabular-nums;
-            font-size: 1.3rem;
+            font-size: 1.35rem;
         }
         
-        .splash-hidden { 
-            transform: translateY(-100%); 
-            opacity: 0; 
-            pointer-events: none; 
-        }
+        .splash-hidden { transform: translateY(-100%); opacity: 0; pointer-events: none; }
 
-        /* نافذة اختيار طريقة الاستلام */
         .welcome-order-type-modal {
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100vw; 
-            height: 100vh;
-            background: rgba(15, 20, 18, 0.85); 
-            backdrop-filter: blur(8px);
-            z-index: 90000; 
-            display: none; 
-            justify-content: center; 
-            align-items: center;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 20, 18, 0.85); backdrop-filter: blur(8px);
+            z-index: 8000; display: none; justify-content: center; align-items: center;
             padding: 16px;
         }
         .welcome-card {
             background: var(--white); width: 100%; max-width: 350px;
-            border-radius: 24px; padding: 22px 18px; text-align: center;
+            border-radius: 24px; padding: 20px 16px; text-align: center;
             box-shadow: 0 25px 50px rgba(0,0,0,0.3);
             animation: smoothFadeIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
             border: 1.5px solid var(--border-color);
@@ -184,41 +157,76 @@
         .welcome-choice-en { font-size: 0.74rem; font-weight: 700; color: var(--desc-text); }
         .welcome-choice-icon { font-size: 1.6rem; }
 
-        /* شريط تثبيت التطبيق يظهر بهدوء أعلى المتصفح داخل التطبيق فقط */
-        .pwa-install-banner {
-            background: linear-gradient(135deg, #1b4d3e 0%, #153e32 100%);
+        /* شريط تثبيت التطبيق السفلي الأنيق */
+        .bottom-install-bar {
+            position: fixed;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 30px);
+            max-width: 460px;
+            background: rgba(27, 77, 62, 0.95);
+            backdrop-filter: blur(10px);
             color: #ffffff;
-            padding: 8px 16px;
+            border-radius: 18px;
+            padding: 10px 14px;
             display: none;
             align-items: center;
             justify-content: space-between;
-            gap: 10px;
-            position: relative;
-            z-index: 1001;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: 1500;
+            animation: smoothSlideUp 0.3s ease-out;
         }
-        .pwa-install-info {
+        .bottom-install-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .bottom-install-info img {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: #ffffff;
+            padding: 2px;
+            object-fit: contain;
+        }
+        .bottom-install-text {
+            display: flex;
+            flex-direction: column;
+        }
+        .bottom-install-title {
+            font-size: 0.85rem;
+            font-weight: 900;
+            line-height: 1.2;
+        }
+        .bottom-install-sub {
+            font-size: 0.70rem;
+            opacity: 0.85;
+            font-weight: 600;
+        }
+        .bottom-install-actions {
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 0.80rem;
-            font-weight: 800;
         }
-        .pwa-install-actions { display: flex; align-items: center; gap: 6px; }
-        .pwa-install-btn {
+        .bottom-install-btn {
             background: #ffffff;
             color: var(--accent);
             border: none;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.76rem;
+            padding: 7px 14px;
+            border-radius: 12px;
+            font-size: 0.80rem;
             font-weight: 900;
             cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            transition: transform 0.15s ease;
         }
-        .pwa-close-banner {
+        .bottom-install-btn:active { transform: scale(0.94); }
+        .bottom-close-btn {
             background: transparent;
             border: none;
-            color: rgba(255,255,255,0.8);
+            color: rgba(255, 255, 255, 0.8);
             font-size: 1.1rem;
             cursor: pointer;
             padding: 0 4px;
@@ -226,9 +234,9 @@
 
         /* نافذة تعليمات الآيفون */
         .ios-install-modal {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.7); backdrop-filter: blur(5px);
-            z-index: 999999; display: none; justify-content: center; align-items: flex-end;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px);
+            z-index: 99999; display: none; justify-content: center; align-items: flex-end;
             padding: 20px 16px 30px 16px;
         }
         .ios-install-card {
@@ -238,12 +246,14 @@
             animation: smoothSlideUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
         .ios-install-title { font-size: 1.1rem; font-weight: 900; color: var(--accent); margin-bottom: 8px; }
-        .ios-install-desc { font-size: 0.82rem; color: var(--desc-text); font-weight: 700; margin-bottom: 14px; }
+        .ios-install-desc { font-size: 0.82rem; color: var(--desc-text); font-weight: 700; line-height: 1.5; margin-bottom: 14px; }
         .ios-steps-box {
             background: var(--bg); border: 1.5px solid var(--border-color);
             border-radius: 16px; padding: 12px; margin-bottom: 14px; text-align: right;
             display: flex; flex-direction: column; gap: 8px; font-size: 0.82rem; font-weight: 800;
         }
+        [dir="ltr"] .ios-steps-box { text-align: left; }
+        .ios-step-item { display: flex; align-items: center; gap: 8px; }
         .ios-close-btn {
             background: var(--accent); color: white; border: none; width: 100%;
             padding: 12px; border-radius: 14px; font-weight: 800; cursor: pointer;
@@ -482,6 +492,7 @@
             cursor: pointer;
         }
         .item-img-box img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.2s; }
+        .item-img-box:hover img { transform: scale(1.05); }
         
         .food-info { 
             flex: 1; 
@@ -534,6 +545,9 @@
             white-space: normal;
             font-weight: 900;
         }
+        [dir="ltr"] .food-price.multi-sizes-badge {
+            text-align: left;
+        }
 
         .food-desc { 
             font-size: 0.73rem; 
@@ -567,6 +581,7 @@
             font-size: 0.74rem;
             font-weight: 800;
             cursor: pointer;
+            transition: all 0.15s ease;
             white-space: nowrap;
             text-align: center;
             display: inline-flex;
@@ -597,24 +612,73 @@
             height: 33px;
             min-width: 0;
             flex-shrink: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
-        .order-btn:disabled { background: #94a3b8 !important; border-color: #94a3b8 !important; cursor: not-allowed; }
+        .order-btn:disabled { background: #94a3b8 !important; border-color: #94a3b8 !important; cursor: not-allowed; box-shadow: none !important; }
 
         .order-btn.size-select-style {
             background: var(--accent);
             color: #ffffff;
             border: 1.5px solid var(--accent);
+            box-shadow: 0 2px 6px rgba(27, 77, 62, 0.25);
         }
         .order-btn.size-select-style:active {
             background: var(--accent-hover);
+            border-color: var(--accent-hover);
             transform: scale(0.97);
+        }
+        
+        .order-btn.added { 
+            background: rgba(46, 125, 50, 0.12) !important; 
+            color: #2e7d32 !important; 
+            border: 1.5px solid #2e7d32 !important;
+            box-shadow: none !important;
+            pointer-events: none;
+            font-weight: 900;
+        }
+
+        .image-lightbox-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(8px);
+            z-index: 9000; display: none; justify-content: center; align-items: center;
+            padding: 16px;
+        }
+        .image-lightbox-content {
+            background: var(--white); width: 100%; max-width: 440px;
+            border-radius: 24px; overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+            animation: smoothFadeIn 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+        .image-lightbox-img-wrapper {
+            width: 100%; height: 280px; background: #000;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .image-lightbox-img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+        .image-lightbox-details {
+            padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;
+            background: var(--white);
+        }
+        .image-lightbox-title { font-size: 1.1rem; font-weight: 900; color: var(--main-text); }
+        .image-lightbox-price { font-size: 1rem; font-weight: 900; color: var(--accent); }
+        .image-lightbox-close {
+            position: absolute; top: 12px; left: 12px;
+            background: rgba(0, 0, 0, 0.6); color: #fff;
+            width: 36px; height: 36px; border-radius: 50%;
+            border: 1.5px solid rgba(255,255,255,0.4);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; font-weight: 900; cursor: pointer;
+            z-index: 10;
         }
 
         .size-only-modal {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.65); z-index: 92000; display: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.65); z-index: 3800; display: none;
             justify-content: center; align-items: center;
-            padding: 16px; backdrop-filter: blur(4px);
+            padding: 16px;
+            backdrop-filter: blur(4px);
         }
         .size-only-content {
             background: var(--white); width: 100%; max-width: 360px;
@@ -629,19 +693,30 @@
         .size-only-header h3 { font-size: 1.05rem; font-weight: 900; color: var(--accent); }
 
         .simple-addons-modal {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.55); z-index: 91000; display: none;
-            justify-content: center; align-items: center; padding: 16px; backdrop-filter: blur(4px);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.55); z-index: 3500; display: none;
+            justify-content: center; align-items: center;
+            padding: 16px;
+            backdrop-filter: blur(4px);
         }
         .simple-addons-content {
             background: var(--white); width: 100%; max-width: 420px;
             border-radius: 24px; padding: 18px 20px; max-height: 85vh;
             overflow-y: auto; color: var(--main-text); box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            animation: floatFadeIn 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
             border: 1px solid var(--border-color);
         }
+        @keyframes floatFadeIn {
+            from { transform: scale(0.92); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
         .simple-addons-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
         }
         .simple-addons-header h3 { font-size: 1.05rem; font-weight: 900; color: var(--accent); }
         .simple-addons-close {
@@ -669,20 +744,36 @@
         .size-selection-title {
             font-size: 0.82rem; font-weight: 800; color: var(--accent); margin-bottom: 8px;
         }
-        .size-options-grid { display: flex; gap: 8px; }
-        .size-opt-btn {
-            flex: 1; padding: 10px 8px; border-radius: 12px;
-            border: 1.5px solid var(--border-color); background: var(--white);
-            color: var(--main-text); cursor: pointer; font-weight: 800; font-size: 0.84rem;
-            display: flex; flex-direction: column; align-items: center; gap: 3px;
+        .size-options-grid {
+            display: flex; gap: 8px;
         }
-        .size-opt-btn.active { border-color: var(--accent); background: var(--accent); color: #ffffff; }
+        .size-opt-btn {
+            flex: 1;
+            padding: 10px 8px;
+            border-radius: 12px;
+            border: 1.5px solid var(--border-color);
+            background: var(--white);
+            color: var(--main-text);
+            cursor: pointer;
+            font-weight: 800;
+            font-size: 0.84rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            transition: all 0.15s ease;
+        }
+        .size-opt-btn.active {
+            border-color: var(--accent);
+            background: var(--accent);
+            color: #ffffff;
+        }
 
         .simple-addons-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
         .simple-addon-item {
             display: flex; justify-content: space-between; align-items: center;
             padding: 10px 12px; background: var(--bg); border: 1.5px solid var(--border-color);
-            border-radius: 12px; cursor: pointer; user-select: none;
+            border-radius: 12px; cursor: pointer; transition: all 0.15s ease; user-select: none;
         }
         .simple-addon-item.checked { border-color: var(--accent); background: rgba(27, 77, 62, 0.08); }
         .simple-addon-left { display: flex; align-items: center; gap: 8px; font-size: 0.88rem; font-weight: 800; }
@@ -690,6 +781,7 @@
             width: 20px; height: 20px; border-radius: 6px; border: 1.5px solid #cbd5e1;
             display: flex; align-items: center; justify-content: center;
             font-size: 0.72rem; color: transparent; background: var(--white);
+            transition: all 0.15s ease;
         }
         .simple-addon-item.checked .custom-check-circ { background: var(--accent); border-color: var(--accent); color: #ffffff; }
         .simple-addon-price { font-size: 0.84rem; font-weight: 800; color: var(--accent); }
@@ -708,15 +800,16 @@
         }
 
         .toast-added-modal {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(3px);
-            z-index: 96000; display: none; justify-content: center; align-items: center;
+            z-index: 9500; display: none; justify-content: center; align-items: center;
             padding: 16px;
         }
         .toast-added-card {
             background: var(--white); width: 100%; max-width: 290px;
             border-radius: 22px; padding: 22px 16px; text-align: center;
             box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+            animation: smoothFadeIn 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
             display: flex; flex-direction: column; align-items: center;
             border: 1px solid var(--border-color);
         }
@@ -726,18 +819,18 @@
             margin-bottom: 10px; border: 2px solid #2e7d32;
         }
         .toast-icon-circle svg { width: 28px; height: 28px; fill: #2e7d32; }
-        .toast-added-title { font-size: 1.05rem; font-weight: 900; color: var(--main-text); }
+        .toast-added-title {
+            font-size: 1.05rem; font-weight: 900; color: var(--main-text); margin-bottom: 4px;
+        }
 
         .restaurant-footer { padding: 30px 20px; text-align: center; background: var(--white); border-top: 1px solid var(--border-color); margin-top: 20px; }
         .footer-rights { font-size: 0.92rem; color: var(--main-text); font-weight: 800; margin-bottom: 4px; }
         .dev-credit { font-size: 0.88rem; color: #475569; font-weight: 800; margin-bottom: 4px; }
         .dev-phone { color: var(--accent); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; font-size: 0.90rem; font-weight: 900; direction: ltr; }
 
-        .modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.65); z-index: 2000; display: none; justify-content: center; align-items: flex-end; }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.65); z-index: 2000; display: none; justify-content: center; align-items: flex-end; }
         .modal-content { background: var(--white); width: 100%; max-width: 500px; padding: 25px; border-radius: 30px 30px 0 0; max-height: 90vh; overflow-y: auto; color: var(--main-text); animation: smoothSlideUp 0.2s ease-out; }
         @keyframes smoothSlideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        @keyframes smoothFadeIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
-        @keyframes floatFadeIn { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
         .cart-item-card { display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg); border-radius: 18px; margin-bottom: 10px; border: 1px solid var(--border-color); }
         .cart-item-img { width: 50px; height: 50px; border-radius: 12px; object-fit: cover; }
@@ -761,73 +854,202 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            box-shadow: 0 4px 15px rgba(27, 77, 62, 0.1);
             position: relative;
             overflow: hidden;
         }
-        .cart-points-card-pro::before { content: ''; position: absolute; top: 0; right: 0; width: 6px; height: 100%; background: var(--accent); }
+        .cart-points-card-pro::before {
+            content: '';
+            position: absolute;
+            top: 0; right: 0; width: 6px; height: 100%;
+            background: var(--accent);
+        }
         [dir="ltr"] .cart-points-card-pro::before { right: auto; left: 0; }
         .cart-points-left { display: flex; align-items: center; gap: 10px; }
-        .cart-points-icon-badge { width: 42px; height: 42px; border-radius: 14px; background: var(--accent); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
+        .cart-points-icon-badge {
+            width: 42px; height: 42px; border-radius: 14px;
+            background: var(--accent); color: #ffffff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem; box-shadow: 0 3px 8px rgba(27, 77, 62, 0.3);
+        }
         .cart-points-text-group { display: flex; flex-direction: column; }
         .cart-points-main-label { font-size: 0.92rem; font-weight: 900; color: var(--main-text); line-height: 1.2; }
         .cart-points-sub-label { font-size: 0.72rem; font-weight: 700; color: var(--desc-text); margin-top: 2px; }
-        .cart-points-val-pill { background: var(--accent); color: #ffffff; padding: 6px 14px; border-radius: 25px; font-size: 1rem; font-weight: 900; white-space: nowrap; }
+        .cart-points-val-pill {
+            background: var(--accent); color: #ffffff;
+            padding: 6px 14px; border-radius: 25px;
+            font-size: 1rem; font-weight: 900;
+            box-shadow: 0 3px 10px rgba(27, 77, 62, 0.3);
+            white-space: nowrap;
+        }
 
-        .success-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.75); z-index: 50000; display: none; justify-content: center; align-items: center; padding: 20px; }
-        .success-card { background: var(--white); width: 100%; max-width: 380px; border-radius: 28px; padding: 30px 22px; text-align: center; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; }
-        .success-icon-wrapper { width: 75px; height: 75px; background: rgba(27, 77, 62, 0.12); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; border: 2px solid var(--accent); }
+        .success-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.75); z-index: 5000; display: none;
+            justify-content: center; align-items: center; padding: 20px;
+        }
+        .success-card {
+            background: var(--white); width: 100%; max-width: 380px;
+            border-radius: 28px; padding: 30px 22px; text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            animation: smoothFadeIn 0.25s ease-out;
+            display: flex; flex-direction: column; align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .success-icon-wrapper {
+            width: 75px; height: 75px; background: rgba(27, 77, 62, 0.12);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            margin-bottom: 12px; border: 2px solid var(--accent);
+        }
         .success-icon-wrapper svg { width: 40px; height: 40px; fill: var(--accent); }
+
         .success-title { font-size: 1.25rem; font-weight: 800; color: var(--main-text); margin-bottom: 4px; }
         .success-sub { font-size: 0.85rem; color: var(--desc-text); font-weight: 600; line-height: 1.4; margin-bottom: 14px; }
-        .points-earned-celebration-pill { background: #ecfdf5; border: 2px dashed #1b4d3e; color: #1b4d3e; padding: 10px 18px; border-radius: 16px; font-weight: 900; font-size: 1.05rem; margin-bottom: 16px; display: inline-flex; align-items: center; gap: 6px; }
-        .emoji-burst-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: hidden; z-index: 10; }
-        .floating-emoji-item { position: absolute; font-size: 1.8rem; animation: floatAndFade 2s ease-out forwards; }
-        @keyframes floatAndFade { 0% { transform: translateY(40px) scale(0.6); opacity: 0; } 40% { opacity: 1; transform: translateY(-10px) scale(1.2); } 100% { transform: translateY(-120px) scale(0.9); opacity: 0; } }
-        .success-chat-btn { background: #25D366; color: white; border: none; padding: 12px 20px; border-radius: 14px; font-weight: 800; font-size: 0.9rem; cursor: pointer; width: 100%; margin-bottom: 8px; }
-        .success-close-btn { background: var(--bg); color: var(--main-text); border: 1px solid var(--border-color); padding: 10px 20px; border-radius: 14px; font-weight: 800; font-size: 0.85rem; cursor: pointer; width: 100%; }
 
-        .loyalty-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.72); z-index: 45000; display: none; justify-content: center; align-items: center; padding: 16px; }
-        .loyalty-box { background: var(--white); width: 100%; max-width: 440px; border-radius: 26px; padding: 22px; max-height: 85vh; overflow-y: auto; border: 1px solid var(--border-color); }
+        .points-earned-celebration-pill {
+            background: #ecfdf5;
+            border: 2px dashed #1b4d3e;
+            color: #1b4d3e;
+            padding: 10px 18px;
+            border-radius: 16px;
+            font-weight: 900;
+            font-size: 1.05rem;
+            margin-bottom: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .emoji-burst-container {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; overflow: hidden; z-index: 10;
+        }
+        .floating-emoji-item {
+            position: absolute;
+            font-size: 1.8rem;
+            animation: floatAndFade 2s ease-out forwards;
+        }
+        @keyframes floatAndFade {
+            0% { transform: translateY(40px) scale(0.6); opacity: 0; }
+            40% { opacity: 1; transform: translateY(-10px) scale(1.2); }
+            100% { transform: translateY(-120px) scale(0.9); opacity: 0; }
+        }
+
+        .success-chat-btn {
+            background: #25D366; color: white; border: none; padding: 12px 20px;
+            border-radius: 14px; font-weight: 800; font-size: 0.9rem; cursor: pointer;
+            width: 100%; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 8px;
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+        }
+
+        .success-close-btn {
+            background: var(--bg); color: var(--main-text); border: 1px solid var(--border-color);
+            padding: 10px 20px; border-radius: 14px; font-weight: 800; font-size: 0.85rem; cursor: pointer; width: 100%;
+        }
+
+        .loyalty-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.72); z-index: 4500; display: none;
+            justify-content: center; align-items: center; padding: 16px;
+        }
+        .loyalty-box {
+            background: var(--white); width: 100%; max-width: 440px;
+            border-radius: 26px; padding: 22px; max-height: 85vh; overflow-y: auto;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4); animation: smoothFadeIn 0.2s ease-out;
+            border: 1px solid var(--border-color);
+        }
         .loyalty-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-        .loyalty-header h3 { font-size: 1.15rem; font-weight: 900; color: var(--accent); }
-        .loyalty-simple-card { background: linear-gradient(135deg, #1b4d3e 0%, #0d2820 100%); border-radius: 18px; padding: 18px; color: white; text-align: center; margin-bottom: 16px; }
+        .loyalty-header h3 { font-size: 1.15rem; font-weight: 900; color: var(--accent); display: flex; align-items: center; gap: 6px; }
+
+        .loyalty-simple-card {
+            background: linear-gradient(135deg, #1b4d3e 0%, #0d2820 100%);
+            border-radius: 18px;
+            padding: 18px;
+            color: white;
+            text-align: center;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
         .loyalty-card-lbl { font-size: 0.78rem; opacity: 0.85; font-weight: 700; }
         .loyalty-card-num { font-size: 2.3rem; font-weight: 900; color: #52b79a; margin: 3px 0; }
         .loyalty-card-phone { font-size: 0.75rem; opacity: 0.8; }
-        .reward-item-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: var(--bg); border: 1px solid var(--border-color); border-radius: 14px; margin-bottom: 9px; gap: 10px; }
+
+        .reward-item-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 14px;
+            background: var(--bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            margin-bottom: 9px;
+            gap: 10px;
+        }
         .reward-item-info { flex: 1; }
         .reward-item-name { font-size: 0.88rem; font-weight: 800; color: var(--main-text); }
         .reward-item-cost { font-size: 0.76rem; color: var(--accent); font-weight: 800; margin-top: 2px; }
-        .reward-redeem-btn { background: var(--accent); color: white; border: none; border-radius: 10px; padding: 6px 14px; font-size: 0.80rem; font-weight: 800; cursor: pointer; }
+        .reward-redeem-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 6px 14px;
+            font-size: 0.80rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
         .reward-redeem-btn:disabled { background: #cbd5e1; color: #64748b; cursor: not-allowed; }
 
-        .admin-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.72); z-index: 40000; display: none; justify-content: center; align-items: center; padding: 14px; }
-        .admin-box { background: var(--white); width: 100%; max-width: 480px; border-radius: 28px; padding: 22px; max-height: 90vh; overflow-y: auto; }
+        .admin-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.72); z-index: 4000; display: none; justify-content: center; align-items: center; padding: 14px; }
+        .admin-box { background: var(--white); width: 100%; max-width: 480px; border-radius: 28px; padding: 22px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.3); animation: smoothFadeIn 0.2s ease-out; }
         .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
-        .admin-header h3 { font-size: 1.25rem; font-weight: 900; color: var(--accent); }
+        .admin-header h3 { font-size: 1.25rem; font-weight: 900; color: var(--accent); display: flex; align-items: center; gap: 6px; }
         .admin-close { background: var(--bg); border: 1px solid var(--border-color); width: 34px; height: 34px; border-radius: 50%; font-weight: 800; cursor: pointer; color: var(--main-text); display: flex; align-items: center; justify-content: center; }
+
         .admin-cards-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .admin-nav-card { background: #ffffff; border: 2px solid #e2e8f0; border-radius: 22px; padding: 16px 12px 14px 12px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; min-height: 165px; position: relative; }
+        .admin-nav-card {
+            background: #ffffff; border: 2px solid #e2e8f0; border-radius: 22px;
+            padding: 16px 12px 14px 12px; text-align: center; cursor: pointer;
+            transition: transform 0.15s ease, border-color 0.15s ease; position: relative;
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            min-height: 165px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+        .admin-nav-card:active { transform: scale(0.96); border-color: var(--accent); }
         .card-badge-num { position: absolute; top: 10px; left: 10px; width: 24px; height: 24px; background: var(--accent); color: #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 900; }
         .card-badge-num.gray { background: #e2e8f0; color: #64748b; }
-        .card-avatar-box { width: 56px; height: 56px; border-radius: 50%; background: rgba(27, 77, 62, 0.08); display: flex; align-items: center; justify-content: center; margin-bottom: 8px; font-size: 1.8rem; }
-        .card-title { font-size: 0.92rem; font-weight: 900; color: #0f172a; margin-bottom: 4px; }
-        .card-subtitle { font-size: 0.70rem; font-weight: 700; color: #64748b; }
+        .card-avatar-box { width: 56px; height: 56px; border-radius: 50%; background: rgba(27, 77, 62, 0.08); display: flex; align-items: center; justify-content: center; margin-bottom: 8px; font-size: 1.8rem; overflow: hidden; }
+        .card-title { font-size: 0.92rem; font-weight: 900; color: #0f172a; margin-bottom: 4px; line-height: 1.2; }
+        .card-subtitle { font-size: 0.70rem; font-weight: 700; color: #64748b; line-height: 1.35; }
 
-        .floating-sub-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.78); z-index: 55000; display: none; justify-content: center; align-items: center; padding: 16px; }
-        .floating-card-box { background: var(--white); width: 100%; max-width: 460px; border-radius: 28px; padding: 20px; max-height: 85vh; overflow-y: auto; }
+        .floating-sub-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.78); z-index: 5500; display: none;
+            justify-content: center; align-items: center; padding: 16px;
+        }
+        .floating-card-box {
+            background: var(--white); width: 100%; max-width: 460px;
+            border-radius: 28px; padding: 20px; max-height: 85vh; overflow-y: auto;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.45); animation: smoothFadeIn 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+            border: 1px solid var(--border-color);
+        }
         .floating-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; }
-        .floating-header h4 { font-size: 1.12rem; font-weight: 900; color: var(--accent); }
+        .floating-header h4 { font-size: 1.12rem; font-weight: 900; color: var(--accent); display: flex; align-items: center; gap: 6px; }
+
         .admin-custom-input-group { margin-bottom: 12px; text-align: right; }
         [dir="ltr"] .admin-custom-input-group { text-align: left; }
         .admin-custom-input-group label { display: block; font-size: 0.82rem; font-weight: 800; color: var(--main-text); margin-bottom: 5px; }
         .admin-custom-input-group input { width: 100%; padding: 12px 14px; background: var(--bg); border: 1.5px solid var(--border-color); border-radius: 12px; font-size: 0.9rem; color: var(--main-text); outline: none; }
-        .admin-save-btn { width: 100%; background: var(--accent); color: white; border: none; padding: 13px; border-radius: 12px; font-weight: 900; font-size: 0.92rem; cursor: pointer; margin-top: 8px; }
+
+        .admin-save-btn { width: 100%; background: var(--accent); color: white; border: none; padding: 13px; border-radius: 12px; font-weight: 900; font-size: 0.92rem; cursor: pointer; margin-top: 8px; box-shadow: 0 4px 12px rgba(27, 77, 62, 0.25); }
+
         .pass-form input { width: 100%; padding: 14px; border-radius: 14px; border: 1px solid var(--border-color); background: var(--bg); color: var(--main-text); margin-bottom: 12px; font-size: 0.95rem; text-align: center; }
         .pass-form button { width: 100%; padding: 14px; border-radius: 14px; border: none; background: var(--accent); color: white; font-weight: 800; cursor: pointer; }
 
-        .chat-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.8); z-index: 60000; display: none; justify-content: center; align-items: center; padding: 14px; }
-        .chat-box-card { background: var(--white); width: 100%; max-width: 440px; height: 80vh; border-radius: 24px; display: flex; flex-direction: column; overflow: hidden; }
+        .chat-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 6000; display: none; justify-content: center; align-items: center; padding: 14px; }
+        .chat-box-card { background: var(--white); width: 100%; max-width: 440px; height: 80vh; border-radius: 24px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5); animation: smoothFadeIn 0.25s ease-out; border: 1px solid var(--border-color); }
         .chat-header { background: var(--accent); color: white; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; }
         .chat-header-info { display: flex; flex-direction: column; }
         .chat-header-title { font-size: 0.95rem; font-weight: 900; }
@@ -846,7 +1068,6 @@
 </head>
 <body>
 
-    <!-- شاشة السبلاش الأصلية بالكامل تغطي الشاشة بدقة متناهية وبدون أي قص -->
     <div id="splash-screen">
         <div class="loader-content">
             <div class="loading-bar"><span id="progressBarFill"></span></div>
@@ -854,7 +1075,7 @@
         </div>
     </div>
 
-    <!-- نافذة اختيار طريقة الاستلام تفتح بعد انتهاء التحميل مباشرة في المنتصف -->
+    <!-- نافذة اختيار طريقة الاستلام الأصلية -->
     <div class="welcome-order-type-modal" id="welcomeOrderModal">
         <div class="welcome-card">
             <h2 class="welcome-title" id="t_welcome_title">مرحباً بك في ستوريا | Welcome</h2>
@@ -880,31 +1101,34 @@
         </div>
     </div>
 
-    <!-- شريط تثبيت التطبيق يظهر فقط أعلى الهيدر بعد اختيار الصالة أو الدليفري -->
-    <div class="pwa-install-banner" id="pwaInstallBanner">
-        <div class="pwa-install-info">
-            <span>📲</span>
-            <div id="t_pwa_text">تثبيت تطبيق ستوريا على هاتفك لتصفح أسرع وبدون إنترنت!</div>
+    <!-- شريط تثبيت التطبيق السفلي (يظهر داخل التطبيق بعد اختيار الصالة أو الدليفري) -->
+    <div class="bottom-install-bar" id="bottomInstallBar">
+        <div class="bottom-install-info">
+            <img src="images/logooo.png" alt="Storia App" onerror="this.src='images/logooo.png'">
+            <div class="bottom-install-text">
+                <span class="bottom-install-title">تطبيق ستوريا</span>
+                <span class="bottom-install-sub">تصفح أسرع وتثبيت على هاتفك</span>
+            </div>
         </div>
-        <div class="pwa-install-actions">
-            <button class="pwa-install-btn" id="pwaInstallBtn" onclick="triggerAppInstall()">تثبيت الآن</button>
-            <button class="pwa-close-banner" onclick="closePwaBanner()">✕</button>
+        <div class="bottom-install-actions">
+            <button class="bottom-install-btn" onclick="triggerAppInstall()">ثبت الآن 📲</button>
+            <button class="bottom-close-btn" onclick="closeInstallBanner()">✕</button>
         </div>
     </div>
 
-    <!-- نافذة تعليمات الآيفون -->
+    <!-- نافذة شرح التثبيت لمستخدمي الآيفون -->
     <div class="ios-install-modal" id="iosInstallModal" onclick="if(event.target===this) closeIosInstallModal()">
         <div class="ios-install-card">
             <h3 class="ios-install-title">تثبيت التطبيق على الآيفون 🍏</h3>
-            <p class="ios-install-desc">لتثبيت تطبيق ستوريا على شاشة جهازك والعمل بكفاءة تامة بدون متصفح، اتبع الخطوتين التاليتين:</p>
+            <p class="ios-install-desc">لتثبيت التطبيق على شاشة هاتفك الرئيسية، اتبع الخطوات التالية من متصفح Safari:</p>
             <div class="ios-steps-box">
                 <div class="ios-step-item">
                     <span>1️⃣</span>
-                    <span>اضغط على زر المشاركة <b>(Share)</b> أسفل المتصفح.</span>
+                    <span>اضغط على زر المشاركة <b>(Share)</b> أسفل الشاشة.</span>
                 </div>
                 <div class="ios-step-item">
                     <span>2️⃣</span>
-                    <span>انزل لأسفل واختر <b>"إضافة إلى الشاشة الرئيسية" (Add to Home Screen ➕)</b>.</span>
+                    <span>اختر <b>"إضافة إلى الشاشة الرئيسية" (Add to Home Screen ➕)</b>.</span>
                 </div>
             </div>
             <button class="ios-close-btn" onclick="closeIosInstallModal()">فهمت ذلك ✓</button>
@@ -981,7 +1205,7 @@
         </div>
     </div>
 
-    <!-- نافذة اختيار الحجم فقط -->
+    <!-- نافذة اختيار الحجم فقط (منفصلة وبسيطة) -->
     <div class="size-only-modal" id="sizeOnlyModal" onclick="if(event.target===this) closeSizeOnlyModal()">
         <div class="size-only-content">
             <div class="size-only-header">
@@ -1427,9 +1651,7 @@
                 footerRights: 'جميع الحقوق محفوظة لـ ستوريا 2026 ©',
                 sizeLarge: 'كبير (Large)',
                 sizeMedium: 'وسط (Medium)',
-                sizeConfirmBtn: '🛒 تأكيد وإضافة للسلة',
-                pwaBannerText: 'تثبيت تطبيق ستوريا على هاتفك لتصفح أسرع وبدون إنترنت!',
-                pwaInstallBtnText: 'تثبيت الآن'
+                sizeConfirmBtn: '🛒 تأكيد وإضافة للسلة'
             },
             en: {
                 langBtn: 'AR',
@@ -1473,20 +1695,20 @@
                 footerRights: 'All Rights Reserved to Storia 2026 ©',
                 sizeLarge: 'Large (L)',
                 sizeMedium: 'Medium (M)',
-                sizeConfirmBtn: '🛒 Confirm & Add to Cart',
-                pwaBannerText: 'Install Storia App for a faster offline experience!',
-                pwaInstallBtnText: 'Install Now'
+                sizeConfirmBtn: '🛒 Confirm & Add to Cart'
             }
         };
 
+        // تسجيل Service Worker لمنع التهنيج
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('SW Registered!', reg.scope))
-                    .catch(err => console.log('SW Registration Failed!', err));
+                    .then(reg => console.log('SW Registered'))
+                    .catch(err => console.log('SW Error', err));
             });
         }
 
+        // استقبال حدث التثبيت للاندرويد
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
@@ -1501,24 +1723,25 @@
                 deferredPrompt.prompt();
                 deferredPrompt.userChoice.then((choiceResult) => {
                     if (choiceResult.outcome === 'accepted') {
-                        closePwaBanner();
+                        closeInstallBanner();
                     }
                     deferredPrompt = null;
                 });
             } else if (isIosDevice()) {
                 document.getElementById('iosInstallModal').style.display = 'flex';
             } else {
-                alert(currentLang === 'ar' ? 'التطبيق جاهز ومثبت بالفعل أو يمكنك إضافته عبر خيارات المتصفح (إضافة للشاشة الرئيسية).' : 'App is already installed or can be added via browser settings (Add to Home screen).');
+                alert(currentLang === 'ar' ? 'التطبيق مثبت بالفعل أو يمكنك إضافته من إعدادات المتصفح (إضافة للشاشة الرئيسية).' : 'App is already installed or can be added from browser menu.');
             }
         }
 
-        function closePwaBanner() {
-            const banner = document.getElementById('pwaInstallBanner');
-            if (banner) banner.style.display = 'none';
+        function closeInstallBanner() {
+            const bar = document.getElementById('bottomInstallBar');
+            if (bar) bar.style.display = 'none';
         }
 
         function closeIosInstallModal() {
-            document.getElementById('iosInstallModal').style.display = 'none';
+            const modal = document.getElementById('iosInstallModal');
+            if (modal) modal.style.display = 'none';
         }
 
         function applyMarkup(price) {
@@ -1588,14 +1811,15 @@
             return cat.catAr || cat.catEn || cat.categoryRaw || '';
         }
 
+        // دالة فلترة الأقسام بناءً على نوع الطلب (إخفاء قسم الشيشة عند اختيار دليفري)
         function getFilteredCategories() {
             if (selectedOrderType === 'takeaway') {
-                return menuData;
+                return menuData; // إظهار كل الأقسام بما فيها الشيشة في الصالة
             }
             return menuData.filter(cat => {
                 const checkStr = ((cat.catAr || '') + ' ' + (cat.catEn || '')).toLowerCase();
                 const isShisha = checkStr.includes('شيش') || checkStr.includes('شيشه') || checkStr.includes('شيشة') || checkStr.includes('shisha') || checkStr.includes('hookah');
-                return !isShisha;
+                return !isShisha; // استبعاد الشيشة في الدليفري
             });
         }
 
@@ -1616,11 +1840,6 @@
 
             const langBtn = document.getElementById('langBtn');
             if (langBtn) langBtn.innerText = t.langBtn;
-
-            const tPwaText = document.getElementById('t_pwa_text');
-            if (tPwaText) tPwaText.innerText = t.pwaBannerText;
-            const pwaInstallBtn = document.getElementById('pwaInstallBtn');
-            if (pwaInstallBtn) pwaInstallBtn.innerText = t.pwaInstallBtnText;
 
             const tWelcomeTitle = document.getElementById('t_welcome_title');
             if (tWelcomeTitle) tWelcomeTitle.innerText = t.welcomeTitle;
@@ -1717,8 +1936,7 @@
         }
 
         function showWelcomeModal() {
-            const welcomeModal = document.getElementById('welcomeOrderModal');
-            if (welcomeModal) welcomeModal.style.display = 'flex';
+            document.getElementById('welcomeOrderModal').style.display = 'flex';
         }
 
         function selectInitialOrderType(type) {
@@ -1726,9 +1944,10 @@
             setInitialOrderTypeUI(type);
             document.getElementById('welcomeOrderModal').style.display = 'none';
 
+            // إظهار زر التثبيت السفلي داخل الأبلكيشن بهدوء
             if (deferredPrompt || (isIosDevice() && !window.navigator.standalone)) {
-                const banner = document.getElementById('pwaInstallBanner');
-                if (banner) banner.style.display = 'flex';
+                const bar = document.getElementById('bottomInstallBar');
+                if (bar) bar.style.display = 'flex';
             }
 
             currentActiveCatIndex = 0;
