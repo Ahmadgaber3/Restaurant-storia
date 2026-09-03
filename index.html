@@ -55,6 +55,87 @@
             line-height: 1.6; 
             overflow-x: hidden; 
             padding-bottom: 90px; 
+            will-change: transform;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* شريط تثبيت التطبيق أعلى الهيدر */
+        .pwa-install-banner {
+            background: linear-gradient(135deg, #1b4d3e 0%, #153e32 100%);
+            color: #ffffff;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            z-index: 1001;
+            position: relative;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            animation: smoothFadeIn 0.3s ease-out;
+        }
+        .pwa-install-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.82rem;
+            font-weight: 800;
+        }
+        .pwa-install-info span { font-size: 1.1rem; }
+        .pwa-install-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .pwa-install-btn {
+            background: #ffffff;
+            color: var(--accent);
+            border: none;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            transition: transform 0.15s ease;
+        }
+        .pwa-install-btn:active { transform: scale(0.92); }
+        .pwa-close-banner {
+            background: transparent;
+            border: none;
+            color: rgba(255,255,255,0.8);
+            font-size: 1rem;
+            font-weight: 900;
+            cursor: pointer;
+            padding: 0 4px;
+        }
+
+        /* نافذة تعليمات التثبيت للآيفون */
+        .ios-install-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(5px);
+            z-index: 99999; display: none; justify-content: center; align-items: flex-end;
+            padding: 20px 16px 30px 16px;
+        }
+        .ios-install-card {
+            background: var(--white); width: 100%; max-width: 380px;
+            border-radius: 24px; padding: 22px 18px; text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+            animation: smoothSlideUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            position: relative;
+        }
+        .ios-install-title { font-size: 1.1rem; font-weight: 900; color: var(--accent); margin-bottom: 8px; }
+        .ios-install-desc { font-size: 0.82rem; color: var(--desc-text); font-weight: 700; line-height: 1.5; margin-bottom: 14px; }
+        .ios-steps-box {
+            background: var(--bg); border: 1.5px solid var(--border-color);
+            border-radius: 16px; padding: 12px; margin-bottom: 14px; text-align: right;
+            display: flex; flex-direction: column; gap: 8px; font-size: 0.82rem; font-weight: 800;
+        }
+        [dir="ltr"] .ios-steps-box { text-align: left; }
+        .ios-step-item { display: flex; align-items: center; gap: 8px; }
+        .ios-step-icon { font-size: 1.2rem; }
+        .ios-close-btn {
+            background: var(--accent); color: white; border: none; width: 100%;
+            padding: 12px; border-radius: 14px; font-weight: 800; cursor: pointer;
         }
 
         #splash-screen {
@@ -491,7 +572,6 @@
         }
         .mini-addons-btn:active { background: var(--accent); color: white; }
 
-        /* تعديل زر اطلب الآن وزر الحجم ليكون بنفس اللون والتناسق البسيط */
         .order-btn { 
             flex: 1.4;
             background: var(--accent); 
@@ -516,7 +596,6 @@
         }
         .order-btn:disabled { background: #94a3b8 !important; border-color: #94a3b8 !important; cursor: not-allowed; box-shadow: none !important; }
 
-        /* تنسيق زر اختيار الحجم البسيط المشابه تماماً لزر اطلب الان */
         .order-btn.size-select-style {
             background: var(--accent);
             color: #ffffff;
@@ -968,6 +1047,37 @@
 </head>
 <body>
 
+    <!-- شريط تثبيت التطبيق أعلى الشاشة -->
+    <div class="pwa-install-banner" id="pwaInstallBanner" style="display: none;">
+        <div class="pwa-install-info">
+            <span>📲</span>
+            <div id="t_pwa_text">تثبيت تطبيق ستوريا على هاتفك لتصفح أسرع وبدون إنترنت!</div>
+        </div>
+        <div class="pwa-install-actions">
+            <button class="pwa-install-btn" id="pwaInstallBtn" onclick="triggerAppInstall()">تثبيت الآن</button>
+            <button class="pwa-close-banner" onclick="closePwaBanner()">✕</button>
+        </div>
+    </div>
+
+    <!-- نافذة شرح التثبيت لمستخدمي الآيفون (iOS) -->
+    <div class="ios-install-modal" id="iosInstallModal" onclick="if(event.target===this) closeIosInstallModal()">
+        <div class="ios-install-card">
+            <h3 class="ios-install-title">تثبيت التطبيق على الآيفون 🍏</h3>
+            <p class="ios-install-desc">لتثبيت تطبيق ستوريا على شاشة جهازك والعمل بكفاءة تامة بدون متصفح، اتبع الخطوتين التاليتين:</p>
+            <div class="ios-steps-box">
+                <div class="ios-step-item">
+                    <span class="ios-step-icon">1️⃣</span>
+                    <span>اضغط على زر المشاركة <b>(Share <svg style="width:16px;height:16px;vertical-align:middle;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>)</b> أسفل المتصفح.</span>
+                </div>
+                <div class="ios-step-item">
+                    <span class="ios-step-icon">2️⃣</span>
+                    <span>انزل لأسفل واختر <b>"إضافة إلى الشاشة الرئيسية" (Add to Home Screen ➕)</b>.</span>
+                </div>
+            </div>
+            <button class="ios-close-btn" onclick="closeIosInstallModal()">فهمت ذلك ✓</button>
+        </div>
+    </div>
+
     <div id="splash-screen">
         <div class="loader-content">
             <div class="loading-bar"><span id="progressBarFill"></span></div>
@@ -1071,7 +1181,7 @@
         </div>
     </div>
 
-    <!-- نافذة اختيار الحجم فقط (منفصلة وبسيطة) -->
+    <!-- نافذة اختيار الحجم فقط -->
     <div class="size-only-modal" id="sizeOnlyModal" onclick="if(event.target===this) closeSizeOnlyModal()">
         <div class="size-only-content">
             <div class="size-only-header">
@@ -1465,6 +1575,8 @@
         let userLoyaltyPoints = 0;
         let activeUserPhone = localStorage.getItem('storia_user_phone') || '';
 
+        let deferredPrompt = null; // للتثبيت التلقائي لـ PWA
+
         let restaurantInfo = { 
             orderPhone: '201014144144', 
             displayPhone1: '0226702680', 
@@ -1515,7 +1627,9 @@
                 footerRights: 'جميع الحقوق محفوظة لـ ستوريا 2026 ©',
                 sizeLarge: 'كبير (Large)',
                 sizeMedium: 'وسط (Medium)',
-                sizeConfirmBtn: '🛒 تأكيد وإضافة للسلة'
+                sizeConfirmBtn: '🛒 تأكيد وإضافة للسلة',
+                pwaBannerText: 'تثبيت تطبيق ستوريا على هاتفك لتصفح أسرع وبدون إنترنت!',
+                pwaInstallBtnText: 'تثبيت الآن'
             },
             en: {
                 langBtn: 'AR',
@@ -1559,9 +1673,58 @@
                 footerRights: 'All Rights Reserved to Storia 2026 ©',
                 sizeLarge: 'Large (L)',
                 sizeMedium: 'Medium (M)',
-                sizeConfirmBtn: '🛒 Confirm & Add to Cart'
+                sizeConfirmBtn: '🛒 Confirm & Add to Cart',
+                pwaBannerText: 'Install Storia App for a faster offline experience!',
+                pwaInstallBtnText: 'Install Now'
             }
         };
+
+        // تسجيل Service Worker للتطبيق السريع ومنع التهنيج
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('SW Registered!', reg.scope))
+                    .catch(err => console.log('SW Registration Failed!', err));
+            });
+        }
+
+        // التقاط حدث تثبيت الـ PWA للأندرويد
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const banner = document.getElementById('pwaInstallBanner');
+            if (banner) banner.style.display = 'flex';
+        });
+
+        // فحص هل المستخدم على iOS ومحتاج نافذة التثبيت الخاصة به
+        function isIosDevice() {
+            return /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase()) && !window.navigator.standalone;
+        }
+
+        function triggerAppInstall() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        closePwaBanner();
+                    }
+                    deferredPrompt = null;
+                });
+            } else if (isIosDevice()) {
+                document.getElementById('iosInstallModal').style.display = 'flex';
+            } else {
+                alert(currentLang === 'ar' ? 'التطبيق جاهز ومثبت بالفعل أو يمكنك إضافته عبر خيارات المتصفح (إضافة للشاشة الرئيسية).' : 'App is already installed or can be added via browser settings (Add to Home screen).');
+            }
+        }
+
+        function closePwaBanner() {
+            const banner = document.getElementById('pwaInstallBanner');
+            if (banner) banner.style.display = 'none';
+        }
+
+        function closeIosInstallModal() {
+            document.getElementById('iosInstallModal').style.display = 'none';
+        }
 
         function applyMarkup(price) {
             if (!price || isNaN(price)) return 0;
@@ -1630,15 +1793,15 @@
             return cat.catAr || cat.catEn || cat.categoryRaw || '';
         }
 
-        // دالة فلترة الأقسام بناءً على نوع الطلب (إخفاء قسم الشيشة عند اختيار دليفري)
+        // فلترة قسم الشيشة بحيث يظهر بالصالة فقط
         function getFilteredCategories() {
             if (selectedOrderType === 'takeaway') {
-                return menuData; // إظهار كل الأقسام بما فيها الشيشة في الصالة
+                return menuData;
             }
             return menuData.filter(cat => {
                 const checkStr = ((cat.catAr || '') + ' ' + (cat.catEn || '')).toLowerCase();
                 const isShisha = checkStr.includes('شيش') || checkStr.includes('شيشه') || checkStr.includes('شيشة') || checkStr.includes('shisha') || checkStr.includes('hookah');
-                return !isShisha; // استبعاد الشيشة في الدليفري
+                return !isShisha;
             });
         }
 
@@ -1659,6 +1822,11 @@
 
             const langBtn = document.getElementById('langBtn');
             if (langBtn) langBtn.innerText = t.langBtn;
+
+            const tPwaText = document.getElementById('t_pwa_text');
+            if (tPwaText) tPwaText.innerText = t.pwaBannerText;
+            const pwaInstallBtn = document.getElementById('pwaInstallBtn');
+            if (pwaInstallBtn) pwaInstallBtn.innerText = t.pwaInstallBtnText;
 
             const tWelcomeTitle = document.getElementById('t_welcome_title');
             if (tWelcomeTitle) tWelcomeTitle.innerText = t.welcomeTitle;
@@ -1756,13 +1924,16 @@
 
         function showWelcomeModal() {
             document.getElementById('welcomeOrderModal').style.display = 'flex';
+            if (isIosDevice() && !window.navigator.standalone) {
+                const banner = document.getElementById('pwaInstallBanner');
+                if (banner) banner.style.display = 'flex';
+            }
         }
 
         function selectInitialOrderType(type) {
             selectedOrderType = type;
             setInitialOrderTypeUI(type);
             document.getElementById('welcomeOrderModal').style.display = 'none';
-            // إعادة رندرة الأقسام والقائمة لتطبيق إخفاء/إظهار قسم الشيشة
             currentActiveCatIndex = 0;
             renderCategories();
             renderMenu();
@@ -1827,7 +1998,6 @@
             }
         }
 
-        // دالة التحميل المسبق الفوري لجميع الصور لضمان كاشينج سريع وظهور فوري عند فتح التطبيق
         function preloadAllMenuImages() {
             if (!menuData || menuData.length === 0) return;
             menuData.forEach(cat => {
@@ -2179,7 +2349,6 @@
                     `;
                 }
 
-                // تم إزالة loading="lazy" لظهور فوري تام للصور بدون أي تأخير عند التمرير
                 card.innerHTML = `
                     <div class="item-img-box" onclick="openImageLightbox(this.querySelector('img').src, '${displayName.replace(/'/g, "\\'")}', '${priceForLightbox}')" title="${currentLang==='ar'?'اضغط لتكبير الصورة':'Click to view photo'}">
                         <img src="${item.img}" alt="${primaryKey}" 

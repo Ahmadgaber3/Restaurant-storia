@@ -1,0 +1,24 @@
+{
+  "name": "Storia Restaurant & Cafe",
+  "short_name": "Storia",
+  "description": "منيو وطلبات مطعم وكافيه ستوريا أونلاين",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#1b4d3e",
+  "theme_color": "#1b4d3e",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "images/logooo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "images/logooo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
