@@ -471,6 +471,7 @@
             border: 1px solid var(--border-color); 
             overflow: hidden;
             width: 100%;
+            transition: opacity 0.2s ease;
         }
         .food-card.disabled-item { opacity: 0.5; filter: grayscale(0.3); }
         
@@ -489,8 +490,7 @@
             align-self: center;
             cursor: pointer;
         }
-        .item-img-box img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.2s; }
-        .item-img-box:hover img { transform: scale(1.05); }
+        .item-img-box img { width: 100%; height: 100%; object-fit: cover; }
         
         .food-info { 
             flex: 1; 
@@ -589,7 +589,14 @@
             flex-shrink: 0;
             height: 33px;
         }
-        .mini-addons-btn:active { background: var(--accent); color: white; }
+        .mini-addons-btn:disabled {
+            opacity: 0.5;
+            border-color: #94a3b8 !important;
+            color: #94a3b8 !important;
+            cursor: not-allowed !important;
+            background: var(--bg) !important;
+        }
+        .mini-addons-btn:not(:disabled):active { background: var(--accent); color: white; }
 
         .order-btn { 
             flex: 1.4;
@@ -625,15 +632,6 @@
             background: var(--accent-hover);
             border-color: var(--accent-hover);
             transform: scale(0.97);
-        }
-        
-        .order-btn.added { 
-            background: rgba(46, 125, 50, 0.12) !important; 
-            color: #2e7d32 !important; 
-            border: 1.5px solid #2e7d32 !important;
-            box-shadow: none !important;
-            pointer-events: none;
-            font-weight: 900;
         }
 
         .image-lightbox-modal {
@@ -1078,8 +1076,9 @@
         }
         .status-toggle-btn {
             padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 0.75rem;
-            cursor: pointer; border: none;
+            cursor: pointer; border: none; transition: transform 0.1s ease;
         }
+        .status-toggle-btn:active { transform: scale(0.95); }
         .status-toggle-btn.on { background: #dcfce7; color: #15803d; }
         .status-toggle-btn.off { background: #fee2e2; color: #b91c1c; }
     </style>
@@ -1093,6 +1092,7 @@
         </div>
     </div>
 
+    <!-- نافذة اختيار طريقة الاستلام الأصلية -->
     <div class="welcome-order-type-modal" id="welcomeOrderModal">
         <div class="welcome-card">
             <h2 class="welcome-title" id="t_welcome_title">مرحباً بك في ستوريا | Welcome</h2>
@@ -1118,6 +1118,7 @@
         </div>
     </div>
 
+    <!-- شريط تثبيت التطبيق السفلي -->
     <div class="bottom-install-bar" id="bottomInstallBar">
         <div class="bottom-install-info">
             <img src="images/logooo.png" alt="Storia App" onerror="this.src='images/logooo.png'">
@@ -1132,6 +1133,7 @@
         </div>
     </div>
 
+    <!-- نافذة شرح التثبيت للآيفون -->
     <div class="ios-install-modal" id="iosInstallModal" onclick="if(event.target===this) closeIosInstallModal()">
         <div class="ios-install-card">
             <h3 class="ios-install-title">تثبيت التطبيق على الآيفون 🍏</h3>
@@ -1150,6 +1152,7 @@
         </div>
     </div>
 
+    <!-- نافذة تكبير الصورة (Lightbox) -->
     <div class="image-lightbox-modal" id="imageLightboxModal" onclick="if(event.target===this) closeImageLightbox()">
         <div class="image-lightbox-content">
             <button class="image-lightbox-close" onclick="closeImageLightbox()">✕</button>
@@ -1170,6 +1173,7 @@
                 <button class="admin-trigger-btn" onclick="openAdminPanel()" title="لوحة التحكم">⚙️</button>
             </div>
             
+            <!-- اللوجو مربع كبير 105 × 105 ومضبوط تماماً في المنتصف -->
             <div class="header-logo-container">
                 <img src="images/logooo.png" class="header-logo" alt="Storia Cafe" onerror="this.src='https://www.storia-eg.com/images/logo.png'">
             </div>
@@ -1219,6 +1223,7 @@
         </div>
     </div>
 
+    <!-- نافذة اختيار الحجم فقط (منفصلة وبسيطة) -->
     <div class="size-only-modal" id="sizeOnlyModal" onclick="if(event.target===this) closeSizeOnlyModal()">
         <div class="size-only-content">
             <div class="size-only-header">
@@ -1235,6 +1240,7 @@
         </div>
     </div>
 
+    <!-- نافذة الإضافات المستقلة -->
     <div class="simple-addons-modal" id="simpleAddonsModal" onclick="if(event.target===this) closeSimpleAddonsModal()">
         <div class="simple-addons-content">
             <div class="simple-addons-header">
@@ -1837,7 +1843,7 @@
             localStorage.setItem('storia_lang', currentLang);
             applyLanguageSettings();
             renderCategories();
-            renderMenu();
+            renderMenu(true);
             renderCartItems();
             renderLoyaltyRewardsUI();
         }
@@ -1942,7 +1948,7 @@
                         showWelcomeModal();
                     }
                 }
-            }, 40);
+            }, 40); // 4 ثوانٍ
         }
 
         function showWelcomeModal() {
@@ -1961,7 +1967,7 @@
 
             currentActiveCatIndex = 0;
             renderCategories();
-            renderMenu();
+            renderMenu(true);
         }
 
         function setInitialOrderTypeUI(type) {
@@ -2023,6 +2029,7 @@
             }
         }
 
+        // تحميل فوري في الذاكرة والكاش
         function preloadAllMenuImages() {
             if (!menuData || menuData.length === 0) return;
             menuData.forEach(cat => {
@@ -2258,7 +2265,7 @@
                 if (parsedMenu.length > 0) {
                     menuData = parsedMenu;
                     renderCategories();
-                    renderMenu();
+                    renderMenu(true);
                     preloadAllMenuImages();
                 }
             } catch (err) {
@@ -2311,92 +2318,108 @@
                 el.classList.add('active');
                 el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
             }
-            renderMenu();
+            renderMenu(false);
         }
 
-        function renderMenu() {
+        // نظام الرندرة الدائم (DOM Persistence) الذي يمنع إعادة تحميل الصور ويضمن ظهورها فوراً 100%
+        function renderMenu(forceRebuild = false) {
             const menuList = document.getElementById('menuList');
             if (!menuList) return;
-            menuList.innerHTML = '';
             const t = translations[currentLang];
-
             const availableCategories = getFilteredCategories();
             if (availableCategories.length === 0) return;
 
-            const activeCatData = availableCategories[currentActiveCatIndex] || availableCategories[0];
-            if (!activeCatData || !activeCatData.items) return;
+            if (forceRebuild) {
+                menuList.innerHTML = '';
+            }
 
-            activeCatData.items.forEach(item => {
-                const primaryKey = item.nameAr || item.nameEn;
-                const isEnabled = itemStatusMap[primaryKey] !== false;
-                const card = document.createElement('div');
-                card.className = 'food-card' + (isEnabled ? '' : ' disabled-item');
-                const hasAddons = item.addons && item.addons.length > 0;
-                const hasSizes = item.priceInfo && item.priceInfo.hasSizes;
-                
-                const displayName = getLocalizedItemName(item);
-                const displayDesc = getLocalizedItemDesc(item);
+            availableCategories.forEach((cat, cIdx) => {
+                let catContainer = document.getElementById(`cat_section_${cIdx}`);
+                if (!catContainer) {
+                    catContainer = document.createElement('div');
+                    catContainer.id = `cat_section_${cIdx}`;
+                    catContainer.className = 'category-group';
+                    menuList.appendChild(catContainer);
 
-                let priceDisplayHTML = '';
-                let priceForLightbox = '';
-                if (hasSizes) {
-                    const lPrice = applyMarkup(item.priceInfo.sizes.large);
-                    const mPrice = applyMarkup(item.priceInfo.sizes.medium);
-                    if (currentLang === 'ar') {
-                        priceDisplayHTML = `<div class="food-price multi-sizes-badge">كبير: ${lPrice.toFixed(2)}<br>وسط: ${mPrice.toFixed(2)} ${t.currency}</div>`;
-                        priceForLightbox = `كبير: ${lPrice.toFixed(2)} ج.م | وسط: ${mPrice.toFixed(2)} ج.م`;
-                    } else {
-                        priceDisplayHTML = `<div class="food-price multi-sizes-badge">L: ${lPrice.toFixed(2)}<br>M: ${mPrice.toFixed(2)} ${t.currency}</div>`;
-                        priceForLightbox = `L: ${lPrice.toFixed(2)} EGP | M: ${mPrice.toFixed(2)} EGP`;
-                    }
-                } else {
-                    const finalPrice = applyMarkup(item.price);
-                    priceDisplayHTML = `<div class="food-price">${finalPrice.toFixed(2)} ${t.currency}</div>`;
-                    priceForLightbox = `${finalPrice.toFixed(2)} ${t.currency}`;
-                }
+                    // بناء كروت الصنف لمرة واحدة في الذاكرة لتظل الصور محملة فوراً
+                    cat.items.forEach(item => {
+                        const primaryKey = item.nameAr || item.nameEn;
+                        const isEnabled = itemStatusMap[primaryKey] !== false;
+                        const card = document.createElement('div');
+                        card.className = 'food-card' + (isEnabled ? '' : ' disabled-item');
+                        card.id = `card_${item.id}`;
+                        const hasAddons = item.addons && item.addons.length > 0;
+                        const hasSizes = item.priceInfo && item.priceInfo.hasSizes;
+                        
+                        const displayName = getLocalizedItemName(item);
+                        const displayDesc = getLocalizedItemDesc(item);
 
-                let actionButtonsHTML = '';
-                if (hasAddons) {
-                    actionButtonsHTML += `<button class="mini-addons-btn" onclick="openSimpleAddonsModal('${item.id}', ${currentActiveCatIndex})">${t.addonsBtnLabel}</button>`;
-                }
+                        let priceDisplayHTML = '';
+                        let priceForLightbox = '';
+                        if (hasSizes) {
+                            const lPrice = applyMarkup(item.priceInfo.sizes.large);
+                            const mPrice = applyMarkup(item.priceInfo.sizes.medium);
+                            if (currentLang === 'ar') {
+                                priceDisplayHTML = `<div class="food-price multi-sizes-badge">كبير: ${lPrice.toFixed(2)}<br>وسط: ${mPrice.toFixed(2)} ${t.currency}</div>`;
+                                priceForLightbox = `كبير: ${lPrice.toFixed(2)} ج.م | وسط: ${mPrice.toFixed(2)} ج.م`;
+                            } else {
+                                priceDisplayHTML = `<div class="food-price multi-sizes-badge">L: ${lPrice.toFixed(2)}<br>M: ${mPrice.toFixed(2)} ${t.currency}</div>`;
+                                priceForLightbox = `L: ${lPrice.toFixed(2)} EGP | M: ${mPrice.toFixed(2)} EGP`;
+                            }
+                        } else {
+                            const finalPrice = applyMarkup(item.price);
+                            priceDisplayHTML = `<div class="food-price">${finalPrice.toFixed(2)} ${t.currency}</div>`;
+                            priceForLightbox = `${finalPrice.toFixed(2)} ${t.currency}`;
+                        }
 
-                if (hasSizes) {
-                    actionButtonsHTML += `
-                        <button class="order-btn size-select-style" id="btn_${item.id}" ${!isEnabled ? 'disabled' : ''} onclick="openSizeOnlyModal('${item.id}', ${currentActiveCatIndex})">
-                            ${isEnabled ? t.chooseSizeBtn : t.unavailableBtn}
-                        </button>
-                    `;
-                } else {
-                    actionButtonsHTML += `
-                        <button class="order-btn" id="btn_${item.id}" ${!isEnabled ? 'disabled' : ''} onclick="addToCartDirect('${item.id}', ${currentActiveCatIndex})">
-                            ${isEnabled ? t.orderNowBtn : t.unavailableBtn}
-                        </button>
-                    `;
-                }
+                        let actionButtonsHTML = '';
+                        if (hasAddons) {
+                            // منع طلب الإضافات إذا كان الصنف معطلاً
+                            actionButtonsHTML += `<button class="mini-addons-btn" id="addons_btn_${item.id}" ${!isEnabled ? 'disabled' : ''} onclick="openSimpleAddonsModal('${item.id}', ${cIdx})">${t.addonsBtnLabel}</button>`;
+                        }
 
-                card.innerHTML = `
-                    <div class="item-img-box" onclick="openImageLightbox(this.querySelector('img').src, '${displayName.replace(/'/g, "\\'")}', '${priceForLightbox}')" title="${currentLang==='ar'?'اضغط لتكبير الصورة':'Click to view photo'}">
-                        <img src="${item.img}" alt="${primaryKey}" 
-                             data-row="${item.sheetRow}" 
-                             data-ar="${item.nameAr || ''}" 
-                             data-en="${item.nameEn || ''}" 
-                             data-step="0"
-                             onerror="handleSmartImageFallback(this)">
-                    </div>
-                    <div class="food-info">
-                        <div>
-                            <div class="food-header">
-                                <div class="food-name">${displayName}</div>
-                                ${priceDisplayHTML}
+                        if (hasSizes) {
+                            actionButtonsHTML += `
+                                <button class="order-btn size-select-style" id="btn_${item.id}" ${!isEnabled ? 'disabled' : ''} onclick="openSizeOnlyModal('${item.id}', ${cIdx})">
+                                    ${isEnabled ? t.chooseSizeBtn : t.unavailableBtn}
+                                </button>
+                            `;
+                        } else {
+                            actionButtonsHTML += `
+                                <button class="order-btn" id="btn_${item.id}" ${!isEnabled ? 'disabled' : ''} onclick="addToCartDirect('${item.id}', ${cIdx})">
+                                    ${isEnabled ? t.orderNowBtn : t.unavailableBtn}
+                                </button>
+                            `;
+                        }
+
+                        card.innerHTML = `
+                            <div class="item-img-box" onclick="openImageLightbox(this.querySelector('img').src, '${displayName.replace(/'/g, "\\'")}', '${priceForLightbox}')" title="${currentLang==='ar'?'اضغط لتكبير الصورة':'Click to view photo'}">
+                                <img src="${item.img}" alt="${primaryKey}" 
+                                     data-row="${item.sheetRow}" 
+                                     data-ar="${item.nameAr || ''}" 
+                                     data-en="${item.nameEn || ''}" 
+                                     data-step="0"
+                                     onerror="handleSmartImageFallback(this)">
                             </div>
-                            ${displayDesc ? `<div class="food-desc">${displayDesc}</div>` : ''}
-                        </div>
-                        <div class="card-actions-box">
-                            ${actionButtonsHTML}
-                        </div>
-                    </div>
-                `;
-                menuList.appendChild(card);
+                            <div class="food-info">
+                                <div>
+                                    <div class="food-header">
+                                        <div class="food-name">${displayName}</div>
+                                        ${priceDisplayHTML}
+                                    </div>
+                                    ${displayDesc ? `<div class="food-desc">${displayDesc}</div>` : ''}
+                                </div>
+                                <div class="card-actions-box">
+                                    ${actionButtonsHTML}
+                                </div>
+                            </div>
+                        `;
+                        catContainer.appendChild(card);
+                    });
+                }
+
+                // إظهار القسم المختار فوراً بدون إعادة تحميل الصور
+                catContainer.style.display = (cIdx === currentActiveCatIndex) ? 'block' : 'none';
             });
         }
 
@@ -2510,6 +2533,13 @@
             if (!catData) return;
             const item = catData.items.find(i => i.id === itemId);
             if (!item) return;
+
+            // حماية إضافية: إذا كان الصنف معطلاً يمنع فتح نافذة الإضافات نهائياً
+            const primaryKey = item.nameAr || item.nameEn;
+            if (itemStatusMap[primaryKey] === false) {
+                return;
+            }
+
             const t = translations[currentLang];
             const displayName = getLocalizedItemName(item);
 
@@ -2968,10 +2998,38 @@
                     const snap = await getDoc(doc(window.db, "settings", "items_status"));
                     if (snap.exists()) {
                         itemStatusMap = snap.data() || {};
-                        renderMenu();
+                        updateAllCardsDOMStatus();
                     }
                 } catch(e) {}
             }
+        }
+
+        // تحديث حالة كروت الأصناف فوراً في الـ DOM بدون إعادة رسم الصفحة
+        function updateAllCardsDOMStatus() {
+            const t = translations[currentLang];
+            menuData.forEach(cat => {
+                if (cat.items) {
+                    cat.items.forEach(item => {
+                        const key = item.nameAr || item.nameEn;
+                        const isEnabled = itemStatusMap[key] !== false;
+                        const card = document.getElementById(`card_${item.id}`);
+                        const btn = document.getElementById(`btn_${item.id}`);
+                        const addonsBtn = document.getElementById(`addons_btn_${item.id}`);
+
+                        if (card) {
+                            card.classList.toggle('disabled-item', !isEnabled);
+                        }
+                        if (btn) {
+                            btn.disabled = !isEnabled;
+                            const hasSizes = item.priceInfo && item.priceInfo.hasSizes;
+                            btn.innerText = isEnabled ? (hasSizes ? t.chooseSizeBtn : t.orderNowBtn) : t.unavailableBtn;
+                        }
+                        if (addonsBtn) {
+                            addonsBtn.disabled = !isEnabled;
+                        }
+                    });
+                }
+            });
         }
 
         function renderAdminItemsList() {
@@ -2996,7 +3054,7 @@
                 row.className = 'admin-item-row';
                 row.innerHTML = `
                     <span style="font-size:0.85rem; font-weight:800;">${getLocalizedItemName(item)}</span>
-                    <button class="status-toggle-btn ${isEnabled ? 'on' : 'off'}" onclick="toggleSingleItemStatus('${key.replace(/'/g, "\\'")}')">
+                    <button class="status-toggle-btn ${isEnabled ? 'on' : 'off'}" id="toggle_ui_${item.id}" onclick="toggleSingleItemStatus('${key.replace(/'/g, "\\'")}', 'toggle_ui_${item.id}')">
                         ${isEnabled ? 'متاح ✅' : 'معطل 🛑'}
                     </button>
                 `;
@@ -3004,15 +3062,27 @@
             });
         }
 
-        async function toggleSingleItemStatus(itemKey) {
+        // تغيير حالة الصنف فورياً في نفس اللحظة بدون أي ثانية انتظار (Instant Optimistic UI)
+        function toggleSingleItemStatus(itemKey, btnId) {
             const currentState = itemStatusMap[itemKey] !== false;
-            itemStatusMap[itemKey] = !currentState;
-            await saveItemsStatusToFirebase();
-            renderAdminItemsList();
-            renderMenu();
+            const newState = !currentState;
+            itemStatusMap[itemKey] = newState;
+
+            // تغيير فوري للزر في لوحة التحكم في جزء من الثانية
+            const btn = document.getElementById(btnId);
+            if (btn) {
+                btn.className = `status-toggle-btn ${newState ? 'on' : 'off'}`;
+                btn.innerText = newState ? 'متاح ✅' : 'معطل 🛑';
+            }
+
+            // تحديث الكارت والأزرار وزر الإضافات فوراً في التطبيق
+            updateAllCardsDOMStatus();
+
+            // حفظ في فايربيز في الخلفية بدون تعطيل الواجهة
+            saveItemsStatusToFirebase();
         }
 
-        async function setAllItemsStatus(status) {
+        function setAllItemsStatus(status) {
             menuData.forEach(cat => {
                 if (cat.items) {
                     cat.items.forEach(i => {
@@ -3021,9 +3091,9 @@
                     });
                 }
             });
-            await saveItemsStatusToFirebase();
             renderAdminItemsList();
-            renderMenu();
+            updateAllCardsDOMStatus();
+            saveItemsStatusToFirebase();
         }
 
         async function saveItemsStatusToFirebase() {
@@ -3031,7 +3101,9 @@
                 try {
                     const { doc, setDoc } = window.firebaseModules;
                     await setDoc(doc(window.db, "settings", "items_status"), itemStatusMap, { merge: true });
-                } catch(e) {}
+                } catch(e) {
+                    console.error("Error saving status:", e);
+                }
             }
         }
 
@@ -3047,7 +3119,7 @@
                 } catch(e) {}
             }
 
-            renderMenu();
+            renderMenu(true);
             renderCartItems();
             alert(currentLang === 'ar' ? `تم تطبيق نسبة ${priceMarkupPercentage}% على جميع الأسعار مع ضبط القروش لـ .95 بنجاح!` : `Successfully applied ${priceMarkupPercentage}% markup with .95 rounding!`);
             closeFloatingModal('priceMarkupModal');
