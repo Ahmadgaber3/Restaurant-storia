@@ -157,6 +157,54 @@
         .welcome-choice-en { font-size: 0.74rem; font-weight: 700; color: var(--desc-text); }
         .welcome-choice-icon { font-size: 1.6rem; }
 
+        /* شريط توجيه الآيفون عند الفتح من واتساب/فيسبوك */
+        .ios-inapp-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: #0f172a;
+            color: #ffffff;
+            z-index: 999999;
+            padding: 12px 14px;
+            display: none;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            border-bottom: 2px solid var(--accent);
+            animation: smoothFadeIn 0.3s ease-out;
+        }
+        .ios-inapp-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            max-width: 600px;
+            margin: auto;
+        }
+        .ios-inapp-text {
+            font-size: 0.78rem;
+            font-weight: 800;
+            line-height: 1.4;
+            flex: 1;
+        }
+        .ios-copy-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 0.74rem;
+            font-weight: 900;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .ios-inapp-close {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            font-size: 1.1rem;
+            cursor: pointer;
+        }
+
         .bottom-install-bar {
             position: fixed;
             bottom: 15px;
@@ -1097,6 +1145,18 @@
 </head>
 <body>
 
+    <!-- شريط توجيه ذكي لمستخدمي الآيفون إذا فتحوا من داخل تطبيقات الشات (واتساب/فيسبوك) -->
+    <div class="ios-inapp-banner" id="iosInAppBanner">
+        <div class="ios-inapp-content">
+            <span style="font-size: 1.4rem;">🧭</span>
+            <div class="ios-inapp-text">
+                لتثبيت التطبيق على الآيفون: اضغط على <b>(···)</b> أو علامة البوصلة أسفل الشاشة واختر <b>"فتح في Safari"</b>.
+            </div>
+            <button class="ios-copy-btn" onclick="copyAppUrlForSafari()">نسخ الرابط 📋</button>
+            <button class="ios-inapp-close" onclick="closeIosInAppBanner()">✕</button>
+        </div>
+    </div>
+
     <div id="splash-screen">
         <div class="loader-content">
             <div class="loading-bar"><span id="progressBarFill"></span></div>
@@ -1153,7 +1213,7 @@
             <div class="ios-steps-box">
                 <div class="ios-step-item">
                     <span>1️⃣</span>
-                    <span>اضغط على زر المشاركة <b>(Share)</b> أسفل الشاشة.</span>
+                    <span>اضغط على زر المشاركة <b>(Share ⎋)</b> أسفل الشاشة.</span>
                 </div>
                 <div class="ios-step-item">
                     <span>2️⃣</span>
@@ -1234,6 +1294,7 @@
         </div>
     </div>
 
+    <!-- نافذة اختيار الحجم فقط -->
     <div class="size-only-modal" id="sizeOnlyModal" onclick="if(event.target===this) closeSizeOnlyModal()">
         <div class="size-only-content">
             <div class="size-only-header">
@@ -1250,6 +1311,7 @@
         </div>
     </div>
 
+    <!-- نافذة الإضافات المستقلة -->
     <div class="simple-addons-modal" id="simpleAddonsModal" onclick="if(event.target===this) closeSimpleAddonsModal()">
         <div class="simple-addons-content">
             <div class="simple-addons-header">
@@ -1742,8 +1804,37 @@
             deferredPrompt = e;
         });
 
+        // دوال التحقق من نظام iOS والمتصفح الداخلي (WhatsApp / Facebook / Safari)
         function isIosDevice() {
-            return /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase()) && !window.navigator.standalone;
+            return /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
+        }
+
+        function isIosInAppBrowser() {
+            const ua = window.navigator.userAgent.toLowerCase();
+            return isIosDevice() && (ua.includes('fban') || ua.includes('fbav') || ua.includes('instagram') || ua.includes('whatsapp') || ua.includes('messenger') || ua.includes('telegram'));
+        }
+
+        function checkIosBrowsingEnvironment() {
+            if (isIosInAppBrowser()) {
+                const banner = document.getElementById('iosInAppBanner');
+                if (banner) banner.style.display = 'block';
+            }
+        }
+
+        function copyAppUrlForSafari() {
+            const url = window.location.href;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(url).then(() => {
+                    alert('تم نسخ الرابط! افتح تطبيق Safari والصق الرابط هناك لتثبيت التطبيق.');
+                });
+            } else {
+                prompt('انسخ الرابط التالي وافتحه في Safari:', url);
+            }
+        }
+
+        function closeIosInAppBanner() {
+            const banner = document.getElementById('iosInAppBanner');
+            if (banner) banner.style.display = 'none';
         }
 
         function triggerAppInstall() {
@@ -1756,7 +1847,11 @@
                     deferredPrompt = null;
                 });
             } else if (isIosDevice()) {
-                document.getElementById('iosInstallModal').style.display = 'flex';
+                if (isIosInAppBrowser()) {
+                    document.getElementById('iosInAppBanner').style.display = 'block';
+                } else {
+                    document.getElementById('iosInstallModal').style.display = 'flex';
+                }
             } else {
                 alert(currentLang === 'ar' ? 'التطبيق مثبت بالفعل أو يمكنك إضافته من إعدادات المتصفح (إضافة للشاشة الرئيسية).' : 'App is already installed or can be added from browser menu.');
             }
@@ -1973,6 +2068,8 @@
                 if (bar) bar.style.display = 'flex';
             }
 
+            checkIosBrowsingEnvironment();
+
             currentActiveCatIndex = 0;
             renderCategories();
             renderMenu(true);
@@ -2063,10 +2160,9 @@
             }
         });
 
-        // المزامنة الحية المباشرة مع فايربيز (Realtime) لجميع الأجهزة بدون ريفرش
         window.addEventListener('firebase-ready', () => {
             setupLiveItemsStatusListener();
-            setupLivePriceMarkupListener(); // استماع لحظي للأسعار الجديدة عند الجميع
+            setupLivePriceMarkupListener();
         });
 
         function updatePointsBadge(pts) {
@@ -3002,7 +3098,7 @@
             }
         }
 
-        // استماع فوري وحي (Realtime) لفايربيز: أي صنف يقف عند الأدمن، ينعكس فوراً عند كل الزبائن في نفس اللحظة
+        // استماع فوري وحقيقي لحالة الأصناف في السحابة
         let itemsStatusUnsubscribe = null;
         function setupLiveItemsStatusListener() {
             if (!window.db || !window.firebaseModules) return;
@@ -3021,7 +3117,7 @@
             });
         }
 
-        // استماع لحظي للأسعار الجديدة: أي تعديل في النسبة ينعكس فوراً عند كل الزبائن
+        // استماع لحظي لنسبة زيادة الأسعار عند كل الأجهزة والزبائن
         let priceConfigUnsubscribe = null;
         function setupLivePriceMarkupListener() {
             if (!window.db || !window.firebaseModules) return;
@@ -3046,7 +3142,7 @@
             });
         }
 
-        // تحديث كل الكروت والأزرار فورياً في المتصفح في 0ms
+        // تحديث كروت الأصناف والأزرار فورياً في المتصفح في 0ms
         function updateAllCardsDOMStatus() {
             const t = translations[currentLang];
             if (!menuData || menuData.length === 0) return;
@@ -3104,26 +3200,20 @@
             });
         }
 
-        // التعديل اللحظي الفوري: تبديل فوري وحفظ مؤكد في فايربيز وسحابياً للجميع
         function toggleSingleItemStatus(itemId, btnId) {
             const currentState = itemStatusMap[itemId] !== false;
             const newState = !currentState;
             itemStatusMap[itemId] = newState;
 
-            // 1. حفظ فوري في LocalStorage
             localStorage.setItem('storia_items_status', JSON.stringify(itemStatusMap));
 
-            // 2. تحديث الزر في لوحة التحكم في نفس اللحظة
             const btn = document.getElementById(btnId);
             if (btn) {
                 btn.className = `status-toggle-btn ${newState ? 'on' : 'off'}`;
                 btn.innerText = newState ? 'متاح ✅' : 'معطل 🛑';
             }
 
-            // 3. تحديث الكارت وزر الإضافات وزر الطلب فوراً
             updateAllCardsDOMStatus();
-
-            // 4. حفظ فوري ومؤكد في Firestore ليظهر للجميع
             saveItemsStatusToFirebase();
         }
 
@@ -3152,7 +3242,6 @@
             }
         }
 
-        // حفظ النسبة في Firestore ليعاد احتساب السعر وتحديثه عند كل الزبائن لحظياً
         async function adminSavePriceMarkup() {
             const inputVal = parseFloat(document.getElementById('adminMarkupPercentInput').value) || 0;
             priceMarkupPercentage = Math.max(0, inputVal);
