@@ -473,7 +473,7 @@
             width: 100%;
             transition: opacity 0.2s ease;
         }
-        .food-card.disabled-item { opacity: 0.5; filter: grayscale(0.35); }
+        .food-card.disabled-item { opacity: 0.45; filter: grayscale(0.4); }
         
         .item-img-box { 
             width: 115px; 
@@ -1606,7 +1606,7 @@
         let currentTotal = 0; 
         let selectedOrderType = 'delivery';
 
-        // تحميل حالة الأصناف فوراً من localStorage لتظهر معطلة من أول جزء من الثانية حتى بعد الريفريش
+        // تحميل حالة الأصناف فوراً من الذاكرة المحلية أولاً
         let itemStatusMap = {};
         try {
             itemStatusMap = JSON.parse(localStorage.getItem('storia_items_status') || '{}');
@@ -1949,7 +1949,7 @@
                         showWelcomeModal();
                     }
                 }
-            }, 40); // 4 ثوانٍ
+            }, 40);
         }
 
         function showWelcomeModal() {
@@ -2044,11 +2044,9 @@
             });
         }
 
-        // استدعاء فوري لحالة الأصناف عند بداية تحميل التطبيق وقبل أي شيء
         window.addEventListener('DOMContentLoaded', () => {
             applyLanguageSettings();
             startCreativeCounter();
-            loadItemsStatusFromFirebase(); // جلب فوري من فايربيز والذاكرة
             fetchMenuFromGoogleSheet();
             renderLoyaltyRewardsUI();
             if (activeUserPhone) {
@@ -2058,8 +2056,9 @@
             }
         });
 
+        // تشغيل الاستماع المباشر الفوري للـ Firestore بمجرد تجهيز فايربيز
         window.addEventListener('firebase-ready', () => {
-            loadItemsStatusFromFirebase();
+            setupLiveItemsStatusListener();
         });
 
         function updatePointsBadge(pts) {
@@ -2227,6 +2226,8 @@
                     const priceInfo = parseEnglishPriceField(priceEnRaw);
 
                     const sheetRowNumber = i + 1;
+                    // استخدام معرف إنجليزي ثابت وفريد ومضمون للكتابة في فايربيز بدون أي خطأ
+                    const stableId = 'storia_item_' + sheetRowNumber;
                     let img = `images/${sheetRowNumber}.jpg`;
 
                     if (row[4] && row[4].trim() !== '') {
@@ -2255,7 +2256,7 @@
                     }
 
                     catObj.items.push({
-                        id: 'item_' + i + '_' + Math.random().toString(36).substr(2, 5),
+                        id: stableId,
                         sheetRow: sheetRowNumber,
                         nameAr: nameAr,
                         nameEn: nameEn,
@@ -2272,6 +2273,7 @@
                     menuData = parsedMenu;
                     renderCategories();
                     renderMenu(true);
+                    updateAllCardsDOMStatus();
                     preloadAllMenuImages();
                 }
             } catch (err) {
@@ -2327,7 +2329,6 @@
             renderMenu(false);
         }
 
-        // بقاء عناصر الأقسام في الـ DOM لمنع إعادة تحميل الصور إطلاقاً
         function renderMenu(forceRebuild = false) {
             const menuList = document.getElementById('menuList');
             if (!menuList) return;
@@ -2348,8 +2349,7 @@
                     menuList.appendChild(catContainer);
 
                     cat.items.forEach(item => {
-                        const primaryKey = item.nameAr || item.nameEn;
-                        const isEnabled = itemStatusMap[primaryKey] !== false;
+                        const isEnabled = itemStatusMap[item.id] !== false;
                         const card = document.createElement('div');
                         card.className = 'food-card' + (isEnabled ? '' : ' disabled-item');
                         card.id = `card_${item.id}`;
@@ -2398,7 +2398,7 @@
 
                         card.innerHTML = `
                             <div class="item-img-box" onclick="openImageLightbox(this.querySelector('img').src, '${displayName.replace(/'/g, "\\'")}', '${priceForLightbox}')" title="${currentLang==='ar'?'اضغط لتكبير الصورة':'Click to view photo'}">
-                                <img src="${item.img}" alt="${primaryKey}" 
+                                <img src="${item.img}" alt="${displayName}" 
                                      data-row="${item.sheetRow}" 
                                      data-ar="${item.nameAr || ''}" 
                                      data-en="${item.nameEn || ''}" 
@@ -2433,8 +2433,7 @@
             const item = catData.items.find(i => i.id === itemId);
             if (!item) return;
 
-            const primaryKey = item.nameAr || item.nameEn;
-            if (itemStatusMap[primaryKey] === false) return; // حظر الإضافة إذا تم تعطيله
+            if (itemStatusMap[item.id] === false) return;
 
             if (item.priceInfo && item.priceInfo.hasSizes) {
                 openSizeOnlyModal(itemId, catIndex);
@@ -2470,8 +2469,7 @@
             const item = catData.items.find(i => i.id === itemId);
             if (!item || !item.priceInfo || !item.priceInfo.hasSizes) return;
 
-            const primaryKey = item.nameAr || item.nameEn;
-            if (itemStatusMap[primaryKey] === false) return;
+            if (itemStatusMap[item.id] === false) return;
 
             const t = translations[currentLang];
             const displayName = getLocalizedItemName(item);
@@ -2544,9 +2542,8 @@
             const item = catData.items.find(i => i.id === itemId);
             if (!item) return;
 
-            // حظر فتح الإضافات للصنف الموقوف
-            const primaryKey = item.nameAr || item.nameEn;
-            if (itemStatusMap[primaryKey] === false) return;
+            // حظر الإضافات فوراً للصنف المعطل
+            if (itemStatusMap[item.id] === false) return;
 
             const t = translations[currentLang];
             const displayName = getLocalizedItemName(item);
@@ -2917,7 +2914,7 @@
                 if (markupInput) markupInput.value = priceMarkupPercentage;
 
                 listenToOrdersLogs();
-                loadItemsStatusFromFirebase();
+                renderAdminItemsList();
             } else {
                 alert(currentLang === 'ar' ? 'كلمة المرور غير صحيحة!' : 'Incorrect password!');
             }
@@ -2999,41 +2996,32 @@
             }
         }
 
-        // جلب وتطبيق حالة الأصناف مع تخزينها فوراً في localStorage لمنع رجوعها بعد الريفريش
-        async function loadItemsStatusFromFirebase() {
-            // أولاً: استخدام ما هو مخزن في localStorage فورياً بدون انتظار
-            try {
-                const localSaved = localStorage.getItem('storia_items_status');
-                if (localSaved) {
-                    itemStatusMap = JSON.parse(localSaved);
-                    updateAllCardsDOMStatus();
-                }
-            } catch(e) {}
+        // استماع لحظي مباشر (Live Real-time Listener) لحالة الأصناف من فايربيز لتظهر للجميع فوراً
+        let itemsStatusUnsubscribe = null;
+        function setupLiveItemsStatusListener() {
+            if (!window.db || !window.firebaseModules) return;
+            const { doc, onSnapshot } = window.firebaseModules;
+            if (itemsStatusUnsubscribe) itemsStatusUnsubscribe();
 
-            // ثانياً: المزامنة الدقيقة مع فايربيز
-            if (window.db && window.firebaseModules) {
-                try {
-                    const { doc, getDoc } = window.firebaseModules;
-                    const snap = await getDoc(doc(window.db, "settings", "items_status"));
-                    if (snap.exists()) {
-                        itemStatusMap = snap.data() || {};
-                        localStorage.setItem('storia_items_status', JSON.stringify(itemStatusMap));
-                        updateAllCardsDOMStatus();
-                    }
-                } catch(e) {
-                    console.error("Error loading items status:", e);
+            itemsStatusUnsubscribe = onSnapshot(doc(window.db, "settings", "items_status"), (snap) => {
+                if (snap.exists()) {
+                    itemStatusMap = snap.data() || {};
+                    localStorage.setItem('storia_items_status', JSON.stringify(itemStatusMap));
+                    updateAllCardsDOMStatus();
+                    renderAdminItemsList();
                 }
-            }
+            }, (err) => {
+                console.error("Error listening to items status:", err);
+            });
         }
 
-        // تحديث كل الكروت والأزرار في الصفحة فورياً
+        // تحديث فوري للكروت بدون أي تأخير
         function updateAllCardsDOMStatus() {
             const t = translations[currentLang];
             menuData.forEach(cat => {
                 if (cat.items) {
                     cat.items.forEach(item => {
-                        const key = item.nameAr || item.nameEn;
-                        const isEnabled = itemStatusMap[key] !== false;
+                        const isEnabled = itemStatusMap[item.id] !== false;
                         const card = document.getElementById(`card_${item.id}`);
                         const btn = document.getElementById(`btn_${item.id}`);
                         const addonsBtn = document.getElementById(`addons_btn_${item.id}`);
@@ -3070,13 +3058,12 @@
             }
 
             allItems.forEach(item => {
-                const key = item.nameAr || item.nameEn;
-                const isEnabled = itemStatusMap[key] !== false;
+                const isEnabled = itemStatusMap[item.id] !== false;
                 const row = document.createElement('div');
                 row.className = 'admin-item-row';
                 row.innerHTML = `
                     <span style="font-size:0.85rem; font-weight:800;">${getLocalizedItemName(item)}</span>
-                    <button class="status-toggle-btn ${isEnabled ? 'on' : 'off'}" id="toggle_ui_${item.id}" onclick="toggleSingleItemStatus('${key.replace(/'/g, "\\'")}', 'toggle_ui_${item.id}')">
+                    <button class="status-toggle-btn ${isEnabled ? 'on' : 'off'}" id="toggle_ui_${item.id}" onclick="toggleSingleItemStatus('${item.id}', 'toggle_ui_${item.id}')">
                         ${isEnabled ? 'متاح ✅' : 'معطل 🛑'}
                     </button>
                 `;
@@ -3084,26 +3071,26 @@
             });
         }
 
-        // تغيير فوري في 0 مللي ثانية بدون أي بطء
-        function toggleSingleItemStatus(itemKey, btnId) {
-            const currentState = itemStatusMap[itemKey] !== false;
+        // تغيير فوري ولحظي تماماً بنسبة 100% وحفظ في فايربيز للجميع
+        function toggleSingleItemStatus(itemId, btnId) {
+            const currentState = itemStatusMap[itemId] !== false;
             const newState = !currentState;
-            itemStatusMap[itemKey] = newState;
+            itemStatusMap[itemId] = newState;
 
-            // حفظ فوري في LocalStorage لضمان عدم عودته بعد الريفريش نهائياً
+            // حفظ فوري في LocalStorage
             localStorage.setItem('storia_items_status', JSON.stringify(itemStatusMap));
 
-            // تحديث الزر في لوحة التحكم في نفس اللحظة
+            // تحديث الزر فوراً في اللوحة
             const btn = document.getElementById(btnId);
             if (btn) {
                 btn.className = `status-toggle-btn ${newState ? 'on' : 'off'}`;
                 btn.innerText = newState ? 'متاح ✅' : 'معطل 🛑';
             }
 
-            // تحديث الكارت وزر الإضافات وزر الطلب فوراً
+            // تحديث الكارت وزر الإضافات للزبائن فوراً
             updateAllCardsDOMStatus();
 
-            // حفظ في فايربيز في الخلفية بهدوء
+            // إرسال فوري لفايربيز ليتم التعطيل عند كل الناس فورياً ومستحيل يرجع
             saveItemsStatusToFirebase();
         }
 
@@ -3111,8 +3098,7 @@
             menuData.forEach(cat => {
                 if (cat.items) {
                     cat.items.forEach(i => {
-                        const key = i.nameAr || i.nameEn;
-                        itemStatusMap[key] = status;
+                        itemStatusMap[i.id] = status;
                     });
                 }
             });
