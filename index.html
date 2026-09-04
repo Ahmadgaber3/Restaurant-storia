@@ -299,6 +299,7 @@
             padding: 0 4px;
         }
 
+        /* نافذة تثبيت الآيفون المحدثة والواضحة لجميع الإصدارات */
         .ios-install-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px);
@@ -311,12 +312,12 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.4);
             animation: smoothSlideUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
-        .ios-install-title { font-size: 1.1rem; font-weight: 900; color: var(--accent); margin-bottom: 8px; }
-        .ios-install-desc { font-size: 0.82rem; color: var(--desc-text); font-weight: 700; line-height: 1.5; margin-bottom: 14px; }
+        .ios-install-title { font-size: 1.1rem; font-weight: 900; color: var(--accent); margin-bottom: 6px; }
+        .ios-install-desc { font-size: 0.80rem; color: var(--desc-text); font-weight: 700; line-height: 1.4; margin-bottom: 12px; }
         .ios-steps-box {
             background: var(--bg); border: 1.5px solid var(--border-color);
             border-radius: 16px; padding: 12px; margin-bottom: 14px; text-align: right;
-            display: flex; flex-direction: column; gap: 8px; font-size: 0.82rem; font-weight: 800;
+            display: flex; flex-direction: column; gap: 9px; font-size: 0.82rem; font-weight: 800;
         }
         [dir="ltr"] .ios-steps-box { text-align: left; }
         .ios-step-item { display: flex; align-items: center; gap: 8px; }
@@ -900,7 +901,7 @@
             font-size: 1.05rem; font-weight: 900; color: var(--main-text); margin-bottom: 4px;
         }
 
-        /* فوتر المطعم المحدث بالعنوان وأرقام الهاتف الرسمية */
+        /* فوتر المطعم المحدث بالعنوان وأرقام الهاتف والعبارة الرسمية */
         .restaurant-footer { 
             padding: 26px 16px 30px 16px; 
             text-align: center; 
@@ -912,13 +913,21 @@
             font-size: 0.90rem; 
             color: var(--main-text); 
             font-weight: 900; 
-            margin-bottom: 8px; 
+            margin-bottom: 3px; 
+        }
+        .footer-lounge-text {
+            font-size: 0.88rem;
+            color: var(--accent);
+            font-weight: 900;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
         }
         .footer-address {
             font-size: 0.88rem;
-            color: var(--accent);
+            color: var(--desc-text);
             font-weight: 800;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1218,7 +1227,7 @@
         <div class="ios-inapp-content">
             <span style="font-size: 1.4rem;">🧭</span>
             <div class="ios-inapp-text">
-                لتثبيت التطبيق على الآيفون: اضغط على <b>(···)</b> أو علامة البوصلة أسفل الشاشة واختر <b>"فتح في Safari"</b>.
+                لتثبيت التطبيق على الآيفون: انسخ الرابط وافتحه في متصفح <b>Safari</b>.
             </div>
             <button class="ios-copy-btn" onclick="copyAppUrlForSafari()">نسخ الرابط 📋</button>
             <button class="ios-inapp-close" onclick="closeIosInAppBanner()">✕</button>
@@ -1232,7 +1241,7 @@
         </div>
     </div>
 
-    <!-- نافذة اختيار طريقة الاستلام المعدلة (صالة وتيك أواي أولاً بخط إنجليزي كبير ثم توصيل للمنازل) -->
+    <!-- نافذة اختيار طريقة الاستلام (صالة وتيك أواي أولاً بخط إنجليزي كبير ثم توصيل للمنازل) -->
     <div class="welcome-order-type-modal" id="welcomeOrderModal">
         <div class="welcome-card">
             <h2 class="welcome-title" id="t_welcome_title">مرحباً بك في ستوريا | Welcome</h2>
@@ -1273,21 +1282,39 @@
         </div>
     </div>
 
-    <!-- نافذة شرح التثبيت للآيفون -->
+    <!-- نافذة تثبيت الآيفون المحسنة بالرابط وزر النسخ المباشر -->
     <div class="ios-install-modal" id="iosInstallModal" onclick="if(event.target===this) closeIosInstallModal()">
         <div class="ios-install-card">
             <h3 class="ios-install-title">تثبيت التطبيق على الآيفون 🍏</h3>
-            <p class="ios-install-desc">لتثبيت التطبيق على شاشة هاتفك الرئيسية، اتبع الخطوات التالية من متصفح Safari:</p>
+            <p class="ios-install-desc">لتثبيت منيو ستوريا كتطبيق على شاشة موبايلك الرئيسية:</p>
+
+            <div style="background: rgba(27, 77, 62, 0.08); border: 1.5px solid var(--accent); border-radius: 16px; padding: 14px; margin-bottom: 14px;">
+                <div style="font-size: 0.80rem; font-weight: 800; color: var(--main-text); margin-bottom: 8px;">
+                    رابط التطبيق الخاص بمتصفح Safari:
+                </div>
+                <div id="iosAppUrlDisplay" style="direction: ltr; font-size: 0.82rem; font-weight: 900; color: var(--accent); word-break: break-all; margin-bottom: 10px; background: var(--white); padding: 8px; border-radius: 8px; border: 1px solid var(--border-color);">
+                    https://storia-cafe.web.app
+                </div>
+                <button id="copySafariBtn" onclick="copyAppUrlForSafari()" style="background: var(--accent); color: white; border: none; padding: 11px 16px; border-radius: 12px; font-weight: 900; font-size: 0.88rem; width: 100%; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 3px 10px rgba(27,77,62,0.25);">
+                    <span>📋 نسخ الرابط لفتحه في Safari</span>
+                </button>
+            </div>
+
             <div class="ios-steps-box">
                 <div class="ios-step-item">
                     <span>1️⃣</span>
-                    <span>اضغط على زر المشاركة <b>(Share ⎋)</b> أسفل الشاشة.</span>
+                    <span>اضغط على الزر الأخضر بالأعلى لنسخ الرابط.</span>
                 </div>
                 <div class="ios-step-item">
                     <span>2️⃣</span>
-                    <span>اختر <b>"إضافة إلى الشاشة الرئيسية" (Add to Home Screen ➕)</b>.</span>
+                    <span>اخرج وافتح متصفح <b>Safari 🧭</b> والصق الرابط.</span>
+                </div>
+                <div class="ios-step-item">
+                    <span>3️⃣</span>
+                    <span>اضغط علامة المشاركة <b>(⎋)</b> ثم <b>"إضافة إلى الشاشة الرئيسية ➕"</b>.</span>
                 </div>
             </div>
+
             <button class="ios-close-btn" onclick="closeIosInstallModal()">فهمت ذلك ✓</button>
         </div>
     </div>
@@ -1626,9 +1653,10 @@
         </div>
     </div>
 
-    <!-- فوتر المطعم المحدث -->
+    <!-- فوتر المطعم المحدث بالعنوان والعبارة الرسمية وأرقام الهاتف المباشرة -->
     <footer class="restaurant-footer">
-        <p class="footer-rights" id="t_footer_rights">جميع الحقوق محفوظة لـ ستوريا 2026 ©</p>
+        <p class="footer-rights" id="t_footer_rights">جميع الحقوق محفوظة لـ ستوريا ©</p>
+        <div class="footer-lounge-text">Storia Restaurant & lounge</div>
         <div class="footer-address">
             <span>📍 104 عباس العقاد - مدينة نصر</span>
         </div>
@@ -1815,7 +1843,7 @@
                 successCloseBtn: 'إغلاق ومتابعة',
                 chatSendBtn: 'إرسال',
                 chatPlaceholder: 'اكتب رسالتك هنا...',
-                footerRights: 'جميع الحقوق محفوظة لـ ستوريا 2026 ©',
+                footerRights: 'جميع الحقوق محفوظة لـ ستوريا ©',
                 sizeLarge: 'كبير (Large)',
                 sizeMedium: 'وسط (Medium)',
                 sizeConfirmBtn: '🛒 تأكيد وإضافة للسلة'
@@ -1859,7 +1887,7 @@
                 successCloseBtn: 'Close & Continue',
                 chatSendBtn: 'Send',
                 chatPlaceholder: 'Type your message here...',
-                footerRights: 'All Rights Reserved to Storia 2026 ©',
+                footerRights: 'All Rights Reserved to Storia ©',
                 sizeLarge: 'Large (L)',
                 sizeMedium: 'Medium (M)',
                 sizeConfirmBtn: '🛒 Confirm & Add to Cart'
@@ -1871,7 +1899,7 @@
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js?v=' + Date.now())
                     .then(reg => {
-                        reg.update(); // يجبر المتصفح على جلب أحدث كود فوراً
+                        reg.update();
                     })
                     .catch(err => console.log('SW Error', err));
             });
@@ -1900,12 +1928,17 @@
 
         function copyAppUrlForSafari() {
             const url = window.location.href;
-            if (navigator.clipboard) {
+            const btn = document.getElementById('copySafariBtn');
+            
+            if (navigator.clipboard && window.isSecureContext) {
                 navigator.clipboard.writeText(url).then(() => {
-                    alert('تم نسخ الرابط! افتح تطبيق Safari والصق الرابط هناك لتثبيت التطبيق.');
+                    if (btn) btn.innerHTML = '<span>تم النسخ بنجاح! افتح الآن Safari ✓</span>';
+                    setTimeout(() => {
+                        if (btn) btn.innerHTML = '<span>📋 نسخ الرابط لفتحه في Safari</span>';
+                    }, 3000);
                 });
             } else {
-                prompt('انسخ الرابط التالي وافتحه في Safari:', url);
+                prompt('انسخ الرابط التالي وافتحه في متصفح Safari:', url);
             }
         }
 
@@ -1924,13 +1957,11 @@
                     deferredPrompt = null;
                 });
             } else if (isIosDevice()) {
-                if (isIosInAppBrowser()) {
-                    document.getElementById('iosInAppBanner').style.display = 'block';
-                } else {
-                    document.getElementById('iosInstallModal').style.display = 'flex';
-                }
+                const urlBox = document.getElementById('iosAppUrlDisplay');
+                if (urlBox) urlBox.innerText = window.location.href;
+                document.getElementById('iosInstallModal').style.display = 'flex';
             } else {
-                alert(currentLang === 'ar' ? 'التطبيق مثبت بالفعل أو يمكنك إضافته من إعدادات المتصفح (إضافة للشاشة الرئيسية).' : 'App is already installed or can be added from browser menu.');
+                alert(currentLang === 'ar' ? 'التطبيق مثبت بالفعل أو يمكنك إضافته من خيارات المتصفح (إضافة للشاشة الرئيسية).' : 'App is already installed.');
             }
         }
 
