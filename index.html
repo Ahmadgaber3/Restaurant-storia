@@ -151,10 +151,26 @@
             background: rgba(27, 77, 62, 0.06);
             transform: translateY(-2px);
         }
-        .welcome-choice-info { text-align: right; }
+        .welcome-choice-info { 
+            text-align: right; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 2px;
+        }
         [dir="ltr"] .welcome-choice-info { text-align: left; }
-        .welcome-choice-ar { font-size: 0.92rem; font-weight: 900; color: var(--main-text); }
-        .welcome-choice-en { font-size: 0.74rem; font-weight: 700; color: var(--desc-text); }
+        .welcome-choice-en { 
+            font-size: 0.98rem; 
+            font-weight: 900; 
+            color: var(--main-text); 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            line-height: 1.2;
+        }
+        .welcome-choice-ar { 
+            font-size: 0.76rem; 
+            font-weight: 700; 
+            color: var(--desc-text); 
+            line-height: 1.2;
+        }
         .welcome-choice-icon { font-size: 1.6rem; }
 
         /* شريط توجيه الآيفون عند الفتح من واتساب/فيسبوك */
@@ -479,6 +495,7 @@
             justify-content: center;
             flex-shrink: 0;
             transition: transform 0.2s ease;
+            font-size: 1.15rem;
         }
         .cat-img-box img { width: 100%; height: 100%; object-fit: cover; }
 
@@ -1164,27 +1181,27 @@
         </div>
     </div>
 
-    <!-- نافذة اختيار طريقة الاستلام الأصلية -->
+    <!-- نافذة اختيار طريقة الاستلام المعدلة (صالة وتيك أواي أولاً بخط إنجليزي كبير ثم توصيل للمنازل) -->
     <div class="welcome-order-type-modal" id="welcomeOrderModal">
         <div class="welcome-card">
             <h2 class="welcome-title" id="t_welcome_title">مرحباً بك في ستوريا | Welcome</h2>
             <p class="welcome-subtitle" id="t_welcome_sub">من فضلك اختر طريقة استلام طلبك للمتابعة:</p>
             
             <div class="welcome-buttons-grid">
-                <div class="welcome-choice-btn" onclick="selectInitialOrderType('delivery')">
-                    <div class="welcome-choice-info">
-                        <div class="welcome-choice-ar" id="t_welcome_del_ar">🛵 توصيل دليفري</div>
-                        <div class="welcome-choice-en">Home Delivery</div>
-                    </div>
-                    <span class="welcome-choice-icon">🛵</span>
-                </div>
-
                 <div class="welcome-choice-btn" onclick="selectInitialOrderType('takeaway')">
                     <div class="welcome-choice-info">
-                        <div class="welcome-choice-ar" id="t_welcome_take_ar">🍽️ صالة وتيك اواي</div>
                         <div class="welcome-choice-en">Dine-in & Takeaway</div>
+                        <div class="welcome-choice-ar" id="t_welcome_take_ar">صالة وتيك اواي</div>
                     </div>
                     <span class="welcome-choice-icon">🍽️</span>
+                </div>
+
+                <div class="welcome-choice-btn" onclick="selectInitialOrderType('delivery')">
+                    <div class="welcome-choice-info">
+                        <div class="welcome-choice-en">Home Delivery</div>
+                        <div class="welcome-choice-ar" id="t_welcome_del_ar">توصيل للمنازل</div>
+                    </div>
+                    <span class="welcome-choice-icon">🛵</span>
                 </div>
             </div>
         </div>
@@ -1459,7 +1476,7 @@
                 <label>النسبة المئوية الحالية للزيادة (%):</label>
                 <input type="number" id="adminMarkupPercentInput" placeholder="مثال: 15 لزيادة 15% أو 0 للأسعار الأصلية" step="0.5" min="0">
                 <small style="color: var(--desc-text); font-weight: 700; display: block; margin-top: 4px;">
-                    * أي زيادة يتم تطبيقها ستظهر فوراً عند كل الزبائن وتُضبط القروش لـ .95 قرشاً.
+                    * أي زيادة يتم تطبيقها ستشمل كل أسعار المنتجات والأحجام والإضافات وتُضبط القروش لـ .95 قرشاً.
                 </small>
             </div>
 
@@ -1626,14 +1643,15 @@
     <script>
         const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTsz0Q8FatsNvh7u2MGFmJpXDuXjC6HD23Vt1VlEnS2EX-dElZco3evuNUXKZSe3-rLmOabuU1NTiyO/pub?output=csv";
 
+        // تم ضبط أي إضافات كان سعرها صفراً لتصبح 19.95
         const soupAddons = [
             { name: "دجاج", nameEn: "Chicken", price: 64.95 }, { name: "مشروم", nameEn: "Mushroom", price: 29.95 }, { name: "ذرة", nameEn: "Corn", price: 29.95 },
             { name: "خضروات", nameEn: "Vegetables", price: 39.95 }, { name: "سمك", nameEn: "Fish", price: 74.95 }, { name: "جبنة موزاريلا", nameEn: "Mozzarella Cheese", price: 29.95 },
             { name: "عيش كريتون", nameEn: "Croutons", price: 29.95 }
         ];
         const appetizerAddons = [
-            { name: "فرنش صصوص", nameEn: "French Sauce", price: 0.00 }, { name: "صويا صصوص", nameEn: "Soya Sauce", price: 0.00 }, { name: "هاني ماسترد", nameEn: "Honey Mustard", price: 0.00 },
-            { name: "تارتار صصوص", nameEn: "Tartar Sauce", price: 0.00 }, { name: "باربكيو صصوص", nameEn: "BBQ Sauce", price: 0.00 }, { name: "كوكتيل صصوص", nameEn: "Cocktail Sauce", price: 0.00 }
+            { name: "فرنش صصوص", nameEn: "French Sauce", price: 19.95 }, { name: "صويا صصوص", nameEn: "Soya Sauce", price: 19.95 }, { name: "هاني ماسترد", nameEn: "Honey Mustard", price: 19.95 },
+            { name: "تارتار صصوص", nameEn: "Tartar Sauce", price: 19.95 }, { name: "باربكيو صصوص", nameEn: "BBQ Sauce", price: 19.95 }, { name: "كوكتيل صصوص", nameEn: "Cocktail Sauce", price: 19.95 }
         ];
         const saladAddons = [
             { name: "مشروم", nameEn: "Mushroom", price: 29.95 }, { name: "ذرة", nameEn: "Corn", price: 29.95 }, { name: "سمك", nameEn: "Fish", price: 74.95 },
@@ -1674,7 +1692,7 @@
         let menuData = [];
         let cart = [];
         let currentTotal = 0; 
-        let selectedOrderType = 'delivery';
+        let selectedOrderType = 'takeaway';
 
         let itemStatusMap = {};
         try {
@@ -1705,8 +1723,8 @@
                 langBtn: 'EN',
                 welcomeTitle: 'مرحباً بك في ستوريا | Welcome',
                 welcomeSub: 'من فضلك اختر طريقة استلام طلبك للمتابعة:',
-                delAr: '🛵 توصيل دليفري',
-                takeAr: '🍽️ صالة وتيك اواي',
+                delAr: 'توصيل للمنازل',
+                takeAr: 'صالة وتيك اواي',
                 loyaltyBtnText: '🎁 الهدايا والمكافآت',
                 loyaltyTitle: '🎁 محفظة مكافآت ستوريا',
                 loyaltyBalLbl: 'رصيد نقاطك الحالي (1 ج.م = 1 نقطة)',
@@ -1749,8 +1767,8 @@
                 langBtn: 'AR',
                 welcomeTitle: 'Welcome to Storia | مرحباً بك',
                 welcomeSub: 'Please choose your order fulfillment type:',
-                delAr: '🛵 Home Delivery',
-                takeAr: '🍽️ Dine-in & Takeaway',
+                delAr: 'Home Delivery',
+                takeAr: 'Dine-in & Takeaway',
                 loyaltyBtnText: '🎁 Rewards Wallet',
                 loyaltyTitle: '🎁 Storia Rewards Wallet',
                 loyaltyBalLbl: 'Current Points Balance (1 EGP = 1 Pt)',
@@ -1804,7 +1822,6 @@
             deferredPrompt = e;
         });
 
-        // دوال التحقق من نظام iOS والمتصفح الداخلي (WhatsApp / Facebook / Safari)
         function isIosDevice() {
             return /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
         }
@@ -1867,6 +1884,7 @@
             if (modal) modal.style.display = 'none';
         }
 
+        // تطبيق نسبة الزيادة على أي سعر (وجبات، أحجام، إضافات) وضبط القروش لـ .95
         function applyMarkup(price) {
             if (!price || isNaN(price)) return 0;
             if (priceMarkupPercentage <= 0) return price;
@@ -1963,6 +1981,11 @@
             if (tWelcomeTitle) tWelcomeTitle.innerText = t.welcomeTitle;
             const tWelcomeSub = document.getElementById('t_welcome_sub');
             if (tWelcomeSub) tWelcomeSub.innerText = t.welcomeSub;
+
+            const tWelcomeTakeAr = document.getElementById('t_welcome_take_ar');
+            if (tWelcomeTakeAr) tWelcomeTakeAr.innerText = t.takeAr;
+            const tWelcomeDelAr = document.getElementById('t_welcome_del_ar');
+            if (tWelcomeDelAr) tWelcomeDelAr.innerText = t.delAr;
 
             const tLoyaltyBtnText = document.getElementById('t_loyalty_btn_text');
             if (tLoyaltyBtnText) tLoyaltyBtnText.innerText = t.loyaltyBtnText;
@@ -2403,15 +2426,24 @@
 
                 const imgBox = document.createElement('div');
                 imgBox.className = 'cat-img-box';
-                const firstItem = cat.items && cat.items[0] ? cat.items[0] : null;
-                const firstItemImg = firstItem ? firstItem.img : 'images/logooo.png';
-                const rowNum = firstItem ? firstItem.sheetRow : '';
-                const arName = firstItem ? firstItem.nameAr : '';
-                const enName = firstItem ? firstItem.nameEn : '';
 
-                imgBox.innerHTML = `<img src="${firstItemImg}" alt="${cat.catAr}" 
-                    data-row="${rowNum}" data-ar="${arName}" data-en="${enName}" data-step="0"
-                    onerror="handleSmartImageFallback(this)">`;
+                // فحص إذا كان القسم هو قسم الأطباق الرئيسية لوضع إيموجي بدلاً من صورة القسم
+                const catCheckStr = ((cat.catAr || '') + ' ' + (cat.catEn || '')).toLowerCase();
+                const isMainDishesCat = catCheckStr.includes('رئيسي') || catCheckStr.includes('رئيسيه') || catCheckStr.includes('رئيسية') || catCheckStr.includes('main');
+
+                if (isMainDishesCat) {
+                    imgBox.innerHTML = `<span>🍽️</span>`;
+                } else {
+                    const firstItem = cat.items && cat.items[0] ? cat.items[0] : null;
+                    const firstItemImg = firstItem ? firstItem.img : 'images/logooo.png';
+                    const rowNum = firstItem ? firstItem.sheetRow : '';
+                    const arName = firstItem ? firstItem.nameAr : '';
+                    const enName = firstItem ? firstItem.nameEn : '';
+
+                    imgBox.innerHTML = `<img src="${firstItemImg}" alt="${cat.catAr}" 
+                        data-row="${rowNum}" data-ar="${arName}" data-en="${enName}" data-step="0"
+                        onerror="handleSmartImageFallback(this)">`;
+                }
 
                 const label = document.createElement('span');
                 label.innerText = getCategoryCleanName(cat);
@@ -2664,12 +2696,16 @@
                     row.className = 'simple-addon-item';
                     row.onclick = () => toggleAddonSelection(idx, ad, row);
                     const adName = currentLang === 'ar' ? ad.name : (ad.nameEn || ad.name);
+                    
+                    // تطبيق نسبة الزيادة على أسعار الإضافات أيضاً
+                    const markedAddonPrice = applyMarkup(ad.price);
+
                     row.innerHTML = `
                         <div class="simple-addon-left">
                             <div class="custom-check-circ">✓</div>
                             <span>${adName}</span>
                         </div>
-                        <div class="simple-addon-price">${ad.price > 0 ? '+' + ad.price.toFixed(2) + ' ' + t.currency : t.free}</div>
+                        <div class="simple-addon-price">${markedAddonPrice > 0 ? '+' + markedAddonPrice.toFixed(2) + ' ' + t.currency : t.free}</div>
                     `;
                     addonsListEl.appendChild(row);
                 });
@@ -2699,7 +2735,9 @@
             basePrice = applyMarkup(basePrice);
 
             let total = basePrice;
-            selectedAddonsMap.forEach(ad => { total += ad.price; });
+            selectedAddonsMap.forEach(ad => { 
+                total += applyMarkup(ad.price); 
+            });
 
             document.getElementById('modalItemBasePrice').innerText = basePrice.toFixed(2) + ' ' + t.currency;
             document.getElementById('modalTotalPrice').innerText = total.toFixed(2) + ' ' + t.currency;
@@ -2716,7 +2754,14 @@
 
             let basePrice = applyMarkup(currentActiveItem.price);
             let total = basePrice;
-            selectedAddonsMap.forEach(ad => { total += ad.price; });
+            
+            // حفظ الإضافات مع أسعارها المحدثة بعد تطبيق نسبة الزيادة
+            const processedAddons = selectedAddonsMap.map(ad => ({
+                ...ad,
+                finalPrice: applyMarkup(ad.price)
+            }));
+
+            processedAddons.forEach(ad => { total += ad.finalPrice; });
             const displayName = getLocalizedItemName(currentActiveItem);
 
             cart.push({
@@ -2729,7 +2774,7 @@
                 price: total,
                 basePrice: basePrice,
                 img: currentActiveItem.img,
-                addons: [...selectedAddonsMap]
+                addons: processedAddons
             });
 
             updateCartBadge();
@@ -2821,7 +2866,7 @@
             if (cart.length === 0) return;
 
             const earnedPts = Math.floor(currentTotal);
-            const modeText = selectedOrderType === 'delivery' ? (currentLang==='ar'?'دليفري توصيل 🛵':'Home Delivery 🛵') : (currentLang==='ar'?'صالة / تيك اواي 🍽️':'Dine-in / Takeaway 🍽️');
+            const modeText = selectedOrderType === 'delivery' ? (currentLang==='ar'?'توصيل للمنازل 🛵':'Home Delivery 🛵') : (currentLang==='ar'?'صالة / تيك اواي 🍽️':'Dine-in / Takeaway 🍽️');
 
             let orderText = `*طلب جديد من Storia Cafe & Restaurant*\n`;
             orderText += `------------------------------------\n`;
@@ -3098,7 +3143,6 @@
             }
         }
 
-        // استماع فوري وحقيقي لحالة الأصناف في السحابة
         let itemsStatusUnsubscribe = null;
         function setupLiveItemsStatusListener() {
             if (!window.db || !window.firebaseModules) return;
@@ -3117,7 +3161,6 @@
             });
         }
 
-        // استماع لحظي لنسبة زيادة الأسعار عند كل الأجهزة والزبائن
         let priceConfigUnsubscribe = null;
         function setupLivePriceMarkupListener() {
             if (!window.db || !window.firebaseModules) return;
@@ -3142,7 +3185,6 @@
             });
         }
 
-        // تحديث كروت الأصناف والأزرار فورياً في المتصفح في 0ms
         function updateAllCardsDOMStatus() {
             const t = translations[currentLang];
             if (!menuData || menuData.length === 0) return;
@@ -3259,7 +3301,7 @@
             renderMenu(true);
             updateAllCardsDOMStatus();
             renderCartItems();
-            alert(currentLang === 'ar' ? `تم تطبيق نسبة ${priceMarkupPercentage}% على جميع الأسعار وتحديثها عند الجميع فوراً!` : `Successfully applied ${priceMarkupPercentage}% markup across all users!`);
+            alert(currentLang === 'ar' ? `تم تطبيق نسبة ${priceMarkupPercentage}% على جميع الأسعار والإضافات وتحديثها فوراً!` : `Successfully applied ${priceMarkupPercentage}% markup across all items & add-ons!`);
             closeFloatingModal('priceMarkupModal');
         }
 
