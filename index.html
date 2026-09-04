@@ -1063,7 +1063,6 @@
         .chat-input-bar input { flex: 1; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--bg); color: var(--main-text); font-size: 0.88rem; outline: none; }
         .chat-send-btn { background: var(--accent); color: white; border: none; padding: 10px 16px; border-radius: 12px; font-weight: 800; cursor: pointer; }
 
-        /* ستايل كروت الطلبات والأصناف داخل لوحة الإدارة */
         .admin-order-card {
             background: var(--bg); border: 1px solid var(--border-color);
             border-radius: 14px; padding: 12px; margin-bottom: 10px;
@@ -1094,7 +1093,6 @@
         </div>
     </div>
 
-    <!-- نافذة اختيار طريقة الاستلام الأصلية -->
     <div class="welcome-order-type-modal" id="welcomeOrderModal">
         <div class="welcome-card">
             <h2 class="welcome-title" id="t_welcome_title">مرحباً بك في ستوريا | Welcome</h2>
@@ -1120,7 +1118,6 @@
         </div>
     </div>
 
-    <!-- شريط تثبيت التطبيق السفلي -->
     <div class="bottom-install-bar" id="bottomInstallBar">
         <div class="bottom-install-info">
             <img src="images/logooo.png" alt="Storia App" onerror="this.src='images/logooo.png'">
@@ -1135,7 +1132,6 @@
         </div>
     </div>
 
-    <!-- نافذة شرح التثبيت للآيفون -->
     <div class="ios-install-modal" id="iosInstallModal" onclick="if(event.target===this) closeIosInstallModal()">
         <div class="ios-install-card">
             <h3 class="ios-install-title">تثبيت التطبيق على الآيفون 🍏</h3>
@@ -1154,7 +1150,6 @@
         </div>
     </div>
 
-    <!-- نافذة تكبير الصورة (Lightbox) -->
     <div class="image-lightbox-modal" id="imageLightboxModal" onclick="if(event.target===this) closeImageLightbox()">
         <div class="image-lightbox-content">
             <button class="image-lightbox-close" onclick="closeImageLightbox()">✕</button>
@@ -1175,7 +1170,6 @@
                 <button class="admin-trigger-btn" onclick="openAdminPanel()" title="لوحة التحكم">⚙️</button>
             </div>
             
-            <!-- اللوجو مربع كبير 105 × 105 -->
             <div class="header-logo-container">
                 <img src="images/logooo.png" class="header-logo" alt="Storia Cafe" onerror="this.src='https://www.storia-eg.com/images/logo.png'">
             </div>
@@ -1225,7 +1219,6 @@
         </div>
     </div>
 
-    <!-- نافذة اختيار الحجم فقط -->
     <div class="size-only-modal" id="sizeOnlyModal" onclick="if(event.target===this) closeSizeOnlyModal()">
         <div class="size-only-content">
             <div class="size-only-header">
@@ -1242,7 +1235,6 @@
         </div>
     </div>
 
-    <!-- نافذة الإضافات المستقلة -->
     <div class="simple-addons-modal" id="simpleAddonsModal" onclick="if(event.target===this) closeSimpleAddonsModal()">
         <div class="simple-addons-content">
             <div class="simple-addons-header">
@@ -1531,19 +1523,19 @@
         </div>
     </div>
 
+    <!-- كود إعدادات Firebase المحدث لمشروع stooria-cafe -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, onSnapshot, addDoc, deleteDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
         const firebaseConfig = {
-          apiKey: "AIzaSyAUwDoxvhwCWb3FUtpA2NwmP7qBm5eYOuE",
-          authDomain: "makkah-restaurant.firebaseapp.com",
-          databaseURL: "https://makkah-restaurant-default-rtdb.firebaseio.com",
-          projectId: "makkah-restaurant",
-          storageBucket: "makkah-restaurant.firebasestorage.app",
-          messagingSenderId: "974492409250",
-          appId: "1:974492409250:web:9bfa2523b8f598489526fb",
-          measurementId: "G-3TMKVN9R5H"
+          apiKey: "AIzaSyBq3bpV6hNVAsHlmBPzn9GAaF4K4r06REM",
+          authDomain: "stooria-cafe.firebaseapp.com",
+          projectId: "stooria-cafe",
+          storageBucket: "stooria-cafe.firebasestorage.app",
+          messagingSenderId: "82255678997",
+          appId: "1:82255678997:web:92a131361189ef2e06881c",
+          measurementId: "G-N1GH3KHJDW"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -1950,7 +1942,7 @@
                         showWelcomeModal();
                     }
                 }
-            }, 40); // 4 ثوانٍ كاملة
+            }, 40);
         }
 
         function showWelcomeModal() {
@@ -2886,7 +2878,6 @@
                 const markupInput = document.getElementById('adminMarkupPercentInput');
                 if (markupInput) markupInput.value = priceMarkupPercentage;
 
-                // بدء الاستماع للطلبات الواردة والأصناف فور فتح اللوحة
                 listenToOrdersLogs();
                 loadItemsStatusFromFirebase();
             } else {
@@ -2912,7 +2903,6 @@
             if (el) el.style.display = 'none';
         }
 
-        // دالة عرض ومراقبة الطلبات الواردة مباشرة من فايربيز
         let ordersUnsubscribe = null;
         function listenToOrdersLogs() {
             if (!window.db || !window.firebaseModules) return;
@@ -2958,7 +2948,7 @@
             }, (err) => {
                 console.error("Orders listener error:", err);
                 const logsEl = document.getElementById('adminOrdersLogsList');
-                if (logsEl) logsEl.innerHTML = '<div style="color:red; text-align:center;">حدث خطأ في صلاحيات فايربيز، يرجى مراجعة Rules.</div>';
+                if (logsEl) logsEl.innerHTML = '<div style="color:red; text-align:center;">حدث خطأ في صلاحيات فايربيز، يرجى تفعيل Rules.</div>';
             });
         }
 
@@ -2971,7 +2961,6 @@
             }
         }
 
-        // جلب حالة إيقاف/تشغيل الأصناف من فايربيز
         async function loadItemsStatusFromFirebase() {
             if (window.db && window.firebaseModules) {
                 try {
@@ -2985,7 +2974,6 @@
             }
         }
 
-        // عرض قائمة الأصناف للتحكم فيها
         function renderAdminItemsList() {
             const listEl = document.getElementById('adminItemsList');
             if (!listEl) return;
