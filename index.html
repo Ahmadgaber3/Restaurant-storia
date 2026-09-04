@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -1104,6 +1104,7 @@
         </div>
     </div>
 
+    <!-- نافذة اختيار طريقة الاستلام الأصلية -->
     <div class="welcome-order-type-modal" id="welcomeOrderModal">
         <div class="welcome-card">
             <h2 class="welcome-title" id="t_welcome_title">مرحباً بك في ستوريا | Welcome</h2>
@@ -1129,6 +1130,7 @@
         </div>
     </div>
 
+    <!-- شريط تثبيت التطبيق السفلي -->
     <div class="bottom-install-bar" id="bottomInstallBar">
         <div class="bottom-install-info">
             <img src="images/logooo.png" alt="Storia App" onerror="this.src='images/logooo.png'">
@@ -1143,6 +1145,7 @@
         </div>
     </div>
 
+    <!-- نافذة شرح التثبيت للآيفون -->
     <div class="ios-install-modal" id="iosInstallModal" onclick="if(event.target===this) closeIosInstallModal()">
         <div class="ios-install-card">
             <h3 class="ios-install-title">تثبيت التطبيق على الآيفون 🍏</h3>
@@ -1161,6 +1164,7 @@
         </div>
     </div>
 
+    <!-- نافذة تكبير الصورة (Lightbox) -->
     <div class="image-lightbox-modal" id="imageLightboxModal" onclick="if(event.target===this) closeImageLightbox()">
         <div class="image-lightbox-content">
             <button class="image-lightbox-close" onclick="closeImageLightbox()">✕</button>
@@ -1393,11 +1397,11 @@
                 <label>النسبة المئوية الحالية للزيادة (%):</label>
                 <input type="number" id="adminMarkupPercentInput" placeholder="مثال: 15 لزيادة 15% أو 0 للأسعار الأصلية" step="0.5" min="0">
                 <small style="color: var(--desc-text); font-weight: 700; display: block; margin-top: 4px;">
-                    * أي زيادة يتم تطبيقها سيتم تلقائياً تحويل كسور السعر لتنتهي بـ .95 قرشاً.
+                    * أي زيادة يتم تطبيقها ستظهر فوراً عند كل الزبائن وتُضبط القروش لـ .95 قرشاً.
                 </small>
             </div>
 
-            <button class="admin-save-btn" onclick="adminSavePriceMarkup()">💾 تطبيق وتحديث الأسعار فوراً</button>
+            <button class="admin-save-btn" onclick="adminSavePriceMarkup()">💾 تطبيق وتحديث الأسعار عند الجميع فوراً</button>
         </div>
     </div>
 
@@ -1610,7 +1614,6 @@
         let currentTotal = 0; 
         let selectedOrderType = 'delivery';
 
-        // قراءة فورية من LocalStorage لمنع الصنف يشتغل أثناء تحميل الصفحة
         let itemStatusMap = {};
         try {
             itemStatusMap = JSON.parse(localStorage.getItem('storia_items_status') || '{}');
@@ -2048,7 +2051,6 @@
             });
         }
 
-        // تشغيل فوري وسريع للبيانات
         window.addEventListener('DOMContentLoaded', () => {
             applyLanguageSettings();
             startCreativeCounter();
@@ -2064,6 +2066,7 @@
         // المزامنة الحية المباشرة مع فايربيز (Realtime) لجميع الأجهزة بدون ريفرش
         window.addEventListener('firebase-ready', () => {
             setupLiveItemsStatusListener();
+            setupLivePriceMarkupListener(); // استماع لحظي للأسعار الجديدة عند الجميع
         });
 
         function updatePointsBadge(pts) {
@@ -2231,7 +2234,6 @@
                     const priceInfo = parseEnglishPriceField(priceEnRaw);
                     const sheetRowNumber = i + 1;
                     
-                    // المعرف الرقمي الثابت لكل صنف لضمان قبوله وحفظه في فايربيز بدون أخطاء الحروف العربية
                     const stableId = 'item_' + sheetRowNumber;
                     let img = `images/${sheetRowNumber}.jpg`;
 
@@ -2278,7 +2280,7 @@
                     menuData = parsedMenu;
                     renderCategories();
                     renderMenu(true);
-                    updateAllCardsDOMStatus(); // تطبيق فوري ومؤكد لحالة التعطيل
+                    updateAllCardsDOMStatus();
                     preloadAllMenuImages();
                 }
             } catch (err) {
@@ -3019,6 +3021,31 @@
             });
         }
 
+        // استماع لحظي للأسعار الجديدة: أي تعديل في النسبة ينعكس فوراً عند كل الزبائن
+        let priceConfigUnsubscribe = null;
+        function setupLivePriceMarkupListener() {
+            if (!window.db || !window.firebaseModules) return;
+            const { doc, onSnapshot } = window.firebaseModules;
+            if (priceConfigUnsubscribe) priceConfigUnsubscribe();
+
+            priceConfigUnsubscribe = onSnapshot(doc(window.db, "settings", "price_config"), (snap) => {
+                if (snap.exists() && snap.data().markupPercent !== undefined) {
+                    const serverMarkup = parseFloat(snap.data().markupPercent) || 0;
+                    if (priceMarkupPercentage !== serverMarkup) {
+                        priceMarkupPercentage = serverMarkup;
+                        localStorage.setItem('storia_price_markup', priceMarkupPercentage);
+                        const inp = document.getElementById('adminMarkupPercentInput');
+                        if (inp) inp.value = priceMarkupPercentage;
+                        renderMenu(true);
+                        updateAllCardsDOMStatus();
+                        renderCartItems();
+                    }
+                }
+            }, (err) => {
+                console.error("Error listening to price config:", err);
+            });
+        }
+
         // تحديث كل الكروت والأزرار فورياً في المتصفح في 0ms
         function updateAllCardsDOMStatus() {
             const t = translations[currentLang];
@@ -3096,7 +3123,7 @@
             // 3. تحديث الكارت وزر الإضافات وزر الطلب فوراً
             updateAllCardsDOMStatus();
 
-            // 4. حفظ فوري ومؤكد في Firestore
+            // 4. حفظ فوري ومؤكد في Firestore ليظهر للجميع
             saveItemsStatusToFirebase();
         }
 
@@ -3125,6 +3152,7 @@
             }
         }
 
+        // حفظ النسبة في Firestore ليعاد احتساب السعر وتحديثه عند كل الزبائن لحظياً
         async function adminSavePriceMarkup() {
             const inputVal = parseFloat(document.getElementById('adminMarkupPercentInput').value) || 0;
             priceMarkupPercentage = Math.max(0, inputVal);
@@ -3134,12 +3162,15 @@
                 try {
                     const { doc, setDoc } = window.firebaseModules;
                     await setDoc(doc(window.db, "settings", "price_config"), { markupPercent: priceMarkupPercentage }, { merge: true });
-                } catch(e) {}
+                } catch(e) {
+                    console.error("Error saving price markup to Firestore:", e);
+                }
             }
 
             renderMenu(true);
+            updateAllCardsDOMStatus();
             renderCartItems();
-            alert(currentLang === 'ar' ? `تم تطبيق نسبة ${priceMarkupPercentage}% على جميع الأسعار مع ضبط القروش لـ .95 بنجاح!` : `Successfully applied ${priceMarkupPercentage}% markup with .95 rounding!`);
+            alert(currentLang === 'ar' ? `تم تطبيق نسبة ${priceMarkupPercentage}% على جميع الأسعار وتحديثها عند الجميع فوراً!` : `Successfully applied ${priceMarkupPercentage}% markup across all users!`);
             closeFloatingModal('priceMarkupModal');
         }
 
