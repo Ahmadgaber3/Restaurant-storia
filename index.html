@@ -473,7 +473,7 @@
             width: 100%;
             transition: opacity 0.2s ease;
         }
-        .food-card.disabled-item { opacity: 0.5; filter: grayscale(0.3); }
+        .food-card.disabled-item { opacity: 0.5; filter: grayscale(0.35); }
         
         .item-img-box { 
             width: 115px; 
@@ -590,11 +590,12 @@
             height: 33px;
         }
         .mini-addons-btn:disabled {
-            opacity: 0.5;
-            border-color: #94a3b8 !important;
+            opacity: 0.45;
+            border-color: #cbd5e1 !important;
             color: #94a3b8 !important;
             cursor: not-allowed !important;
             background: var(--bg) !important;
+            pointer-events: none;
         }
         .mini-addons-btn:not(:disabled):active { background: var(--accent); color: white; }
 
@@ -1604,9 +1605,14 @@
         let cart = [];
         let currentTotal = 0; 
         let selectedOrderType = 'delivery';
-        let itemStatusMap = {}; 
-        let currentActiveCatIndex = 0;
 
+        // تحميل حالة الأصناف فوراً من localStorage لتظهر معطلة من أول جزء من الثانية حتى بعد الريفريش
+        let itemStatusMap = {};
+        try {
+            itemStatusMap = JSON.parse(localStorage.getItem('storia_items_status') || '{}');
+        } catch(e) { itemStatusMap = {}; }
+
+        let currentActiveCatIndex = 0;
         let currentActiveChatOrderId = null;
         let currentChatUserType = 'admin'; 
 
@@ -1616,7 +1622,6 @@
 
         let userLoyaltyPoints = 0;
         let activeUserPhone = localStorage.getItem('storia_user_phone') || '';
-
         let deferredPrompt = null;
 
         let restaurantInfo = { 
@@ -1770,7 +1775,6 @@
 
         function parseEnglishPriceField(priceRaw) {
             const str = String(priceRaw || '').trim();
-
             let pLarge = 0;
             let pMedium = 0;
 
@@ -1791,10 +1795,7 @@
             if (pLarge > 0 && pMedium > 0) {
                 return {
                     hasSizes: true,
-                    sizes: {
-                        large: pLarge,
-                        medium: pMedium
-                    },
+                    sizes: { large: pLarge, medium: pMedium },
                     defaultPrice: pLarge
                 };
             }
@@ -2029,7 +2030,6 @@
             }
         }
 
-        // تحميل فوري في الذاكرة والكاش
         function preloadAllMenuImages() {
             if (!menuData || menuData.length === 0) return;
             menuData.forEach(cat => {
@@ -2044,9 +2044,11 @@
             });
         }
 
+        // استدعاء فوري لحالة الأصناف عند بداية تحميل التطبيق وقبل أي شيء
         window.addEventListener('DOMContentLoaded', () => {
             applyLanguageSettings();
             startCreativeCounter();
+            loadItemsStatusFromFirebase(); // جلب فوري من فايربيز والذاكرة
             fetchMenuFromGoogleSheet();
             renderLoyaltyRewardsUI();
             if (activeUserPhone) {
@@ -2054,6 +2056,10 @@
                 if (phoneInput) phoneInput.value = activeUserPhone;
                 fetchUserPointsFromFirebase(activeUserPhone);
             }
+        });
+
+        window.addEventListener('firebase-ready', () => {
+            loadItemsStatusFromFirebase();
         });
 
         function updatePointsBadge(pts) {
@@ -2321,7 +2327,7 @@
             renderMenu(false);
         }
 
-        // نظام الرندرة الدائم (DOM Persistence) الذي يمنع إعادة تحميل الصور ويضمن ظهورها فوراً 100%
+        // بقاء عناصر الأقسام في الـ DOM لمنع إعادة تحميل الصور إطلاقاً
         function renderMenu(forceRebuild = false) {
             const menuList = document.getElementById('menuList');
             if (!menuList) return;
@@ -2341,7 +2347,6 @@
                     catContainer.className = 'category-group';
                     menuList.appendChild(catContainer);
 
-                    // بناء كروت الصنف لمرة واحدة في الذاكرة لتظل الصور محملة فوراً
                     cat.items.forEach(item => {
                         const primaryKey = item.nameAr || item.nameEn;
                         const isEnabled = itemStatusMap[primaryKey] !== false;
@@ -2374,7 +2379,6 @@
 
                         let actionButtonsHTML = '';
                         if (hasAddons) {
-                            // منع طلب الإضافات إذا كان الصنف معطلاً
                             actionButtonsHTML += `<button class="mini-addons-btn" id="addons_btn_${item.id}" ${!isEnabled ? 'disabled' : ''} onclick="openSimpleAddonsModal('${item.id}', ${cIdx})">${t.addonsBtnLabel}</button>`;
                         }
 
@@ -2418,7 +2422,6 @@
                     });
                 }
 
-                // إظهار القسم المختار فوراً بدون إعادة تحميل الصور
                 catContainer.style.display = (cIdx === currentActiveCatIndex) ? 'block' : 'none';
             });
         }
@@ -2429,6 +2432,9 @@
             if (!catData) return;
             const item = catData.items.find(i => i.id === itemId);
             if (!item) return;
+
+            const primaryKey = item.nameAr || item.nameEn;
+            if (itemStatusMap[primaryKey] === false) return; // حظر الإضافة إذا تم تعطيله
 
             if (item.priceInfo && item.priceInfo.hasSizes) {
                 openSizeOnlyModal(itemId, catIndex);
@@ -2463,6 +2469,10 @@
             if (!catData) return;
             const item = catData.items.find(i => i.id === itemId);
             if (!item || !item.priceInfo || !item.priceInfo.hasSizes) return;
+
+            const primaryKey = item.nameAr || item.nameEn;
+            if (itemStatusMap[primaryKey] === false) return;
+
             const t = translations[currentLang];
             const displayName = getLocalizedItemName(item);
 
@@ -2534,11 +2544,9 @@
             const item = catData.items.find(i => i.id === itemId);
             if (!item) return;
 
-            // حماية إضافية: إذا كان الصنف معطلاً يمنع فتح نافذة الإضافات نهائياً
+            // حظر فتح الإضافات للصنف الموقوف
             const primaryKey = item.nameAr || item.nameEn;
-            if (itemStatusMap[primaryKey] === false) {
-                return;
-            }
+            if (itemStatusMap[primaryKey] === false) return;
 
             const t = translations[currentLang];
             const displayName = getLocalizedItemName(item);
@@ -2991,20 +2999,34 @@
             }
         }
 
+        // جلب وتطبيق حالة الأصناف مع تخزينها فوراً في localStorage لمنع رجوعها بعد الريفريش
         async function loadItemsStatusFromFirebase() {
+            // أولاً: استخدام ما هو مخزن في localStorage فورياً بدون انتظار
+            try {
+                const localSaved = localStorage.getItem('storia_items_status');
+                if (localSaved) {
+                    itemStatusMap = JSON.parse(localSaved);
+                    updateAllCardsDOMStatus();
+                }
+            } catch(e) {}
+
+            // ثانياً: المزامنة الدقيقة مع فايربيز
             if (window.db && window.firebaseModules) {
                 try {
                     const { doc, getDoc } = window.firebaseModules;
                     const snap = await getDoc(doc(window.db, "settings", "items_status"));
                     if (snap.exists()) {
                         itemStatusMap = snap.data() || {};
+                        localStorage.setItem('storia_items_status', JSON.stringify(itemStatusMap));
                         updateAllCardsDOMStatus();
                     }
-                } catch(e) {}
+                } catch(e) {
+                    console.error("Error loading items status:", e);
+                }
             }
         }
 
-        // تحديث حالة كروت الأصناف فوراً في الـ DOM بدون إعادة رسم الصفحة
+        // تحديث كل الكروت والأزرار في الصفحة فورياً
         function updateAllCardsDOMStatus() {
             const t = translations[currentLang];
             menuData.forEach(cat => {
@@ -3062,23 +3084,26 @@
             });
         }
 
-        // تغيير حالة الصنف فورياً في نفس اللحظة بدون أي ثانية انتظار (Instant Optimistic UI)
+        // تغيير فوري في 0 مللي ثانية بدون أي بطء
         function toggleSingleItemStatus(itemKey, btnId) {
             const currentState = itemStatusMap[itemKey] !== false;
             const newState = !currentState;
             itemStatusMap[itemKey] = newState;
 
-            // تغيير فوري للزر في لوحة التحكم في جزء من الثانية
+            // حفظ فوري في LocalStorage لضمان عدم عودته بعد الريفريش نهائياً
+            localStorage.setItem('storia_items_status', JSON.stringify(itemStatusMap));
+
+            // تحديث الزر في لوحة التحكم في نفس اللحظة
             const btn = document.getElementById(btnId);
             if (btn) {
                 btn.className = `status-toggle-btn ${newState ? 'on' : 'off'}`;
                 btn.innerText = newState ? 'متاح ✅' : 'معطل 🛑';
             }
 
-            // تحديث الكارت والأزرار وزر الإضافات فوراً في التطبيق
+            // تحديث الكارت وزر الإضافات وزر الطلب فوراً
             updateAllCardsDOMStatus();
 
-            // حفظ في فايربيز في الخلفية بدون تعطيل الواجهة
+            // حفظ في فايربيز في الخلفية بهدوء
             saveItemsStatusToFirebase();
         }
 
@@ -3091,6 +3116,7 @@
                     });
                 }
             });
+            localStorage.setItem('storia_items_status', JSON.stringify(itemStatusMap));
             renderAdminItemsList();
             updateAllCardsDOMStatus();
             saveItemsStatusToFirebase();
