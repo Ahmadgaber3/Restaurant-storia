@@ -1104,7 +1104,6 @@
         </div>
     </div>
 
-    <!-- نافذة اختيار طريقة الاستلام الأصلية -->
     <div class="welcome-order-type-modal" id="welcomeOrderModal">
         <div class="welcome-card">
             <h2 class="welcome-title" id="t_welcome_title">مرحباً بك في ستوريا | Welcome</h2>
@@ -1130,7 +1129,6 @@
         </div>
     </div>
 
-    <!-- شريط تثبيت التطبيق السفلي -->
     <div class="bottom-install-bar" id="bottomInstallBar">
         <div class="bottom-install-info">
             <img src="images/logooo.png" alt="Storia App" onerror="this.src='images/logooo.png'">
@@ -1145,7 +1143,6 @@
         </div>
     </div>
 
-    <!-- نافذة شرح التثبيت للآيفون -->
     <div class="ios-install-modal" id="iosInstallModal" onclick="if(event.target===this) closeIosInstallModal()">
         <div class="ios-install-card">
             <h3 class="ios-install-title">تثبيت التطبيق على الآيفون 🍏</h3>
@@ -1164,7 +1161,6 @@
         </div>
     </div>
 
-    <!-- نافذة تكبير الصورة (Lightbox) -->
     <div class="image-lightbox-modal" id="imageLightboxModal" onclick="if(event.target===this) closeImageLightbox()">
         <div class="image-lightbox-content">
             <button class="image-lightbox-close" onclick="closeImageLightbox()">✕</button>
@@ -1185,7 +1181,6 @@
                 <button class="admin-trigger-btn" onclick="openAdminPanel()" title="لوحة التحكم">⚙️</button>
             </div>
             
-            <!-- اللوجو مربع كبير 105 × 105 ومضبوط تماماً في المنتصف -->
             <div class="header-logo-container">
                 <img src="images/logooo.png" class="header-logo" alt="Storia Cafe" onerror="this.src='https://www.storia-eg.com/images/logo.png'">
             </div>
@@ -1235,7 +1230,6 @@
         </div>
     </div>
 
-    <!-- نافذة اختيار الحجم فقط -->
     <div class="size-only-modal" id="sizeOnlyModal" onclick="if(event.target===this) closeSizeOnlyModal()">
         <div class="size-only-content">
             <div class="size-only-header">
@@ -1252,7 +1246,6 @@
         </div>
     </div>
 
-    <!-- نافذة الإضافات المستقلة -->
     <div class="simple-addons-modal" id="simpleAddonsModal" onclick="if(event.target===this) closeSimpleAddonsModal()">
         <div class="simple-addons-content">
             <div class="simple-addons-header">
@@ -2055,6 +2048,7 @@
             });
         }
 
+        // تشغيل فوري وسريع للبيانات
         window.addEventListener('DOMContentLoaded', () => {
             applyLanguageSettings();
             startCreativeCounter();
@@ -2067,7 +2061,7 @@
             }
         });
 
-        // تشغيل مراقبة وتحديث الأصناف فورياً من السيرفر
+        // المزامنة الحية المباشرة مع فايربيز (Realtime) لجميع الأجهزة بدون ريفرش
         window.addEventListener('firebase-ready', () => {
             setupLiveItemsStatusListener();
         });
@@ -2237,7 +2231,7 @@
                     const priceInfo = parseEnglishPriceField(priceEnRaw);
                     const sheetRowNumber = i + 1;
                     
-                    // المعرف الرقمي الإنجليزي النظيف لضمان قبوله 100% في فايربيز
+                    // المعرف الرقمي الثابت لكل صنف لضمان قبوله وحفظه في فايربيز بدون أخطاء الحروف العربية
                     const stableId = 'item_' + sheetRowNumber;
                     let img = `images/${sheetRowNumber}.jpg`;
 
@@ -2284,7 +2278,7 @@
                     menuData = parsedMenu;
                     renderCategories();
                     renderMenu(true);
-                    updateAllCardsDOMStatus(); // تطبيق الإيقاف فوراً بمجرد تجهيز المنيو
+                    updateAllCardsDOMStatus(); // تطبيق فوري ومؤكد لحالة التعطيل
                     preloadAllMenuImages();
                 }
             } catch (err) {
@@ -2340,7 +2334,6 @@
             renderMenu(false);
         }
 
-        // بناء دائم للأقسام لمنع اختفاء الصور نهائياً
         function renderMenu(forceRebuild = false) {
             const menuList = document.getElementById('menuList');
             if (!menuList) return;
@@ -2445,7 +2438,6 @@
             const item = catData.items.find(i => i.id === itemId);
             if (!item) return;
 
-            // حماية كاملة ضد إضافة الصنف الموقوف
             if (itemStatusMap[item.id] === false) return;
 
             if (item.priceInfo && item.priceInfo.hasSizes) {
@@ -2555,7 +2547,6 @@
             const item = catData.items.find(i => i.id === itemId);
             if (!item) return;
 
-            // حظر فتح الإضافات للصنف الموقوف
             if (itemStatusMap[item.id] === false) return;
 
             const t = translations[currentLang];
@@ -3009,7 +3000,7 @@
             }
         }
 
-        // استماع فوري وحقيقي لحالة الأصناف في السحابة
+        // استماع فوري وحي (Realtime) لفايربيز: أي صنف يقف عند الأدمن، ينعكس فوراً عند كل الزبائن في نفس اللحظة
         let itemsStatusUnsubscribe = null;
         function setupLiveItemsStatusListener() {
             if (!window.db || !window.firebaseModules) return;
@@ -3028,7 +3019,7 @@
             });
         }
 
-        // تحديث كل الكروت والأزرار فورياً في المتصفح
+        // تحديث كل الكروت والأزرار فورياً في المتصفح في 0ms
         function updateAllCardsDOMStatus() {
             const t = translations[currentLang];
             if (!menuData || menuData.length === 0) return;
