@@ -1,4 +1,4 @@
-const CACHE_NAME = 'storia-v11';
+const CACHE_NAME = 'storia-v12';
 const STATIC_ASSETS = [
   './',
   './index.html',
