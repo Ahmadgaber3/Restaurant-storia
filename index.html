@@ -471,9 +471,13 @@
             border: 1px solid var(--border-color); 
             overflow: hidden;
             width: 100%;
-            transition: opacity 0.2s ease;
+            transition: all 0.2s ease;
         }
-        .food-card.disabled-item { opacity: 0.45; filter: grayscale(0.4); }
+        .food-card.disabled-item { 
+            opacity: 0.45 !important; 
+            filter: grayscale(0.6) !important; 
+            background: #f1f5f9 !important;
+        }
         
         .item-img-box { 
             width: 115px; 
@@ -590,12 +594,12 @@
             height: 33px;
         }
         .mini-addons-btn:disabled {
-            opacity: 0.45;
+            opacity: 0.4 !important;
             border-color: #cbd5e1 !important;
             color: #94a3b8 !important;
             cursor: not-allowed !important;
-            background: var(--bg) !important;
-            pointer-events: none;
+            background: #e2e8f0 !important;
+            pointer-events: none !important;
         }
         .mini-addons-btn:not(:disabled):active { background: var(--accent); color: white; }
 
@@ -621,7 +625,14 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
-        .order-btn:disabled { background: #94a3b8 !important; border-color: #94a3b8 !important; cursor: not-allowed; box-shadow: none !important; }
+        .order-btn:disabled { 
+            background: #94a3b8 !important; 
+            border-color: #94a3b8 !important; 
+            color: #ffffff !important;
+            cursor: not-allowed !important; 
+            box-shadow: none !important; 
+            pointer-events: none !important;
+        }
 
         .order-btn.size-select-style {
             background: var(--accent);
@@ -1224,7 +1235,7 @@
         </div>
     </div>
 
-    <!-- نافذة اختيار الحجم فقط (منفصلة وبسيطة) -->
+    <!-- نافذة اختيار الحجم فقط -->
     <div class="size-only-modal" id="sizeOnlyModal" onclick="if(event.target===this) closeSizeOnlyModal()">
         <div class="size-only-content">
             <div class="size-only-header">
@@ -1606,7 +1617,7 @@
         let currentTotal = 0; 
         let selectedOrderType = 'delivery';
 
-        // تحميل حالة الأصناف فوراً من الذاكرة المحلية أولاً
+        // قراءة فورية من LocalStorage لمنع الصنف يشتغل أثناء تحميل الصفحة
         let itemStatusMap = {};
         try {
             itemStatusMap = JSON.parse(localStorage.getItem('storia_items_status') || '{}');
@@ -2056,7 +2067,7 @@
             }
         });
 
-        // تشغيل الاستماع المباشر الفوري للـ Firestore بمجرد تجهيز فايربيز
+        // تشغيل مراقبة وتحديث الأصناف فورياً من السيرفر
         window.addEventListener('firebase-ready', () => {
             setupLiveItemsStatusListener();
         });
@@ -2224,10 +2235,10 @@
                     if (!nameAr && !nameEn) continue;
 
                     const priceInfo = parseEnglishPriceField(priceEnRaw);
-
                     const sheetRowNumber = i + 1;
-                    // استخدام معرف إنجليزي ثابت وفريد ومضمون للكتابة في فايربيز بدون أي خطأ
-                    const stableId = 'storia_item_' + sheetRowNumber;
+                    
+                    // المعرف الرقمي الإنجليزي النظيف لضمان قبوله 100% في فايربيز
+                    const stableId = 'item_' + sheetRowNumber;
                     let img = `images/${sheetRowNumber}.jpg`;
 
                     if (row[4] && row[4].trim() !== '') {
@@ -2273,7 +2284,7 @@
                     menuData = parsedMenu;
                     renderCategories();
                     renderMenu(true);
-                    updateAllCardsDOMStatus();
+                    updateAllCardsDOMStatus(); // تطبيق الإيقاف فوراً بمجرد تجهيز المنيو
                     preloadAllMenuImages();
                 }
             } catch (err) {
@@ -2329,6 +2340,7 @@
             renderMenu(false);
         }
 
+        // بناء دائم للأقسام لمنع اختفاء الصور نهائياً
         function renderMenu(forceRebuild = false) {
             const menuList = document.getElementById('menuList');
             if (!menuList) return;
@@ -2433,6 +2445,7 @@
             const item = catData.items.find(i => i.id === itemId);
             if (!item) return;
 
+            // حماية كاملة ضد إضافة الصنف الموقوف
             if (itemStatusMap[item.id] === false) return;
 
             if (item.priceInfo && item.priceInfo.hasSizes) {
@@ -2542,7 +2555,7 @@
             const item = catData.items.find(i => i.id === itemId);
             if (!item) return;
 
-            // حظر الإضافات فوراً للصنف المعطل
+            // حظر فتح الإضافات للصنف الموقوف
             if (itemStatusMap[item.id] === false) return;
 
             const t = translations[currentLang];
@@ -2996,7 +3009,7 @@
             }
         }
 
-        // استماع لحظي مباشر (Live Real-time Listener) لحالة الأصناف من فايربيز لتظهر للجميع فوراً
+        // استماع فوري وحقيقي لحالة الأصناف في السحابة
         let itemsStatusUnsubscribe = null;
         function setupLiveItemsStatusListener() {
             if (!window.db || !window.firebaseModules) return;
@@ -3015,9 +3028,11 @@
             });
         }
 
-        // تحديث فوري للكروت بدون أي تأخير
+        // تحديث كل الكروت والأزرار فورياً في المتصفح
         function updateAllCardsDOMStatus() {
             const t = translations[currentLang];
+            if (!menuData || menuData.length === 0) return;
+
             menuData.forEach(cat => {
                 if (cat.items) {
                     cat.items.forEach(item => {
@@ -3071,26 +3086,26 @@
             });
         }
 
-        // تغيير فوري ولحظي تماماً بنسبة 100% وحفظ في فايربيز للجميع
+        // التعديل اللحظي الفوري: تبديل فوري وحفظ مؤكد في فايربيز وسحابياً للجميع
         function toggleSingleItemStatus(itemId, btnId) {
             const currentState = itemStatusMap[itemId] !== false;
             const newState = !currentState;
             itemStatusMap[itemId] = newState;
 
-            // حفظ فوري في LocalStorage
+            // 1. حفظ فوري في LocalStorage
             localStorage.setItem('storia_items_status', JSON.stringify(itemStatusMap));
 
-            // تحديث الزر فوراً في اللوحة
+            // 2. تحديث الزر في لوحة التحكم في نفس اللحظة
             const btn = document.getElementById(btnId);
             if (btn) {
                 btn.className = `status-toggle-btn ${newState ? 'on' : 'off'}`;
                 btn.innerText = newState ? 'متاح ✅' : 'معطل 🛑';
             }
 
-            // تحديث الكارت وزر الإضافات للزبائن فوراً
+            // 3. تحديث الكارت وزر الإضافات وزر الطلب فوراً
             updateAllCardsDOMStatus();
 
-            // إرسال فوري لفايربيز ليتم التعطيل عند كل الناس فورياً ومستحيل يرجع
+            // 4. حفظ فوري ومؤكد في Firestore
             saveItemsStatusToFirebase();
         }
 
@@ -3114,7 +3129,7 @@
                     const { doc, setDoc } = window.firebaseModules;
                     await setDoc(doc(window.db, "settings", "items_status"), itemStatusMap, { merge: true });
                 } catch(e) {
-                    console.error("Error saving status:", e);
+                    console.error("Critical error saving items status to Firestore:", e);
                 }
             }
         }
