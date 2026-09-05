@@ -2,11 +2,11 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <!-- ميتا تاج صارم لمنع تخزين الكاش القديم عند الزبائن نهائياً -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <!-- ميتا تاج صارم جداً لمنع تخزين الكاش في الآيفون وجميع المتصفحات -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Expires" content="-1">
     <title>Storia Restaurant & Cafe</title>
     
     <link rel="manifest" href="manifest.json">
@@ -47,10 +47,10 @@
             --border-color: #263831;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', -apple-system, BlinkMacSystemFont, sans-serif; -webkit-tap-highlight-color: transparent; }
         
         [dir="ltr"] * {
-            font-family: 'Plus Jakarta Sans', 'Cairo', sans-serif;
+            font-family: 'Plus Jakarta Sans', 'Cairo', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
         body { 
@@ -58,7 +58,8 @@
             color: var(--main-text); 
             line-height: 1.6; 
             overflow-x: hidden; 
-            padding-bottom: 90px; 
+            padding-bottom: 90px;
+            -webkit-overflow-scrolling: touch;
         }
 
         #splash-screen {
@@ -70,7 +71,7 @@
             z-index: 9999;
             display: flex; justify-content: center; align-items: flex-end;
             padding: 0 20px 90px 20px;
-            transition: 0.6s ease-out;
+            transition: 0.5s ease-out;
             filter: brightness(105%) contrast(100%);
         }
         
@@ -126,11 +127,11 @@
             font-size: 1.35rem;
         }
         
-        .splash-hidden { transform: translateY(-100%); opacity: 0; pointer-events: none; }
+        .splash-hidden { transform: translateY(-100%); opacity: 0; pointer-events: none; visibility: hidden; }
 
         .welcome-order-type-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 20, 18, 0.85); backdrop-filter: blur(8px);
+            background: rgba(15, 20, 18, 0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
             z-index: 8000; display: none; justify-content: center; align-items: center;
             padding: 16px;
         }
@@ -177,7 +178,7 @@
         }
         .welcome-choice-icon { font-size: 1.6rem; }
 
-        /* شريط توجيه الآيفون عند الفتح من واتساب/فيسبوك */
+        /* شريط توجيه الآيفون */
         .ios-inapp-banner {
             position: fixed;
             top: 0;
@@ -233,7 +234,7 @@
             width: calc(100% - 30px);
             max-width: 460px;
             background: rgba(27, 77, 62, 0.95);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
             color: #ffffff;
             border-radius: 18px;
             padding: 10px 14px;
@@ -301,7 +302,7 @@
 
         .ios-install-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px);
+            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
             z-index: 99999; display: none; justify-content: center; align-items: flex-end;
             padding: 20px 16px 30px 16px;
         }
@@ -327,9 +328,11 @@
 
         header { 
             background: var(--header-bg); 
+            position: -webkit-sticky;
             position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 15px var(--card-shadow);
             display: flex; flex-direction: column; align-items: center;
             padding: 8px 0 0 0;
+            width: 100%;
         }
         
         .header-top { 
@@ -385,6 +388,7 @@
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
+            -webkit-transform: translate(-50%, -50%);
             width: 105px; 
             height: 105px; 
             border-radius: 20px; 
@@ -484,6 +488,7 @@
             flex-shrink: 0;
             transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
             user-select: none;
+            -webkit-user-select: none;
             box-shadow: 0 2px 6px var(--card-shadow);
         }
 
@@ -526,7 +531,18 @@
             transform: scale(1.1);
         }
         
-        .menu-list { padding: 12px 14px; max-width: 600px; margin: auto; }
+        .menu-list { 
+            padding: 14px; 
+            max-width: 600px; 
+            margin: auto; 
+            min-height: 250px;
+            width: 100%;
+        }
+
+        .category-group {
+            width: 100%;
+            display: block;
+        }
         
         .food-card { 
             background: var(--white); 
@@ -540,6 +556,7 @@
             border: 1px solid var(--border-color); 
             overflow: hidden;
             width: 100%;
+            min-height: 120px;
             transition: all 0.2s ease;
         }
         .food-card.disabled-item { 
@@ -717,7 +734,7 @@
 
         .image-lightbox-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
             z-index: 9000; display: none; justify-content: center; align-items: center;
             padding: 16px;
         }
@@ -755,7 +772,7 @@
             background: rgba(0, 0, 0, 0.65); z-index: 3800; display: none;
             justify-content: center; align-items: center;
             padding: 16px;
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
         }
         .size-only-content {
             background: var(--white); width: 100%; max-width: 360px;
@@ -774,7 +791,7 @@
             background: rgba(0, 0, 0, 0.55); z-index: 3500; display: none;
             justify-content: center; align-items: center;
             padding: 16px;
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
         }
         .simple-addons-content {
             background: var(--white); width: 100%; max-width: 420px;
@@ -851,6 +868,7 @@
             display: flex; justify-content: space-between; align-items: center;
             padding: 10px 12px; background: var(--bg); border: 1.5px solid var(--border-color);
             border-radius: 12px; cursor: pointer; transition: all 0.15s ease; user-select: none;
+            -webkit-user-select: none;
         }
         .simple-addon-item.checked { border-color: var(--accent); background: rgba(27, 77, 62, 0.08); }
         .simple-addon-left { display: flex; align-items: center; gap: 8px; font-size: 0.88rem; font-weight: 800; }
@@ -878,7 +896,7 @@
 
         .toast-added-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(3px);
+            background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
             z-index: 9500; display: none; justify-content: center; align-items: center;
             padding: 16px;
         }
@@ -900,13 +918,14 @@
             font-size: 1.05rem; font-weight: 900; color: var(--main-text); margin-bottom: 4px;
         }
 
-        /* فوتر المطعم المحدث بالعنوان وأرقام الهاتف الرسمية */
+        /* فوتر المطعم المحدث */
         .restaurant-footer { 
             padding: 26px 16px 30px 16px; 
             text-align: center; 
             background: var(--white); 
             border-top: 1px solid var(--border-color); 
             margin-top: 25px; 
+            width: 100%;
         }
         .footer-rights { 
             font-size: 0.90rem; 
@@ -1221,7 +1240,6 @@
 </head>
 <body>
 
-    <!-- شريط توجيه ذكي لمستخدمي الآيفون إذا فتحوا من داخل تطبيقات الشات -->
     <div class="ios-inapp-banner" id="iosInAppBanner">
         <div class="ios-inapp-content">
             <span style="font-size: 1.4rem;">🧭</span>
@@ -1240,7 +1258,6 @@
         </div>
     </div>
 
-    <!-- نافذة اختيار طريقة الاستلام المعدلة (صالة وتيك أواي أولاً بخط إنجليزي كبير ثم توصيل للمنازل) -->
     <div class="welcome-order-type-modal" id="welcomeOrderModal">
         <div class="welcome-card">
             <h2 class="welcome-title" id="t_welcome_title">مرحباً بك في ستوريا | Welcome</h2>
@@ -1266,7 +1283,6 @@
         </div>
     </div>
 
-    <!-- شريط تثبيت التطبيق السفلي -->
     <div class="bottom-install-bar" id="bottomInstallBar">
         <div class="bottom-install-info">
             <img src="images/logooo.png" alt="Storia App" onerror="this.src='images/logooo.png'">
@@ -1281,7 +1297,6 @@
         </div>
     </div>
 
-    <!-- نافذة شرح التثبيت للآيفون -->
     <div class="ios-install-modal" id="iosInstallModal" onclick="if(event.target===this) closeIosInstallModal()">
         <div class="ios-install-card">
             <h3 class="ios-install-title">تثبيت التطبيق على الآيفون 🍏</h3>
@@ -1300,7 +1315,6 @@
         </div>
     </div>
 
-    <!-- نافذة تكبير الصورة (Lightbox) -->
     <div class="image-lightbox-modal" id="imageLightboxModal" onclick="if(event.target===this) closeImageLightbox()">
         <div class="image-lightbox-content">
             <button class="image-lightbox-close" onclick="closeImageLightbox()">✕</button>
@@ -1350,7 +1364,9 @@
         <div class="category-nav" id="catNav"></div>
     </header>
 
-    <div id="menuList" class="menu-list"></div>
+    <div id="menuList" class="menu-list">
+        <div id="menuLoadingMsg" style="text-align: center; padding: 40px 10px; font-weight: 800; color: var(--accent);">جاري تحميل قائمة المنيو... ☕</div>
+    </div>
 
     <div class="loyalty-modal" id="loyaltyModal" onclick="if(event.target===this) closeLoyaltyModal()">
         <div class="loyalty-box">
@@ -1370,7 +1386,6 @@
         </div>
     </div>
 
-    <!-- نافذة اختيار الحجم فقط -->
     <div class="size-only-modal" id="sizeOnlyModal" onclick="if(event.target===this) closeSizeOnlyModal()">
         <div class="size-only-content">
             <div class="size-only-header">
@@ -1387,7 +1402,6 @@
         </div>
     </div>
 
-    <!-- نافذة الإضافات المستقلة -->
     <div class="simple-addons-modal" id="simpleAddonsModal" onclick="if(event.target===this) closeSimpleAddonsModal()">
         <div class="simple-addons-content">
             <div class="simple-addons-header">
@@ -1634,7 +1648,6 @@
         </div>
     </div>
 
-    <!-- فوتر المطعم المحدث -->
     <footer class="restaurant-footer">
         <p class="footer-rights" id="t_footer_rights">جميع الحقوق محفوظة لـ ستوريا ©</p>
         <div class="footer-brand-sub">Storia Restaurant & lounge</div>
@@ -1683,7 +1696,7 @@
         </div>
     </div>
 
-    <!-- كود إعدادات Firebase المحدث لمشروع stooria-cafe -->
+    <!-- كود إعدادات Firebase المحدث -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, onSnapshot, addDoc, deleteDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -1698,18 +1711,21 @@
           measurementId: "G-N1GH3KHJDW"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        try {
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
 
-        window.db = db;
-        window.firebaseModules = { doc, getDoc, setDoc, updateDoc, collection, onSnapshot, addDoc, deleteDoc, getDocs, query, orderBy };
-        window.dispatchEvent(new Event('firebase-ready'));
+            window.db = db;
+            window.firebaseModules = { doc, getDoc, setDoc, updateDoc, collection, onSnapshot, addDoc, deleteDoc, getDocs, query, orderBy };
+            window.dispatchEvent(new Event('firebase-ready'));
+        } catch(e) {
+            console.warn("Firebase Init Error:", e);
+        }
     </script>
 
     <script>
         const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTsz0Q8FatsNvh7u2MGFmJpXDuXjC6HD23Vt1VlEnS2EX-dElZco3evuNUXKZSe3-rLmOabuU1NTiyO/pub?output=csv";
 
-        // تم ضبط أي إضافات كان سعرها صفراً لتصبح 19.95
         const soupAddons = [
             { name: "دجاج", nameEn: "Chicken", price: 64.95 }, { name: "مشروم", nameEn: "Mushroom", price: 29.95 }, { name: "ذرة", nameEn: "Corn", price: 29.95 },
             { name: "خضروات", nameEn: "Vegetables", price: 39.95 }, { name: "سمك", nameEn: "Fish", price: 74.95 }, { name: "جبنة موزاريلا", nameEn: "Mozzarella Cheese", price: 29.95 },
@@ -1753,8 +1769,23 @@
             { id: 'rew_5', title: 'وجبة رئيسية أو مكس جريل 🥩', titleEn: 'Main Dish / Mix Grill 🥩', cost: 800 }
         ];
 
-        let currentLang = localStorage.getItem('storia_lang') || 'ar';
-        let priceMarkupPercentage = parseFloat(localStorage.getItem('storia_price_markup') || '0') || 0;
+        // قراءة آمنة لـ localStorage تمنع تعليق Safari في نمط التصفح الخاص
+        function safeGetStorage(key, defaultVal) {
+            try {
+                const val = localStorage.getItem(key);
+                return val !== null ? val : defaultVal;
+            } catch(e) {
+                return defaultVal;
+            }
+        }
+        function safeSetStorage(key, val) {
+            try {
+                localStorage.setItem(key, val);
+            } catch(e) {}
+        }
+
+        let currentLang = safeGetStorage('storia_lang', 'ar');
+        let priceMarkupPercentage = parseFloat(safeGetStorage('storia_price_markup', '0')) || 0;
         let menuData = [];
         let cart = [];
         let currentTotal = 0; 
@@ -1762,7 +1793,7 @@
 
         let itemStatusMap = {};
         try {
-            itemStatusMap = JSON.parse(localStorage.getItem('storia_items_status') || '{}');
+            itemStatusMap = JSON.parse(safeGetStorage('storia_items_status', '{}'));
         } catch(e) { itemStatusMap = {}; }
 
         let currentActiveCatIndex = 0;
@@ -1774,7 +1805,7 @@
         let selectedItemSizeKey = 'large';
 
         let userLoyaltyPoints = 0;
-        let activeUserPhone = localStorage.getItem('storia_user_phone') || '';
+        let activeUserPhone = safeGetStorage('storia_user_phone', '');
         let deferredPrompt = null;
 
         let restaurantInfo = { 
@@ -1875,15 +1906,13 @@
             }
         };
 
-        // تحديث إجباري للـ Service Worker لمنع احتفاظ أي عميل بالنسخة القديمة
+        // مسح الـ Cache القديم نهائياً وإلغاء تسجيل أي Service Worker معلق في سفاري
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js?v=' + Date.now())
-                    .then(reg => {
-                        reg.update(); // يجبر المتصفح على جلب أحدث كود فوراً
-                    })
-                    .catch(err => console.log('SW Error', err));
-            });
+            navigator.serviceWorker.getRegistrations().then(registrations => {
+                for (let registration of registrations) {
+                    registration.update();
+                }
+            }).catch(() => {});
         }
 
         window.addEventListener('beforeinstallprompt', (e) => {
@@ -1953,11 +1982,9 @@
             if (modal) modal.style.display = 'none';
         }
 
-        // تطبيق نسبة الزيادة على أي سعر (وجبات، أحجام، إضافات) وضبط القروش لـ .95
         function applyMarkup(price) {
             if (!price || isNaN(price)) return 0;
             if (priceMarkupPercentage <= 0) return price;
-            
             const increasedPrice = price * (1 + priceMarkupPercentage / 100);
             return Math.floor(increasedPrice) + 0.95;
         }
@@ -2018,6 +2045,7 @@
         }
 
         function getFilteredCategories() {
+            if (!menuData || !Array.isArray(menuData)) return [];
             if (selectedOrderType === 'takeaway') {
                 return menuData;
             }
@@ -2030,7 +2058,7 @@
 
         function toggleLanguage() {
             currentLang = currentLang === 'ar' ? 'en' : 'ar';
-            localStorage.setItem('storia_lang', currentLang);
+            safeSetStorage('storia_lang', currentLang);
             applyLanguageSettings();
             renderCategories();
             renderMenu(true);
@@ -2039,7 +2067,7 @@
         }
 
         function applyLanguageSettings() {
-            const t = translations[currentLang];
+            const t = translations[currentLang] || translations.ar;
             document.documentElement.lang = currentLang;
             document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
 
@@ -2132,7 +2160,7 @@
             let count = 0;
             
             const timer = setInterval(() => {
-                count++;
+                count += 2;
                 if (count <= 100) {
                     if (counterEl) counterEl.innerText = count;
                     if (barFill) barFill.style.width = count + '%';
@@ -2140,20 +2168,23 @@
                     clearInterval(timer);
                     if (splashScreen) {
                         splashScreen.classList.add('splash-hidden');
+                        setTimeout(() => { splashScreen.style.display = 'none'; }, 500);
                         showWelcomeModal();
                     }
                 }
-            }, 40);
+            }, 30);
         }
 
         function showWelcomeModal() {
-            document.getElementById('welcomeOrderModal').style.display = 'flex';
+            const welcomeModal = document.getElementById('welcomeOrderModal');
+            if (welcomeModal) welcomeModal.style.display = 'flex';
         }
 
         function selectInitialOrderType(type) {
             selectedOrderType = type;
             setInitialOrderTypeUI(type);
-            document.getElementById('welcomeOrderModal').style.display = 'none';
+            const welcomeModal = document.getElementById('welcomeOrderModal');
+            if (welcomeModal) welcomeModal.style.display = 'none';
 
             if (deferredPrompt || (isIosDevice() && !window.navigator.standalone)) {
                 const bar = document.getElementById('bottomInstallBar');
@@ -2169,7 +2200,7 @@
 
         function setInitialOrderTypeUI(type) {
             const addrInput = document.getElementById('uAddr');
-            const t = translations[currentLang];
+            const t = translations[currentLang] || translations.ar;
 
             if (type === 'delivery') {
                 if (addrInput) addrInput.placeholder = t.addrPlaceholderDel;
@@ -2240,7 +2271,8 @@
             });
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
+        // بدء التشغيل الفوري المتوافق مع iOS
+        function initializeAppCore() {
             applyLanguageSettings();
             startCreativeCounter();
             fetchMenuFromGoogleSheet();
@@ -2250,7 +2282,13 @@
                 if (phoneInput) phoneInput.value = activeUserPhone;
                 fetchUserPointsFromFirebase(activeUserPhone);
             }
-        });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeAppCore);
+        } else {
+            initializeAppCore();
+        }
 
         window.addEventListener('firebase-ready', () => {
             setupLiveItemsStatusListener();
@@ -2269,7 +2307,7 @@
         async function fetchUserPointsFromFirebase(phone) {
             if (!phone) return;
             activeUserPhone = phone;
-            localStorage.setItem('storia_user_phone', phone);
+            safeSetStorage('storia_user_phone', phone);
             
             const displayEl = document.getElementById('modalUserPhoneDisplay');
             if (displayEl) displayEl.innerText = currentLang === 'ar' ? `حساب العميل: ${phone}` : `Customer Phone: ${phone}`;
@@ -2298,7 +2336,7 @@
             const listEl = document.getElementById('simpleRewardsList');
             if (!listEl) return;
             listEl.innerHTML = '';
-            const t = translations[currentLang];
+            const t = translations[currentLang] || translations.ar;
 
             loyaltyRewards.forEach(r => {
                 const canRedeem = userLoyaltyPoints >= r.cost;
@@ -2393,11 +2431,13 @@
             return result;
         }
 
-        // جلب أحدث شيت بيانات مع منع الكاش نهائياً (Cache-Busting)
+        // جلب البيانات مع مانع كاش فوري متوافق 100% مع iOS Safari
         async function fetchMenuFromGoogleSheet() {
             try {
-                const freshUrl = GOOGLE_SHEET_CSV_URL + (GOOGLE_SHEET_CSV_URL.includes('?') ? '&' : '?') + '_ts=' + Date.now() + '&rnd=' + Math.random();
-                const response = await fetch(freshUrl, { cache: 'no-store' });
+                const cacheBuster = `_ts=${Date.now()}_${Math.floor(Math.random()*100000)}`;
+                const freshUrl = GOOGLE_SHEET_CSV_URL + (GOOGLE_SHEET_CSV_URL.includes('?') ? '&' : '?') + cacheBuster;
+                
+                const response = await fetch(freshUrl);
                 if (!response.ok) throw new Error("Failed to fetch google sheet");
                 
                 const csvText = await response.text();
@@ -2467,6 +2507,9 @@
 
                 if (parsedMenu.length > 0) {
                     menuData = parsedMenu;
+                    const loadingMsg = document.getElementById('menuLoadingMsg');
+                    if (loadingMsg) loadingMsg.remove();
+                    
                     renderCategories();
                     renderMenu(true);
                     updateAllCardsDOMStatus();
@@ -2474,6 +2517,10 @@
                 }
             } catch (err) {
                 console.error("Error loading menu:", err);
+                const loadingMsg = document.getElementById('menuLoadingMsg');
+                if (loadingMsg) {
+                    loadingMsg.innerHTML = 'حدث خطأ في تحميل الأصناف، يرجى إعادة تحديث الصفحة أو التأكد من اتصال الإنترنت.';
+                }
             }
         }
 
@@ -2497,7 +2544,6 @@
                 const imgBox = document.createElement('div');
                 imgBox.className = 'cat-img-box';
 
-                // فحص إذا كان القسم هو قسم الأطباق الرئيسية لوضع إيموجي بدلاً من صورة القسم
                 const catCheckStr = ((cat.catAr || '') + ' ' + (cat.catEn || '')).toLowerCase();
                 const isMainDishesCat = catCheckStr.includes('رئيسي') || catCheckStr.includes('رئيسيه') || catCheckStr.includes('رئيسية') || catCheckStr.includes('main');
 
@@ -2537,7 +2583,7 @@
         function renderMenu(forceRebuild = false) {
             const menuList = document.getElementById('menuList');
             if (!menuList) return;
-            const t = translations[currentLang];
+            const t = translations[currentLang] || translations.ar;
             const availableCategories = getFilteredCategories();
             if (availableCategories.length === 0) return;
 
@@ -2627,6 +2673,7 @@
                     });
                 }
 
+                // ضمان التوافق مع سفاري
                 catContainer.style.display = (cIdx === currentActiveCatIndex) ? 'block' : 'none';
             });
         }
@@ -2645,7 +2692,7 @@
                 return;
             }
 
-            const t = translations[currentLang];
+            const t = translations[currentLang] || translations.ar;
             const displayName = getLocalizedItemName(item);
             const markedPrice = applyMarkup(item.price);
 
@@ -2676,7 +2723,7 @@
 
             if (itemStatusMap[item.id] === false) return;
 
-            const t = translations[currentLang];
+            const t = translations[currentLang] || translations.ar;
             const displayName = getLocalizedItemName(item);
 
             currentActiveItem = item;
@@ -2715,7 +2762,7 @@
 
         function confirmSizeOnlySelection() {
             if (!currentActiveItem) return;
-            const t = translations[currentLang];
+            const t = translations[currentLang] || translations.ar;
 
             const basePrice = applyMarkup(currentActiveItem.priceInfo.sizes[selectedItemSizeKey]);
             const sizeLabelText = selectedItemSizeKey === 'large' ? t.sizeLarge : t.sizeMedium;
@@ -2749,7 +2796,7 @@
 
             if (itemStatusMap[item.id] === false) return;
 
-            const t = translations[currentLang];
+            const t = translations[currentLang] || translations.ar;
             const displayName = getLocalizedItemName(item);
 
             currentActiveItem = item;
@@ -2767,7 +2814,6 @@
                     row.onclick = () => toggleAddonSelection(idx, ad, row);
                     const adName = currentLang === 'ar' ? ad.name : (ad.nameEn || ad.name);
                     
-                    // تطبيق نسبة الزيادة على أسعار الإضافات أيضاً
                     const markedAddonPrice = applyMarkup(ad.price);
 
                     row.innerHTML = `
@@ -2799,7 +2845,7 @@
 
         function updateModalTotal() {
             if (!currentActiveItem) return;
-            const t = translations[currentLang];
+            const t = translations[currentLang] || translations.ar;
 
             let basePrice = currentActiveItem.price;
             basePrice = applyMarkup(basePrice);
@@ -2825,7 +2871,6 @@
             let basePrice = applyMarkup(currentActiveItem.price);
             let total = basePrice;
             
-            // حفظ الإضافات مع أسعارها المحدثة بعد تطبيق نسبة الزيادة
             const processedAddons = selectedAddonsMap.map(ad => ({
                 ...ad,
                 finalPrice: applyMarkup(ad.price)
@@ -2882,7 +2927,7 @@
             if (!listEl) return;
             listEl.innerHTML = '';
             currentTotal = 0;
-            const t = translations[currentLang];
+            const t = translations[currentLang] || translations.ar;
 
             if (cart.length === 0) {
                 listEl.innerHTML = `<div style="text-align: center; color: var(--desc-text); padding: 20px 0; font-weight: 700;">${t.cartEmptyText}</div>`;
@@ -2927,7 +2972,7 @@
             const name = document.getElementById('uName').value.trim();
             const phone = document.getElementById('uPhone').value.trim();
             const addr = document.getElementById('uAddr').value.trim();
-            const t = translations[currentLang];
+            const t = translations[currentLang] || translations.ar;
 
             if (!name || !phone) {
                 alert(currentLang === 'ar' ? 'يرجى كتابة الاسم ورقم الموبايل لإكمال الطلب وحفظ نقاطك' : 'Please enter your full name and phone number to complete the order');
@@ -2979,8 +3024,8 @@
                         timestamp: Date.now()
                     });
                     
-                    localStorage.setItem('storia_active_order_id', orderDoc.id);
-                    localStorage.setItem('storia_active_user_name', name);
+                    safeSetStorage('storia_active_order_id', orderDoc.id);
+                    safeSetStorage('storia_active_user_name', name);
                     showClientHeaderChatButton();
 
                     const userRef = doc(window.db, "loyalty_users", phone);
@@ -3014,8 +3059,8 @@
         }
 
         function openClientHeaderChat() {
-            const activeOrderId = localStorage.getItem('storia_active_order_id');
-            const activeUserName = localStorage.getItem('storia_active_user_name') || 'العميل';
+            const activeOrderId = safeGetStorage('storia_active_order_id', null);
+            const activeUserName = safeGetStorage('storia_active_user_name', 'العميل');
             if (activeOrderId) openChatModal(activeOrderId, 'client', activeUserName);
             else alert(currentLang === 'ar' ? 'لا يوجد طلب نشط حالياً للمتابعة' : 'No active order found to track');
         }
@@ -3027,7 +3072,7 @@
 
         function dismissClientActiveOrder() {
             if (confirm(currentLang === 'ar' ? 'هل أنت متأكد من إنهاء المتابعة؟' : 'Are you sure you want to end order tracking?')) {
-                localStorage.removeItem('storia_active_order_id');
+                try { localStorage.removeItem('storia_active_order_id'); } catch(e) {}
                 const btn = document.getElementById('clientHeaderChatBtn');
                 if (btn) btn.style.display = 'none';
                 closeChatModal();
@@ -3199,8 +3244,6 @@
                 });
             }, (err) => {
                 console.error("Orders listener error:", err);
-                const logsEl = document.getElementById('adminOrdersLogsList');
-                if (logsEl) logsEl.innerHTML = '<div style="color:red; text-align:center;">حدث خطأ في صلاحيات فايربيز، يرجى تفعيل Rules.</div>';
             });
         }
 
@@ -3213,7 +3256,6 @@
             }
         }
 
-        // استماع فوري وحقيقي لحالة الأصناف في السحابة
         let itemsStatusUnsubscribe = null;
         function setupLiveItemsStatusListener() {
             if (!window.db || !window.firebaseModules) return;
@@ -3223,7 +3265,7 @@
             itemsStatusUnsubscribe = onSnapshot(doc(window.db, "settings", "items_status"), (snap) => {
                 if (snap.exists()) {
                     itemStatusMap = snap.data() || {};
-                    localStorage.setItem('storia_items_status', JSON.stringify(itemStatusMap));
+                    safeSetStorage('storia_items_status', JSON.stringify(itemStatusMap));
                     updateAllCardsDOMStatus();
                     renderAdminItemsList();
                 }
@@ -3232,7 +3274,6 @@
             });
         }
 
-        // استماع لحظي لنسبة زيادة الأسعار عند كل الأجهزة والزبائن
         let priceConfigUnsubscribe = null;
         function setupLivePriceMarkupListener() {
             if (!window.db || !window.firebaseModules) return;
@@ -3244,7 +3285,7 @@
                     const serverMarkup = parseFloat(snap.data().markupPercent) || 0;
                     if (priceMarkupPercentage !== serverMarkup) {
                         priceMarkupPercentage = serverMarkup;
-                        localStorage.setItem('storia_price_markup', priceMarkupPercentage);
+                        safeSetStorage('storia_price_markup', priceMarkupPercentage);
                         const inp = document.getElementById('adminMarkupPercentInput');
                         if (inp) inp.value = priceMarkupPercentage;
                         renderMenu(true);
@@ -3258,7 +3299,7 @@
         }
 
         function updateAllCardsDOMStatus() {
-            const t = translations[currentLang];
+            const t = translations[currentLang] || translations.ar;
             if (!menuData || menuData.length === 0) return;
 
             menuData.forEach(cat => {
@@ -3319,7 +3360,7 @@
             const newState = !currentState;
             itemStatusMap[itemId] = newState;
 
-            localStorage.setItem('storia_items_status', JSON.stringify(itemStatusMap));
+            safeSetStorage('storia_items_status', JSON.stringify(itemStatusMap));
 
             const btn = document.getElementById(btnId);
             if (btn) {
@@ -3339,7 +3380,7 @@
                     });
                 }
             });
-            localStorage.setItem('storia_items_status', JSON.stringify(itemStatusMap));
+            safeSetStorage('storia_items_status', JSON.stringify(itemStatusMap));
             renderAdminItemsList();
             updateAllCardsDOMStatus();
             saveItemsStatusToFirebase();
@@ -3351,7 +3392,7 @@
                     const { doc, setDoc } = window.firebaseModules;
                     await setDoc(doc(window.db, "settings", "items_status"), itemStatusMap, { merge: true });
                 } catch(e) {
-                    console.error("Critical error saving items status to Firestore:", e);
+                    console.error("Error saving items status to Firestore:", e);
                 }
             }
         }
@@ -3359,7 +3400,7 @@
         async function adminSavePriceMarkup() {
             const inputVal = parseFloat(document.getElementById('adminMarkupPercentInput').value) || 0;
             priceMarkupPercentage = Math.max(0, inputVal);
-            localStorage.setItem('storia_price_markup', priceMarkupPercentage);
+            safeSetStorage('storia_price_markup', priceMarkupPercentage);
 
             if (window.db && window.firebaseModules) {
                 try {
