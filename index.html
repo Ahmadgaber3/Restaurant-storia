@@ -579,7 +579,7 @@
             align-self: center;
             cursor: pointer;
         }
-        .item-img-box img { width: 100%; height: 100%; object-fit: cover; }
+        .item-img-box img { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.2s ease; }
         
         .food-info { 
             flex: 1; 
@@ -917,7 +917,6 @@
             font-size: 1.05rem; font-weight: 900; color: var(--main-text); margin-bottom: 4px;
         }
 
-        /* فوتر المطعم */
         .restaurant-footer { 
             padding: 26px 16px 30px 16px; 
             text-align: center; 
@@ -1284,7 +1283,7 @@
 
     <div class="bottom-install-bar" id="bottomInstallBar">
         <div class="bottom-install-info">
-            <img src="images/logooo.png" alt="Storia App" onerror="this.src='images/logooo.png'">
+            <img src="images/logooo.png" alt="Storia App" onerror="this.style.display='none'">
             <div class="bottom-install-text">
                 <span class="bottom-install-title">تطبيق ستوريا</span>
                 <span class="bottom-install-sub">تصفح أسرع وتثبيت على هاتفك</span>
@@ -1318,7 +1317,7 @@
         <div class="image-lightbox-content">
             <button class="image-lightbox-close" onclick="closeImageLightbox()">✕</button>
             <div class="image-lightbox-img-wrapper">
-                <img id="lightboxImg" src="" alt="صورة الصنف" onerror="this.src='images/logooo.png'">
+                <img id="lightboxImg" src="" alt="صورة الصنف" onerror="this.style.display='none'">
             </div>
             <div class="image-lightbox-details">
                 <div class="image-lightbox-title" id="lightboxTitle">اسم الصنف</div>
@@ -2156,7 +2155,7 @@
             const splashScreen = document.getElementById('splash-screen');
             let count = 0;
             
-            // عداد دقيق 4 ثوانٍ كاملة (4000 ملي ثانية / 100 خطوة = 40 ملي ثانية)
+            // عداد 4 ثوانٍ بالضبط
             const timer = setInterval(() => {
                 count += 1;
                 if (count <= 100) {
@@ -2213,7 +2212,10 @@
             const titleEl = document.getElementById('lightboxTitle');
             const priceEl = document.getElementById('lightboxPrice');
 
-            if (imgEl) imgEl.src = imgSrc;
+            if (imgEl) {
+                imgEl.style.display = 'block';
+                imgEl.src = imgSrc;
+            }
             if (titleEl) titleEl.innerText = itemName;
             if (priceEl) priceEl.innerText = priceText;
 
@@ -2225,10 +2227,29 @@
             if (modal) modal.style.display = 'none';
         }
 
-        // معالجة فورية لصورة اللوجو دون محاولات فاشلة
+        // دالة الفالباك المعدلة بدون وضع أي لوجو نهائياً
         function handleSmartImageFallback(imgElement) {
-            imgElement.onerror = null;
-            imgElement.src = 'images/logooo.png';
+            const step = parseInt(imgElement.dataset.step || '0', 10);
+            const rowNum = imgElement.dataset.row || '';
+            const nameAr = (imgElement.dataset.ar || '').trim();
+            const nameEn = (imgElement.dataset.en || '').trim();
+
+            const attempts = [
+                `images/${rowNum}.png`,
+                `images/${encodeURIComponent(nameAr)}.jpg`,
+                `images/${encodeURIComponent(nameAr)}.png`,
+                `images/${encodeURIComponent(nameEn)}.jpg`,
+                `images/${encodeURIComponent(nameEn)}.png`
+            ];
+
+            if (step < attempts.length) {
+                imgElement.dataset.step = step + 1;
+                imgElement.src = attempts[step];
+            } else {
+                // إخفاء الصورة في حالة عدم وجودها ليظل المربع فارغاً تماماً كما طلبت
+                imgElement.style.opacity = '0';
+                imgElement.onerror = null;
+            }
         }
 
         function initializeAppCore() {
@@ -2339,7 +2360,7 @@
                     name: currentLang === 'ar' ? `🎁 [هدية مكافأة]: ${rewardTitle}` : `🎁 [Gift Reward]: ${rewardTitle}`,
                     price: 0.00,
                     sizeLabel: '',
-                    img: 'images/logooo.png',
+                    img: '',
                     addons: []
                 });
 
@@ -2508,9 +2529,9 @@
                     imgBox.innerHTML = `<span>🍽️</span>`;
                 } else {
                     const firstItem = cat.items && cat.items[0] ? cat.items[0] : null;
-                    const firstItemImg = firstItem ? firstItem.img : 'images/logooo.png';
+                    const firstItemImg = firstItem ? firstItem.img : '';
 
-                    imgBox.innerHTML = `<img src="${firstItemImg}" alt="${cat.catAr}" loading="lazy" decoding="async" onerror="handleSmartImageFallback(this)">`;
+                    imgBox.innerHTML = `<img src="${firstItemImg}" alt="${cat.catAr}" loading="lazy" decoding="async" onerror="this.style.display='none'">`;
                 }
 
                 const label = document.createElement('span');
@@ -2601,7 +2622,14 @@
 
                         card.innerHTML = `
                             <div class="item-img-box" onclick="openImageLightbox(this.querySelector('img').src, '${displayName.replace(/'/g, "\\'")}', '${priceForLightbox}')" title="${currentLang==='ar'?'اضغط لتكبير الصورة':'Click to view photo'}">
-                                <img src="${item.img}" alt="${displayName}" loading="lazy" decoding="async" onerror="handleSmartImageFallback(this)">
+                                <img src="${item.img}" alt="${displayName}" 
+                                     data-row="${item.sheetRow}" 
+                                     data-ar="${item.nameAr || ''}" 
+                                     data-en="${item.nameEn || ''}" 
+                                     data-step="0"
+                                     loading="lazy"
+                                     decoding="async"
+                                     onerror="handleSmartImageFallback(this)">
                             </div>
                             <div class="food-info">
                                 <div>
@@ -2892,7 +2920,7 @@
                 const sizeBadge = item.sizeLabel ? ` <span style="font-size:0.75rem; color:var(--accent); font-weight:800;">(${item.sizeLabel})</span>` : '';
 
                 itemEl.innerHTML = `
-                    <img src="${item.img}" class="cart-item-img" alt="${displayName}" onerror="handleSmartImageFallback(this)">
+                    <img src="${item.img}" class="cart-item-img" alt="${displayName}" onerror="this.style.display='none'">
                     <div class="cart-item-info">
                         <div class="cart-item-name">${displayName}${sizeBadge}</div>
                         ${addonsText ? `<div class="cart-item-addons-text">+ ${currentLang==='ar'?'إضافات:':'Extras:'} ${addonsText}</div>` : ''}
