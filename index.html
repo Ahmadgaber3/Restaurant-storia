@@ -178,7 +178,6 @@
         }
         .welcome-choice-icon { font-size: 1.6rem; }
 
-        /* شريط توجيه الآيفون */
         .ios-inapp-banner {
             position: fixed;
             top: 0;
@@ -918,7 +917,7 @@
             font-size: 1.05rem; font-weight: 900; color: var(--main-text); margin-bottom: 4px;
         }
 
-        /* فوتر المطعم المحدث */
+        /* فوتر المطعم */
         .restaurant-footer { 
             padding: 26px 16px 30px 16px; 
             text-align: center; 
@@ -1769,7 +1768,6 @@
             { id: 'rew_5', title: 'وجبة رئيسية أو مكس جريل 🥩', titleEn: 'Main Dish / Mix Grill 🥩', cost: 800 }
         ];
 
-        // قراءة آمنة لـ localStorage تمنع تعليق Safari في نمط التصفح الخاص
         function safeGetStorage(key, defaultVal) {
             try {
                 const val = localStorage.getItem(key);
@@ -1906,7 +1904,6 @@
             }
         };
 
-        // مسح الـ Cache القديم نهائياً وإلغاء تسجيل أي Service Worker معلق في سفاري
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.getRegistrations().then(registrations => {
                 for (let registration of registrations) {
@@ -2159,8 +2156,9 @@
             const splashScreen = document.getElementById('splash-screen');
             let count = 0;
             
+            // عداد دقيق 4 ثوانٍ كاملة (4000 ملي ثانية / 100 خطوة = 40 ملي ثانية)
             const timer = setInterval(() => {
-                count += 2;
+                count += 1;
                 if (count <= 100) {
                     if (counterEl) counterEl.innerText = count;
                     if (barFill) barFill.style.width = count + '%';
@@ -2172,7 +2170,7 @@
                         showWelcomeModal();
                     }
                 }
-            }, 30);
+            }, 40);
         }
 
         function showWelcomeModal() {
@@ -2227,51 +2225,12 @@
             if (modal) modal.style.display = 'none';
         }
 
+        // معالجة فورية لصورة اللوجو دون محاولات فاشلة
         function handleSmartImageFallback(imgElement) {
-            const step = parseInt(imgElement.dataset.step || '0', 10);
-            const rowNum = imgElement.dataset.row || '';
-            const nameAr = imgElement.dataset.ar || '';
-            const nameEn = imgElement.dataset.en || '';
-            
-            const nameArUnderscore = nameAr.replace(/\s+/g, '_');
-            const nameEnUnderscore = nameEn.replace(/\s+/g, '_');
-
-            const attempts = [
-                `images/${rowNum}.jpg`,
-                `images/${rowNum}.png`,
-                `images/${encodeURIComponent(nameAr)}.jpg`,
-                `images/${encodeURIComponent(nameAr)}.png`,
-                `images/${encodeURIComponent(nameArUnderscore)}.jpg`,
-                `images/${encodeURIComponent(nameEn)}.jpg`,
-                `images/${encodeURIComponent(nameEn)}.png`,
-                `images/${encodeURIComponent(nameEnUnderscore)}.jpg`,
-                `images/${encodeURIComponent(nameEnUnderscore)}.png`,
-                'images/logooo.png'
-            ];
-
-            if (step < attempts.length) {
-                imgElement.dataset.step = step + 1;
-                imgElement.src = attempts[step];
-            } else {
-                imgElement.src = 'images/logooo.png';
-            }
+            imgElement.onerror = null;
+            imgElement.src = 'images/logooo.png';
         }
 
-        function preloadAllMenuImages() {
-            if (!menuData || menuData.length === 0) return;
-            menuData.forEach(cat => {
-                if (cat.items) {
-                    cat.items.forEach(item => {
-                        if (item.img) {
-                            const preImg = new Image();
-                            preImg.src = item.img;
-                        }
-                    });
-                }
-            });
-        }
-
-        // بدء التشغيل الفوري المتوافق مع iOS
         function initializeAppCore() {
             applyLanguageSettings();
             startCreativeCounter();
@@ -2431,7 +2390,6 @@
             return result;
         }
 
-        // جلب البيانات مع مانع كاش فوري متوافق 100% مع iOS Safari
         async function fetchMenuFromGoogleSheet() {
             try {
                 const cacheBuster = `_ts=${Date.now()}_${Math.floor(Math.random()*100000)}`;
@@ -2513,7 +2471,6 @@
                     renderCategories();
                     renderMenu(true);
                     updateAllCardsDOMStatus();
-                    preloadAllMenuImages();
                 }
             } catch (err) {
                 console.error("Error loading menu:", err);
@@ -2552,13 +2509,8 @@
                 } else {
                     const firstItem = cat.items && cat.items[0] ? cat.items[0] : null;
                     const firstItemImg = firstItem ? firstItem.img : 'images/logooo.png';
-                    const rowNum = firstItem ? firstItem.sheetRow : '';
-                    const arName = firstItem ? firstItem.nameAr : '';
-                    const enName = firstItem ? firstItem.nameEn : '';
 
-                    imgBox.innerHTML = `<img src="${firstItemImg}" alt="${cat.catAr}" 
-                        data-row="${rowNum}" data-ar="${arName}" data-en="${enName}" data-step="0"
-                        onerror="handleSmartImageFallback(this)">`;
+                    imgBox.innerHTML = `<img src="${firstItemImg}" alt="${cat.catAr}" loading="lazy" decoding="async" onerror="handleSmartImageFallback(this)">`;
                 }
 
                 const label = document.createElement('span');
@@ -2649,12 +2601,7 @@
 
                         card.innerHTML = `
                             <div class="item-img-box" onclick="openImageLightbox(this.querySelector('img').src, '${displayName.replace(/'/g, "\\'")}', '${priceForLightbox}')" title="${currentLang==='ar'?'اضغط لتكبير الصورة':'Click to view photo'}">
-                                <img src="${item.img}" alt="${displayName}" 
-                                     data-row="${item.sheetRow}" 
-                                     data-ar="${item.nameAr || ''}" 
-                                     data-en="${item.nameEn || ''}" 
-                                     data-step="0"
-                                     onerror="handleSmartImageFallback(this)">
+                                <img src="${item.img}" alt="${displayName}" loading="lazy" decoding="async" onerror="handleSmartImageFallback(this)">
                             </div>
                             <div class="food-info">
                                 <div>
@@ -2673,7 +2620,6 @@
                     });
                 }
 
-                // ضمان التوافق مع سفاري
                 catContainer.style.display = (cIdx === currentActiveCatIndex) ? 'block' : 'none';
             });
         }
@@ -2946,7 +2892,7 @@
                 const sizeBadge = item.sizeLabel ? ` <span style="font-size:0.75rem; color:var(--accent); font-weight:800;">(${item.sizeLabel})</span>` : '';
 
                 itemEl.innerHTML = `
-                    <img src="${item.img}" class="cart-item-img" alt="${displayName}" onerror="this.src='images/logooo.png'">
+                    <img src="${item.img}" class="cart-item-img" alt="${displayName}" onerror="handleSmartImageFallback(this)">
                     <div class="cart-item-info">
                         <div class="cart-item-name">${displayName}${sizeBadge}</div>
                         ${addonsText ? `<div class="cart-item-addons-text">+ ${currentLang==='ar'?'إضافات:':'Extras:'} ${addonsText}</div>` : ''}
