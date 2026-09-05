@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <!-- ميتا تاج صارم لمنع تخزين صفحات HTML في الكاش -->
+    <!-- ميتا تاج صارم جداً لمنع تخزين الكاش في الآيفون وجميع المتصفحات -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
@@ -1694,7 +1694,7 @@
         </div>
     </div>
 
-    <!-- كود إعدادات Firebase -->
+    <!-- كود إعدادات Firebase المحدث -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, onSnapshot, addDoc, deleteDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -1723,43 +1723,6 @@
 
     <script>
         const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTsz0Q8FatsNvh7u2MGFmJpXDuXjC6HD23Vt1VlEnS2EX-dElZco3evuNUXKZSe3-rLmOabuU1NTiyO/pub?output=csv";
-        const IMAGE_CACHE_NAME = 'storia-images-cache-v1';
-
-        // محرك الكاش الدائم للصور
-        async function loadCachedImage(imgElement, initialSrc) {
-            if (!('caches' in window)) {
-                imgElement.src = initialSrc;
-                return;
-            }
-
-            try {
-                const cache = await caches.open(IMAGE_CACHE_NAME);
-                const cachedResponse = await cache.match(initialSrc);
-                
-                if (cachedResponse) {
-                    const blob = await cachedResponse.blob();
-                    imgElement.src = URL.createObjectURL(blob);
-                } else {
-                    imgElement.src = initialSrc;
-                }
-            } catch(e) {
-                imgElement.src = initialSrc;
-            }
-        }
-
-        async function saveImageToPermanentCache(url) {
-            if (!('caches' in window) || !url || url.startsWith('data:') || url.startsWith('blob:')) return;
-            try {
-                const cache = await caches.open(IMAGE_CACHE_NAME);
-                const match = await cache.match(url);
-                if (!match) {
-                    const response = await fetch(url);
-                    if (response.ok) {
-                        await cache.put(url, response.clone());
-                    }
-                }
-            } catch(e) {}
-        }
 
         const soupAddons = [
             { name: "دجاج", nameEn: "Chicken", price: 64.95 }, { name: "مشروم", nameEn: "Mushroom", price: 29.95 }, { name: "ذرة", nameEn: "Corn", price: 29.95 },
@@ -2192,6 +2155,7 @@
             const splashScreen = document.getElementById('splash-screen');
             let count = 0;
             
+            // عداد 4 ثوانٍ بالضبط
             const timer = setInterval(() => {
                 count += 1;
                 if (count <= 100) {
@@ -2263,6 +2227,7 @@
             if (modal) modal.style.display = 'none';
         }
 
+        // دالة الفالباك المعدلة بدون وضع أي لوجو نهائياً
         function handleSmartImageFallback(imgElement) {
             const step = parseInt(imgElement.dataset.step || '0', 10);
             const rowNum = imgElement.dataset.row || '';
@@ -2279,8 +2244,9 @@
 
             if (step < attempts.length) {
                 imgElement.dataset.step = step + 1;
-                loadCachedImage(imgElement, attempts[step]);
+                imgElement.src = attempts[step];
             } else {
+                // إخفاء الصورة في حالة عدم وجودها ليظل المربع فارغاً تماماً كما طلبت
                 imgElement.style.opacity = '0';
                 imgElement.onerror = null;
             }
@@ -2565,15 +2531,7 @@
                     const firstItem = cat.items && cat.items[0] ? cat.items[0] : null;
                     const firstItemImg = firstItem ? firstItem.img : '';
 
-                    const imgTag = document.createElement('img');
-                    imgTag.alt = cat.catAr;
-                    imgTag.loading = "lazy";
-                    imgTag.decoding = "async";
-                    imgTag.onload = () => saveImageToPermanentCache(firstItemImg);
-                    imgTag.onerror = () => { imgTag.style.display = 'none'; };
-                    loadCachedImage(imgTag, firstItemImg);
-
-                    imgBox.appendChild(imgTag);
+                    imgBox.innerHTML = `<img src="${firstItemImg}" alt="${cat.catAr}" loading="lazy" decoding="async" onerror="this.style.display='none'">`;
                 }
 
                 const label = document.createElement('span');
@@ -2664,15 +2622,13 @@
 
                         card.innerHTML = `
                             <div class="item-img-box" onclick="openImageLightbox(this.querySelector('img').src, '${displayName.replace(/'/g, "\\'")}', '${priceForLightbox}')" title="${currentLang==='ar'?'اضغط لتكبير الصورة':'Click to view photo'}">
-                                <img src="" alt="${displayName}" 
+                                <img src="${item.img}" alt="${displayName}" 
                                      data-row="${item.sheetRow}" 
                                      data-ar="${item.nameAr || ''}" 
                                      data-en="${item.nameEn || ''}" 
                                      data-step="0"
-                                     data-original-src="${item.img}"
                                      loading="lazy"
                                      decoding="async"
-                                     onload="saveImageToPermanentCache('${item.img}')"
                                      onerror="handleSmartImageFallback(this)">
                             </div>
                             <div class="food-info">
@@ -2689,11 +2645,6 @@
                             </div>
                         `;
                         catContainer.appendChild(card);
-
-                        const cardImg = card.querySelector('.item-img-box img');
-                        if (cardImg) {
-                            loadCachedImage(cardImg, item.img);
-                        }
                     });
                 }
 
@@ -2968,17 +2919,8 @@
                 const displayName = item.itemRef ? getLocalizedItemName(item.itemRef) : item.name;
                 const sizeBadge = item.sizeLabel ? ` <span style="font-size:0.75rem; color:var(--accent); font-weight:800;">(${item.sizeLabel})</span>` : '';
 
-                const imgTag = document.createElement('img');
-                imgTag.className = 'cart-item-img';
-                imgTag.alt = displayName;
-                imgTag.onerror = () => { imgTag.style.display = 'none'; };
-                if (item.img) {
-                    loadCachedImage(imgTag, item.img);
-                } else {
-                    imgTag.style.display = 'none';
-                }
-
                 itemEl.innerHTML = `
+                    <img src="${item.img}" class="cart-item-img" alt="${displayName}" onerror="this.style.display='none'">
                     <div class="cart-item-info">
                         <div class="cart-item-name">${displayName}${sizeBadge}</div>
                         ${addonsText ? `<div class="cart-item-addons-text">+ ${currentLang==='ar'?'إضافات:':'Extras:'} ${addonsText}</div>` : ''}
@@ -2986,7 +2928,6 @@
                     </div>
                     <div class="remove-btn" onclick="removeFromCart(${idx})">${t.removeText}</div>
                 `;
-                itemEl.insertBefore(imgTag, itemEl.firstChild);
                 listEl.appendChild(itemEl);
             });
 
