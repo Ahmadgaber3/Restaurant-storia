@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <!-- ميتا تاج صارم جداً لمنع تخزين الكاش في الآيفون وجميع المتصفحات -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="-1">
     <title>Storia Restaurant & Cafe</title>
+    
+    <!-- تحميل مسبق لصورة الخلفية واللوجو لتظهر فوراً بدون تأخير -->
+    <link rel="preload" as="image" href="images/splash-bg.jpg">
+    <link rel="preload" as="image" href="images/logooo.png">
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1b4d3e">
@@ -64,15 +64,15 @@
 
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: radial-gradient(circle, rgba(27, 77, 62, 0.2) 0%, rgba(0, 0, 0, 0.2) 100%), url('images/splash-bg.jpg');
+            background-color: #1b4d3e;
+            background-image: radial-gradient(circle, rgba(27, 77, 62, 0.3) 0%, rgba(0, 0, 0, 0.3) 100%), url('images/splash-bg.jpg');
             background-size: cover;
             background-position: center center;
             background-repeat: no-repeat;
             z-index: 9999;
             display: flex; justify-content: center; align-items: flex-end;
             padding: 0 20px 90px 20px;
-            transition: 0.5s ease-out;
-            filter: brightness(105%) contrast(100%);
+            transition: opacity 0.4s ease-out, visibility 0.4s ease-out;
         }
         
         .loader-content { 
@@ -90,7 +90,7 @@
             width: 100%; 
             max-width: 260px; 
             height: 8px; 
-            background: rgba(0, 0, 0, 0.15); 
+            background: rgba(0, 0, 0, 0.25); 
             margin: 0 auto 15px auto; 
             border-radius: 10px; 
             overflow: hidden; 
@@ -101,7 +101,7 @@
             display: block; 
             width: 0%; 
             height: 100%; 
-            background: var(--accent); 
+            background: #52b79a; 
             border-radius: 10px;
             transition: width 0.04s linear;
         }
@@ -127,7 +127,7 @@
             font-size: 1.35rem;
         }
         
-        .splash-hidden { transform: translateY(-100%); opacity: 0; pointer-events: none; visibility: hidden; }
+        .splash-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 
         .welcome-order-type-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -178,7 +178,6 @@
         }
         .welcome-choice-icon { font-size: 1.6rem; }
 
-        /* شريط توجيه الآيفون */
         .ios-inapp-banner {
             position: fixed;
             top: 0;
@@ -918,7 +917,6 @@
             font-size: 1.05rem; font-weight: 900; color: var(--main-text); margin-bottom: 4px;
         }
 
-        /* فوتر المطعم المحدث */
         .restaurant-footer { 
             padding: 26px 16px 30px 16px; 
             text-align: center; 
@@ -1336,7 +1334,7 @@
             </div>
             
             <div class="header-logo-container">
-                <img src="images/logooo.png" class="header-logo" alt="Storia Cafe" onerror="this.src='https://www.storia-eg.com/images/logo.png'">
+                <img src="images/logooo.png" class="header-logo" alt="Storia Cafe" onerror="this.src='images/logooo.png'">
             </div>
             
             <div class="header-left-actions">
@@ -1696,7 +1694,7 @@
         </div>
     </div>
 
-    <!-- كود إعدادات Firebase المحدث -->
+    <!-- كود إعدادات Firebase بدون تعطيل الجافاسكربت على سفاري -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, onSnapshot, addDoc, deleteDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -1769,7 +1767,6 @@
             { id: 'rew_5', title: 'وجبة رئيسية أو مكس جريل 🥩', titleEn: 'Main Dish / Mix Grill 🥩', cost: 800 }
         ];
 
-        // قراءة آمنة لـ localStorage تمنع تعليق Safari في نمط التصفح الخاص
         function safeGetStorage(key, defaultVal) {
             try {
                 const val = localStorage.getItem(key);
@@ -1905,15 +1902,6 @@
                 sizeConfirmBtn: '🛒 Confirm & Add to Cart'
             }
         };
-
-        // مسح الـ Cache القديم نهائياً وإلغاء تسجيل أي Service Worker معلق في سفاري
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(registrations => {
-                for (let registration of registrations) {
-                    registration.update();
-                }
-            }).catch(() => {});
-        }
 
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
@@ -2061,7 +2049,7 @@
             safeSetStorage('storia_lang', currentLang);
             applyLanguageSettings();
             renderCategories();
-            renderMenu(true);
+            updateLanguageInDOM(); // تحديث النصوص والأسعار فوراً دون تدمير الصور وإعادة تحميلها
             renderCartItems();
             renderLoyaltyRewardsUI();
         }
@@ -2160,7 +2148,7 @@
             let count = 0;
             
             const timer = setInterval(() => {
-                count += 2;
+                count += 4;
                 if (count <= 100) {
                     if (counterEl) counterEl.innerText = count;
                     if (barFill) barFill.style.width = count + '%';
@@ -2168,11 +2156,11 @@
                     clearInterval(timer);
                     if (splashScreen) {
                         splashScreen.classList.add('splash-hidden');
-                        setTimeout(() => { splashScreen.style.display = 'none'; }, 500);
+                        setTimeout(() => { splashScreen.style.display = 'none'; }, 400);
                         showWelcomeModal();
                     }
                 }
-            }, 30);
+            }, 25);
         }
 
         function showWelcomeModal() {
@@ -2195,7 +2183,7 @@
 
             currentActiveCatIndex = 0;
             renderCategories();
-            renderMenu(true);
+            renderMenu();
         }
 
         function setInitialOrderTypeUI(type) {
@@ -2227,54 +2215,39 @@
             if (modal) modal.style.display = 'none';
         }
 
+        // مسارات Fallback سريعة جداً ومباشرة دون تأخير في الطلب
         function handleSmartImageFallback(imgElement) {
-            const step = parseInt(imgElement.dataset.step || '0', 10);
-            const rowNum = imgElement.dataset.row || '';
-            const nameAr = imgElement.dataset.ar || '';
-            const nameEn = imgElement.dataset.en || '';
-            
-            const nameArUnderscore = nameAr.replace(/\s+/g, '_');
-            const nameEnUnderscore = nameEn.replace(/\s+/g, '_');
-
-            const attempts = [
-                `images/${rowNum}.jpg`,
-                `images/${rowNum}.png`,
-                `images/${encodeURIComponent(nameAr)}.jpg`,
-                `images/${encodeURIComponent(nameAr)}.png`,
-                `images/${encodeURIComponent(nameArUnderscore)}.jpg`,
-                `images/${encodeURIComponent(nameEn)}.jpg`,
-                `images/${encodeURIComponent(nameEn)}.png`,
-                `images/${encodeURIComponent(nameEnUnderscore)}.jpg`,
-                `images/${encodeURIComponent(nameEnUnderscore)}.png`,
-                'images/logooo.png'
-            ];
-
-            if (step < attempts.length) {
-                imgElement.dataset.step = step + 1;
-                imgElement.src = attempts[step];
-            } else {
+            if (imgElement.dataset.failedOnce === 'true') {
                 imgElement.src = 'images/logooo.png';
+                return;
             }
+            imgElement.dataset.failedOnce = 'true';
+            const rowNum = imgElement.dataset.row || '';
+            imgElement.src = `images/${rowNum}.jpg`;
+            imgElement.onerror = () => {
+                imgElement.src = 'images/logooo.png';
+            };
         }
 
-        function preloadAllMenuImages() {
-            if (!menuData || menuData.length === 0) return;
-            menuData.forEach(cat => {
-                if (cat.items) {
-                    cat.items.forEach(item => {
-                        if (item.img) {
-                            const preImg = new Image();
-                            preImg.src = item.img;
-                        }
-                    });
-                }
-            });
-        }
-
-        // بدء التشغيل الفوري المتوافق مع iOS
         function initializeAppCore() {
             applyLanguageSettings();
             startCreativeCounter();
+
+            // فحص كاش المنيو المحلي للظهور الفوري بدون انتظار ثانية واحدة
+            const cachedMenu = safeGetStorage('storia_cached_menu_data', null);
+            if (cachedMenu) {
+                try {
+                    menuData = JSON.parse(cachedMenu);
+                    if (menuData && menuData.length > 0) {
+                        const loadingMsg = document.getElementById('menuLoadingMsg');
+                        if (loadingMsg) loadingMsg.remove();
+                        renderCategories();
+                        renderMenu();
+                        updateAllCardsDOMStatus();
+                    }
+                } catch(e) {}
+            }
+
             fetchMenuFromGoogleSheet();
             renderLoyaltyRewardsUI();
             if (activeUserPhone) {
@@ -2431,13 +2404,9 @@
             return result;
         }
 
-        // جلب البيانات مع مانع كاش فوري متوافق 100% مع iOS Safari
         async function fetchMenuFromGoogleSheet() {
             try {
-                const cacheBuster = `_ts=${Date.now()}_${Math.floor(Math.random()*100000)}`;
-                const freshUrl = GOOGLE_SHEET_CSV_URL + (GOOGLE_SHEET_CSV_URL.includes('?') ? '&' : '?') + cacheBuster;
-                
-                const response = await fetch(freshUrl);
+                const response = await fetch(GOOGLE_SHEET_CSV_URL);
                 if (!response.ok) throw new Error("Failed to fetch google sheet");
                 
                 const csvText = await response.text();
@@ -2507,20 +2476,17 @@
 
                 if (parsedMenu.length > 0) {
                     menuData = parsedMenu;
+                    safeSetStorage('storia_cached_menu_data', JSON.stringify(menuData));
+                    
                     const loadingMsg = document.getElementById('menuLoadingMsg');
                     if (loadingMsg) loadingMsg.remove();
                     
                     renderCategories();
-                    renderMenu(true);
+                    renderMenu();
                     updateAllCardsDOMStatus();
-                    preloadAllMenuImages();
                 }
             } catch (err) {
                 console.error("Error loading menu:", err);
-                const loadingMsg = document.getElementById('menuLoadingMsg');
-                if (loadingMsg) {
-                    loadingMsg.innerHTML = 'حدث خطأ في تحميل الأصناف، يرجى إعادة تحديث الصفحة أو التأكد من اتصال الإنترنت.';
-                }
             }
         }
 
@@ -2553,11 +2519,9 @@
                     const firstItem = cat.items && cat.items[0] ? cat.items[0] : null;
                     const firstItemImg = firstItem ? firstItem.img : 'images/logooo.png';
                     const rowNum = firstItem ? firstItem.sheetRow : '';
-                    const arName = firstItem ? firstItem.nameAr : '';
-                    const enName = firstItem ? firstItem.nameEn : '';
 
                     imgBox.innerHTML = `<img src="${firstItemImg}" alt="${cat.catAr}" 
-                        data-row="${rowNum}" data-ar="${arName}" data-en="${enName}" data-step="0"
+                        data-row="${rowNum}"
                         onerror="handleSmartImageFallback(this)">`;
                 }
 
@@ -2577,19 +2541,15 @@
                 el.classList.add('active');
                 el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
             }
-            renderMenu(false);
+            renderMenu();
         }
 
-        function renderMenu(forceRebuild = false) {
+        function renderMenu() {
             const menuList = document.getElementById('menuList');
             if (!menuList) return;
             const t = translations[currentLang] || translations.ar;
             const availableCategories = getFilteredCategories();
             if (availableCategories.length === 0) return;
-
-            if (forceRebuild) {
-                menuList.innerHTML = '';
-            }
 
             availableCategories.forEach((cat, cIdx) => {
                 let catContainer = document.getElementById(`cat_section_${cIdx}`);
@@ -2651,9 +2611,6 @@
                             <div class="item-img-box" onclick="openImageLightbox(this.querySelector('img').src, '${displayName.replace(/'/g, "\\'")}', '${priceForLightbox}')" title="${currentLang==='ar'?'اضغط لتكبير الصورة':'Click to view photo'}">
                                 <img src="${item.img}" alt="${displayName}" 
                                      data-row="${item.sheetRow}" 
-                                     data-ar="${item.nameAr || ''}" 
-                                     data-en="${item.nameEn || ''}" 
-                                     data-step="0"
                                      onerror="handleSmartImageFallback(this)">
                             </div>
                             <div class="food-info">
@@ -2673,8 +2630,51 @@
                     });
                 }
 
-                // ضمان التوافق مع سفاري
                 catContainer.style.display = (cIdx === currentActiveCatIndex) ? 'block' : 'none';
+            });
+        }
+
+        // تحديث النصوص فقط دون إعادة رسم الـ DOM لحماية الصور من الوميض والتأخير
+        function updateLanguageInDOM() {
+            const t = translations[currentLang] || translations.ar;
+            const availableCategories = getFilteredCategories();
+            if (!availableCategories) return;
+
+            availableCategories.forEach((cat, cIdx) => {
+                cat.items.forEach(item => {
+                    const card = document.getElementById(`card_${item.id}`);
+                    if (!card) return;
+
+                    const nameEl = card.querySelector('.food-name');
+                    if (nameEl) nameEl.innerText = getLocalizedItemName(item);
+
+                    const descEl = card.querySelector('.food-desc');
+                    if (descEl) descEl.innerText = getLocalizedItemDesc(item);
+
+                    const priceEl = card.querySelector('.food-price');
+                    const hasSizes = item.priceInfo && item.priceInfo.hasSizes;
+                    if (priceEl) {
+                        if (hasSizes) {
+                            const lPrice = applyMarkup(item.priceInfo.sizes.large);
+                            const mPrice = applyMarkup(item.priceInfo.sizes.medium);
+                            priceEl.innerHTML = currentLang === 'ar' ? 
+                                `كبير: ${lPrice.toFixed(2)}<br>وسط: ${mPrice.toFixed(2)} ${t.currency}` :
+                                `L: ${lPrice.toFixed(2)}<br>M: ${mPrice.toFixed(2)} ${t.currency}`;
+                        } else {
+                            const finalPrice = applyMarkup(item.price);
+                            priceEl.innerText = `${finalPrice.toFixed(2)} ${t.currency}`;
+                        }
+                    }
+
+                    const isEnabled = itemStatusMap[item.id] !== false;
+                    const btn = document.getElementById(`btn_${item.id}`);
+                    if (btn) {
+                        btn.innerText = isEnabled ? (hasSizes ? t.chooseSizeBtn : t.orderNowBtn) : t.unavailableBtn;
+                    }
+
+                    const addonsBtn = document.getElementById(`addons_btn_${item.id}`);
+                    if (addonsBtn) addonsBtn.innerText = t.addonsBtnLabel;
+                });
             });
         }
 
@@ -2692,7 +2692,6 @@
                 return;
             }
 
-            const t = translations[currentLang] || translations.ar;
             const displayName = getLocalizedItemName(item);
             const markedPrice = applyMarkup(item.price);
 
@@ -2813,7 +2812,6 @@
                     row.className = 'simple-addon-item';
                     row.onclick = () => toggleAddonSelection(idx, ad, row);
                     const adName = currentLang === 'ar' ? ad.name : (ad.nameEn || ad.name);
-                    
                     const markedAddonPrice = applyMarkup(ad.price);
 
                     row.innerHTML = `
@@ -3288,7 +3286,7 @@
                         safeSetStorage('storia_price_markup', priceMarkupPercentage);
                         const inp = document.getElementById('adminMarkupPercentInput');
                         if (inp) inp.value = priceMarkupPercentage;
-                        renderMenu(true);
+                        updateLanguageInDOM();
                         updateAllCardsDOMStatus();
                         renderCartItems();
                     }
@@ -3411,7 +3409,7 @@
                 }
             }
 
-            renderMenu(true);
+            updateLanguageInDOM();
             updateAllCardsDOMStatus();
             renderCartItems();
             alert(currentLang === 'ar' ? `تم تطبيق نسبة ${priceMarkupPercentage}% على جميع الأسعار والإضافات وتحديثها فوراً عند كل الزبائن!` : `Successfully applied ${priceMarkupPercentage}% markup across all items & add-ons for all customers!`);
