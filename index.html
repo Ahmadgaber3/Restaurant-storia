@@ -2226,16 +2226,17 @@
             if (modal) modal.style.display = 'none';
         }
 
-        // فحص بديل مباشر وسريع: يجرب الامتداد الآخر للصورة الإنجليزية فوراً بدون طلبات عشوائية
+        // فحص بديل مباشر وسريع: يجرب الاسم العربي بمسافات أو شرطة تحتية أو png فوراً
         function handleSmartImageFallback(imgElement) {
             const step = parseInt(imgElement.dataset.step || '0', 10);
-            const enName = (imgElement.dataset.en || '').trim();
-            const cleanEn = enName.replace(/\s+/g, '_');
+            const arName = (imgElement.dataset.ar || '').trim();
+            const cleanAr = arName.replace(/\s+/g, '_');
 
             const attempts = [
-                `images/${encodeURIComponent(cleanEn)}.png`,
-                `images/${encodeURIComponent(enName)}.png`,
-                `images/${encodeURIComponent(cleanEn)}.jpeg`
+                `images/${encodeURIComponent(cleanAr)}.jpg`,
+                `images/${encodeURIComponent(arName)}.png`,
+                `images/${encodeURIComponent(cleanAr)}.png`,
+                `images/${encodeURIComponent(arName)}.jpeg`
             ];
 
             if (step < attempts.length) {
@@ -2438,11 +2439,10 @@
                     const sheetRowNumber = i + 1;
                     const stableId = 'item_' + sheetRowNumber;
 
-                    // سحب الصورة بالاسم الإنجليزي من الشيت مباشرة (سواء بمسافة أو underscore)
-                    const cleanEnName = nameEn.replace(/\s+/g, '_');
-                    let img = `images/${encodeURIComponent(cleanEnName)}.jpg`;
+                    // الاعتماد الصريح على الاسم العربي فقط للصورة
+                    let img = `images/${encodeURIComponent(nameAr)}.jpg`;
 
-                    // إذا وُجد اسم أو رابط مخصص في خانة الصورة بالشيت يعتمد عليه مباشرة
+                    // إذا وُجد اسم أو رابط مخصص في خانة الصورة بالشيت يعتمد عليه
                     if (row[4] && row[4].trim() !== '') {
                         let customImg = row[4].trim().replace(/^\[|\]$/g, '');
                         if (customImg.startsWith('http') || customImg.startsWith('images/')) {
@@ -2528,9 +2528,9 @@
                 } else {
                     const firstItem = cat.items && cat.items[0] ? cat.items[0] : null;
                     const firstItemImg = firstItem ? firstItem.img : '';
-                    const enName = firstItem ? firstItem.nameEn : '';
+                    const arName = firstItem ? firstItem.nameAr : '';
 
-                    imgBox.innerHTML = `<img src="${firstItemImg}" alt="${cat.catAr}" data-en="${enName}" data-step="0" loading="lazy" decoding="async" onerror="handleSmartImageFallback(this)">`;
+                    imgBox.innerHTML = `<img src="${firstItemImg}" alt="${cat.catAr}" data-ar="${arName}" data-step="0" loading="lazy" decoding="async" onerror="handleSmartImageFallback(this)">`;
                 }
 
                 const label = document.createElement('span');
@@ -2622,8 +2622,7 @@
                         card.innerHTML = `
                             <div class="item-img-box" onclick="openImageLightbox(this.querySelector('img').src, '${displayName.replace(/'/g, "\\'")}', '${priceForLightbox}')" title="${currentLang==='ar'?'اضغط لتكبير الصورة':'Click to view photo'}">
                                 <img src="${item.img}" alt="${displayName}" 
-                                     data-row="${item.sheetRow}" 
-                                     data-en="${item.nameEn || ''}" 
+                                     data-ar="${item.nameAr || ''}" 
                                      data-step="0"
                                      loading="lazy"
                                      decoding="async"
@@ -3128,7 +3127,7 @@
 
         function closeAdminPanel() { document.getElementById('adminModal').style.display = 'none'; }
 
-        // التحقق الصارم من كلمة المرور عبر فايربيس فقط دون أي كلمات افتراضية قديمة
+        // التحقق الحصري من كلمة المرور عبر فايربيس فقط
         async function verifyAdminPassword() {
             const pass = document.getElementById('adminPassInput').value.trim();
             if (!pass) return alert(currentLang === 'ar' ? 'من فضلك أدخل كلمة المرور' : 'Please enter password');
@@ -3145,12 +3144,10 @@
                 } catch(e) {}
             }
 
-            // إذا لم يتم حفظ كلمة مرور في السيرفر سابقاً، تكون الافتراضية لأول مرة فقط
             if (!savedPass) {
                 savedPass = 'storia2026';
             }
 
-            // فحص مطابق لكلمة السر الرسمية فقط
             if (pass === savedPass) {
                 document.getElementById('adminAuthView').style.display = 'none';
                 document.getElementById('adminDashboardView').style.display = 'block';
