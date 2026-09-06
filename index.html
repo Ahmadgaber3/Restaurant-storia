@@ -1437,7 +1437,7 @@
         </div>
     </div>
 
-    <!-- نافذة تقييم الأوردر البسيطة والأنيقة (نفس طابع نافذة الإضافة للسلة) -->
+    <!-- نافذة تقييم الأوردر البسيطة والأنيقة (نفس طابع بطاقة الإضافة للسلة) -->
     <div class="order-review-modal" id="orderReviewModal">
         <div class="order-review-card">
             <div class="review-icon-circle">
@@ -1960,6 +1960,7 @@
 
         let userSelectedOrderRating = 5;
         let pendingReviewOrderData = null;
+        let reviewCheckInterval = null;
 
         let restaurantInfo = { 
             orderPhone: '201014144144', 
@@ -2348,9 +2349,9 @@
                         splashScreen.classList.add('splash-hidden');
                         setTimeout(() => { splashScreen.style.display = 'none'; }, 500);
                         
-                        // فحص إذا كان هناك تقييم مستحق بعد دقيقة واحدة للتجربة
-                        const shouldShowReview = checkAndPromptOrderReview();
-                        if (!shouldShowReview) {
+                        // فحص أولي لظهور التقييم
+                        const showed = checkAndPromptOrderReview();
+                        if (!showed) {
                             showWelcomeModal();
                         }
                     }
@@ -2413,7 +2414,6 @@
             if (modal) modal.style.display = 'none';
         }
 
-        // فحص بديل مباشر وسريع: يجرب الاسم العربي بمسافات أو شرطة تحتية أو png فوراً
         function handleSmartImageFallback(imgElement) {
             const step = parseInt(imgElement.dataset.step || '0', 10);
             const arName = (imgElement.dataset.ar || '').trim();
@@ -2435,21 +2435,21 @@
             }
         }
 
-        /* فحص التقييم: تم ضبط الوقت هنا إلى دقيقة واحدة (1 minute) للتجربة الآن */
+        /* فحص التقييم: يتم الفحص التلقائي المستمر كل 5 ثوانٍ وإظهاره بمجرد مرور 60 ثانية (1 دقيقة) */
         function checkAndPromptOrderReview() {
             try {
                 const rawOrderData = localStorage.getItem('storia_last_order_review');
                 if (!rawOrderData) return false;
 
                 const orderData = JSON.parse(rawOrderData);
-                if (!orderData || orderData.reviewed) return false;
+                if (!orderData || orderData.reviewed === true) return false;
 
                 const now = Date.now();
                 const orderTime = orderData.timestamp || 0;
-                const timeDiffMinutes = (now - orderTime) / (1000 * 60);
+                const elapsedSeconds = (now - orderTime) / 1000;
 
-                // مضبوط على دقيقة واحدة فقط لتجربتها حالاً
-                if (timeDiffMinutes >= 1) {
+                // مرور 60 ثانية (دقيقة واحدة للتجربة)
+                if (elapsedSeconds >= 60) {
                     pendingReviewOrderData = orderData;
                     displayOrderReviewModal(orderData);
                     return true;
@@ -2460,15 +2460,29 @@
             return false;
         }
 
+        // تشغيل مؤقت يفحص التقييم كل 5 ثوانٍ لضمان ظهوره للعميل وهو داخل التطبيق فور مرور الدقيقة
+        function startOrderReviewWatcher() {
+            if (reviewCheckInterval) clearInterval(reviewCheckInterval);
+            reviewCheckInterval = setInterval(() => {
+                const reviewModal = document.getElementById('orderReviewModal');
+                if (reviewModal && reviewModal.style.display === 'flex') return;
+                checkAndPromptOrderReview();
+            }, 5000);
+        }
+
         function displayOrderReviewModal(orderData) {
             const modal = document.getElementById('orderReviewModal');
             const itemsListEl = document.getElementById('reviewOrderItemsList');
             if (!modal) return;
 
+            // إخفاء نافذة الترحيب مؤقتاً لتظهر نافذة التقييم بوضوح
+            const welcomeModal = document.getElementById('welcomeOrderModal');
+            if (welcomeModal) welcomeModal.style.display = 'none';
+
             if (itemsListEl && orderData.items && orderData.items.length > 0) {
                 itemsListEl.innerText = orderData.items.join(' ، ');
             } else if (itemsListEl) {
-                itemsListEl.innerText = orderData.summary || 'وجبات ومشروبات ستوريا';
+                itemsListEl.innerText = 'وجبات ومشروبات ستوريا';
             }
 
             setOrderRating(5);
@@ -2532,7 +2546,6 @@
                             timestamp: Date.now()
                         });
 
-                        // تحديث إحصائيات التقييم الإجمالي في فايربيس
                         const statsRef = doc(window.db, "settings", "overall_rating");
                         const snap = await getDoc(statsRef);
                         let totalSum = userSelectedOrderRating;
@@ -2567,6 +2580,11 @@
         function dismissOrderReview() {
             const modal = document.getElementById('orderReviewModal');
             if (modal) modal.style.display = 'none';
+            if (pendingReviewOrderData) {
+                // تأجيل ظهورها 5 دقائق حتى لا تزعجه فورا
+                pendingReviewOrderData.timestamp = Date.now() + (5 * 60 * 1000);
+                safeSetStorage('storia_last_order_review', JSON.stringify(pendingReviewOrderData));
+            }
             showWelcomeModal();
         }
 
@@ -2599,6 +2617,7 @@
         function initializeAppCore() {
             applyLanguageSettings();
             startCreativeCounter();
+            startOrderReviewWatcher();
             fetchMenuFromGoogleSheet();
             renderLoyaltyRewardsUI();
             if (activeUserPhone) {
@@ -2788,10 +2807,8 @@
                     const sheetRowNumber = i + 1;
                     const stableId = 'item_' + sheetRowNumber;
 
-                    // الاعتماد الصريح على الاسم العربي فقط للصورة
                     let img = `images/${encodeURIComponent(nameAr)}.jpg`;
 
-                    // إذا وُجد اسم أو رابط مخصص في خانة الصورة بالشيت يعتمد عليه
                     if (row[4] && row[4].trim() !== '') {
                         let customImg = row[4].trim().replace(/^\[|\]$/g, '');
                         if (customImg.startsWith('http') || customImg.startsWith('images/')) {
@@ -3332,8 +3349,19 @@
             orderText += `*${currentLang==='ar'?'الإجمالي الكلي:':'Total Amount:'}* ${currentTotal.toFixed(2)} ${t.currency}\n`;
             orderText += `*🎁 ${currentLang==='ar'?'النقاط المكتسبة:':'Earned Points:'}* +${earnedPts} ${t.ptsUnit}\n`;
 
+            // حفظ بيانات التقييم بشكل فوري ومباشر في الـ LocalStorage أولاً قبل أي عملية
+            const tempOrderId = 'ord_' + Date.now();
+            const reviewData = {
+                orderId: tempOrderId,
+                userName: name,
+                userPhone: phone,
+                items: itemsShortNames,
+                timestamp: Date.now(),
+                reviewed: false
+            };
+            safeSetStorage('storia_last_order_review', JSON.stringify(reviewData));
+
             try {
-                let savedOrderId = 'ord_' + Date.now();
                 if (window.db && window.firebaseModules) {
                     const { collection, addDoc, doc, getDoc, setDoc } = window.firebaseModules;
                     const orderDoc = await addDoc(collection(window.db, "orders"), {
@@ -3348,10 +3376,13 @@
                         timestamp: Date.now()
                     });
                     
-                    savedOrderId = orderDoc.id;
                     safeSetStorage('storia_active_order_id', orderDoc.id);
                     safeSetStorage('storia_active_user_name', name);
                     showClientHeaderChatButton();
+
+                    // تحديث معرف الطلب الحقيقي
+                    reviewData.orderId = orderDoc.id;
+                    safeSetStorage('storia_last_order_review', JSON.stringify(reviewData));
 
                     const userRef = doc(window.db, "loyalty_users", phone);
                     const userSnap = await getDoc(userRef);
@@ -3360,18 +3391,6 @@
                     await setDoc(userRef, { phone, points: currentPts, lastOrder: new Date().toISOString() }, { merge: true });
                     updatePointsBadge(currentPts);
                 }
-
-                // حفظ بيانات الأوردر للتجربة الآن بعد دقيقة
-                const reviewData = {
-                    orderId: savedOrderId,
-                    userName: name,
-                    userPhone: phone,
-                    items: itemsShortNames,
-                    timestamp: Date.now(),
-                    reviewed: false
-                };
-                safeSetStorage('storia_last_order_review', JSON.stringify(reviewData));
-
             } catch(e) {
                 console.error("Error saving order:", e);
             }
@@ -3493,7 +3512,6 @@
 
         function closeAdminPanel() { document.getElementById('adminModal').style.display = 'none'; }
 
-        // التحقق الحصري من كلمة المرور عبر فايربيس فقط
         async function verifyAdminPassword() {
             const pass = document.getElementById('adminPassInput').value.trim();
             if (!pass) return alert(currentLang === 'ar' ? 'من فضلك أدخل كلمة المرور' : 'Please enter password');
