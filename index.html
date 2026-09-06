@@ -419,27 +419,65 @@
             align-items: center;
             justify-content: space-between;
             width: 100%;
+            gap: 6px;
+        }
+
+        .sub-actions-left-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .loyalty-sub-btn {
             background: linear-gradient(135deg, #1b4d3e 0%, #113329 100%);
             color: white;
             border: none;
-            padding: 6px 14px;
+            padding: 6px 12px;
             border-radius: 12px;
-            font-size: 0.80rem;
+            font-size: 0.78rem;
             font-weight: 800;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             cursor: pointer;
             box-shadow: 0 2px 8px rgba(27, 77, 62, 0.25);
+            white-space: nowrap;
         }
         .loyalty-sub-btn .pts {
             background: rgba(255, 255, 255, 0.22);
-            padding: 2px 7px;
+            padding: 2px 6px;
             border-radius: 8px;
             font-weight: 900;
+        }
+
+        /* شارة التقييم الإجمالي الفخمة */
+        .overall-rating-chip {
+            background: rgba(27, 77, 62, 0.08);
+            border: 1.5px solid rgba(27, 77, 62, 0.25);
+            color: var(--accent);
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 0.78rem;
+            font-weight: 900;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+        }
+        .overall-rating-chip:active {
+            transform: scale(0.96);
+            background: rgba(27, 77, 62, 0.15);
+        }
+        .overall-rating-chip .star-icon {
+            color: #f59e0b;
+            font-size: 0.95rem;
+        }
+        .overall-rating-chip .rating-count {
+            font-size: 0.68rem;
+            color: var(--desc-text);
+            font-weight: 700;
         }
 
         .chat-sub-btn-mini {
@@ -917,6 +955,79 @@
             font-size: 1.05rem; font-weight: 900; color: var(--main-text); margin-bottom: 4px;
         }
 
+        /* نافذة تقييم الأوردر البسيطة والشيك بنفس ستايل نافذة الإضافة للسلة */
+        .order-review-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.55); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+            z-index: 9900; display: none; justify-content: center; align-items: center;
+            padding: 16px;
+        }
+        .order-review-card {
+            background: var(--white); width: 100%; max-width: 310px;
+            border-radius: 24px; padding: 22px 18px; text-align: center;
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.28);
+            animation: smoothFadeIn 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+            display: flex; flex-direction: column; align-items: center;
+            border: 1px solid var(--border-color);
+        }
+        .review-icon-circle {
+            width: 55px; height: 55px; background: rgba(27, 77, 62, 0.1);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            margin-bottom: 10px; border: 2px solid var(--accent); font-size: 1.6rem;
+        }
+        .review-card-title {
+            font-size: 1.05rem; font-weight: 900; color: var(--main-text); margin-bottom: 3px; line-height: 1.3;
+        }
+        .review-card-subtitle {
+            font-size: 0.74rem; color: var(--desc-text); font-weight: 700; margin-bottom: 12px;
+        }
+        .review-items-box {
+            background: var(--bg); border: 1.5px solid var(--border-color);
+            border-radius: 14px; padding: 8px 12px; margin-bottom: 12px;
+            width: 100%; text-align: center;
+        }
+        .review-items-caption {
+            font-size: 0.68rem; color: var(--accent); font-weight: 800; display: block; margin-bottom: 2px;
+        }
+        .review-items-text {
+            font-size: 0.76rem; font-weight: 800; color: var(--main-text); line-height: 1.35;
+        }
+        .review-stars-box {
+            display: flex; justify-content: center; align-items: center;
+            gap: 8px; margin-bottom: 6px; direction: ltr;
+        }
+        .review-star-btn {
+            background: transparent; border: none; font-size: 1.9rem;
+            cursor: pointer; color: #cbd5e1; transition: transform 0.15s ease, color 0.15s ease;
+            user-select: none;
+        }
+        .review-star-btn.active {
+            color: #f59e0b;
+        }
+        .review-star-btn:active { transform: scale(1.18); }
+        .review-rating-status {
+            font-size: 0.80rem; font-weight: 900; color: var(--accent); margin-bottom: 10px; min-height: 20px;
+        }
+        .review-input-simple {
+            width: 100%; background: var(--bg); border: 1px solid var(--border-color);
+            border-radius: 12px; padding: 8px 12px; font-size: 0.76rem; font-weight: 700;
+            color: var(--main-text); outline: none; margin-bottom: 12px; text-align: center;
+        }
+        .review-btn-row {
+            display: flex; gap: 6px; width: 100%;
+        }
+        .review-confirm-btn {
+            flex: 2; background: var(--accent); color: #ffffff; border: none;
+            padding: 10px; border-radius: 12px; font-weight: 900; font-size: 0.85rem;
+            cursor: pointer; box-shadow: 0 2px 8px rgba(27, 77, 62, 0.25);
+        }
+        .review-confirm-btn:active { transform: scale(0.96); }
+        .review-skip-btn {
+            flex: 1; background: var(--bg); color: var(--desc-text); border: 1px solid var(--border-color);
+            padding: 10px; border-radius: 12px; font-weight: 800; font-size: 0.78rem;
+            cursor: pointer;
+        }
+
         .restaurant-footer { 
             padding: 26px 16px 30px 16px; 
             text-align: center; 
@@ -1326,6 +1437,39 @@
         </div>
     </div>
 
+    <!-- نافذة تقييم الأوردر البسيطة والأنيقة (نفس طابع نافذة الإضافة للسلة) -->
+    <div class="order-review-modal" id="orderReviewModal">
+        <div class="order-review-card">
+            <div class="review-icon-circle">
+                <span>🍽️</span>
+            </div>
+            <div class="review-card-title" id="t_rev_title">طمنا.. إيه رأيك في الأكل؟</div>
+            <div class="review-card-subtitle" id="t_rev_sub">تقييمك يساعدنا لنقدم لك أفضل جودة دائماً</div>
+            
+            <div class="review-items-box">
+                <span class="review-items-caption" id="t_rev_reminder_lbl">طلبك السابق كان:</span>
+                <span class="review-items-text" id="reviewOrderItemsList">جاري التحميل...</span>
+            </div>
+
+            <div class="review-stars-box" id="starRatingRow">
+                <button class="review-star-btn" onclick="setOrderRating(1)">★</button>
+                <button class="review-star-btn" onclick="setOrderRating(2)">★</button>
+                <button class="review-star-btn" onclick="setOrderRating(3)">★</button>
+                <button class="review-star-btn" onclick="setOrderRating(4)">★</button>
+                <button class="review-star-btn" onclick="setOrderRating(5)">★</button>
+            </div>
+
+            <div class="review-rating-status" id="ratingLevelFeedback">ممتاز جداً! ⭐⭐⭐⭐⭐</div>
+
+            <input type="text" class="review-input-simple" id="reviewNotesInput" placeholder="ملاحظاتك على الطعم أو الأوردر (اختياري)">
+
+            <div class="review-btn-row">
+                <button class="review-confirm-btn" id="t_rev_submit_btn" onclick="submitOrderReview()">تأكيد التقييم ✓</button>
+                <button class="review-skip-btn" id="t_rev_dismiss_btn" onclick="dismissOrderReview()">تخطي</button>
+            </div>
+        </div>
+    </div>
+
     <header>
         <div class="header-top">
             <div class="header-right-actions">
@@ -1348,10 +1492,19 @@
 
         <div class="sub-header-bar">
             <div class="sub-actions-row">
-                <button class="loyalty-sub-btn" onclick="openLoyaltyModal()" title="محفظة نقاط المكافآت">
-                    <span id="t_loyalty_btn_text">🎁 الهدايا والمكافآت</span>
-                    <span class="pts" id="headerPointsBadge">0</span>
-                </button>
+                <div class="sub-actions-left-group">
+                    <button class="loyalty-sub-btn" onclick="openLoyaltyModal()" title="محفظة نقاط المكافآت">
+                        <span id="t_loyalty_btn_text">🎁 الهدايا والمكافآت</span>
+                        <span class="pts" id="headerPointsBadge">0</span>
+                    </button>
+
+                    <!-- شارة التقييم الإجمالي للمطعم -->
+                    <div class="overall-rating-chip" id="overallRatingChip" onclick="alert(currentLang==='ar'?'متوسط تقييم ستوريا بناءً على آراء وتقييمات العملاء':'Storia Restaurant rating based on customer reviews')">
+                        <span class="star-icon">⭐</span>
+                        <span id="overallRatingScore">4.9</span>
+                        <span class="rating-count" id="overallRatingCount">(1.2k)</span>
+                    </div>
+                </div>
 
                 <button class="chat-sub-btn-mini" id="clientHeaderChatBtn" onclick="openClientHeaderChat()" title="متابعة شات الأوردر">
                     <span>💬</span>
@@ -1805,6 +1958,9 @@
         let activeUserPhone = safeGetStorage('storia_user_phone', '');
         let deferredPrompt = null;
 
+        let userSelectedOrderRating = 5;
+        let pendingReviewOrderData = null;
+
         let restaurantInfo = { 
             orderPhone: '201014144144', 
             displayPhone1: '0226702680', 
@@ -1855,7 +2011,13 @@
                 footerRights: 'جميع الحقوق محفوظة لـ ستوريا ©',
                 sizeLarge: 'كبير (Large)',
                 sizeMedium: 'وسط (Medium)',
-                sizeConfirmBtn: '🛒 تأكيد وإضافة للسلة'
+                sizeConfirmBtn: '🛒 تأكيد وإضافة للسلة',
+                revTitle: 'طمنا.. إيه رأيك في الأكل؟',
+                revSub: 'تقييمك يساعدنا لنقدم لك أفضل جودة دائماً',
+                revReminderLbl: 'طلبك السابق كان:',
+                revSubmitBtn: 'تأكيد التقييم ✓',
+                revDismissBtn: 'تخطي',
+                revPlaceholder: 'ملاحظاتك على الطعم أو الأوردر (اختياري)'
             },
             en: {
                 langBtn: 'AR',
@@ -1899,7 +2061,13 @@
                 footerRights: 'All Rights Reserved to Storia ©',
                 sizeLarge: 'Large (L)',
                 sizeMedium: 'Medium (M)',
-                sizeConfirmBtn: '🛒 Confirm & Add to Cart'
+                sizeConfirmBtn: '🛒 Confirm & Add to Cart',
+                revTitle: 'How was the food?',
+                revSub: 'Your review helps us keep the best quality',
+                revReminderLbl: 'Your last order was:',
+                revSubmitBtn: 'Confirm Review ✓',
+                revDismissBtn: 'Skip',
+                revPlaceholder: 'Notes on food taste or packaging (optional)'
             }
         };
 
@@ -2060,6 +2228,7 @@
             renderMenu(true);
             renderCartItems();
             renderLoyaltyRewardsUI();
+            updateRatingFeedbackText(userSelectedOrderRating);
         }
 
         function applyLanguageSettings() {
@@ -2136,6 +2305,19 @@
             const tFooterRights = document.getElementById('t_footer_rights');
             if (tFooterRights) tFooterRights.innerText = t.footerRights;
 
+            const tRevTitle = document.getElementById('t_rev_title');
+            if (tRevTitle) tRevTitle.innerText = t.revTitle;
+            const tRevSub = document.getElementById('t_rev_sub');
+            if (tRevSub) tRevSub.innerText = t.revSub;
+            const tRevReminderLbl = document.getElementById('t_rev_reminder_lbl');
+            if (tRevReminderLbl) tRevReminderLbl.innerText = t.revReminderLbl;
+            const tRevSubmitBtn = document.getElementById('t_rev_submit_btn');
+            if (tRevSubmitBtn) tRevSubmitBtn.innerText = t.revSubmitBtn;
+            const tRevDismissBtn = document.getElementById('t_rev_dismiss_btn');
+            if (tRevDismissBtn) tRevDismissBtn.innerText = t.revDismissBtn;
+            const reviewNotesInput = document.getElementById('reviewNotesInput');
+            if (reviewNotesInput) reviewNotesInput.placeholder = t.revPlaceholder;
+
             setInitialOrderTypeUI(selectedOrderType);
         }
 
@@ -2165,7 +2347,12 @@
                     if (splashScreen) {
                         splashScreen.classList.add('splash-hidden');
                         setTimeout(() => { splashScreen.style.display = 'none'; }, 500);
-                        showWelcomeModal();
+                        
+                        // فحص إذا كان هناك تقييم مستحق بعد دقيقة واحدة للتجربة
+                        const shouldShowReview = checkAndPromptOrderReview();
+                        if (!shouldShowReview) {
+                            showWelcomeModal();
+                        }
                     }
                 }
             }, 40);
@@ -2248,6 +2435,167 @@
             }
         }
 
+        /* فحص التقييم: تم ضبط الوقت هنا إلى دقيقة واحدة (1 minute) للتجربة الآن */
+        function checkAndPromptOrderReview() {
+            try {
+                const rawOrderData = localStorage.getItem('storia_last_order_review');
+                if (!rawOrderData) return false;
+
+                const orderData = JSON.parse(rawOrderData);
+                if (!orderData || orderData.reviewed) return false;
+
+                const now = Date.now();
+                const orderTime = orderData.timestamp || 0;
+                const timeDiffMinutes = (now - orderTime) / (1000 * 60);
+
+                // مضبوط على دقيقة واحدة فقط لتجربتها حالاً
+                if (timeDiffMinutes >= 1) {
+                    pendingReviewOrderData = orderData;
+                    displayOrderReviewModal(orderData);
+                    return true;
+                }
+            } catch(e) {
+                console.error("Review check error:", e);
+            }
+            return false;
+        }
+
+        function displayOrderReviewModal(orderData) {
+            const modal = document.getElementById('orderReviewModal');
+            const itemsListEl = document.getElementById('reviewOrderItemsList');
+            if (!modal) return;
+
+            if (itemsListEl && orderData.items && orderData.items.length > 0) {
+                itemsListEl.innerText = orderData.items.join(' ، ');
+            } else if (itemsListEl) {
+                itemsListEl.innerText = orderData.summary || 'وجبات ومشروبات ستوريا';
+            }
+
+            setOrderRating(5);
+            modal.style.display = 'flex';
+        }
+
+        function setOrderRating(ratingNum) {
+            userSelectedOrderRating = ratingNum;
+            const starButtons = document.querySelectorAll('#starRatingRow .review-star-btn');
+            starButtons.forEach((btn, index) => {
+                btn.classList.toggle('active', index < ratingNum);
+            });
+            updateRatingFeedbackText(ratingNum);
+        }
+
+        function updateRatingFeedbackText(ratingNum) {
+            const feedbackEl = document.getElementById('ratingLevelFeedback');
+            if (!feedbackEl) return;
+
+            const feedbacksAr = {
+                1: 'سيء 😞',
+                2: 'مقبول 😐',
+                3: 'جيد 👍',
+                4: 'لذيذ جداً 😍',
+                5: 'ممتاز جداً! ⭐⭐⭐⭐⭐'
+            };
+
+            const feedbacksEn = {
+                1: 'Poor 😞',
+                2: 'Fair 😐',
+                3: 'Good 👍',
+                4: 'Delicious 😍',
+                5: 'Excellent! ⭐⭐⭐⭐⭐'
+            };
+
+            feedbackEl.innerText = currentLang === 'ar' ? (feedbacksAr[ratingNum] || '') : (feedbacksEn[ratingNum] || '');
+        }
+
+        async function submitOrderReview() {
+            const notes = document.getElementById('reviewNotesInput').value.trim();
+            const modal = document.getElementById('orderReviewModal');
+
+            if (pendingReviewOrderData) {
+                pendingReviewOrderData.reviewed = true;
+                pendingReviewOrderData.rating = userSelectedOrderRating;
+                pendingReviewOrderData.notes = notes;
+                pendingReviewOrderData.reviewedAt = new Date().toISOString();
+                safeSetStorage('storia_last_order_review', JSON.stringify(pendingReviewOrderData));
+
+                if (window.db && window.firebaseModules) {
+                    try {
+                        const { collection, addDoc, doc, getDoc, setDoc } = window.firebaseModules;
+                        await addDoc(collection(window.db, "restaurant_reviews"), {
+                            orderId: pendingReviewOrderData.orderId || 'web_order',
+                            userName: pendingReviewOrderData.userName || 'زبون ستوريا',
+                            userPhone: pendingReviewOrderData.userPhone || '',
+                            rating: userSelectedOrderRating,
+                            notes: notes,
+                            items: pendingReviewOrderData.items || [],
+                            createdAt: new Date().toISOString(),
+                            timestamp: Date.now()
+                        });
+
+                        // تحديث إحصائيات التقييم الإجمالي في فايربيس
+                        const statsRef = doc(window.db, "settings", "overall_rating");
+                        const snap = await getDoc(statsRef);
+                        let totalSum = userSelectedOrderRating;
+                        let count = 1;
+                        if (snap.exists()) {
+                            totalSum += (snap.data().totalScoreSum || 4900);
+                            count += (snap.data().totalReviewsCount || 1000);
+                        } else {
+                            totalSum += 4900;
+                            count += 1000;
+                        }
+                        const newAvg = (totalSum / count).toFixed(1);
+                        await setDoc(statsRef, {
+                            averageRating: parseFloat(newAvg),
+                            totalScoreSum: totalSum,
+                            totalReviewsCount: count
+                        }, { merge: true });
+                        
+                        updateOverallRatingDisplay(newAvg, count);
+                    } catch(e) {
+                        console.error("Error saving review:", e);
+                    }
+                }
+            }
+
+            if (modal) modal.style.display = 'none';
+            alert(currentLang === 'ar' ? 'شكراً جزيلاً لتقييمك! رأيك يسعدنا دائماً 💚' : 'Thank you so much for your review! 💚');
+            
+            showWelcomeModal();
+        }
+
+        function dismissOrderReview() {
+            const modal = document.getElementById('orderReviewModal');
+            if (modal) modal.style.display = 'none';
+            showWelcomeModal();
+        }
+
+        function updateOverallRatingDisplay(score, count) {
+            const scoreEl = document.getElementById('overallRatingScore');
+            const countEl = document.getElementById('overallRatingCount');
+            if (scoreEl) scoreEl.innerText = score;
+            if (countEl) {
+                let formattedCount = count;
+                if (count >= 1000) {
+                    formattedCount = (count / 1000).toFixed(1) + 'k';
+                }
+                countEl.innerText = `(${formattedCount})`;
+            }
+        }
+
+        async function fetchOverallRatingLive() {
+            if (!window.db || !window.firebaseModules) return;
+            const { doc, onSnapshot } = window.firebaseModules;
+            onSnapshot(doc(window.db, "settings", "overall_rating"), (snap) => {
+                if (snap.exists()) {
+                    const data = snap.data();
+                    const avg = data.averageRating || 4.9;
+                    const cnt = data.totalReviewsCount || 1240;
+                    updateOverallRatingDisplay(avg, cnt);
+                }
+            }, (e) => {});
+        }
+
         function initializeAppCore() {
             applyLanguageSettings();
             startCreativeCounter();
@@ -2269,6 +2617,7 @@
         window.addEventListener('firebase-ready', () => {
             setupLiveItemsStatusListener();
             setupLivePriceMarkupListener();
+            fetchOverallRatingLive();
         });
 
         function updatePointsBadge(pts) {
@@ -2964,6 +3313,8 @@
             orderText += `*${currentLang==='ar'?'تفاصيل الطلبات:':'Order Details:'}*\n`;
 
             const itemsArrayForLog = [];
+            const itemsShortNames = [];
+
             cart.forEach((item, i) => {
                 const displayName = item.itemRef ? getLocalizedItemName(item.itemRef) : item.name;
                 const sizeStr = item.sizeLabel ? ` [${item.sizeLabel}]` : '';
@@ -2974,6 +3325,7 @@
                 line += ` - ${item.price > 0 ? item.price.toFixed(2) + ' ' + t.currency : t.free}`;
                 orderText += `${line}\n`;
                 itemsArrayForLog.push(line);
+                itemsShortNames.push(`${displayName}${sizeStr}`);
             });
 
             orderText += `------------------------------------\n`;
@@ -2981,6 +3333,7 @@
             orderText += `*🎁 ${currentLang==='ar'?'النقاط المكتسبة:':'Earned Points:'}* +${earnedPts} ${t.ptsUnit}\n`;
 
             try {
+                let savedOrderId = 'ord_' + Date.now();
                 if (window.db && window.firebaseModules) {
                     const { collection, addDoc, doc, getDoc, setDoc } = window.firebaseModules;
                     const orderDoc = await addDoc(collection(window.db, "orders"), {
@@ -2995,6 +3348,7 @@
                         timestamp: Date.now()
                     });
                     
+                    savedOrderId = orderDoc.id;
                     safeSetStorage('storia_active_order_id', orderDoc.id);
                     safeSetStorage('storia_active_user_name', name);
                     showClientHeaderChatButton();
@@ -3006,6 +3360,18 @@
                     await setDoc(userRef, { phone, points: currentPts, lastOrder: new Date().toISOString() }, { merge: true });
                     updatePointsBadge(currentPts);
                 }
+
+                // حفظ بيانات الأوردر للتجربة الآن بعد دقيقة
+                const reviewData = {
+                    orderId: savedOrderId,
+                    userName: name,
+                    userPhone: phone,
+                    items: itemsShortNames,
+                    timestamp: Date.now(),
+                    reviewed: false
+                };
+                safeSetStorage('storia_last_order_review', JSON.stringify(reviewData));
+
             } catch(e) {
                 console.error("Error saving order:", e);
             }
