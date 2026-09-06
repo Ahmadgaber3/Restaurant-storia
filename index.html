@@ -450,14 +450,14 @@
             font-weight: 900;
         }
 
-        /* شارة التقييم الإجمالي الفخمة */
+        /* شارة التقييم الإجمالي الفخمة (عرض الرقم فقط بدون عدد المقيمين) */
         .overall-rating-chip {
             background: rgba(27, 77, 62, 0.08);
             border: 1.5px solid rgba(27, 77, 62, 0.25);
             color: var(--accent);
             padding: 5px 10px;
             border-radius: 12px;
-            font-size: 0.78rem;
+            font-size: 0.82rem;
             font-weight: 900;
             display: inline-flex;
             align-items: center;
@@ -473,11 +473,6 @@
         .overall-rating-chip .star-icon {
             color: #f59e0b;
             font-size: 0.95rem;
-        }
-        .overall-rating-chip .rating-count {
-            font-size: 0.68rem;
-            color: var(--desc-text);
-            font-weight: 700;
         }
 
         .chat-sub-btn-mini {
@@ -955,7 +950,7 @@
             font-size: 1.05rem; font-weight: 900; color: var(--main-text); margin-bottom: 4px;
         }
 
-        /* نافذة تقييم الأوردر البسيطة والشيك بنفس ستايل نافذة الإضافة للسلة */
+        /* نافذة تقييم الأوردر البسيطة والشيك بنفس ستايل بطاقة الإضافة للسلة */
         .order-review-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.55); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
@@ -992,21 +987,28 @@
         .review-items-text {
             font-size: 0.76rem; font-weight: 800; color: var(--main-text); line-height: 1.35;
         }
+        
+        /* نجوم التقييم مع دعم النصف نجمة بدقة */
         .review-stars-box {
             display: flex; justify-content: center; align-items: center;
-            gap: 8px; margin-bottom: 6px; direction: ltr;
+            gap: 6px; margin-bottom: 6px; direction: ltr;
         }
         .review-star-btn {
-            background: transparent; border: none; font-size: 1.9rem;
-            cursor: pointer; color: #cbd5e1; transition: transform 0.15s ease, color 0.15s ease;
-            user-select: none;
+            background: transparent; border: none; font-size: 2.1rem;
+            cursor: pointer; color: #cbd5e1; transition: transform 0.12s ease, color 0.12s ease;
+            user-select: none; position: relative; line-height: 1; padding: 0 2px;
         }
-        .review-star-btn.active {
+        .review-star-btn.full {
             color: #f59e0b;
         }
-        .review-star-btn:active { transform: scale(1.18); }
+        .review-star-btn.half {
+            background: linear-gradient(90deg, #f59e0b 50%, #cbd5e1 50%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .review-star-btn:active { transform: scale(1.2); }
         .review-rating-status {
-            font-size: 0.80rem; font-weight: 900; color: var(--accent); margin-bottom: 10px; min-height: 20px;
+            font-size: 0.82rem; font-weight: 900; color: var(--accent); margin-bottom: 10px; min-height: 20px;
         }
         .review-input-simple {
             width: 100%; background: var(--bg); border: 1px solid var(--border-color);
@@ -1026,6 +1028,37 @@
             flex: 1; background: var(--bg); color: var(--desc-text); border: 1px solid var(--border-color);
             padding: 10px; border-radius: 12px; font-weight: 800; font-size: 0.78rem;
             cursor: pointer;
+        }
+
+        /* كارت طائر شيك لعرض التقييم الإجمالي للمطعم بنفس طراز كارت الإضافة */
+        .overall-toast-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.45); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+            z-index: 9600; display: none; justify-content: center; align-items: center;
+            padding: 16px;
+        }
+        .overall-toast-card {
+            background: var(--white); width: 100%; max-width: 280px;
+            border-radius: 22px; padding: 20px 16px; text-align: center;
+            box-shadow: 0 20px 45px rgba(0,0,0,0.25);
+            animation: smoothFadeIn 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+            display: flex; flex-direction: column; align-items: center;
+            border: 1px solid var(--border-color);
+        }
+        .overall-toast-icon {
+            width: 50px; height: 50px; background: rgba(245, 158, 11, 0.12);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            margin-bottom: 8px; border: 2px solid #f59e0b; font-size: 1.5rem;
+        }
+        .overall-toast-title {
+            font-size: 1.25rem; font-weight: 900; color: var(--main-text); margin-bottom: 2px;
+        }
+        .overall-toast-count {
+            font-size: 0.80rem; font-weight: 800; color: var(--desc-text); margin-bottom: 12px;
+        }
+        .overall-toast-close {
+            background: var(--accent); color: white; border: none; padding: 7px 18px;
+            border-radius: 10px; font-weight: 800; font-size: 0.78rem; cursor: pointer;
         }
 
         .restaurant-footer { 
@@ -1437,7 +1470,7 @@
         </div>
     </div>
 
-    <!-- نافذة تقييم الأوردر البسيطة والأنيقة (نفس طابع بطاقة الإضافة للسلة) -->
+    <!-- نافذة تقييم الأوردر البسيطة والأنيقة مع دعم النصف نجمة -->
     <div class="order-review-modal" id="orderReviewModal">
         <div class="order-review-card">
             <div class="review-icon-circle">
@@ -1452,11 +1485,11 @@
             </div>
 
             <div class="review-stars-box" id="starRatingRow">
-                <button class="review-star-btn" onclick="setOrderRating(1)">★</button>
-                <button class="review-star-btn" onclick="setOrderRating(2)">★</button>
-                <button class="review-star-btn" onclick="setOrderRating(3)">★</button>
-                <button class="review-star-btn" onclick="setOrderRating(4)">★</button>
-                <button class="review-star-btn" onclick="setOrderRating(5)">★</button>
+                <button class="review-star-btn full" onclick="handleStarClick(1)">★</button>
+                <button class="review-star-btn full" onclick="handleStarClick(2)">★</button>
+                <button class="review-star-btn full" onclick="handleStarClick(3)">★</button>
+                <button class="review-star-btn full" onclick="handleStarClick(4)">★</button>
+                <button class="review-star-btn full" onclick="handleStarClick(5)">★</button>
             </div>
 
             <div class="review-rating-status" id="ratingLevelFeedback">ممتاز جداً! ⭐⭐⭐⭐⭐</div>
@@ -1467,6 +1500,16 @@
                 <button class="review-confirm-btn" id="t_rev_submit_btn" onclick="submitOrderReview()">تأكيد التقييم ✓</button>
                 <button class="review-skip-btn" id="t_rev_dismiss_btn" onclick="dismissOrderReview()">تخطي</button>
             </div>
+        </div>
+    </div>
+
+    <!-- بطاقة طائرة شيك للتقييم الإجمالي عند الضغط عليها -->
+    <div class="overall-toast-modal" id="overallToastModal" onclick="if(event.target===this) closeOverallToast()">
+        <div class="overall-toast-card">
+            <div class="overall-toast-icon">⭐</div>
+            <div class="overall-toast-title"><span id="popupOverallScore">4.9</span> / 5.0</div>
+            <div class="overall-toast-count" id="popupOverallCount">بناءً على 1,240 تقييماً حقيقياً للعملاء</div>
+            <button class="overall-toast-close" onclick="closeOverallToast()">فهمت ذلك ✓</button>
         </div>
     </div>
 
@@ -1498,11 +1541,10 @@
                         <span class="pts" id="headerPointsBadge">0</span>
                     </button>
 
-                    <!-- شارة التقييم الإجمالي للمطعم -->
-                    <div class="overall-rating-chip" id="overallRatingChip" onclick="alert(currentLang==='ar'?'متوسط تقييم ستوريا بناءً على آراء وتقييمات العملاء':'Storia Restaurant rating based on customer reviews')">
+                    <!-- شارة التقييم الإجمالي للمطعم: التقييم فقط وبدون عدد المقيمين هنا -->
+                    <div class="overall-rating-chip" id="overallRatingChip" onclick="openOverallToast()" title="عرض تقييم المطعم">
                         <span class="star-icon">⭐</span>
                         <span id="overallRatingScore">4.9</span>
-                        <span class="rating-count" id="overallRatingCount">(1.2k)</span>
                     </div>
                 </div>
 
@@ -1958,9 +2000,10 @@
         let activeUserPhone = safeGetStorage('storia_user_phone', '');
         let deferredPrompt = null;
 
-        let userSelectedOrderRating = 5;
+        let userSelectedOrderRating = 5.0;
         let pendingReviewOrderData = null;
         let reviewCheckInterval = null;
+        let currentTotalReviewsCount = 1240;
 
         let restaurantInfo = { 
             orderPhone: '201014144144', 
@@ -2018,7 +2061,9 @@
                 revReminderLbl: 'طلبك السابق كان:',
                 revSubmitBtn: 'تأكيد التقييم ✓',
                 revDismissBtn: 'تخطي',
-                revPlaceholder: 'ملاحظاتك على الطعم أو الأوردر (اختياري)'
+                revPlaceholder: 'ملاحظاتك على الطعم أو الأوردر (اختياري)',
+                toastPopupBase: 'بناءً على {count} تقييماً حقيقياً للعملاء',
+                toastPopupBtn: 'فهمت ذلك ✓'
             },
             en: {
                 langBtn: 'AR',
@@ -2068,7 +2113,9 @@
                 revReminderLbl: 'Your last order was:',
                 revSubmitBtn: 'Confirm Review ✓',
                 revDismissBtn: 'Skip',
-                revPlaceholder: 'Notes on food taste or packaging (optional)'
+                revPlaceholder: 'Notes on food taste or packaging (optional)',
+                toastPopupBase: 'Based on {count} real customer reviews',
+                toastPopupBtn: 'Got it ✓'
             }
         };
 
@@ -2349,7 +2396,6 @@
                         splashScreen.classList.add('splash-hidden');
                         setTimeout(() => { splashScreen.style.display = 'none'; }, 500);
                         
-                        // فحص أولي لظهور التقييم
                         const showed = checkAndPromptOrderReview();
                         if (!showed) {
                             showWelcomeModal();
@@ -2435,7 +2481,7 @@
             }
         }
 
-        /* فحص التقييم: يتم الفحص التلقائي المستمر كل 5 ثوانٍ وإظهاره بمجرد مرور 60 ثانية (1 دقيقة) */
+        /* فحص التقييم: بعد نصف ساعة كاملة (1800 ثانية) من وقت الأوردر */
         function checkAndPromptOrderReview() {
             try {
                 const rawOrderData = localStorage.getItem('storia_last_order_review');
@@ -2448,8 +2494,8 @@
                 const orderTime = orderData.timestamp || 0;
                 const elapsedSeconds = (now - orderTime) / 1000;
 
-                // مرور 60 ثانية (دقيقة واحدة للتجربة)
-                if (elapsedSeconds >= 60) {
+                // مرور 30 دقيقة = 1800 ثانية
+                if (elapsedSeconds >= 1800) {
                     pendingReviewOrderData = orderData;
                     displayOrderReviewModal(orderData);
                     return true;
@@ -2460,14 +2506,13 @@
             return false;
         }
 
-        // تشغيل مؤقت يفحص التقييم كل 5 ثوانٍ لضمان ظهوره للعميل وهو داخل التطبيق فور مرور الدقيقة
         function startOrderReviewWatcher() {
             if (reviewCheckInterval) clearInterval(reviewCheckInterval);
             reviewCheckInterval = setInterval(() => {
                 const reviewModal = document.getElementById('orderReviewModal');
                 if (reviewModal && reviewModal.style.display === 'flex') return;
                 checkAndPromptOrderReview();
-            }, 5000);
+            }, 10000);
         }
 
         function displayOrderReviewModal(orderData) {
@@ -2475,7 +2520,6 @@
             const itemsListEl = document.getElementById('reviewOrderItemsList');
             if (!modal) return;
 
-            // إخفاء نافذة الترحيب مؤقتاً لتظهر نافذة التقييم بوضوح
             const welcomeModal = document.getElementById('welcomeOrderModal');
             if (welcomeModal) welcomeModal.style.display = 'none';
 
@@ -2485,40 +2529,58 @@
                 itemsListEl.innerText = 'وجبات ومشروبات ستوريا';
             }
 
-            setOrderRating(5);
+            renderStarsUI(5.0);
             modal.style.display = 'flex';
         }
 
-        function setOrderRating(ratingNum) {
-            userSelectedOrderRating = ratingNum;
+        /* منطق تقييم النجوم التفاعلي مع دعم النصف نجمة (0.5 إلى 5.0) */
+        function handleStarClick(starIndex) {
+            // إذا ضغط نفس النجمة التي تم تقييمها ككاملة، تتحول إلى نصف نجمة
+            if (userSelectedOrderRating === starIndex) {
+                userSelectedOrderRating = starIndex - 0.5;
+            } else {
+                userSelectedOrderRating = starIndex;
+            }
+            if (userSelectedOrderRating < 0.5) userSelectedOrderRating = 0.5;
+            renderStarsUI(userSelectedOrderRating);
+        }
+
+        function renderStarsUI(rating) {
             const starButtons = document.querySelectorAll('#starRatingRow .review-star-btn');
-            starButtons.forEach((btn, index) => {
-                btn.classList.toggle('active', index < ratingNum);
+            starButtons.forEach((btn, idx) => {
+                const starVal = idx + 1;
+                btn.className = 'review-star-btn';
+                if (rating >= starVal) {
+                    btn.classList.add('full');
+                } else if (rating === starVal - 0.5) {
+                    btn.classList.add('half');
+                }
             });
-            updateRatingFeedbackText(ratingNum);
+            updateRatingFeedbackText(rating);
         }
 
         function updateRatingFeedbackText(ratingNum) {
             const feedbackEl = document.getElementById('ratingLevelFeedback');
             if (!feedbackEl) return;
 
-            const feedbacksAr = {
-                1: 'سيء 😞',
-                2: 'مقبول 😐',
-                3: 'جيد 👍',
-                4: 'لذيذ جداً 😍',
-                5: 'ممتاز جداً! ⭐⭐⭐⭐⭐'
-            };
+            let textAr = `${ratingNum} من 5 نجوم ⭐`;
+            let textEn = `${ratingNum} out of 5 stars ⭐`;
 
-            const feedbacksEn = {
-                1: 'Poor 😞',
-                2: 'Fair 😐',
-                3: 'Good 👍',
-                4: 'Delicious 😍',
-                5: 'Excellent! ⭐⭐⭐⭐⭐'
-            };
+            if (ratingNum >= 4.5) {
+                textAr = `ممتاز جداً! (${ratingNum}) ⭐`;
+                textEn = `Outstanding! (${ratingNum}) ⭐`;
+            } else if (ratingNum >= 3.5) {
+                textAr = `لذيذ وجيد جداً (${ratingNum}) 👍`;
+                textEn = `Very Good (${ratingNum}) 👍`;
+            } else if (ratingNum >= 2.5) {
+                textAr = `مقبول وبحاجة لتحسين (${ratingNum}) 😐`;
+                textEn = `Fair (${ratingNum}) 😐`;
+            } else {
+                textAr = `نعتذر منك، سنطور الجودة (${ratingNum}) 😞`;
+                textEn = `We apologize, we will improve (${ratingNum}) 😞`;
+            }
 
-            feedbackEl.innerText = currentLang === 'ar' ? (feedbacksAr[ratingNum] || '') : (feedbacksEn[ratingNum] || '');
+            feedbackEl.innerText = currentLang === 'ar' ? textAr : textEn;
         }
 
         async function submitOrderReview() {
@@ -2551,11 +2613,11 @@
                         let totalSum = userSelectedOrderRating;
                         let count = 1;
                         if (snap.exists()) {
-                            totalSum += (snap.data().totalScoreSum || 4900);
-                            count += (snap.data().totalReviewsCount || 1000);
+                            totalSum += (snap.data().totalScoreSum || 6076);
+                            count += (snap.data().totalReviewsCount || 1240);
                         } else {
-                            totalSum += 4900;
-                            count += 1000;
+                            totalSum += 6076;
+                            count += 1240;
                         }
                         const newAvg = (totalSum / count).toFixed(1);
                         await setDoc(statsRef, {
@@ -2581,24 +2643,37 @@
             const modal = document.getElementById('orderReviewModal');
             if (modal) modal.style.display = 'none';
             if (pendingReviewOrderData) {
-                // تأجيل ظهورها 5 دقائق حتى لا تزعجه فورا
-                pendingReviewOrderData.timestamp = Date.now() + (5 * 60 * 1000);
+                pendingReviewOrderData.timestamp = Date.now() + (10 * 60 * 1000);
                 safeSetStorage('storia_last_order_review', JSON.stringify(pendingReviewOrderData));
             }
             showWelcomeModal();
         }
 
+        /* نافذة العرض الطائرة للتقييم الإجمالي */
+        function openOverallToast() {
+            const score = document.getElementById('overallRatingScore').innerText || '4.9';
+            const popupScore = document.getElementById('popupOverallScore');
+            const popupCount = document.getElementById('popupOverallCount');
+            const t = translations[currentLang] || translations.ar;
+
+            if (popupScore) popupScore.innerText = score;
+            if (popupCount) {
+                const formattedCnt = Number(currentTotalReviewsCount).toLocaleString(currentLang === 'ar' ? 'ar-EG' : 'en-US');
+                popupCount.innerText = t.toastPopupBase.replace('{count}', formattedCnt);
+            }
+            const modal = document.getElementById('overallToastModal');
+            if (modal) modal.style.display = 'flex';
+        }
+
+        function closeOverallToast() {
+            const modal = document.getElementById('overallToastModal');
+            if (modal) modal.style.display = 'none';
+        }
+
         function updateOverallRatingDisplay(score, count) {
             const scoreEl = document.getElementById('overallRatingScore');
-            const countEl = document.getElementById('overallRatingCount');
             if (scoreEl) scoreEl.innerText = score;
-            if (countEl) {
-                let formattedCount = count;
-                if (count >= 1000) {
-                    formattedCount = (count / 1000).toFixed(1) + 'k';
-                }
-                countEl.innerText = `(${formattedCount})`;
-            }
+            if (count) currentTotalReviewsCount = count;
         }
 
         async function fetchOverallRatingLive() {
@@ -3349,7 +3424,7 @@
             orderText += `*${currentLang==='ar'?'الإجمالي الكلي:':'Total Amount:'}* ${currentTotal.toFixed(2)} ${t.currency}\n`;
             orderText += `*🎁 ${currentLang==='ar'?'النقاط المكتسبة:':'Earned Points:'}* +${earnedPts} ${t.ptsUnit}\n`;
 
-            // حفظ بيانات التقييم بشكل فوري ومباشر في الـ LocalStorage أولاً قبل أي عملية
+            // حفظ بيانات التقييم مع توقيت الطلب (يظهر بعد نص ساعة بدقة)
             const tempOrderId = 'ord_' + Date.now();
             const reviewData = {
                 orderId: tempOrderId,
@@ -3380,7 +3455,6 @@
                     safeSetStorage('storia_active_user_name', name);
                     showClientHeaderChatButton();
 
-                    // تحديث معرف الطلب الحقيقي
                     reviewData.orderId = orderDoc.id;
                     safeSetStorage('storia_last_order_review', JSON.stringify(reviewData));
 
