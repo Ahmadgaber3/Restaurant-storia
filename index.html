@@ -1482,7 +1482,7 @@
             
             <div id="adminAuthView">
                 <div class="pass-form">
-                    <p style="margin-bottom: 12px; font-weight: 800; font-size: 0.88rem; text-align: center; color: var(--desc-text);">أدخل كلمة المرور (الافتراضية: storia2026):</p>
+                    <p style="margin-bottom: 12px; font-weight: 800; font-size: 0.88rem; text-align: center; color: var(--desc-text);">أدخل كلمة المرور الحالية للدخول:</p>
                     <input type="password" id="adminPassInput" placeholder="كلمة المرور" autofocus>
                     <button onclick="verifyAdminPassword()">دخول لوحة التحكم</button>
                 </div>
@@ -2155,7 +2155,6 @@
             const splashScreen = document.getElementById('splash-screen');
             let count = 0;
             
-            // عداد 4 ثوانٍ بالضبط
             const timer = setInterval(() => {
                 count += 1;
                 if (count <= 100) {
@@ -2227,26 +2226,22 @@
             if (modal) modal.style.display = 'none';
         }
 
-        // دالة الفالباك المعدلة بدون وضع أي لوجو نهائياً
+        // فحص بديل مباشر وسريع: يجرب الامتداد الآخر للصورة الإنجليزية فوراً بدون طلبات عشوائية
         function handleSmartImageFallback(imgElement) {
             const step = parseInt(imgElement.dataset.step || '0', 10);
-            const rowNum = imgElement.dataset.row || '';
-            const nameAr = (imgElement.dataset.ar || '').trim();
-            const nameEn = (imgElement.dataset.en || '').trim();
+            const enName = (imgElement.dataset.en || '').trim();
+            const cleanEn = enName.replace(/\s+/g, '_');
 
             const attempts = [
-                `images/${rowNum}.png`,
-                `images/${encodeURIComponent(nameAr)}.jpg`,
-                `images/${encodeURIComponent(nameAr)}.png`,
-                `images/${encodeURIComponent(nameEn)}.jpg`,
-                `images/${encodeURIComponent(nameEn)}.png`
+                `images/${encodeURIComponent(cleanEn)}.png`,
+                `images/${encodeURIComponent(enName)}.png`,
+                `images/${encodeURIComponent(cleanEn)}.jpeg`
             ];
 
             if (step < attempts.length) {
                 imgElement.dataset.step = step + 1;
                 imgElement.src = attempts[step];
             } else {
-                // إخفاء الصورة في حالة عدم وجودها ليظل المربع فارغاً تماماً كما طلبت
                 imgElement.style.opacity = '0';
                 imgElement.onerror = null;
             }
@@ -2441,10 +2436,13 @@
 
                     const priceInfo = parseEnglishPriceField(priceEnRaw);
                     const sheetRowNumber = i + 1;
-                    
                     const stableId = 'item_' + sheetRowNumber;
-                    let img = `images/${sheetRowNumber}.jpg`;
 
+                    // سحب الصورة بالاسم الإنجليزي من الشيت مباشرة (سواء بمسافة أو underscore)
+                    const cleanEnName = nameEn.replace(/\s+/g, '_');
+                    let img = `images/${encodeURIComponent(cleanEnName)}.jpg`;
+
+                    // إذا وُجد اسم أو رابط مخصص في خانة الصورة بالشيت يعتمد عليه مباشرة
                     if (row[4] && row[4].trim() !== '') {
                         let customImg = row[4].trim().replace(/^\[|\]$/g, '');
                         if (customImg.startsWith('http') || customImg.startsWith('images/')) {
@@ -2530,8 +2528,9 @@
                 } else {
                     const firstItem = cat.items && cat.items[0] ? cat.items[0] : null;
                     const firstItemImg = firstItem ? firstItem.img : '';
+                    const enName = firstItem ? firstItem.nameEn : '';
 
-                    imgBox.innerHTML = `<img src="${firstItemImg}" alt="${cat.catAr}" loading="lazy" decoding="async" onerror="this.style.display='none'">`;
+                    imgBox.innerHTML = `<img src="${firstItemImg}" alt="${cat.catAr}" data-en="${enName}" data-step="0" loading="lazy" decoding="async" onerror="handleSmartImageFallback(this)">`;
                 }
 
                 const label = document.createElement('span');
@@ -2624,7 +2623,6 @@
                             <div class="item-img-box" onclick="openImageLightbox(this.querySelector('img').src, '${displayName.replace(/'/g, "\\'")}', '${priceForLightbox}')" title="${currentLang==='ar'?'اضغط لتكبير الصورة':'Click to view photo'}">
                                 <img src="${item.img}" alt="${displayName}" 
                                      data-row="${item.sheetRow}" 
-                                     data-ar="${item.nameAr || ''}" 
                                      data-en="${item.nameEn || ''}" 
                                      data-step="0"
                                      loading="lazy"
@@ -3130,19 +3128,30 @@
 
         function closeAdminPanel() { document.getElementById('adminModal').style.display = 'none'; }
 
+        // التحقق الصارم من كلمة المرور عبر فايربيس فقط دون أي كلمات افتراضية قديمة
         async function verifyAdminPassword() {
-            const pass = document.getElementById('adminPassInput').value;
-            let savedPass = 'storia2026';
+            const pass = document.getElementById('adminPassInput').value.trim();
+            if (!pass) return alert(currentLang === 'ar' ? 'من فضلك أدخل كلمة المرور' : 'Please enter password');
+
+            let savedPass = null;
 
             if (window.db && window.firebaseModules) {
                 try {
                     const { doc, getDoc } = window.firebaseModules;
                     const snap = await getDoc(doc(window.db, "settings", "admin_config"));
-                    if (snap.exists() && snap.data().password) savedPass = snap.data().password;
+                    if (snap.exists() && snap.data().password) {
+                        savedPass = String(snap.data().password).trim();
+                    }
                 } catch(e) {}
             }
 
-            if (pass === savedPass || pass === '123456' || pass === 'storia2026') {
+            // إذا لم يتم حفظ كلمة مرور في السيرفر سابقاً، تكون الافتراضية لأول مرة فقط
+            if (!savedPass) {
+                savedPass = 'storia2026';
+            }
+
+            // فحص مطابق لكلمة السر الرسمية فقط
+            if (pass === savedPass) {
                 document.getElementById('adminAuthView').style.display = 'none';
                 document.getElementById('adminDashboardView').style.display = 'block';
                 
@@ -3429,11 +3438,20 @@
 
         async function updateAdminPassword() {
             const newP = document.getElementById('newAdminPass').value.trim();
-            if (newP && window.db && window.firebaseModules) {
-                const { doc, setDoc } = window.firebaseModules;
-                await setDoc(doc(window.db, "settings", "admin_config"), { password: newP }, { merge: true });
-                alert(currentLang === 'ar' ? 'تم تحديث كلمة المرور بنجاح!' : 'Password updated successfully!');
-                closeFloatingModal('passwordModal');
+            if (!newP) {
+                return alert(currentLang === 'ar' ? 'يرجى كتابة كلمة المرور الجديدة' : 'Please enter new password');
+            }
+
+            if (window.db && window.firebaseModules) {
+                try {
+                    const { doc, setDoc } = window.firebaseModules;
+                    await setDoc(doc(window.db, "settings", "admin_config"), { password: newP }, { merge: true });
+                    alert(currentLang === 'ar' ? 'تم تحديث كلمة المرور بنجاح! لن تفتح اللوحة إلا بها.' : 'Password updated successfully!');
+                    document.getElementById('newAdminPass').value = '';
+                    closeFloatingModal('passwordModal');
+                } catch(e) {
+                    alert(currentLang === 'ar' ? 'حدث خطأ أثناء الحفظ في السيرفر' : 'Error updating password');
+                }
             }
         }
     </script>
