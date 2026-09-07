@@ -350,7 +350,7 @@
             z-index: 2;
         }
 
-        .theme-toggle, .lang-toggle, .admin-trigger-btn, .cart-trigger {
+        .theme-toggle, .lang-toggle, .cart-trigger {
             width: 38px;
             height: 38px;
             background: var(--bg);
@@ -372,7 +372,7 @@
             color: var(--accent);
             border-color: rgba(27, 77, 62, 0.3);
         }
-        .theme-toggle:active, .lang-toggle:active, .admin-trigger-btn:active, .cart-trigger:active {
+        .theme-toggle:active, .lang-toggle:active, .cart-trigger:active {
             transform: scale(0.92);
         }
 
@@ -399,8 +399,11 @@
             justify-content: center; 
             border: 2px solid var(--accent); 
             z-index: 1;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
         }
-        .header-logo { width: 100%; height: 100%; border-radius: 14px; object-fit: contain; }
+        .header-logo { width: 100%; height: 100%; border-radius: 14px; object-fit: contain; pointer-events: none; }
 
         .sub-header-bar {
             width: 100%;
@@ -449,7 +452,6 @@
             font-weight: 900;
         }
 
-        /* شارة التقييم الإجمالي الفخمة */
         .overall-rating-chip {
             background: rgba(27, 77, 62, 0.08);
             border: 1.5px solid rgba(27, 77, 62, 0.25);
@@ -1549,10 +1551,10 @@
         <div class="header-top">
             <div class="header-right-actions">
                 <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="الوضع الليلي / النهاري">🌙</button>
-                <button class="admin-trigger-btn" onclick="openAdminPanel()" title="لوحة التحكم">⚙️</button>
             </div>
             
-            <div class="header-logo-container">
+            <!-- اللوجو مع خاصية النقر المزدوج (Double Click) لفتح لوحة التحكم بأمان -->
+            <div class="header-logo-container" id="brandLogoContainer" onclick="handleLogoTap()" title="Storia Cafe">
                 <img src="images/logooo.png" class="header-logo" alt="Storia Cafe" onerror="this.src='https://www.storia-eg.com/images/logo.png'">
             </div>
             
@@ -1573,7 +1575,7 @@
                         <span class="pts" id="headerPointsBadge">0</span>
                     </button>
 
-                    <!-- زر التقييم الإجمالي الذي يفتح التعليقات والآراء الحية -->
+                    <!-- زر التقييم الإجمالي (يعرض المتوسط 4.5 أو 5.0 فقط) -->
                     <div class="overall-rating-chip" id="overallRatingChip" onclick="openOverallToast()" title="عرض تقييمات وتعليقات العملاء">
                         <span class="star-icon">⭐</span>
                         <span id="overallRatingScore">5.0</span>
@@ -1943,7 +1945,7 @@
         </div>
     </div>
 
-    <!-- كود إعدادات Firebase مع استيراد limit بشكل سليم وبدون أي نقص -->
+    <!-- كود إعدادات Firebase -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, onSnapshot, addDoc, deleteDoc, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -2058,6 +2060,9 @@
         let pendingReviewOrderData = null;
         let reviewCheckInterval = null;
         let currentTotalReviewsCount = 1;
+
+        // متغيرات النقر المزدوج على اللوجو
+        let lastLogoTapTime = 0;
 
         let restaurantInfo = { 
             orderPhone: '201014144144', 
@@ -2636,6 +2641,7 @@
             feedbackEl.innerText = currentLang === 'ar' ? textAr : textEn;
         }
 
+        /* حفظ التقييم وحساب المتوسط بدقة (1 إلى 5 نجوم) */
         async function submitOrderReview() {
             const notes = document.getElementById('reviewNotesInput').value.trim();
             const modal = document.getElementById('orderReviewModal');
@@ -2661,7 +2667,6 @@
                             timestamp: Date.now()
                         });
 
-                        // تحديث الإحصائيات التراكمية في مستند واحد موفر للكوتة
                         const statsRef = doc(window.db, "settings", "overall_rating");
                         const statsSnap = await getDoc(statsRef);
                         let totalSum = userSelectedOrderRating;
@@ -2673,7 +2678,10 @@
                             totalCount += (parseInt(sData.totalCount) || 0);
                         }
 
-                        const finalAvg = (totalSum / totalCount).toFixed(1);
+                        // ضمان حساب المتوسط الفعلي بدقة بين 1.0 و 5.0
+                        let finalAvg = (totalSum / totalCount).toFixed(1);
+                        if (parseFloat(finalAvg) > 5.0) finalAvg = "5.0";
+
                         await setDoc(statsRef, {
                             averageRating: finalAvg,
                             totalScoreSum: totalSum,
@@ -2700,7 +2708,6 @@
             }
         }
 
-        /* جلب التعليقات عند النقر فقط بحد أقصى 15 تعليق لتوفير كوتة فايربيس تماماً */
         async function openOverallToast() {
             const score = document.getElementById('overallRatingScore').innerText || '5.0';
             const popupScore = document.getElementById('popupOverallScore');
@@ -2761,11 +2768,12 @@
 
         function updateOverallRatingDisplay(score, count) {
             const scoreEl = document.getElementById('overallRatingScore');
-            if (scoreEl) scoreEl.innerText = score;
-            currentTotalReviewsCount = Math.max(1, count);
+            let parsedScore = parseFloat(score);
+            if (isNaN(parsedScore) || parsedScore > 5.0) parsedScore = 5.0;
+            if (scoreEl) scoreEl.innerText = parsedScore.toFixed(1);
+            currentTotalReviewsCount = Math.max(1, count || 1);
         }
 
-        /* جلب ملخص التقييم الإجمالي فقط في الخلفية (قراءة واحدة سريعة جداً) */
         function setupLiveReviewsListener() {
             if (!window.db || !window.firebaseModules) return;
             const { doc, onSnapshot } = window.firebaseModules;
@@ -2773,14 +2781,29 @@
             onSnapshot(doc(window.db, "settings", "overall_rating"), (snap) => {
                 if (snap.exists()) {
                     const data = snap.data();
-                    updateOverallRatingDisplay(data.averageRating || "5.0", data.totalCount || 1);
+                    let avg = parseFloat(data.averageRating) || 5.0;
+                    if (avg > 5.0) avg = 5.0;
+                    updateOverallRatingDisplay(avg.toFixed(1), data.totalCount || 1);
                 } else {
                     updateOverallRatingDisplay("5.0", 1);
                 }
             }, (err) => console.warn("Rating listener fallback:", err));
         }
 
-        /* إدارة التقييمات في لوحة التحكم */
+        /* ميزة النقر المزدوج (Double Tap / Double Click) على اللوجو لفتح لوحة التحكم */
+        function handleLogoTap() {
+            const currentTime = new Date().getTime();
+            const tapGap = currentTime - lastLogoTapTime;
+            
+            if (tapGap < 500 && tapGap > 0) {
+                // نقر مزدوج سريع
+                openAdminPanel();
+                lastLogoTapTime = 0;
+            } else {
+                lastLogoTapTime = currentTime;
+            }
+        }
+
         async function renderAdminReviewsList() {
             const area = document.getElementById('adminReviewsListArea');
             if (!area || !window.db || !window.firebaseModules) return;
@@ -2829,7 +2852,6 @@
                         const { doc, deleteDoc, getDoc, setDoc } = window.firebaseModules;
                         await deleteDoc(doc(window.db, "restaurant_reviews", reviewId));
 
-                        // تعديل الإحصائيات التراكمية
                         const statsRef = doc(window.db, "settings", "overall_rating");
                         const statsSnap = await getDoc(statsRef);
                         if (statsSnap.exists()) {
@@ -2837,7 +2859,7 @@
                             let totalSum = Math.max(0, (parseFloat(sData.totalScoreSum) || 0) - ratingVal);
                             let totalCount = Math.max(1, (parseInt(sData.totalCount) || 1) - 1);
                             let finalAvg = (totalSum / totalCount).toFixed(1);
-                            if (totalCount === 1 && totalSum === 0) finalAvg = "5.0";
+                            if (parseFloat(finalAvg) > 5.0 || totalCount <= 1) finalAvg = "5.0";
 
                             await setDoc(statsRef, {
                                 averageRating: finalAvg,
@@ -3018,7 +3040,6 @@
             return result;
         }
 
-        /* جلب المنيو مع نظام الكاش الاحتياطي لحماية المنيو من التعليق للأبد */
         async function fetchMenuFromGoogleSheet() {
             try {
                 const cacheBuster = `_ts=${Date.now()}_${Math.floor(Math.random()*100000)}`;
@@ -3094,7 +3115,6 @@
 
                 if (parsedMenu.length > 0) {
                     menuData = parsedMenu;
-                    // تخزين نسخة سليمة في الكاش كحزام أمان
                     safeSetStorage('storia_cached_menu_data', JSON.stringify(parsedMenu));
 
                     const loadingMsg = document.getElementById('menuLoadingMsg');
