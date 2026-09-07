@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <!-- ميتا تاج صارم جداً لمنع تخزين الكاش في الآيفون وجميع المتصفحات -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
@@ -450,7 +449,7 @@
             font-weight: 900;
         }
 
-        /* شارة التقييم الإجمالي الفخمة (عرض الرقم فقط بدون عدد المقيمين) */
+        /* شارة التقييم الإجمالي الفخمة */
         .overall-rating-chip {
             background: rgba(27, 77, 62, 0.08);
             border: 1.5px solid rgba(27, 77, 62, 0.25);
@@ -950,7 +949,7 @@
             font-size: 1.05rem; font-weight: 900; color: var(--main-text); margin-bottom: 4px;
         }
 
-        /* نافذة تقييم الأوردر البسيطة والشيك بنفس ستايل بطاقة الإضافة للسلة */
+        /* نافذة تقييم الأوردر البسيطة والشيك */
         .order-review-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.55); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
@@ -988,7 +987,6 @@
             font-size: 0.76rem; font-weight: 800; color: var(--main-text); line-height: 1.35;
         }
         
-        /* نجوم التقييم مع دعم النصف نجمة بدقة */
         .review-stars-box {
             display: flex; justify-content: center; align-items: center;
             gap: 6px; margin-bottom: 6px; direction: ltr;
@@ -1030,36 +1028,65 @@
             cursor: pointer;
         }
 
-        /* كارت طائر شيك لعرض التقييم الإجمالي للمطعم بنفس طراز كارت الإضافة */
+        /* نافذة عرض التقييم الإجمالي والتعليقات الحية للعملاء */
         .overall-toast-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.45); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+            background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
             z-index: 9600; display: none; justify-content: center; align-items: center;
             padding: 16px;
         }
         .overall-toast-card {
-            background: var(--white); width: 100%; max-width: 280px;
-            border-radius: 22px; padding: 20px 16px; text-align: center;
-            box-shadow: 0 20px 45px rgba(0,0,0,0.25);
+            background: var(--white); width: 100%; max-width: 360px;
+            border-radius: 26px; padding: 22px 18px; text-align: center;
+            box-shadow: 0 20px 45px rgba(0,0,0,0.3);
             animation: smoothFadeIn 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
             display: flex; flex-direction: column; align-items: center;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--border-color); max-height: 85vh; overflow-y: auto;
         }
         .overall-toast-icon {
-            width: 50px; height: 50px; background: rgba(245, 158, 11, 0.12);
+            width: 52px; height: 52px; background: rgba(245, 158, 11, 0.12);
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            margin-bottom: 8px; border: 2px solid #f59e0b; font-size: 1.5rem;
+            margin-bottom: 8px; border: 2px solid #f59e0b; font-size: 1.6rem;
         }
         .overall-toast-title {
-            font-size: 1.25rem; font-weight: 900; color: var(--main-text); margin-bottom: 2px;
+            font-size: 1.35rem; font-weight: 900; color: var(--main-text); margin-bottom: 2px;
         }
         .overall-toast-count {
             font-size: 0.80rem; font-weight: 800; color: var(--desc-text); margin-bottom: 12px;
         }
-        .overall-toast-close {
-            background: var(--accent); color: white; border: none; padding: 7px 18px;
-            border-radius: 10px; font-weight: 800; font-size: 0.78rem; cursor: pointer;
+        .overall-comments-list {
+            width: 100%; display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;
+            max-height: 240px; overflow-y: auto; text-align: right;
         }
+        [dir="ltr"] .overall-comments-list { text-align: left; }
+        .customer-comment-card {
+            background: var(--bg); border: 1px solid var(--border-color);
+            border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 3px;
+        }
+        .comment-header-row {
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .comment-user-name { font-size: 0.82rem; font-weight: 900; color: var(--accent); }
+        .comment-star-badge { font-size: 0.76rem; font-weight: 900; color: #f59e0b; }
+        .comment-text-content { font-size: 0.78rem; font-weight: 700; color: var(--main-text); line-height: 1.35; }
+        .comment-date-sub { font-size: 0.65rem; color: var(--desc-text); font-weight: 600; }
+        .overall-toast-close {
+            background: var(--accent); color: white; border: none; padding: 9px 24px;
+            border-radius: 12px; font-weight: 800; font-size: 0.85rem; cursor: pointer; width: 100%;
+        }
+
+        /* كارت تعليق الأدمن مع زر المسح */
+        .admin-review-card {
+            background: var(--white); border: 1px solid var(--border-color);
+            border-radius: 14px; padding: 10px 12px; margin-bottom: 8px;
+            display: flex; justify-content: space-between; align-items: center; gap: 10px;
+        }
+        .admin-del-rev-btn {
+            background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5;
+            padding: 6px 10px; border-radius: 10px; font-weight: 800; font-size: 0.75rem;
+            cursor: pointer; white-space: nowrap;
+        }
+        .admin-del-rev-btn:active { transform: scale(0.95); }
 
         .restaurant-footer { 
             padding: 26px 16px 30px 16px; 
@@ -1470,7 +1497,7 @@
         </div>
     </div>
 
-    <!-- نافذة تقييم الأوردر البسيطة والأنيقة مع دعم النصف نجمة -->
+    <!-- نافذة تقييم الأوردر -->
     <div class="order-review-modal" id="orderReviewModal">
         <div class="order-review-card">
             <div class="review-icon-circle">
@@ -1503,13 +1530,18 @@
         </div>
     </div>
 
-    <!-- بطاقة طائرة شيك للتقييم الإجمالي عند الضغط عليها -->
+    <!-- نافذة عرض التقييم الإجمالي والتعليقات الحية للعملاء -->
     <div class="overall-toast-modal" id="overallToastModal" onclick="if(event.target===this) closeOverallToast()">
         <div class="overall-toast-card">
             <div class="overall-toast-icon">⭐</div>
-            <div class="overall-toast-title"><span id="popupOverallScore">4.9</span> / 5.0</div>
-            <div class="overall-toast-count" id="popupOverallCount">بناءً على 1,240 تقييماً حقيقياً للعملاء</div>
-            <button class="overall-toast-close" onclick="closeOverallToast()">فهمت ذلك ✓</button>
+            <div class="overall-toast-title"><span id="popupOverallScore">5.0</span> / 5.0</div>
+            <div class="overall-toast-count" id="popupOverallCount">بناءً على 1 تقييم حقيقي للعملاء</div>
+            
+            <div class="overall-comments-list" id="customerCommentsFeed">
+                <div style="text-align:center; padding:15px 0; color:var(--desc-text); font-size:0.75rem; font-weight:700;">جاري تحميل آراء الزبائن...</div>
+            </div>
+
+            <button class="overall-toast-close" onclick="closeOverallToast()">إغلاق ومتابعة ✓</button>
         </div>
     </div>
 
@@ -1541,10 +1573,10 @@
                         <span class="pts" id="headerPointsBadge">0</span>
                     </button>
 
-                    <!-- شارة التقييم الإجمالي للمطعم: التقييم فقط وبدون عدد المقيمين هنا -->
-                    <div class="overall-rating-chip" id="overallRatingChip" onclick="openOverallToast()" title="عرض تقييم المطعم">
+                    <!-- زر التقييم الإجمالي الذي يفتح التعليقات والآراء الحية -->
+                    <div class="overall-rating-chip" id="overallRatingChip" onclick="openOverallToast()" title="عرض تقييمات وتعليقات العملاء">
                         <span class="star-icon">⭐</span>
-                        <span id="overallRatingScore">4.9</span>
+                        <span id="overallRatingScore">5.0</span>
                     </div>
                 </div>
 
@@ -1668,6 +1700,7 @@
         </div>
     </div>
 
+    <!-- لوحة التحكم الإدارية المحدثة -->
     <div class="admin-modal" id="adminModal" onclick="if(event.target==this) closeAdminPanel()">
         <div class="admin-box">
             <div class="admin-header">
@@ -1699,6 +1732,13 @@
                         <div class="card-subtitle">تعديل وإضافة رصيد النقاط لأي عميل</div>
                     </div>
 
+                    <div class="admin-nav-card" onclick="openFloatingModal('adminReviewsModal')">
+                        <div class="card-badge-num">⭐</div>
+                        <div class="card-avatar-box">💬</div>
+                        <div class="card-title">آراء وتعليقات العملاء</div>
+                        <div class="card-subtitle">استعراض وحذف أي تعليق سلبي</div>
+                    </div>
+
                     <div class="admin-nav-card" onclick="openFloatingModal('statusModal')">
                         <div class="card-badge-num gray">1</div>
                         <div class="card-avatar-box">📦</div>
@@ -1728,6 +1768,20 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- نافذة إدارة ومسح تعليقات العملاء في لوحة الإدارة -->
+    <div class="floating-sub-modal" id="adminReviewsModal" onclick="if(event.target==this) closeFloatingModal('adminReviewsModal')">
+        <div class="floating-card-box">
+            <div class="floating-header">
+                <h4>💬 إدارة تقييمات وآراء العملاء</h4>
+                <button class="admin-close" onclick="closeFloatingModal('adminReviewsModal')">✕</button>
+            </div>
+            <div style="font-size: 0.78rem; font-weight: 700; color: var(--desc-text); margin-bottom: 12px;">
+                يمكنك حذف أي تعليق غير لائق، وسيتم تحديث متوسط التقييم العام تلقائياً فوراً:
+            </div>
+            <div id="adminReviewsListArea">جاري تحميل التعليقات...</div>
         </div>
     </div>
 
@@ -1889,7 +1943,7 @@
         </div>
     </div>
 
-    <!-- كود إعدادات Firebase المحدث -->
+    <!-- كود إعدادات Firebase -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, onSnapshot, addDoc, deleteDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -1981,7 +2035,7 @@
         let menuData = [];
         let cart = [];
         let currentTotal = 0; 
-        let selectedOrderType = 'takeaway';
+        let selectedOrderType = safeGetStorage('storia_order_type', 'takeaway');
 
         let itemStatusMap = {};
         try {
@@ -2003,7 +2057,8 @@
         let userSelectedOrderRating = 5.0;
         let pendingReviewOrderData = null;
         let reviewCheckInterval = null;
-        let currentTotalReviewsCount = 1240;
+        let currentTotalReviewsCount = 1;
+        let liveReviewsList = [];
 
         let restaurantInfo = { 
             orderPhone: '201014144144', 
@@ -2062,8 +2117,8 @@
                 revSubmitBtn: 'تأكيد التقييم ✓',
                 revDismissBtn: 'تخطي',
                 revPlaceholder: 'ملاحظاتك على الطعم أو الأوردر (اختياري)',
-                toastPopupBase: 'بناءً على {count} تقييماً حقيقياً للعملاء',
-                toastPopupBtn: 'فهمت ذلك ✓'
+                toastPopupBase: 'بناءً على {count} تقييم حقيقي للعملاء',
+                noReviewsYet: 'لا توجد تعليقات مكتوبة حتى الآن، كن أول من يقيم!'
             },
             en: {
                 langBtn: 'AR',
@@ -2115,7 +2170,7 @@
                 revDismissBtn: 'Skip',
                 revPlaceholder: 'Notes on food taste or packaging (optional)',
                 toastPopupBase: 'Based on {count} real customer reviews',
-                toastPopupBtn: 'Got it ✓'
+                noReviewsYet: 'No written reviews yet. Be the first to review!'
             }
         };
 
@@ -2396,13 +2451,14 @@
                         splashScreen.classList.add('splash-hidden');
                         setTimeout(() => { splashScreen.style.display = 'none'; }, 500);
                         
-                        const showed = checkAndPromptOrderReview();
-                        if (!showed) {
-                            showWelcomeModal();
-                        }
+                        showWelcomeModal();
+                        
+                        setTimeout(() => {
+                            checkAndPromptOrderReview();
+                        }, 1000);
                     }
                 }
-            }, 40);
+            }, 35);
         }
 
         function showWelcomeModal() {
@@ -2412,6 +2468,7 @@
 
         function selectInitialOrderType(type) {
             selectedOrderType = type;
+            safeSetStorage('storia_order_type', type);
             setInitialOrderTypeUI(type);
             const welcomeModal = document.getElementById('welcomeOrderModal');
             if (welcomeModal) welcomeModal.style.display = 'none';
@@ -2533,9 +2590,7 @@
             modal.style.display = 'flex';
         }
 
-        /* منطق تقييم النجوم التفاعلي مع دعم النصف نجمة (0.5 إلى 5.0) */
         function handleStarClick(starIndex) {
-            // إذا ضغط نفس النجمة التي تم تقييمها ككاملة، تتحول إلى نصف نجمة
             if (userSelectedOrderRating === starIndex) {
                 userSelectedOrderRating = starIndex - 0.5;
             } else {
@@ -2608,25 +2663,8 @@
                             timestamp: Date.now()
                         });
 
-                        const statsRef = doc(window.db, "settings", "overall_rating");
-                        const snap = await getDoc(statsRef);
-                        let totalSum = userSelectedOrderRating;
-                        let count = 1;
-                        if (snap.exists()) {
-                            totalSum += (snap.data().totalScoreSum || 6076);
-                            count += (snap.data().totalReviewsCount || 1240);
-                        } else {
-                            totalSum += 6076;
-                            count += 1240;
-                        }
-                        const newAvg = (totalSum / count).toFixed(1);
-                        await setDoc(statsRef, {
-                            averageRating: parseFloat(newAvg),
-                            totalScoreSum: totalSum,
-                            totalReviewsCount: count
-                        }, { merge: true });
-                        
-                        updateOverallRatingDisplay(newAvg, count);
+                        // إعادة احتساب المتوسط الحي من قاعدة البيانات
+                        recalculateOverallRating();
                     } catch(e) {
                         console.error("Error saving review:", e);
                     }
@@ -2635,8 +2673,6 @@
 
             if (modal) modal.style.display = 'none';
             alert(currentLang === 'ar' ? 'شكراً جزيلاً لتقييمك! رأيك يسعدنا دائماً 💚' : 'Thank you so much for your review! 💚');
-            
-            showWelcomeModal();
         }
 
         function dismissOrderReview() {
@@ -2646,21 +2682,45 @@
                 pendingReviewOrderData.timestamp = Date.now() + (10 * 60 * 1000);
                 safeSetStorage('storia_last_order_review', JSON.stringify(pendingReviewOrderData));
             }
-            showWelcomeModal();
         }
 
-        /* نافذة العرض الطائرة للتقييم الإجمالي */
+        /* فتح نافذة استعراض التقييم والتعليقات الحية للعميل */
         function openOverallToast() {
-            const score = document.getElementById('overallRatingScore').innerText || '4.9';
+            const score = document.getElementById('overallRatingScore').innerText || '5.0';
             const popupScore = document.getElementById('popupOverallScore');
             const popupCount = document.getElementById('popupOverallCount');
+            const commentsArea = document.getElementById('customerCommentsFeed');
             const t = translations[currentLang] || translations.ar;
 
             if (popupScore) popupScore.innerText = score;
             if (popupCount) {
-                const formattedCnt = Number(currentTotalReviewsCount).toLocaleString(currentLang === 'ar' ? 'ar-EG' : 'en-US');
-                popupCount.innerText = t.toastPopupBase.replace('{count}', formattedCnt);
+                popupCount.innerText = t.toastPopupBase.replace('{count}', currentTotalReviewsCount);
             }
+
+            if (commentsArea) {
+                commentsArea.innerHTML = '';
+                const writtenReviews = liveReviewsList.filter(r => r.notes && r.notes.trim() !== '');
+
+                if (writtenReviews.length === 0) {
+                    commentsArea.innerHTML = `<div style="text-align:center; padding:15px 0; color:var(--desc-text); font-size:0.75rem; font-weight:700;">${t.noReviewsYet}</div>`;
+                } else {
+                    writtenReviews.forEach(r => {
+                        const dateStr = r.timestamp ? new Date(r.timestamp).toLocaleDateString(currentLang === 'ar' ? 'ar-EG' : 'en-US') : '';
+                        const card = document.createElement('div');
+                        card.className = 'customer-comment-card';
+                        card.innerHTML = `
+                            <div class="comment-header-row">
+                                <span class="comment-user-name">${r.userName || (currentLang === 'ar' ? 'عميل ستوريا' : 'Customer')}</span>
+                                <span class="comment-star-badge">⭐ ${r.rating || 5}</span>
+                            </div>
+                            <div class="comment-text-content">"${r.notes}"</div>
+                            <span class="comment-date-sub">${dateStr}</span>
+                        `;
+                        commentsArea.appendChild(card);
+                    });
+                }
+            }
+
             const modal = document.getElementById('overallToastModal');
             if (modal) modal.style.display = 'flex';
         }
@@ -2673,20 +2733,93 @@
         function updateOverallRatingDisplay(score, count) {
             const scoreEl = document.getElementById('overallRatingScore');
             if (scoreEl) scoreEl.innerText = score;
-            if (count) currentTotalReviewsCount = count;
+            currentTotalReviewsCount = Math.max(1, count);
         }
 
-        async function fetchOverallRatingLive() {
+        /* الاستماع اللحظي للتقييمات والتعليقات من Firestore وإعادة الحساب الحي (تبدأ من 1 وكل تقييم يزيد 1) */
+        let reviewsLiveUnsubscribe = null;
+        function setupLiveReviewsListener() {
             if (!window.db || !window.firebaseModules) return;
-            const { doc, onSnapshot } = window.firebaseModules;
-            onSnapshot(doc(window.db, "settings", "overall_rating"), (snap) => {
-                if (snap.exists()) {
-                    const data = snap.data();
-                    const avg = data.averageRating || 4.9;
-                    const cnt = data.totalReviewsCount || 1240;
-                    updateOverallRatingDisplay(avg, cnt);
+            const { collection, onSnapshot, query, orderBy } = window.firebaseModules;
+            if (reviewsLiveUnsubscribe) reviewsLiveUnsubscribe();
+
+            const q = query(collection(window.db, "restaurant_reviews"), orderBy("timestamp", "desc"));
+            reviewsLiveUnsubscribe = onSnapshot(q, (snapshot) => {
+                liveReviewsList = [];
+                let sum = 0;
+                let count = 0;
+
+                snapshot.forEach(docSnap => {
+                    const data = docSnap.data();
+                    data.id = docSnap.id;
+                    liveReviewsList.push(data);
+                    sum += (parseFloat(data.rating) || 5);
+                    count++;
+                });
+
+                if (count > 0) {
+                    const avg = (sum / count).toFixed(1);
+                    updateOverallRatingDisplay(avg, count);
+                } else {
+                    updateOverallRatingDisplay("5.0", 1);
                 }
-            }, (e) => {});
+
+                // تحديث قائمة الأدمن لو كانت مفتوحة
+                renderAdminReviewsList();
+            }, (err) => {
+                console.error("Reviews listener error:", err);
+            });
+        }
+
+        async function recalculateOverallRating() {
+            if (!window.db || !window.firebaseModules) return;
+            // يتم التحديث تلقائياً بفضل الـ onSnapshot
+        }
+
+        /* إدارة التقييمات في لوحة التحكم وحذف أي تعليق */
+        function renderAdminReviewsList() {
+            const area = document.getElementById('adminReviewsListArea');
+            if (!area) return;
+            area.innerHTML = '';
+
+            if (liveReviewsList.length === 0) {
+                area.innerHTML = '<div style="text-align:center; padding:15px; color:var(--desc-text); font-weight:700;">لا توجد تقييمات مسجلة حتى الآن.</div>';
+                return;
+            }
+
+            liveReviewsList.forEach(r => {
+                const dateStr = r.timestamp ? new Date(r.timestamp).toLocaleDateString('ar-EG') : '';
+                const card = document.createElement('div');
+                card.className = 'admin-review-card';
+                card.innerHTML = `
+                    <div style="flex:1; text-align:right;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;">
+                            <b style="color:var(--accent); font-size:0.85rem;">${r.userName || 'بدون اسم'} (📞 ${r.userPhone || 'غير مسجل'})</b>
+                            <span style="color:#f59e0b; font-weight:900; font-size:0.8rem;">⭐ ${r.rating || 5}</span>
+                        </div>
+                        <div style="font-size:0.80rem; font-weight:700; color:var(--main-text); margin-bottom:2px;">
+                            ${r.notes ? `"${r.notes}"` : '<i style="color:var(--desc-text);">تقييم بدون تعليق</i>'}
+                        </div>
+                        <span style="font-size:0.65rem; color:var(--desc-text);">${dateStr}</span>
+                    </div>
+                    <button class="admin-del-rev-btn" onclick="deleteCustomerReview('${r.id}')">حذف التعليق ✕</button>
+                `;
+                area.appendChild(card);
+            });
+        }
+
+        async function deleteCustomerReview(reviewId) {
+            if (confirm("هل أنت متأكد من حذف هذا التعليق نهائياً؟")) {
+                if (window.db && window.firebaseModules) {
+                    try {
+                        const { doc, deleteDoc } = window.firebaseModules;
+                        await deleteDoc(doc(window.db, "restaurant_reviews", reviewId));
+                        alert("تم حذف التعليق بنجاح وتحديث التقييم العام!");
+                    } catch(e) {
+                        alert("حدث خطأ أثناء الحذف");
+                    }
+                }
+            }
         }
 
         function initializeAppCore() {
@@ -2711,7 +2844,7 @@
         window.addEventListener('firebase-ready', () => {
             setupLiveItemsStatusListener();
             setupLivePriceMarkupListener();
-            fetchOverallRatingLive();
+            setupLiveReviewsListener();
         });
 
         function updatePointsBadge(pts) {
@@ -3424,7 +3557,6 @@
             orderText += `*${currentLang==='ar'?'الإجمالي الكلي:':'Total Amount:'}* ${currentTotal.toFixed(2)} ${t.currency}\n`;
             orderText += `*🎁 ${currentLang==='ar'?'النقاط المكتسبة:':'Earned Points:'}* +${earnedPts} ${t.ptsUnit}\n`;
 
-            // حفظ بيانات التقييم مع توقيت الطلب (يظهر بعد نص ساعة بدقة)
             const tempOrderId = 'ord_' + Date.now();
             const reviewData = {
                 orderId: tempOrderId,
@@ -3615,6 +3747,7 @@
 
                 listenToOrdersLogs();
                 renderAdminItemsList();
+                renderAdminReviewsList();
             } else {
                 alert(currentLang === 'ar' ? 'كلمة المرور غير صحيحة!' : 'Incorrect password!');
             }
@@ -3629,6 +3762,9 @@
                 }
                 if (id === 'statusModal') {
                     renderAdminItemsList();
+                }
+                if (id === 'adminReviewsModal') {
+                    renderAdminReviewsList();
                 }
                 el.style.display = 'flex';
             }
