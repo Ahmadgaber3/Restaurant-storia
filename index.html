@@ -949,7 +949,7 @@
             font-size: 1.05rem; font-weight: 900; color: var(--main-text); margin-bottom: 4px;
         }
 
-        /* نافذة تقييم الأوردر البسيطة والشيك */
+        /* نافذة تقييم الأوردر */
         .order-review-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.55); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
@@ -1700,7 +1700,7 @@
         </div>
     </div>
 
-    <!-- لوحة التحكم الإدارية المحدثة -->
+    <!-- لوحة التحكم الإدارية -->
     <div class="admin-modal" id="adminModal" onclick="if(event.target==this) closeAdminPanel()">
         <div class="admin-box">
             <div class="admin-header">
@@ -1943,10 +1943,10 @@
         </div>
     </div>
 
-    <!-- كود إعدادات Firebase -->
+    <!-- كود إعدادات Firebase مع استيراد limit بشكل سليم وبدون أي نقص -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, onSnapshot, addDoc, deleteDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, onSnapshot, addDoc, deleteDoc, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyBq3bpV6hNVAsHlmBPzn9GAaF4K4r06REM",
@@ -1963,7 +1963,7 @@
             const db = getFirestore(app);
 
             window.db = db;
-            window.firebaseModules = { doc, getDoc, setDoc, updateDoc, collection, onSnapshot, addDoc, deleteDoc, getDocs, query, orderBy };
+            window.firebaseModules = { doc, getDoc, setDoc, updateDoc, collection, onSnapshot, addDoc, deleteDoc, getDocs, query, orderBy, limit };
             window.dispatchEvent(new Event('firebase-ready'));
         } catch(e) {
             console.warn("Firebase Init Error:", e);
@@ -2058,7 +2058,6 @@
         let pendingReviewOrderData = null;
         let reviewCheckInterval = null;
         let currentTotalReviewsCount = 1;
-        let liveReviewsList = [];
 
         let restaurantInfo = { 
             orderPhone: '201014144144', 
@@ -2551,7 +2550,6 @@
                 const orderTime = orderData.timestamp || 0;
                 const elapsedSeconds = (now - orderTime) / 1000;
 
-                // مرور 30 دقيقة = 1800 ثانية
                 if (elapsedSeconds >= 1800) {
                     pendingReviewOrderData = orderData;
                     displayOrderReviewModal(orderData);
@@ -2663,8 +2661,26 @@
                             timestamp: Date.now()
                         });
 
-                        // إعادة احتساب المتوسط الحي من قاعدة البيانات
-                        recalculateOverallRating();
+                        // تحديث الإحصائيات التراكمية في مستند واحد موفر للكوتة
+                        const statsRef = doc(window.db, "settings", "overall_rating");
+                        const statsSnap = await getDoc(statsRef);
+                        let totalSum = userSelectedOrderRating;
+                        let totalCount = 1;
+
+                        if (statsSnap.exists()) {
+                            const sData = statsSnap.data();
+                            totalSum += (parseFloat(sData.totalScoreSum) || 0);
+                            totalCount += (parseInt(sData.totalCount) || 0);
+                        }
+
+                        const finalAvg = (totalSum / totalCount).toFixed(1);
+                        await setDoc(statsRef, {
+                            averageRating: finalAvg,
+                            totalScoreSum: totalSum,
+                            totalCount: totalCount
+                        }, { merge: true });
+
+                        updateOverallRatingDisplay(finalAvg, totalCount);
                     } catch(e) {
                         console.error("Error saving review:", e);
                     }
@@ -2684,8 +2700,8 @@
             }
         }
 
-        /* فتح نافذة استعراض التقييم والتعليقات الحية للعميل */
-        function openOverallToast() {
+        /* جلب التعليقات عند النقر فقط بحد أقصى 15 تعليق لتوفير كوتة فايربيس تماماً */
+        async function openOverallToast() {
             const score = document.getElementById('overallRatingScore').innerText || '5.0';
             const popupScore = document.getElementById('popupOverallScore');
             const popupCount = document.getElementById('popupOverallCount');
@@ -2697,32 +2713,45 @@
                 popupCount.innerText = t.toastPopupBase.replace('{count}', currentTotalReviewsCount);
             }
 
-            if (commentsArea) {
-                commentsArea.innerHTML = '';
-                const writtenReviews = liveReviewsList.filter(r => r.notes && r.notes.trim() !== '');
-
-                if (writtenReviews.length === 0) {
-                    commentsArea.innerHTML = `<div style="text-align:center; padding:15px 0; color:var(--desc-text); font-size:0.75rem; font-weight:700;">${t.noReviewsYet}</div>`;
-                } else {
-                    writtenReviews.forEach(r => {
-                        const dateStr = r.timestamp ? new Date(r.timestamp).toLocaleDateString(currentLang === 'ar' ? 'ar-EG' : 'en-US') : '';
-                        const card = document.createElement('div');
-                        card.className = 'customer-comment-card';
-                        card.innerHTML = `
-                            <div class="comment-header-row">
-                                <span class="comment-user-name">${r.userName || (currentLang === 'ar' ? 'عميل ستوريا' : 'Customer')}</span>
-                                <span class="comment-star-badge">⭐ ${r.rating || 5}</span>
-                            </div>
-                            <div class="comment-text-content">"${r.notes}"</div>
-                            <span class="comment-date-sub">${dateStr}</span>
-                        `;
-                        commentsArea.appendChild(card);
-                    });
-                }
-            }
-
             const modal = document.getElementById('overallToastModal');
             if (modal) modal.style.display = 'flex';
+
+            if (commentsArea && window.db && window.firebaseModules) {
+                commentsArea.innerHTML = `<div style="text-align:center; padding:15px 0; color:var(--desc-text); font-size:0.75rem; font-weight:700;">${currentLang === 'ar' ? 'جاري تحميل الآراء...' : 'Loading reviews...'}</div>`;
+                try {
+                    const { collection, getDocs, query, orderBy, limit } = window.firebaseModules;
+                    const q = query(collection(window.db, "restaurant_reviews"), orderBy("timestamp", "desc"), limit(15));
+                    const snap = await getDocs(q);
+
+                    commentsArea.innerHTML = '';
+                    let hasComments = false;
+
+                    snap.forEach(docSnap => {
+                        const r = docSnap.data();
+                        if (r.notes && r.notes.trim() !== '') {
+                            hasComments = true;
+                            const dateStr = r.timestamp ? new Date(r.timestamp).toLocaleDateString(currentLang === 'ar' ? 'ar-EG' : 'en-US') : '';
+                            const card = document.createElement('div');
+                            card.className = 'customer-comment-card';
+                            card.innerHTML = `
+                                <div class="comment-header-row">
+                                    <span class="comment-user-name">${r.userName || (currentLang === 'ar' ? 'عميل ستوريا' : 'Customer')}</span>
+                                    <span class="comment-star-badge">⭐ ${r.rating || 5}</span>
+                                </div>
+                                <div class="comment-text-content">"${r.notes}"</div>
+                                <span class="comment-date-sub">${dateStr}</span>
+                            `;
+                            commentsArea.appendChild(card);
+                        }
+                    });
+
+                    if (!hasComments) {
+                        commentsArea.innerHTML = `<div style="text-align:center; padding:15px 0; color:var(--desc-text); font-size:0.75rem; font-weight:700;">${t.noReviewsYet}</div>`;
+                    }
+                } catch(e) {
+                    commentsArea.innerHTML = `<div style="text-align:center; padding:10px 0; color:var(--desc-text); font-size:0.75rem;">${t.noReviewsYet}</div>`;
+                }
+            }
         }
 
         function closeOverallToast() {
@@ -2736,85 +2765,91 @@
             currentTotalReviewsCount = Math.max(1, count);
         }
 
-        /* الاستماع اللحظي للتقييمات والتعليقات من Firestore وإعادة الحساب الحي (تبدأ من 1 وكل تقييم يزيد 1) */
-        let reviewsLiveUnsubscribe = null;
+        /* جلب ملخص التقييم الإجمالي فقط في الخلفية (قراءة واحدة سريعة جداً) */
         function setupLiveReviewsListener() {
             if (!window.db || !window.firebaseModules) return;
-            const { collection, onSnapshot, query, orderBy } = window.firebaseModules;
-            if (reviewsLiveUnsubscribe) reviewsLiveUnsubscribe();
+            const { doc, onSnapshot } = window.firebaseModules;
 
-            const q = query(collection(window.db, "restaurant_reviews"), orderBy("timestamp", "desc"));
-            reviewsLiveUnsubscribe = onSnapshot(q, (snapshot) => {
-                liveReviewsList = [];
-                let sum = 0;
-                let count = 0;
-
-                snapshot.forEach(docSnap => {
-                    const data = docSnap.data();
-                    data.id = docSnap.id;
-                    liveReviewsList.push(data);
-                    sum += (parseFloat(data.rating) || 5);
-                    count++;
-                });
-
-                if (count > 0) {
-                    const avg = (sum / count).toFixed(1);
-                    updateOverallRatingDisplay(avg, count);
+            onSnapshot(doc(window.db, "settings", "overall_rating"), (snap) => {
+                if (snap.exists()) {
+                    const data = snap.data();
+                    updateOverallRatingDisplay(data.averageRating || "5.0", data.totalCount || 1);
                 } else {
                     updateOverallRatingDisplay("5.0", 1);
                 }
-
-                // تحديث قائمة الأدمن لو كانت مفتوحة
-                renderAdminReviewsList();
-            }, (err) => {
-                console.error("Reviews listener error:", err);
-            });
+            }, (err) => console.warn("Rating listener fallback:", err));
         }
 
-        async function recalculateOverallRating() {
-            if (!window.db || !window.firebaseModules) return;
-            // يتم التحديث تلقائياً بفضل الـ onSnapshot
-        }
-
-        /* إدارة التقييمات في لوحة التحكم وحذف أي تعليق */
-        function renderAdminReviewsList() {
+        /* إدارة التقييمات في لوحة التحكم */
+        async function renderAdminReviewsList() {
             const area = document.getElementById('adminReviewsListArea');
-            if (!area) return;
-            area.innerHTML = '';
+            if (!area || !window.db || !window.firebaseModules) return;
+            area.innerHTML = '<div style="text-align:center; padding:15px; color:var(--desc-text);">جاري تحميل التعليقات...</div>';
 
-            if (liveReviewsList.length === 0) {
-                area.innerHTML = '<div style="text-align:center; padding:15px; color:var(--desc-text); font-weight:700;">لا توجد تقييمات مسجلة حتى الآن.</div>';
-                return;
+            try {
+                const { collection, getDocs, query, orderBy, limit } = window.firebaseModules;
+                const q = query(collection(window.db, "restaurant_reviews"), orderBy("timestamp", "desc"), limit(30));
+                const snap = await getDocs(q);
+
+                area.innerHTML = '';
+                if (snap.empty) {
+                    area.innerHTML = '<div style="text-align:center; padding:15px; color:var(--desc-text); font-weight:700;">لا توجد تقييمات مسجلة حتى الآن.</div>';
+                    return;
+                }
+
+                snap.forEach(docSnap => {
+                    const r = docSnap.data();
+                    const dateStr = r.timestamp ? new Date(r.timestamp).toLocaleDateString('ar-EG') : '';
+                    const card = document.createElement('div');
+                    card.className = 'admin-review-card';
+                    card.innerHTML = `
+                        <div style="flex:1; text-align:right;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;">
+                                <b style="color:var(--accent); font-size:0.85rem;">${r.userName || 'بدون اسم'} (📞 ${r.userPhone || 'غير مسجل'})</b>
+                                <span style="color:#f59e0b; font-weight:900; font-size:0.8rem;">⭐ ${r.rating || 5}</span>
+                            </div>
+                            <div style="font-size:0.80rem; font-weight:700; color:var(--main-text); margin-bottom:2px;">
+                                ${r.notes ? `"${r.notes}"` : '<i style="color:var(--desc-text);">تقييم بدون تعليق</i>'}
+                            </div>
+                            <span style="font-size:0.65rem; color:var(--desc-text);">${dateStr}</span>
+                        </div>
+                        <button class="admin-del-rev-btn" onclick="deleteCustomerReview('${docSnap.id}', ${r.rating || 5})">حذف التعليق ✕</button>
+                    `;
+                    area.appendChild(card);
+                });
+            } catch(e) {
+                area.innerHTML = '<div style="text-align:center; padding:10px; color:#ef4444;">حدث خطأ في تحميل التعليقات</div>';
             }
-
-            liveReviewsList.forEach(r => {
-                const dateStr = r.timestamp ? new Date(r.timestamp).toLocaleDateString('ar-EG') : '';
-                const card = document.createElement('div');
-                card.className = 'admin-review-card';
-                card.innerHTML = `
-                    <div style="flex:1; text-align:right;">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;">
-                            <b style="color:var(--accent); font-size:0.85rem;">${r.userName || 'بدون اسم'} (📞 ${r.userPhone || 'غير مسجل'})</b>
-                            <span style="color:#f59e0b; font-weight:900; font-size:0.8rem;">⭐ ${r.rating || 5}</span>
-                        </div>
-                        <div style="font-size:0.80rem; font-weight:700; color:var(--main-text); margin-bottom:2px;">
-                            ${r.notes ? `"${r.notes}"` : '<i style="color:var(--desc-text);">تقييم بدون تعليق</i>'}
-                        </div>
-                        <span style="font-size:0.65rem; color:var(--desc-text);">${dateStr}</span>
-                    </div>
-                    <button class="admin-del-rev-btn" onclick="deleteCustomerReview('${r.id}')">حذف التعليق ✕</button>
-                `;
-                area.appendChild(card);
-            });
         }
 
-        async function deleteCustomerReview(reviewId) {
+        async function deleteCustomerReview(reviewId, ratingVal) {
             if (confirm("هل أنت متأكد من حذف هذا التعليق نهائياً؟")) {
                 if (window.db && window.firebaseModules) {
                     try {
-                        const { doc, deleteDoc } = window.firebaseModules;
+                        const { doc, deleteDoc, getDoc, setDoc } = window.firebaseModules;
                         await deleteDoc(doc(window.db, "restaurant_reviews", reviewId));
+
+                        // تعديل الإحصائيات التراكمية
+                        const statsRef = doc(window.db, "settings", "overall_rating");
+                        const statsSnap = await getDoc(statsRef);
+                        if (statsSnap.exists()) {
+                            const sData = statsSnap.data();
+                            let totalSum = Math.max(0, (parseFloat(sData.totalScoreSum) || 0) - ratingVal);
+                            let totalCount = Math.max(1, (parseInt(sData.totalCount) || 1) - 1);
+                            let finalAvg = (totalSum / totalCount).toFixed(1);
+                            if (totalCount === 1 && totalSum === 0) finalAvg = "5.0";
+
+                            await setDoc(statsRef, {
+                                averageRating: finalAvg,
+                                totalScoreSum: totalSum,
+                                totalCount: totalCount
+                            }, { merge: true });
+
+                            updateOverallRatingDisplay(finalAvg, totalCount);
+                        }
+
                         alert("تم حذف التعليق بنجاح وتحديث التقييم العام!");
+                        renderAdminReviewsList();
                     } catch(e) {
                         alert("حدث خطأ أثناء الحذف");
                     }
@@ -2983,6 +3018,7 @@
             return result;
         }
 
+        /* جلب المنيو مع نظام الكاش الاحتياطي لحماية المنيو من التعليق للأبد */
         async function fetchMenuFromGoogleSheet() {
             try {
                 const cacheBuster = `_ts=${Date.now()}_${Math.floor(Math.random()*100000)}`;
@@ -2993,7 +3029,7 @@
                 
                 const csvText = await response.text();
                 const lines = csvText.split(/\r?\n/).filter(line => line.trim() !== "");
-                if (lines.length < 2) return;
+                if (lines.length < 2) throw new Error("Empty CSV");
 
                 const parsedMenu = [];
 
@@ -3058,6 +3094,9 @@
 
                 if (parsedMenu.length > 0) {
                     menuData = parsedMenu;
+                    // تخزين نسخة سليمة في الكاش كحزام أمان
+                    safeSetStorage('storia_cached_menu_data', JSON.stringify(parsedMenu));
+
                     const loadingMsg = document.getElementById('menuLoadingMsg');
                     if (loadingMsg) loadingMsg.remove();
                     
@@ -3066,7 +3105,19 @@
                     updateAllCardsDOMStatus();
                 }
             } catch (err) {
-                console.error("Error loading menu:", err);
+                console.warn("Using menu safe cache fallback due to fetch error:", err);
+                const cached = safeGetStorage('storia_cached_menu_data', null);
+                if (cached) {
+                    try {
+                        menuData = JSON.parse(cached);
+                        const loadingMsg = document.getElementById('menuLoadingMsg');
+                        if (loadingMsg) loadingMsg.remove();
+                        renderCategories();
+                        renderMenu(true);
+                        updateAllCardsDOMStatus();
+                        return;
+                    } catch(e) {}
+                }
                 const loadingMsg = document.getElementById('menuLoadingMsg');
                 if (loadingMsg) {
                     loadingMsg.innerHTML = 'حدث خطأ في تحميل الأصناف، يرجى إعادة تحديث الصفحة أو التأكد من اتصال الإنترنت.';
