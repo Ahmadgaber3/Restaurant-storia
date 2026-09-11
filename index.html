@@ -430,6 +430,7 @@
             gap: 6px;
         }
 
+        /* تم تعطيل وإخفاء زر المكافآت مؤقتاً */
         .loyalty-sub-btn {
             background: linear-gradient(135deg, #1b4d3e 0%, #113329 100%);
             color: white;
@@ -438,7 +439,7 @@
             border-radius: 12px;
             font-size: 0.78rem;
             font-weight: 800;
-            display: inline-flex;
+            display: none !important; /* إخفاء مؤقت للنقاط */
             align-items: center;
             gap: 5px;
             cursor: pointer;
@@ -1167,13 +1168,14 @@
 
         .submit-btn { background: var(--accent); color: white; border: none; padding: 18px; border-radius: 18px; width: 100%; font-weight: 800; cursor: pointer; font-size: 1rem; }
 
+        /* تم تعطيل وإخفاء كارت احتساب النقاط من السلة مؤقتاً */
         .cart-points-card-pro {
             background: linear-gradient(135deg, rgba(27, 77, 62, 0.12) 0%, rgba(52, 132, 108, 0.18) 100%);
             border: 2px solid var(--accent);
             border-radius: 18px;
             padding: 14px 16px;
             margin-bottom: 14px;
-            display: flex;
+            display: none !important; /* إخفاء مؤقت للنقاط */
             align-items: center;
             justify-content: space-between;
             box-shadow: 0 4px 15px rgba(27, 77, 62, 0.1);
@@ -1239,7 +1241,7 @@
             font-weight: 900;
             font-size: 1.05rem;
             margin-bottom: 16px;
-            display: inline-flex;
+            display: none !important; /* إخفاء مؤقت للنقاط */
             align-items: center;
             gap: 6px;
         }
@@ -1575,7 +1577,7 @@
                         <span class="pts" id="headerPointsBadge">0</span>
                     </button>
 
-                    <!-- زر التقييم الإجمالي (يعرض المتوسط 4.5 أو 5.0 فقط) -->
+                    <!-- زر التقييم الإجمالي -->
                     <div class="overall-rating-chip" id="overallRatingChip" onclick="openOverallToast()" title="عرض تقييمات وتعليقات العملاء">
                         <span class="star-icon">⭐</span>
                         <span id="overallRatingScore">5.0</span>
@@ -1938,10 +1940,10 @@
 
             <div class="user-fields">
                 <input type="text" id="uName" placeholder="الاسم بالكامل">
-                <input type="tel" id="uPhone" placeholder="رقم الموبايل (لتجميع النقاط)" oninput="handlePhoneInput(this.value)">
+                <input type="tel" id="uPhone" placeholder="رقم الموبايل" oninput="handlePhoneInput(this.value)">
                 <input type="text" id="uAddr" placeholder="العنوان بالتفصيل أو رقم الترابيزة">
             </div>
-            <button class="submit-btn" id="t_cart_submit_btn" onclick="sendToWA()">تأكيد الطلب وتجميع النقاط 🛒</button>
+            <button class="submit-btn" id="t_cart_submit_btn" onclick="sendToWA()">تأكيد الطلب 🛒</button>
         </div>
     </div>
 
@@ -2061,7 +2063,6 @@
         let reviewCheckInterval = null;
         let currentTotalReviewsCount = 1;
 
-        // متغيرات النقر المزدوج على اللوجو
         let lastLogoTapTime = 0;
 
         let restaurantInfo = { 
@@ -2099,10 +2100,10 @@
                 cartSubtotal: 'مجموع الأصناف:',
                 cartTotal: 'الإجمالي الكلي',
                 namePlaceholder: 'الاسم بالكامل',
-                phonePlaceholder: 'رقم الموبايل (لتجميع النقاط)',
+                phonePlaceholder: 'رقم الموبايل',
                 addrPlaceholderDel: 'العنوان بالتفصيل',
                 addrPlaceholderTake: 'رقم الترابيزة أو ملاحظات الاستلام',
-                cartSubmitBtn: 'تأكيد الطلب وتجميع النقاط 🛒',
+                cartSubmitBtn: 'تأكيد الطلب 🛒',
                 cartEmptyText: 'سلة الطلبات فارغة حالياً',
                 removeText: 'حذف ✕',
                 currency: 'ج.م',
@@ -2151,10 +2152,10 @@
                 cartSubtotal: 'Items Subtotal:',
                 cartTotal: 'Total Amount',
                 namePlaceholder: 'Full Name',
-                phonePlaceholder: 'Mobile Number (for rewards points)',
+                phonePlaceholder: 'Mobile Number',
                 addrPlaceholderDel: 'Detailed Delivery Address',
                 addrPlaceholderTake: 'Table Number or Pickup Notes',
-                cartSubmitBtn: 'Confirm Order & Earn Points 🛒',
+                cartSubmitBtn: 'Confirm Order 🛒',
                 cartEmptyText: 'Your cart is currently empty',
                 removeText: 'Remove ✕',
                 currency: 'EGP',
@@ -2678,7 +2679,6 @@
                             totalCount += (parseInt(sData.totalCount) || 0);
                         }
 
-                        // ضمان حساب المتوسط الفعلي بدقة بين 1.0 و 5.0
                         let finalAvg = (totalSum / totalCount).toFixed(1);
                         if (parseFloat(finalAvg) > 5.0) finalAvg = "5.0";
 
@@ -2796,7 +2796,6 @@
             const tapGap = currentTime - lastLogoTapTime;
             
             if (tapGap < 500 && tapGap > 0) {
-                // نقر مزدوج سريع
                 openAdminPanel();
                 lastLogoTapTime = 0;
             } else {
@@ -2914,28 +2913,11 @@
         }
 
         async function fetchUserPointsFromFirebase(phone) {
-            if (!phone) return;
-            activeUserPhone = phone;
-            safeSetStorage('storia_user_phone', phone);
-            
-            const displayEl = document.getElementById('modalUserPhoneDisplay');
-            if (displayEl) displayEl.innerText = currentLang === 'ar' ? `حساب العميل: ${phone}` : `Customer Phone: ${phone}`;
-
-            if (window.db && window.firebaseModules) {
-                try {
-                    const { doc, getDoc } = window.firebaseModules;
-                    const snap = await getDoc(doc(window.db, "loyalty_users", phone));
-                    if (snap.exists()) {
-                        updatePointsBadge(snap.data().points || 0);
-                    } else {
-                        updatePointsBadge(0);
-                    }
-                } catch(e) {}
-            }
+            // معطل مؤقتاً
         }
 
         function handlePhoneInput(phone) {
-            if (phone.length >= 10) fetchUserPointsFromFirebase(phone.trim());
+            // معطل مؤقتاً
         }
 
         function openLoyaltyModal() { document.getElementById('loyaltyModal').style.display = 'flex'; }
@@ -3591,7 +3573,7 @@
             const t = translations[currentLang] || translations.ar;
 
             if (!name || !phone) {
-                alert(currentLang === 'ar' ? 'يرجى كتابة الاسم ورقم الموبايل لإكمال الطلب وحفظ نقاطك' : 'Please enter your full name and phone number to complete the order');
+                alert(currentLang === 'ar' ? 'يرجى كتابة الاسم ورقم الموبايل لإكمال الطلب' : 'Please enter your full name and phone number to complete the order');
                 return;
             }
             if (cart.length === 0) return;
@@ -3626,7 +3608,6 @@
 
             orderText += `------------------------------------\n`;
             orderText += `*${currentLang==='ar'?'الإجمالي الكلي:':'Total Amount:'}* ${currentTotal.toFixed(2)} ${t.currency}\n`;
-            orderText += `*🎁 ${currentLang==='ar'?'النقاط المكتسبة:':'Earned Points:'}* +${earnedPts} ${t.ptsUnit}\n`;
 
             const tempOrderId = 'ord_' + Date.now();
             const reviewData = {
@@ -3641,7 +3622,7 @@
 
             try {
                 if (window.db && window.firebaseModules) {
-                    const { collection, addDoc, doc, getDoc, setDoc } = window.firebaseModules;
+                    const { collection, addDoc } = window.firebaseModules;
                     const orderDoc = await addDoc(collection(window.db, "orders"), {
                         userName: name,
                         userPhone: phone,
@@ -3649,7 +3630,7 @@
                         orderType: selectedOrderType,
                         items: itemsArrayForLog,
                         totalPrice: currentTotal,
-                        earnedPoints: earnedPts,
+                        earnedPoints: 0,
                         createdAt: new Date().toISOString(),
                         timestamp: Date.now()
                     });
@@ -3660,13 +3641,6 @@
 
                     reviewData.orderId = orderDoc.id;
                     safeSetStorage('storia_last_order_review', JSON.stringify(reviewData));
-
-                    const userRef = doc(window.db, "loyalty_users", phone);
-                    const userSnap = await getDoc(userRef);
-                    let currentPts = userSnap.exists() ? (userSnap.data().points || 0) : 0;
-                    currentPts += earnedPts;
-                    await setDoc(userRef, { phone, points: currentPts, lastOrder: new Date().toISOString() }, { merge: true });
-                    updatePointsBadge(currentPts);
                 }
             } catch(e) {
                 console.error("Error saving order:", e);
@@ -3677,7 +3651,6 @@
             const waPhone = restaurantInfo.orderPhone || '201014144144';
             window.open(`https://wa.me/${waPhone}?text=${encodeURIComponent(orderText)}`, '_blank');
 
-            document.getElementById('successPointsPill').innerHTML = `<span>🌟 +${earnedPts} ${currentLang==='ar'?'نقطة جديدة أضيفت لرصيدك!':'new points added to your balance!'}</span>`;
             document.getElementById('successModal').style.display = 'flex';
             triggerEmojiCelebration();
 
