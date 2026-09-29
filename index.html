@@ -725,7 +725,7 @@
     <div class="order-review-modal" id="orderReviewModal">
         <div class="order-review-card">
             <div class="review-icon-circle">
-                <span>🍽️</span>
+                <span>🍽️️</span>
             </div>
             <div class="review-card-title" id="t_rev_title">طمنا.. إيه رأيك في الأكل؟</div>
             <div class="review-card-subtitle" id="t_rev_sub">تقييمك يساعدنا لنقدم لك أفضل جودة دائماً</div>
@@ -998,6 +998,7 @@
         </div>
     </div>
 
+    <!-- لوحة التحكم الإدارية -->
     <div class="admin-modal" id="adminModal" onclick="if(event.target==this) closeAdminPanel()">
         <div class="admin-box">
             <div class="admin-header">
@@ -1795,28 +1796,30 @@
             activeUserPhone = phone;
             safeSetStorage('storia_user_phone', phone);
 
+            // ضمان إضافة 100 نقطة كاملة للحساب الجديد أو تحديثه إذا كان أقل من 100
             if (window.db && window.firebaseModules) {
                 try {
                     const { doc, getDoc, setDoc } = window.firebaseModules;
                     const userRef = doc(window.db, "loyalty_users", phone);
                     const userSnap = await getDoc(userRef);
 
-                    if (!userSnap.exists()) {
+                    if (!userSnap.exists() || (userSnap.data().points || 0) < 100) {
                         await setDoc(userRef, {
                             phone: phone,
                             points: 100,
                             createdAt: new Date().toISOString(),
                             timestamp: Date.now()
-                        });
+                        }, { merge: true });
                         userLoyaltyPoints = 100;
                         safeSetStorage('storia_user_pts', '100');
                         alert('🎉 مبروك! تم تسجيل حسابك وحصلت على 100 نقطة هدية ترحيبية!');
                     } else {
-                        userLoyaltyPoints = userSnap.data().points || 0;
+                        userLoyaltyPoints = userSnap.data().points || 100;
                         safeSetStorage('storia_user_pts', String(userLoyaltyPoints));
                     }
                 } catch(e) {
-                    console.error("User gate registration error:", e);
+                    userLoyaltyPoints = 100;
+                    safeSetStorage('storia_user_pts', '100');
                 }
             } else {
                 userLoyaltyPoints = 100;
@@ -2264,15 +2267,6 @@
             setupLiveItemsStatusListener();
             setupLivePriceMarkupListener();
             setupLiveReviewsListener();
-            
-            if (window.db && window.firebaseModules) {
-                const { doc, getDoc } = window.firebaseModules;
-                getDoc(doc(window.db, "settings", "admin_config")).then(snap => {
-                    if (snap.exists() && snap.data().password) {
-                        safeSetStorage('storia_admin_pass', String(snap.data().password).trim());
-                    }
-                }).catch(() => {});
-            }
 
             if (activeUserPhone) {
                 fetchUserPointsFromFirebase(activeUserPhone);
@@ -2306,7 +2300,10 @@
                 const { doc, getDoc } = window.firebaseModules;
                 const snap = await getDoc(doc(window.db, "loyalty_users", phone));
                 if (snap.exists()) {
-                    const pts = snap.data().points || 0;
+                    let pts = snap.data().points || 0;
+                    if (pts < 100) {
+                        pts = 100;
+                    }
                     updatePointsBadge(pts);
                 }
             } catch(e) {
@@ -3398,6 +3395,16 @@
         }
 
         function openAdminPanel() {
+            // فحص هل المستخدم تم حفظه للدخول التلقائي
+            const isAutoAuth = safeGetStorage('storia_admin_auto_auth', 'false');
+            if (isAutoAuth === 'true') {
+                document.getElementById('adminModal').style.display = 'flex';
+                document.getElementById('adminAuthView').style.display = 'none';
+                document.getElementById('adminDashboardView').style.display = 'block';
+                setTimeout(() => { listenToOrdersLogs(); }, 50);
+                return;
+            }
+
             document.getElementById('adminModal').style.display = 'flex';
             document.getElementById('adminAuthView').style.display = 'block';
             document.getElementById('adminDashboardView').style.display = 'none';
@@ -3411,31 +3418,20 @@
             const pass = document.getElementById('adminPassInput').value.trim();
             if (!pass) return alert(currentLang === 'ar' ? 'من فضلك أدخل كلمة المرور' : 'Please enter password');
 
-            const loginBtn = document.getElementById('adminLoginBtn');
-            if (loginBtn) loginBtn.innerText = 'جاري التحقق...';
+            // الباسورد المعتمد رسمياً: 123321
+            const officialPass = '123321';
 
-            let savedPass = safeGetStorage('storia_admin_pass', null);
+            if (pass === officialPass) {
+                // احتساب مرات الدخول الصحيحة
+                let loginCount = parseInt(safeGetStorage('storia_login_success_count', '0')) || 0;
+                loginCount += 1;
+                safeSetStorage('storia_login_success_count', String(loginCount));
 
-            if (!savedPass && window.db && window.firebaseModules) {
-                try {
-                    const { doc, getDoc } = window.firebaseModules;
-                    const snapPromise = getDoc(doc(window.db, "settings", "admin_config"));
-                    const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject('timeout'), 1200));
-                    const snap = await Promise.race([snapPromise, timeoutPromise]);
-                    if (snap && snap.exists() && snap.data().password) {
-                        savedPass = String(snap.data().password).trim();
-                        safeSetStorage('storia_admin_pass', savedPass);
-                    }
-                } catch(e) {}
-            }
+                // إذا وصل لـ 5 مرات يتم تفعيل الدخول التلقائي بدون باسورد نهائياً
+                if (loginCount >= 5) {
+                    safeSetStorage('storia_admin_auto_auth', 'true');
+                }
 
-            if (!savedPass) {
-                savedPass = 'storia2026';
-            }
-
-            if (loginBtn) loginBtn.innerText = 'دخول لوحة التحكم';
-
-            if (pass === savedPass) {
                 document.getElementById('adminAuthView').style.display = 'none';
                 document.getElementById('adminDashboardView').style.display = 'block';
                 
@@ -3446,7 +3442,7 @@
                     listenToOrdersLogs();
                 }, 50);
             } else {
-                alert(currentLang === 'ar' ? 'كلمة المرور غير صحيحة!' : 'Incorrect password!');
+                alert('كلمة المرور غير صحيحة! الباسورد هو: 123321');
             }
         }
 
@@ -3737,8 +3733,7 @@
                 try {
                     const { doc, setDoc } = window.firebaseModules;
                     await setDoc(doc(window.db, "settings", "admin_config"), { password: newP }, { merge: true });
-                    safeSetStorage('storia_admin_pass', newP);
-                    alert(currentLang === 'ar' ? 'تم تحديث كلمة المرور بنجاح! لن تفتح اللوحة إلا بها.' : 'Password updated successfully!');
+                    alert(currentLang === 'ar' ? 'تم تحديث كلمة المرور بنجاح!' : 'Password updated successfully!');
                     document.getElementById('newAdminPass').value = '';
                     closeFloatingModal('passwordModal');
                 } catch(e) {
