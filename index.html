@@ -6,17 +6,20 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
-    <title>Storia Restaurant & Cafe</title>
+    <title>Storia Restaurant & lounge</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1b4d3e">
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Storia Cafe">
+    <meta name="apple-mobile-web-app-title" content="Storia Restaurant & lounge">
     <link rel="apple-touch-icon" href="images/logooo.png">
     
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
     <style>
         :root {
             --bg: #f9f8f6; 
@@ -128,6 +131,23 @@
         
         .splash-hidden { transform: translateY(-100%); opacity: 0; pointer-events: none; visibility: hidden; }
 
+        .user-phone-gate-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 20, 18, 0.92); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            z-index: 8500; display: none; justify-content: center; align-items: center; padding: 16px;
+        }
+        .gate-card {
+            background: var(--white); width: 100%; max-width: 360px;
+            border-radius: 26px; padding: 26px 20px; text-align: center;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.4); border: 1.5px solid var(--border-color);
+            animation: smoothFadeIn 0.3s ease;
+        }
+        .gate-gift-icon {
+            width: 60px; height: 60px; background: rgba(27, 77, 62, 0.1);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; margin: 0 auto 12px auto; border: 2px dashed var(--accent);
+        }
+
         .welcome-order-type-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15, 20, 18, 0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
@@ -178,137 +198,43 @@
         .welcome-choice-icon { font-size: 1.6rem; }
 
         .ios-inapp-banner {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background: #0f172a;
-            color: #ffffff;
-            z-index: 999999;
-            padding: 12px 14px;
-            display: none;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-            border-bottom: 2px solid var(--accent);
-            animation: smoothFadeIn 0.3s ease-out;
+            position: fixed; top: 0; left: 0; width: 100%;
+            background: #0f172a; color: #ffffff; z-index: 999999;
+            padding: 12px 14px; display: none; box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            border-bottom: 2px solid var(--accent); animation: smoothFadeIn 0.3s ease-out;
         }
-        .ios-inapp-content {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            max-width: 600px;
-            margin: auto;
-        }
-        .ios-inapp-text {
-            font-size: 0.78rem;
-            font-weight: 800;
-            line-height: 1.4;
-            flex: 1;
-        }
-        .ios-copy-btn {
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 6px 10px;
-            border-radius: 8px;
-            font-size: 0.74rem;
-            font-weight: 900;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-        .ios-inapp-close {
-            background: transparent;
-            border: none;
-            color: #94a3b8;
-            font-size: 1.1rem;
-            cursor: pointer;
-        }
+        .ios-inapp-content { display: flex; align-items: center; justify-content: space-between; gap: 10px; max-width: 600px; margin: auto; }
+        .ios-inapp-text { font-size: 0.78rem; font-weight: 800; line-height: 1.4; flex: 1; }
+        .ios-copy-btn { background: var(--accent); color: white; border: none; padding: 6px 10px; border-radius: 8px; font-size: 0.74rem; font-weight: 900; cursor: pointer; white-space: nowrap; }
+        .ios-inapp-close { background: transparent; border: none; color: #94a3b8; font-size: 1.1rem; cursor: pointer; }
 
         .bottom-install-bar {
-            position: fixed;
-            bottom: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: calc(100% - 30px);
-            max-width: 460px;
-            background: rgba(27, 77, 62, 0.95);
-            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            color: #ffffff;
-            border-radius: 18px;
-            padding: 10px 14px;
-            display: none;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            z-index: 1500;
-            animation: smoothSlideUp 0.3s ease-out;
+            position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
+            width: calc(100% - 30px); max-width: 460px; background: rgba(27, 77, 62, 0.95);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: #ffffff;
+            border-radius: 18px; padding: 10px 14px; display: none; align-items: center;
+            justify-content: space-between; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.2); z-index: 1500; animation: smoothSlideUp 0.3s ease-out;
         }
-        .bottom-install-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .bottom-install-info img {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            background: #ffffff;
-            padding: 2px;
-            object-fit: contain;
-        }
-        .bottom-install-text {
-            display: flex;
-            flex-direction: column;
-        }
-        .bottom-install-title {
-            font-size: 0.85rem;
-            font-weight: 900;
-            line-height: 1.2;
-        }
-        .bottom-install-sub {
-            font-size: 0.70rem;
-            opacity: 0.85;
-            font-weight: 600;
-        }
-        .bottom-install-actions {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .bottom-install-btn {
-            background: #ffffff;
-            color: var(--accent);
-            border: none;
-            padding: 7px 14px;
-            border-radius: 12px;
-            font-size: 0.80rem;
-            font-weight: 900;
-            cursor: pointer;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-            transition: transform 0.15s ease;
-        }
+        .bottom-install-info { display: flex; align-items: center; gap: 10px; }
+        .bottom-install-info img { width: 36px; height: 36px; border-radius: 10px; background: #ffffff; padding: 2px; object-fit: contain; }
+        .bottom-install-text { display: flex; flex-direction: column; }
+        .bottom-install-title { font-size: 0.85rem; font-weight: 900; line-height: 1.2; }
+        .bottom-install-sub { font-size: 0.70rem; opacity: 0.85; font-weight: 600; }
+        .bottom-install-actions { display: flex; align-items: center; gap: 8px; }
+        .bottom-install-btn { background: #ffffff; color: var(--accent); border: none; padding: 7px 14px; border-radius: 12px; font-size: 0.80rem; font-weight: 900; cursor: pointer; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); transition: transform 0.15s ease; }
         .bottom-install-btn:active { transform: scale(0.94); }
-        .bottom-close-btn {
-            background: transparent;
-            border: none;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 1.1rem;
-            cursor: pointer;
-            padding: 0 4px;
-        }
+        .bottom-close-btn { background: transparent; border: none; color: rgba(255, 255, 255, 0.8); font-size: 1.1rem; cursor: pointer; padding: 0 4px; }
 
         .ios-install-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
-            z-index: 99999; display: none; justify-content: center; align-items: flex-end;
-            padding: 20px 16px 30px 16px;
+            z-index: 99999; display: none; justify-content: center; align-items: flex-end; padding: 20px 16px 30px 16px;
         }
         .ios-install-card {
             background: var(--white); width: 100%; max-width: 380px;
             border-radius: 24px; padding: 22px 18px; text-align: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
-            animation: smoothSlideUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4); animation: smoothSlideUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
         .ios-install-title { font-size: 1.1rem; font-weight: 900; color: var(--accent); margin-bottom: 8px; }
         .ios-install-desc { font-size: 0.82rem; color: var(--desc-text); font-weight: 700; line-height: 1.5; margin-bottom: 14px; }
@@ -319,837 +245,233 @@
         }
         [dir="ltr"] .ios-steps-box { text-align: left; }
         .ios-step-item { display: flex; align-items: center; gap: 8px; }
-        .ios-close-btn {
-            background: var(--accent); color: white; border: none; width: 100%;
-            padding: 12px; border-radius: 14px; font-weight: 800; cursor: pointer;
-        }
+        .ios-close-btn { background: var(--accent); color: white; border: none; width: 100%; padding: 12px; border-radius: 14px; font-weight: 800; cursor: pointer; }
 
         header { 
-            background: var(--header-bg); 
-            position: -webkit-sticky;
-            position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 15px var(--card-shadow);
-            display: flex; flex-direction: column; align-items: center;
-            padding: 8px 0 0 0;
-            width: 100%;
+            background: var(--header-bg); position: -webkit-sticky; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 15px var(--card-shadow);
+            display: flex; flex-direction: column; align-items: center; padding: 8px 0 0 0; width: 100%;
         }
-        
         .header-top { 
-            width: 100%; 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-            padding: 0 16px;
-            min-height: 120px;
-            position: relative;
+            width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; min-height: 120px; position: relative;
         }
-        
-        .header-left-actions, .header-right-actions {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            z-index: 2;
-        }
+        .header-left-actions, .header-right-actions { display: flex; align-items: center; gap: 8px; z-index: 2; }
 
         .theme-toggle, .lang-toggle, .cart-trigger {
-            width: 38px;
-            height: 38px;
-            background: var(--bg);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 1.05rem;
-            border: 1px solid var(--border-color);
-            color: var(--main-text);
-            box-shadow: 0 2px 6px var(--card-shadow);
-            transition: transform 0.15s ease, background-color 0.2s ease;
-            position: relative;
-            font-weight: 900;
+            width: 38px; height: 38px; background: var(--bg); border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 1.05rem; border: 1px solid var(--border-color); color: var(--main-text); box-shadow: 0 2px 6px var(--card-shadow);
+            transition: transform 0.15s ease, background-color 0.2s ease; position: relative; font-weight: 900;
         }
-        .lang-toggle {
-            font-size: 0.80rem;
-            color: var(--accent);
-            border-color: rgba(27, 77, 62, 0.3);
-        }
-        .theme-toggle:active, .lang-toggle:active, .cart-trigger:active {
-            transform: scale(0.92);
-        }
-
+        .lang-toggle { font-size: 0.80rem; color: var(--accent); border-color: rgba(27, 77, 62, 0.3); }
+        .theme-toggle:active, .lang-toggle:active, .cart-trigger:active { transform: scale(0.92); }
         .cart-trigger.shake { animation: cartShake 0.5s ease-in-out; }
         @keyframes cartShake { 0%, 100% { transform: scale(1) rotate(0deg); } 20%, 60% { transform: scale(1.15) rotate(-10deg); } 40%, 80% { transform: scale(1.15) rotate(10deg); } }
         .badge { position: absolute; top: -5px; right: -5px; background: #ef4444; color: #fff; font-size: 10px; font-weight: 800; width: 19px; height: 19px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--white); transform: scale(0); transition: 0.2s ease; }
         .badge.show { transform: scale(1); }
 
         .header-logo-container { 
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            -webkit-transform: translate(-50%, -50%);
-            width: 105px; 
-            height: 105px; 
-            border-radius: 20px; 
-            background: var(--white); 
-            padding: 6px; 
-            box-shadow: 0 4px 15px var(--card-shadow); 
-            overflow: hidden; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            border: 2px solid var(--accent); 
-            z-index: 1;
-            cursor: pointer;
-            user-select: none;
-            -webkit-user-select: none;
+            position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); -webkit-transform: translate(-50%, -50%);
+            width: 105px; height: 105px; border-radius: 20px; background: var(--white); padding: 6px; box-shadow: 0 4px 15px var(--card-shadow); 
+            overflow: hidden; display: flex; align-items: center; justify-content: center; border: 2px solid var(--accent); z-index: 1;
+            cursor: pointer; user-select: none; -webkit-user-select: none;
         }
         .header-logo { width: 100%; height: 100%; border-radius: 14px; object-fit: contain; pointer-events: none; }
 
         .sub-header-bar {
-            width: 100%;
-            padding: 6px 14px 8px 14px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 8px;
-            border-top: 1px solid var(--border-color);
-            background: var(--header-bg);
+            width: 100%; padding: 6px 14px 8px 14px; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+            border-top: 1px solid var(--border-color); background: var(--header-bg);
         }
+        .sub-actions-row { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 6px; }
+        .sub-actions-left-group { display: flex; align-items: center; gap: 6px; }
 
-        .sub-actions-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-            gap: 6px;
-        }
-
-        .sub-actions-left-group {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        /* تم تعطيل وإخفاء زر المكافآت مؤقتاً */
         .loyalty-sub-btn {
             background: linear-gradient(135deg, #1b4d3e 0%, #113329 100%);
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 12px;
-            font-size: 0.78rem;
-            font-weight: 800;
-            display: none !important; /* إخفاء مؤقت للنقاط */
-            align-items: center;
-            gap: 5px;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(27, 77, 62, 0.25);
-            white-space: nowrap;
+            color: white; border: none; padding: 6px 12px; border-radius: 12px; font-size: 0.78rem; font-weight: 800;
+            display: inline-flex !important; align-items: center; gap: 5px; cursor: pointer;
+            box-shadow: 0 2px 8px rgba(27, 77, 62, 0.25); white-space: nowrap;
         }
-        .loyalty-sub-btn .pts {
-            background: rgba(255, 255, 255, 0.22);
-            padding: 2px 6px;
-            border-radius: 8px;
-            font-weight: 900;
-        }
+        .loyalty-sub-btn .pts { background: rgba(255, 255, 255, 0.22); padding: 2px 6px; border-radius: 8px; font-weight: 900; }
 
         .overall-rating-chip {
-            background: rgba(27, 77, 62, 0.08);
-            border: 1.5px solid rgba(27, 77, 62, 0.25);
-            color: var(--accent);
-            padding: 5px 10px;
-            border-radius: 12px;
-            font-size: 0.82rem;
-            font-weight: 900;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            white-space: nowrap;
+            background: rgba(27, 77, 62, 0.08); border: 1.5px solid rgba(27, 77, 62, 0.25); color: var(--accent);
+            padding: 5px 10px; border-radius: 12px; font-size: 0.82rem; font-weight: 900; display: inline-flex; align-items: center; gap: 4px;
+            cursor: pointer; transition: all 0.15s ease; white-space: nowrap;
         }
-        .overall-rating-chip:active {
-            transform: scale(0.96);
-            background: rgba(27, 77, 62, 0.15);
-        }
-        .overall-rating-chip .star-icon {
-            color: #f59e0b;
-            font-size: 0.95rem;
-        }
+        .overall-rating-chip:active { transform: scale(0.96); background: rgba(27, 77, 62, 0.15); }
+        .overall-rating-chip .star-icon { color: #f59e0b; font-size: 0.95rem; }
 
         .chat-sub-btn-mini {
-            background: #25D366;
-            color: white;
-            border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            font-size: 1.1rem;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 3px 10px rgba(37, 211, 102, 0.35);
-            transition: transform 0.15s ease;
+            background: #25D366; color: white; border: none; width: 36px; height: 36px; border-radius: 50%; font-size: 1.1rem;
+            display: none; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 3px 10px rgba(37, 211, 102, 0.35); transition: transform 0.15s ease;
         }
         .chat-sub-btn-mini:active { transform: scale(0.9); }
 
         .category-nav { 
-            display: flex; 
-            overflow-x: auto; 
-            white-space: nowrap; 
-            padding: 10px 14px; 
-            gap: 10px; 
-            scrollbar-width: none; 
-            background: var(--header-bg); 
-            width: 100%; 
-            border-top: 1px solid var(--border-color); 
-            border-bottom: 1px solid var(--border-color); 
-            scroll-behavior: smooth; 
-            -webkit-overflow-scrolling: touch;
+            display: flex; overflow-x: auto; white-space: nowrap; padding: 10px 14px; gap: 10px; scrollbar-width: none; background: var(--header-bg); 
+            width: 100%; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); scroll-behavior: smooth; -webkit-overflow-scrolling: touch;
         }
         .category-nav::-webkit-scrollbar { display: none; }
-
         .cat-item { 
-            display: inline-flex; 
-            align-items: center; 
-            gap: 8px;
-            padding: 7px 14px 7px 8px;
-            border-radius: 30px;
-            background: var(--bg);
-            border: 1.5px solid var(--border-color);
-            cursor: pointer; 
-            flex-shrink: 0;
-            transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-            user-select: none;
-            -webkit-user-select: none;
-            box-shadow: 0 2px 6px var(--card-shadow);
+            display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px 7px 8px; border-radius: 30px; background: var(--bg); 
+            border: 1.5px solid var(--border-color); cursor: pointer; flex-shrink: 0; transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+            user-select: none; -webkit-user-select: none; box-shadow: 0 2px 6px var(--card-shadow);
         }
-
         .cat-img-box { 
-            width: 32px; 
-            height: 32px; 
-            border-radius: 50%; 
-            background: #e0e0e0; 
-            overflow: hidden; 
-            border: 1.5px solid var(--border-color); 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            transition: transform 0.2s ease;
-            font-size: 1.15rem;
+            width: 32px; height: 32px; border-radius: 50%; background: #e0e0e0; overflow: hidden; border: 1.5px solid var(--border-color); 
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: transform 0.2s ease; font-size: 1.15rem;
         }
         .cat-img-box img { width: 100%; height: 100%; object-fit: cover; }
-
-        .cat-item span { 
-            font-size: 0.82rem; 
-            font-weight: 800; 
-            color: var(--desc-text); 
-            white-space: nowrap;
-            transition: color 0.2s ease;
-        }
-
-        .cat-item.active { 
-            background: var(--accent); 
-            border-color: var(--accent); 
-            transform: scale(1.03); 
-            box-shadow: 0 4px 14px rgba(27, 77, 62, 0.3);
-        }
-        .cat-item.active span { 
-            color: #ffffff; 
-            font-weight: 900; 
-        }
-        .cat-item.active .cat-img-box {
-            border-color: #ffffff;
-            transform: scale(1.1);
-        }
+        .cat-item span { font-size: 0.82rem; font-weight: 800; color: var(--desc-text); white-space: nowrap; transition: color 0.2s ease; }
+        .cat-item.active { background: var(--accent); border-color: var(--accent); transform: scale(1.03); box-shadow: 0 4px 14px rgba(27, 77, 62, 0.3); }
+        .cat-item.active span { color: #ffffff; font-weight: 900; }
+        .cat-item.active .cat-img-box { border-color: #ffffff; transform: scale(1.1); }
         
-        .menu-list { 
-            padding: 14px; 
-            max-width: 600px; 
-            margin: auto; 
-            min-height: 250px;
-            width: 100%;
-        }
-
-        .category-group {
-            width: 100%;
-            display: block;
-        }
-        
+        .menu-list { padding: 14px; max-width: 600px; margin: auto; min-height: 250px; width: 100%; }
+        .category-group { width: 100%; display: block; }
         .food-card { 
-            background: var(--white); 
-            border-radius: 20px; 
-            margin-bottom: 14px; 
-            display: flex; 
-            padding: 12px; 
-            gap: 12px; 
-            align-items: stretch; 
-            box-shadow: 0 3px 12px var(--card-shadow); 
-            border: 1px solid var(--border-color); 
-            overflow: hidden;
-            width: 100%;
-            min-height: 120px;
-            transition: all 0.2s ease;
+            background: var(--white); border-radius: 20px; margin-bottom: 14px; display: flex; padding: 12px; gap: 12px; align-items: stretch; 
+            box-shadow: 0 3px 12px var(--card-shadow); border: 1px solid var(--border-color); overflow: hidden; width: 100%; min-height: 120px; transition: all 0.2s ease;
         }
-        .food-card.disabled-item { 
-            opacity: 0.45 !important; 
-            filter: grayscale(0.6) !important; 
-            background: #f1f5f9 !important;
-        }
-        
+        .food-card.disabled-item { opacity: 0.45 !important; filter: grayscale(0.6) !important; background: #f1f5f9 !important; }
         .item-img-box { 
-            width: 115px; 
-            height: 115px; 
-            min-width: 115px;
-            border-radius: 16px; 
-            overflow: hidden; 
-            background: #e2e8f0; 
-            flex-shrink: 0; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 2.2rem; 
-            align-self: center;
-            cursor: pointer;
+            width: 115px; height: 115px; min-width: 115px; border-radius: 16px; overflow: hidden; background: #e2e8f0; flex-shrink: 0; 
+            display: flex; align-items: center; justify-content: center; font-size: 2.2rem; align-self: center; cursor: pointer;
         }
         .item-img-box img { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.2s ease; }
-        
-        .food-info { 
-            flex: 1; 
-            min-width: 0;
-            display: flex; 
-            flex-direction: column; 
-            justify-content: space-between; 
-            padding: 2px 0;
-            overflow: hidden;
-        }
-
-        .food-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 6px;
-            width: 100%;
-            margin-bottom: 4px;
-        }
-
-        .food-name { 
-            font-weight: 800; 
-            font-size: 0.92rem; 
-            color: var(--main-text); 
-            line-height: 1.35;
-            flex: 1;
-            white-space: normal;
-            word-break: keep-all;
-            overflow-wrap: break-word;
-        }
-
-        .food-price { 
-            font-weight: 900; 
-            color: var(--accent); 
-            font-size: 0.95rem; 
-            white-space: nowrap; 
-            direction: ltr;
-            margin-right: 4px;
-        }
+        .food-info { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: space-between; padding: 2px 0; overflow: hidden; }
+        .food-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 6px; width: 100%; margin-bottom: 4px; }
+        .food-name { font-weight: 800; font-size: 0.92rem; color: var(--main-text); line-height: 1.35; flex: 1; white-space: normal; word-break: keep-all; overflow-wrap: break-word; }
+        .food-price { font-weight: 900; color: var(--accent); font-size: 0.95rem; white-space: nowrap; direction: ltr; margin-right: 4px; }
         [dir="ltr"] .food-price { margin-right: 0; margin-left: 4px; }
+        .food-price.multi-sizes-badge { font-size: 0.74rem; line-height: 1.35; text-align: right; background: rgba(27, 77, 62, 0.08); border: 1px solid rgba(27, 77, 62, 0.2); padding: 3px 8px; border-radius: 8px; white-space: normal; font-weight: 900; }
+        [dir="ltr"] .food-price.multi-sizes-badge { text-align: left; }
+        .food-desc { font-size: 0.73rem; color: var(--desc-text); line-height: 1.35; margin-bottom: 8px; font-weight: 600; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .card-actions-box { display: flex; align-items: center; justify-content: space-between; gap: 6px; width: 100%; margin-top: auto; flex-wrap: nowrap; }
         
-        .food-price.multi-sizes-badge {
-            font-size: 0.74rem;
-            line-height: 1.35;
-            text-align: right;
-            background: rgba(27, 77, 62, 0.08);
-            border: 1px solid rgba(27, 77, 62, 0.2);
-            padding: 3px 8px;
-            border-radius: 8px;
-            white-space: normal;
-            font-weight: 900;
-        }
-        [dir="ltr"] .food-price.multi-sizes-badge {
-            text-align: left;
-        }
-
-        .food-desc { 
-            font-size: 0.73rem; 
-            color: var(--desc-text); 
-            line-height: 1.35; 
-            margin-bottom: 8px; 
-            font-weight: 600;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .card-actions-box {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 6px;
-            width: 100%;
-            margin-top: auto;
-            flex-wrap: nowrap;
-        }
-
         .mini-addons-btn {
-            flex: 1;
-            background: var(--bg);
-            color: var(--accent);
-            border: 1.5px solid var(--accent);
-            padding: 5px 4px;
-            border-radius: 9px;
-            font-size: 0.74rem;
-            font-weight: 800;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            white-space: nowrap;
-            text-align: center;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 0;
-            flex-shrink: 0;
-            height: 33px;
+            flex: 1; background: var(--bg); color: var(--accent); border: 1.5px solid var(--accent); padding: 5px 4px; border-radius: 9px;
+            font-size: 0.74rem; font-weight: 800; cursor: pointer; transition: all 0.15s ease; white-space: nowrap; text-align: center;
+            display: inline-flex; align-items: center; justify-content: center; min-width: 0; flex-shrink: 0; height: 33px;
         }
-        .mini-addons-btn:disabled {
-            opacity: 0.4 !important;
-            border-color: #cbd5e1 !important;
-            color: #94a3b8 !important;
-            cursor: not-allowed !important;
-            background: #e2e8f0 !important;
-            pointer-events: none !important;
-        }
+        .mini-addons-btn:disabled { opacity: 0.4 !important; border-color: #cbd5e1 !important; color: #94a3b8 !important; cursor: not-allowed !important; background: #e2e8f0 !important; pointer-events: none !important; }
         .mini-addons-btn:not(:disabled):active { background: var(--accent); color: white; }
 
         .order-btn { 
-            flex: 1.4;
-            background: var(--accent); 
-            color: #ffffff; 
-            border: 1.5px solid var(--accent); 
-            padding: 5px 6px; 
-            border-radius: 9px; 
-            font-size: 0.78rem; 
-            font-weight: 800; 
-            cursor: pointer; 
-            box-shadow: 0 2px 6px rgba(27, 77, 62, 0.25);
-            transition: all 0.15s ease; 
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            white-space: nowrap;
-            height: 33px;
-            min-width: 0;
-            flex-shrink: 0;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            flex: 1.4; background: var(--accent); color: #ffffff; border: 1.5px solid var(--accent); padding: 5px 6px; border-radius: 9px; 
+            font-size: 0.78rem; font-weight: 800; cursor: pointer; box-shadow: 0 2px 6px rgba(27, 77, 62, 0.25); transition: all 0.15s ease; 
+            display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; height: 33px; min-width: 0; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis;
         }
-        .order-btn:disabled { 
-            background: #94a3b8 !important; 
-            border-color: #94a3b8 !important; 
-            color: #ffffff !important;
-            cursor: not-allowed !important; 
-            box-shadow: none !important; 
-            pointer-events: none !important;
-        }
-
-        .order-btn.size-select-style {
-            background: var(--accent);
-            color: #ffffff;
-            border: 1.5px solid var(--accent);
-            box-shadow: 0 2px 6px rgba(27, 77, 62, 0.25);
-        }
-        .order-btn.size-select-style:active {
-            background: var(--accent-hover);
-            border-color: var(--accent-hover);
-            transform: scale(0.97);
-        }
+        .order-btn:disabled { background: #94a3b8 !important; border-color: #94a3b8 !important; color: #ffffff !important; cursor: not-allowed !important; box-shadow: none !important; pointer-events: none !important; }
+        .order-btn.size-select-style { background: var(--accent); color: #ffffff; border: 1.5px solid var(--accent); box-shadow: 0 2px 6px rgba(27, 77, 62, 0.25); }
+        .order-btn.size-select-style:active { background: var(--accent-hover); border-color: var(--accent-hover); transform: scale(0.97); }
 
         .image-lightbox-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-            z-index: 9000; display: none; justify-content: center; align-items: center;
-            padding: 16px;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            z-index: 9000; display: none; justify-content: center; align-items: center; padding: 16px;
         }
-        .image-lightbox-content {
-            background: var(--white); width: 100%; max-width: 440px;
-            border-radius: 24px; overflow: hidden;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
-            animation: smoothFadeIn 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
-            border: 1px solid var(--border-color);
-            position: relative;
-        }
-        .image-lightbox-img-wrapper {
-            width: 100%; height: 280px; background: #000;
-            display: flex; align-items: center; justify-content: center;
-        }
+        .image-lightbox-content { background: var(--white); width: 100%; max-width: 440px; border-radius: 24px; overflow: hidden; box-shadow: 0 25px 60px rgba(0,0,0,0.5); animation: smoothFadeIn 0.25s cubic-bezier(0.2, 0.8, 0.2, 1); border: 1px solid var(--border-color); position: relative; }
+        .image-lightbox-img-wrapper { width: 100%; height: 280px; background: #000; display: flex; align-items: center; justify-content: center; }
         .image-lightbox-img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
-        .image-lightbox-details {
-            padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;
-            background: var(--white);
-        }
+        .image-lightbox-details { padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; background: var(--white); }
         .image-lightbox-title { font-size: 1.1rem; font-weight: 900; color: var(--main-text); }
         .image-lightbox-price { font-size: 1rem; font-weight: 900; color: var(--accent); }
-        .image-lightbox-close {
-            position: absolute; top: 12px; left: 12px;
-            background: rgba(0, 0, 0, 0.6); color: #fff;
-            width: 36px; height: 36px; border-radius: 50%;
-            border: 1.5px solid rgba(255,255,255,0.4);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.1rem; font-weight: 900; cursor: pointer;
-            z-index: 10;
-        }
+        .image-lightbox-close { position: absolute; top: 12px; left: 12px; background: rgba(0, 0, 0, 0.6); color: #fff; width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.4); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: 900; cursor: pointer; z-index: 10; }
 
         .size-only-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.65); z-index: 3800; display: none;
-            justify-content: center; align-items: center;
-            padding: 16px;
-            backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.65); z-index: 3800; display: none;
+            justify-content: center; align-items: center; padding: 16px; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
         }
-        .size-only-content {
-            background: var(--white); width: 100%; max-width: 360px;
-            border-radius: 24px; padding: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-            animation: floatFadeIn 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-            border: 1px solid var(--border-color);
-        }
-        .size-only-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 14px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;
-        }
+        .size-only-content { background: var(--white); width: 100%; max-width: 360px; border-radius: 24px; padding: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); animation: floatFadeIn 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); border: 1px solid var(--border-color); }
+        .size-only-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
         .size-only-header h3 { font-size: 1.05rem; font-weight: 900; color: var(--accent); }
 
         .simple-addons-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.55); z-index: 3500; display: none;
-            justify-content: center; align-items: center;
-            padding: 16px;
-            backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.55); z-index: 3500; display: none;
+            justify-content: center; align-items: center; padding: 16px; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
         }
-        .simple-addons-content {
-            background: var(--white); width: 100%; max-width: 420px;
-            border-radius: 24px; padding: 18px 20px; max-height: 85vh;
-            overflow-y: auto; color: var(--main-text); box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-            animation: floatFadeIn 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-            border: 1px solid var(--border-color);
-        }
-        @keyframes floatFadeIn {
-            from { transform: scale(0.92); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-        .simple-addons-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--border-color);
-        }
+        .simple-addons-content { background: var(--white); width: 100%; max-width: 420px; border-radius: 24px; padding: 18px 20px; max-height: 85vh; overflow-y: auto; color: var(--main-text); box-shadow: 0 15px 40px rgba(0,0,0,0.2); animation: floatFadeIn 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); border: 1px solid var(--border-color); }
+        @keyframes floatFadeIn { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .simple-addons-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color); }
         .simple-addons-header h3 { font-size: 1.05rem; font-weight: 900; color: var(--accent); }
-        .simple-addons-close {
-            width: 30px; height: 30px; border-radius: 50%;
-            background: var(--bg); border: 1px solid var(--border-color);
-            color: var(--main-text); font-weight: 800; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-        }
-
-        .simple-item-summary {
-            display: flex; justify-content: space-between; align-items: center;
-            background: var(--bg); padding: 10px 14px; border-radius: 14px;
-            margin-bottom: 14px; border: 1px solid var(--border-color);
-        }
+        .simple-addons-close { width: 30px; height: 30px; border-radius: 50%; background: var(--bg); border: 1px solid var(--border-color); color: var(--main-text); font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .simple-item-summary { display: flex; justify-content: space-between; align-items: center; background: var(--bg); padding: 10px 14px; border-radius: 14px; margin-bottom: 14px; border: 1px solid var(--border-color); }
         .simple-item-name { font-weight: 800; font-size: 0.92rem; color: var(--main-text); }
         .simple-item-price { font-weight: 900; color: var(--accent); font-size: 0.92rem; }
-
-        .size-selection-box {
-            background: rgba(27, 77, 62, 0.06);
-            border: 1.5px solid var(--accent);
-            border-radius: 14px;
-            padding: 12px;
-            margin-bottom: 14px;
-        }
-        .size-selection-title {
-            font-size: 0.82rem; font-weight: 800; color: var(--accent); margin-bottom: 8px;
-        }
-        .size-options-grid {
-            display: flex; gap: 8px;
-        }
-        .size-opt-btn {
-            flex: 1;
-            padding: 10px 8px;
-            border-radius: 12px;
-            border: 1.5px solid var(--border-color);
-            background: var(--white);
-            color: var(--main-text);
-            cursor: pointer;
-            font-weight: 800;
-            font-size: 0.84rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 3px;
-            transition: all 0.15s ease;
-        }
-        .size-opt-btn.active {
-            border-color: var(--accent);
-            background: var(--accent);
-            color: #ffffff;
-        }
-
+        .size-selection-box { background: rgba(27, 77, 62, 0.06); border: 1.5px solid var(--accent); border-radius: 14px; padding: 12px; margin-bottom: 14px; }
+        .size-selection-title { font-size: 0.82rem; font-weight: 800; color: var(--accent); margin-bottom: 8px; }
+        .size-options-grid { display: flex; gap: 8px; }
+        .size-opt-btn { flex: 1; padding: 10px 8px; border-radius: 12px; border: 1.5px solid var(--border-color); background: var(--white); color: var(--main-text); cursor: pointer; font-weight: 800; font-size: 0.84rem; display: flex; flex-direction: column; align-items: center; gap: 3px; transition: all 0.15s ease; }
+        .size-opt-btn.active { border-color: var(--accent); background: var(--accent); color: #ffffff; }
         .simple-addons-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
-        .simple-addon-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 10px 12px; background: var(--bg); border: 1.5px solid var(--border-color);
-            border-radius: 12px; cursor: pointer; transition: all 0.15s ease; user-select: none;
-            -webkit-user-select: none;
-        }
+        .simple-addon-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: var(--bg); border: 1.5px solid var(--border-color); border-radius: 12px; cursor: pointer; transition: all 0.15s ease; user-select: none; -webkit-user-select: none; }
         .simple-addon-item.checked { border-color: var(--accent); background: rgba(27, 77, 62, 0.08); }
         .simple-addon-left { display: flex; align-items: center; gap: 8px; font-size: 0.88rem; font-weight: 800; }
-        .custom-check-circ {
-            width: 20px; height: 20px; border-radius: 6px; border: 1.5px solid #cbd5e1;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 0.72rem; color: transparent; background: var(--white);
-            transition: all 0.15s ease;
-        }
+        .custom-check-circ { width: 20px; height: 20px; border-radius: 6px; border: 1.5px solid #cbd5e1; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; color: transparent; background: var(--white); transition: all 0.15s ease; }
         .simple-addon-item.checked .custom-check-circ { background: var(--accent); border-color: var(--accent); color: #ffffff; }
         .simple-addon-price { font-size: 0.84rem; font-weight: 800; color: var(--accent); }
-
-        .simple-addons-footer {
-            display: flex; align-items: center; justify-content: space-between;
-            gap: 12px; padding-top: 12px; border-top: 1px solid var(--border-color);
-        }
+        .simple-addons-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 12px; border-top: 1px solid var(--border-color); }
         .simple-total-text { display: flex; flex-direction: column; }
         .simple-total-text span:first-child { font-size: 0.70rem; color: var(--desc-text); font-weight: 700; }
         .simple-total-text span:last-child { font-size: 1.1rem; font-weight: 900; color: var(--accent); }
-        .simple-confirm-btn {
-            flex: 1; background: var(--accent); color: white; border: none;
-            padding: 12px 16px; border-radius: 12px; font-weight: 800;
-            font-size: 0.9rem; cursor: pointer; box-shadow: 0 4px 12px rgba(27, 77, 62, 0.25);
-        }
+        .simple-confirm-btn { flex: 1; background: var(--accent); color: white; border: none; padding: 12px 16px; border-radius: 12px; font-weight: 800; font-size: 0.9rem; cursor: pointer; box-shadow: 0 4px 12px rgba(27, 77, 62, 0.25); }
 
         .toast-added-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
-            z-index: 9500; display: none; justify-content: center; align-items: center;
-            padding: 16px;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+            z-index: 9500; display: none; justify-content: center; align-items: center; padding: 16px;
         }
-        .toast-added-card {
-            background: var(--white); width: 100%; max-width: 290px;
-            border-radius: 22px; padding: 22px 16px; text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
-            animation: smoothFadeIn 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-            display: flex; flex-direction: column; align-items: center;
-            border: 1px solid var(--border-color);
-        }
-        .toast-icon-circle {
-            width: 55px; height: 55px; background: rgba(46, 125, 50, 0.12);
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            margin-bottom: 10px; border: 2px solid #2e7d32;
-        }
+        .toast-added-card { background: var(--white); width: 100%; max-width: 290px; border-radius: 22px; padding: 22px 16px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.25); animation: smoothFadeIn 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); display: flex; flex-direction: column; align-items: center; border: 1px solid var(--border-color); }
+        .toast-icon-circle { width: 55px; height: 55px; background: rgba(46, 125, 50, 0.12); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; border: 2px solid #2e7d32; }
         .toast-icon-circle svg { width: 28px; height: 28px; fill: #2e7d32; }
-        .toast-added-title {
-            font-size: 1.05rem; font-weight: 900; color: var(--main-text); margin-bottom: 4px;
-        }
+        .toast-added-title { font-size: 1.05rem; font-weight: 900; color: var(--main-text); margin-bottom: 4px; }
 
-        /* نافذة تقييم الأوردر */
-        .order-review-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.55); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
-            z-index: 9900; display: none; justify-content: center; align-items: center;
-            padding: 16px;
-        }
-        .order-review-card {
-            background: var(--white); width: 100%; max-width: 310px;
-            border-radius: 24px; padding: 22px 18px; text-align: center;
-            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.28);
-            animation: smoothFadeIn 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-            display: flex; flex-direction: column; align-items: center;
-            border: 1px solid var(--border-color);
-        }
-        .review-icon-circle {
-            width: 55px; height: 55px; background: rgba(27, 77, 62, 0.1);
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            margin-bottom: 10px; border: 2px solid var(--accent); font-size: 1.6rem;
-        }
-        .review-card-title {
-            font-size: 1.05rem; font-weight: 900; color: var(--main-text); margin-bottom: 3px; line-height: 1.3;
-        }
-        .review-card-subtitle {
-            font-size: 0.74rem; color: var(--desc-text); font-weight: 700; margin-bottom: 12px;
-        }
-        .review-items-box {
-            background: var(--bg); border: 1.5px solid var(--border-color);
-            border-radius: 14px; padding: 8px 12px; margin-bottom: 12px;
-            width: 100%; text-align: center;
-        }
-        .review-items-caption {
-            font-size: 0.68rem; color: var(--accent); font-weight: 800; display: block; margin-bottom: 2px;
-        }
-        .review-items-text {
-            font-size: 0.76rem; font-weight: 800; color: var(--main-text); line-height: 1.35;
-        }
-        
-        .review-stars-box {
-            display: flex; justify-content: center; align-items: center;
-            gap: 6px; margin-bottom: 6px; direction: ltr;
-        }
-        .review-star-btn {
-            background: transparent; border: none; font-size: 2.1rem;
-            cursor: pointer; color: #cbd5e1; transition: transform 0.12s ease, color 0.12s ease;
-            user-select: none; position: relative; line-height: 1; padding: 0 2px;
-        }
-        .review-star-btn.full {
-            color: #f59e0b;
-        }
-        .review-star-btn.half {
-            background: linear-gradient(90deg, #f59e0b 50%, #cbd5e1 50%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+        .order-review-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.55); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 9900; display: none; justify-content: center; align-items: center; padding: 16px; }
+        .order-review-card { background: var(--white); width: 100%; max-width: 310px; border-radius: 24px; padding: 22px 18px; text-align: center; box-shadow: 0 20px 45px rgba(0, 0, 0, 0.28); animation: smoothFadeIn 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); display: flex; flex-direction: column; align-items: center; border: 1px solid var(--border-color); }
+        .review-icon-circle { width: 55px; height: 55px; background: rgba(27, 77, 62, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; border: 2px solid var(--accent); font-size: 1.6rem; }
+        .review-card-title { font-size: 1.05rem; font-weight: 900; color: var(--main-text); margin-bottom: 3px; line-height: 1.3; }
+        .review-card-subtitle { font-size: 0.74rem; color: var(--desc-text); font-weight: 700; margin-bottom: 12px; }
+        .review-items-box { background: var(--bg); border: 1.5px solid var(--border-color); border-radius: 14px; padding: 8px 12px; margin-bottom: 12px; width: 100%; text-align: center; }
+        .review-items-caption { font-size: 0.68rem; color: var(--accent); font-weight: 800; display: block; margin-bottom: 2px; }
+        .review-items-text { font-size: 0.76rem; font-weight: 800; color: var(--main-text); line-height: 1.35; }
+        .review-stars-box { display: flex; justify-content: center; align-items: center; gap: 6px; margin-bottom: 6px; direction: ltr; }
+        .review-star-btn { background: transparent; border: none; font-size: 2.1rem; cursor: pointer; color: #cbd5e1; transition: transform 0.12s ease, color 0.12s ease; user-select: none; position: relative; line-height: 1; padding: 0 2px; }
+        .review-star-btn.full { color: #f59e0b; }
+        .review-star-btn.half { background: linear-gradient(90deg, #f59e0b 50%, #cbd5e1 50%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .review-star-btn:active { transform: scale(1.2); }
-        .review-rating-status {
-            font-size: 0.82rem; font-weight: 900; color: var(--accent); margin-bottom: 10px; min-height: 20px;
-        }
-        .review-input-simple {
-            width: 100%; background: var(--bg); border: 1px solid var(--border-color);
-            border-radius: 12px; padding: 8px 12px; font-size: 0.76rem; font-weight: 700;
-            color: var(--main-text); outline: none; margin-bottom: 12px; text-align: center;
-        }
-        .review-btn-row {
-            display: flex; gap: 6px; width: 100%;
-        }
-        .review-confirm-btn {
-            flex: 2; background: var(--accent); color: #ffffff; border: none;
-            padding: 10px; border-radius: 12px; font-weight: 900; font-size: 0.85rem;
-            cursor: pointer; box-shadow: 0 2px 8px rgba(27, 77, 62, 0.25);
-        }
+        .review-rating-status { font-size: 0.82rem; font-weight: 900; color: var(--accent); margin-bottom: 10px; min-height: 20px; }
+        .review-input-simple { width: 100%; background: var(--bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 8px 12px; font-size: 0.76rem; font-weight: 700; color: var(--main-text); outline: none; margin-bottom: 12px; text-align: center; }
+        .review-btn-row { display: flex; gap: 6px; width: 100%; }
+        .review-confirm-btn { flex: 2; background: var(--accent); color: #ffffff; border: none; padding: 10px; border-radius: 12px; font-weight: 900; font-size: 0.85rem; cursor: pointer; box-shadow: 0 2px 8px rgba(27, 77, 62, 0.25); }
         .review-confirm-btn:active { transform: scale(0.96); }
-        .review-skip-btn {
-            flex: 1; background: var(--bg); color: var(--desc-text); border: 1px solid var(--border-color);
-            padding: 10px; border-radius: 12px; font-weight: 800; font-size: 0.78rem;
-            cursor: pointer;
-        }
+        .review-skip-btn { flex: 1; background: var(--bg); color: var(--desc-text); border: 1px solid var(--border-color); padding: 10px; border-radius: 12px; font-weight: 800; font-size: 0.78rem; cursor: pointer; }
 
-        /* نافذة عرض التقييم الإجمالي والتعليقات الحية للعملاء */
         .overall-toast-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
-            z-index: 9600; display: none; justify-content: center; align-items: center;
-            padding: 16px;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+            z-index: 9600; display: none; justify-content: center; align-items: center; padding: 16px;
         }
-        .overall-toast-card {
-            background: var(--white); width: 100%; max-width: 360px;
-            border-radius: 26px; padding: 22px 18px; text-align: center;
-            box-shadow: 0 20px 45px rgba(0,0,0,0.3);
-            animation: smoothFadeIn 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-            display: flex; flex-direction: column; align-items: center;
-            border: 1px solid var(--border-color); max-height: 85vh; overflow-y: auto;
-        }
-        .overall-toast-icon {
-            width: 52px; height: 52px; background: rgba(245, 158, 11, 0.12);
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            margin-bottom: 8px; border: 2px solid #f59e0b; font-size: 1.6rem;
-        }
-        .overall-toast-title {
-            font-size: 1.35rem; font-weight: 900; color: var(--main-text); margin-bottom: 2px;
-        }
-        .overall-toast-count {
-            font-size: 0.80rem; font-weight: 800; color: var(--desc-text); margin-bottom: 12px;
-        }
-        .overall-comments-list {
-            width: 100%; display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;
-            max-height: 240px; overflow-y: auto; text-align: right;
-        }
+        .overall-toast-card { background: var(--white); width: 100%; max-width: 360px; border-radius: 26px; padding: 22px 18px; text-align: center; box-shadow: 0 20px 45px rgba(0,0,0,0.3); animation: smoothFadeIn 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); display: flex; flex-direction: column; align-items: center; border: 1px solid var(--border-color); max-height: 85vh; overflow-y: auto; }
+        .overall-toast-icon { width: 52px; height: 52px; background: rgba(245, 158, 11, 0.12); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; border: 2px solid #f59e0b; font-size: 1.6rem; }
+        .overall-toast-title { font-size: 1.35rem; font-weight: 900; color: var(--main-text); margin-bottom: 2px; }
+        .overall-toast-count { font-size: 0.80rem; font-weight: 800; color: var(--desc-text); margin-bottom: 12px; }
+        .overall-comments-list { width: 100%; display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; max-height: 240px; overflow-y: auto; text-align: right; }
         [dir="ltr"] .overall-comments-list { text-align: left; }
-        .customer-comment-card {
-            background: var(--bg); border: 1px solid var(--border-color);
-            border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 3px;
-        }
-        .comment-header-row {
-            display: flex; justify-content: space-between; align-items: center;
-        }
+        .customer-comment-card { background: var(--bg); border: 1px solid var(--border-color); border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 3px; }
+        .comment-header-row { display: flex; justify-content: space-between; align-items: center; }
         .comment-user-name { font-size: 0.82rem; font-weight: 900; color: var(--accent); }
         .comment-star-badge { font-size: 0.76rem; font-weight: 900; color: #f59e0b; }
         .comment-text-content { font-size: 0.78rem; font-weight: 700; color: var(--main-text); line-height: 1.35; }
         .comment-date-sub { font-size: 0.65rem; color: var(--desc-text); font-weight: 600; }
-        .overall-toast-close {
-            background: var(--accent); color: white; border: none; padding: 9px 24px;
-            border-radius: 12px; font-weight: 800; font-size: 0.85rem; cursor: pointer; width: 100%;
-        }
+        .overall-toast-close { background: var(--accent); color: white; border: none; padding: 9px 24px; border-radius: 12px; font-weight: 800; font-size: 0.85rem; cursor: pointer; width: 100%; }
 
-        /* كارت تعليق الأدمن مع زر المسح */
-        .admin-review-card {
-            background: var(--white); border: 1px solid var(--border-color);
-            border-radius: 14px; padding: 10px 12px; margin-bottom: 8px;
-            display: flex; justify-content: space-between; align-items: center; gap: 10px;
-        }
-        .admin-del-rev-btn {
-            background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5;
-            padding: 6px 10px; border-radius: 10px; font-weight: 800; font-size: 0.75rem;
-            cursor: pointer; white-space: nowrap;
-        }
+        .admin-review-card { background: var(--white); border: 1px solid var(--border-color); border-radius: 14px; padding: 10px 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+        .admin-del-rev-btn { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; padding: 6px 10px; border-radius: 10px; font-weight: 800; font-size: 0.75rem; cursor: pointer; white-space: nowrap; }
         .admin-del-rev-btn:active { transform: scale(0.95); }
 
-        .restaurant-footer { 
-            padding: 26px 16px 30px 16px; 
-            text-align: center; 
-            background: var(--white); 
-            border-top: 1px solid var(--border-color); 
-            margin-top: 25px; 
-            width: 100%;
-        }
-        .footer-rights { 
-            font-size: 0.90rem; 
-            color: var(--main-text); 
-            font-weight: 900; 
-            margin-bottom: 4px; 
-        }
-        .footer-brand-sub {
-            font-size: 0.85rem;
-            color: var(--desc-text);
-            font-weight: 800;
-            margin-bottom: 10px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            letter-spacing: 0.3px;
-        }
-        .footer-address {
-            font-size: 0.88rem;
-            color: var(--accent);
-            font-weight: 800;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-        .footer-phones-group {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-        .footer-phone-chip {
-            background: var(--bg);
-            border: 1.5px solid var(--border-color);
-            color: var(--main-text);
-            padding: 7px 14px;
-            border-radius: 12px;
-            text-decoration: none;
-            font-size: 0.88rem;
-            font-weight: 900;
-            direction: ltr;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.15s ease;
-        }
-        .footer-phone-chip:active {
-            border-color: var(--accent);
-            color: var(--accent);
-            transform: scale(0.96);
-        }
+        .restaurant-footer { padding: 26px 16px 30px 16px; text-align: center; background: var(--white); border-top: 1px solid var(--border-color); margin-top: 25px; width: 100%; }
+        .footer-rights { font-size: 0.90rem; color: var(--main-text); font-weight: 900; margin-bottom: 4px; }
+        .footer-brand-sub { font-size: 0.85rem; color: var(--desc-text); font-weight: 800; margin-bottom: 10px; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: 0.3px; }
+        .footer-address { font-size: 0.88rem; color: var(--accent); font-weight: 800; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .footer-phones-group { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
+        .footer-phone-chip { background: var(--bg); border: 1.5px solid var(--border-color); color: var(--main-text); padding: 7px 14px; border-radius: 12px; text-decoration: none; font-size: 0.88rem; font-weight: 900; direction: ltr; display: inline-flex; align-items: center; gap: 6px; transition: all 0.15s ease; }
+        .footer-phone-chip:active { border-color: var(--accent); color: var(--accent); transform: scale(0.96); }
 
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.65); z-index: 2000; display: none; justify-content: center; align-items: flex-end; }
         .modal-content { background: var(--white); width: 100%; max-width: 500px; padding: 25px; border-radius: 30px 30px 0 0; max-height: 90vh; overflow-y: auto; color: var(--main-text); animation: smoothSlideUp 0.2s ease-out; }
@@ -1165,170 +487,46 @@
 
         .user-fields input { background: var(--bg); border: 1.5px solid var(--border-color); padding: 16px; border-radius: 14px; width: 100%; margin-bottom: 10px; color: var(--main-text); text-align: right; outline: none; font-size: 0.9rem; font-weight: 700; }
         [dir="ltr"] .user-fields input { text-align: left; }
-
         .submit-btn { background: var(--accent); color: white; border: none; padding: 18px; border-radius: 18px; width: 100%; font-weight: 800; cursor: pointer; font-size: 1rem; }
 
-        /* تم تعطيل وإخفاء كارت احتساب النقاط من السلة مؤقتاً */
-        .cart-points-card-pro {
-            background: linear-gradient(135deg, rgba(27, 77, 62, 0.12) 0%, rgba(52, 132, 108, 0.18) 100%);
-            border: 2px solid var(--accent);
-            border-radius: 18px;
-            padding: 14px 16px;
-            margin-bottom: 14px;
-            display: none !important; /* إخفاء مؤقت للنقاط */
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 4px 15px rgba(27, 77, 62, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-        .cart-points-card-pro::before {
-            content: '';
-            position: absolute;
-            top: 0; right: 0; width: 6px; height: 100%;
-            background: var(--accent);
-        }
-        [dir="ltr"] .cart-points-card-pro::before { right: auto; left: 0; }
-        .cart-points-left { display: flex; align-items: center; gap: 10px; }
-        .cart-points-icon-badge {
-            width: 42px; height: 42px; border-radius: 14px;
-            background: var(--accent); color: #ffffff;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.3rem; box-shadow: 0 3px 8px rgba(27, 77, 62, 0.3);
-        }
-        .cart-points-text-group { display: flex; flex-direction: column; }
-        .cart-points-main-label { font-size: 0.92rem; font-weight: 900; color: var(--main-text); line-height: 1.2; }
-        .cart-points-sub-label { font-size: 0.72rem; font-weight: 700; color: var(--desc-text); margin-top: 2px; }
-        .cart-points-val-pill {
-            background: var(--accent); color: #ffffff;
-            padding: 6px 14px; border-radius: 25px;
-            font-size: 1rem; font-weight: 900;
-            box-shadow: 0 3px 10px rgba(27, 77, 62, 0.3);
-            white-space: nowrap;
-        }
-
-        .success-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.75); z-index: 5000; display: none;
-            justify-content: center; align-items: center; padding: 20px;
-        }
-        .success-card {
-            background: var(--white); width: 100%; max-width: 380px;
-            border-radius: 28px; padding: 30px 22px; text-align: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-            animation: smoothFadeIn 0.25s ease-out;
-            display: flex; flex-direction: column; align-items: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .success-icon-wrapper {
-            width: 75px; height: 75px; background: rgba(27, 77, 62, 0.12);
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            margin-bottom: 12px; border: 2px solid var(--accent);
-        }
+        .success-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); z-index: 5000; display: none; justify-content: center; align-items: center; padding: 20px; }
+        .success-card { background: var(--white); width: 100%; max-width: 380px; border-radius: 28px; padding: 30px 22px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.3); animation: smoothFadeIn 0.25s ease-out; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; }
+        .success-icon-wrapper { width: 75px; height: 75px; background: rgba(27, 77, 62, 0.12); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; border: 2px solid var(--accent); }
         .success-icon-wrapper svg { width: 40px; height: 40px; fill: var(--accent); }
-
         .success-title { font-size: 1.25rem; font-weight: 800; color: var(--main-text); margin-bottom: 4px; }
         .success-sub { font-size: 0.85rem; color: var(--desc-text); font-weight: 600; line-height: 1.4; margin-bottom: 14px; }
+        .emoji-burst-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: hidden; z-index: 10; }
+        .floating-emoji-item { position: absolute; font-size: 1.8rem; animation: floatAndFade 2s ease-out forwards; }
+        @keyframes floatAndFade { 0% { transform: translateY(40px) scale(0.6); opacity: 0; } 40% { opacity: 1; transform: translateY(-10px) scale(1.2); } 100% { transform: translateY(-120px) scale(0.9); opacity: 0; } }
+        .success-chat-btn { background: #25D366; color: white; border: none; padding: 12px 20px; border-radius: 14px; font-weight: 800; font-size: 0.9rem; cursor: pointer; width: 100%; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3); }
+        .success-close-btn { background: var(--bg); color: var(--main-text); border: 1px solid var(--border-color); padding: 10px 20px; border-radius: 14px; font-weight: 800; font-size: 0.85rem; cursor: pointer; width: 100%; }
 
-        .points-earned-celebration-pill {
-            background: #ecfdf5;
-            border: 2px dashed #1b4d3e;
-            color: #1b4d3e;
-            padding: 10px 18px;
-            border-radius: 16px;
-            font-weight: 900;
-            font-size: 1.05rem;
-            margin-bottom: 16px;
-            display: none !important; /* إخفاء مؤقت للنقاط */
-            align-items: center;
-            gap: 6px;
-        }
-
-        .emoji-burst-container {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; overflow: hidden; z-index: 10;
-        }
-        .floating-emoji-item {
-            position: absolute;
-            font-size: 1.8rem;
-            animation: floatAndFade 2s ease-out forwards;
-        }
-        @keyframes floatAndFade {
-            0% { transform: translateY(40px) scale(0.6); opacity: 0; }
-            40% { opacity: 1; transform: translateY(-10px) scale(1.2); }
-            100% { transform: translateY(-120px) scale(0.9); opacity: 0; }
-        }
-
-        .success-chat-btn {
-            background: #25D366; color: white; border: none; padding: 12px 20px;
-            border-radius: 14px; font-weight: 800; font-size: 0.9rem; cursor: pointer;
-            width: 100%; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 8px;
-            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
-        }
-
-        .success-close-btn {
-            background: var(--bg); color: var(--main-text); border: 1px solid var(--border-color);
-            padding: 10px 20px; border-radius: 14px; font-weight: 800; font-size: 0.85rem; cursor: pointer; width: 100%;
-        }
-
-        .loyalty-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.72); z-index: 4500; display: none;
-            justify-content: center; align-items: center; padding: 16px;
-        }
-        .loyalty-box {
-            background: var(--white); width: 100%; max-width: 440px;
-            border-radius: 26px; padding: 22px; max-height: 85vh; overflow-y: auto;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.4); animation: smoothFadeIn 0.2s ease-out;
-            border: 1px solid var(--border-color);
-        }
+        .loyalty-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.72); z-index: 4500; display: none; justify-content: center; align-items: center; padding: 16px; }
+        .loyalty-box { background: var(--white); width: 100%; max-width: 440px; border-radius: 26px; padding: 22px; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.4); animation: smoothFadeIn 0.2s ease-out; border: 1px solid var(--border-color); }
         .loyalty-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
         .loyalty-header h3 { font-size: 1.15rem; font-weight: 900; color: var(--accent); display: flex; align-items: center; gap: 6px; }
 
         .loyalty-simple-card {
             background: linear-gradient(135deg, #1b4d3e 0%, #0d2820 100%);
-            border-radius: 18px;
-            padding: 18px;
-            color: white;
-            text-align: center;
-            margin-bottom: 16px;
+            border-radius: 18px; padding: 18px; color: white; text-align: center; margin-bottom: 14px;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         .loyalty-card-lbl { font-size: 0.78rem; opacity: 0.85; font-weight: 700; }
         .loyalty-card-num { font-size: 2.3rem; font-weight: 900; color: #52b79a; margin: 3px 0; }
+        .loyalty-card-val { font-size: 0.95rem; font-weight: 800; color: #fde047; margin-bottom: 4px; }
         .loyalty-card-phone { font-size: 0.75rem; opacity: 0.8; }
 
-        .reward-item-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 14px;
-            background: var(--bg);
-            border: 1px solid var(--border-color);
-            border-radius: 14px;
-            margin-bottom: 9px;
-            gap: 10px;
-        }
-        .reward-item-info { flex: 1; }
-        .reward-item-name { font-size: 0.88rem; font-weight: 800; color: var(--main-text); }
-        .reward-item-cost { font-size: 0.76rem; color: var(--accent); font-weight: 800; margin-top: 2px; }
-        .reward-redeem-btn {
-            background: var(--accent);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 6px 14px;
-            font-size: 0.80rem;
-            font-weight: 800;
-            cursor: pointer;
+        .points-action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px; }
+        .pts-btn {
+            background: var(--bg); border: 1.5px solid var(--accent); color: var(--accent);
+            padding: 12px 8px; border-radius: 14px; font-weight: 800; font-size: 0.82rem;
+            cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px;
             transition: all 0.15s ease;
         }
-        .reward-redeem-btn:disabled { background: #cbd5e1; color: #64748b; cursor: not-allowed; }
+        .pts-btn:active { background: var(--accent); color: white; }
 
         .admin-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.72); z-index: 4000; display: none; justify-content: center; align-items: center; padding: 14px; }
-        .admin-box { background: var(--white); width: 100%; max-width: 480px; border-radius: 28px; padding: 22px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.3); animation: smoothFadeIn 0.2s ease-out; }
+        .admin-box { background: var(--white); width: 100%; max-width: 480px; border-radius: 28px; padding: 22px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.3); animation: smoothFadeIn 0.2s ease-out; border: 1px solid var(--border-color); }
         .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
         .admin-header h3 { font-size: 1.25rem; font-weight: 900; color: var(--accent); display: flex; align-items: center; gap: 6px; }
         .admin-close { background: var(--bg); border: 1px solid var(--border-color); width: 34px; height: 34px; border-radius: 50%; font-weight: 800; cursor: pointer; color: var(--main-text); display: flex; align-items: center; justify-content: center; }
@@ -1349,15 +547,12 @@
         .card-subtitle { font-size: 0.70rem; font-weight: 700; color: #64748b; line-height: 1.35; }
 
         .floating-sub-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.78); z-index: 5500; display: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.78); z-index: 5500; display: none;
             justify-content: center; align-items: center; padding: 16px;
         }
         .floating-card-box {
-            background: var(--white); width: 100%; max-width: 460px;
-            border-radius: 28px; padding: 20px; max-height: 85vh; overflow-y: auto;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.45); animation: smoothFadeIn 0.2s cubic-bezier(0.25, 1, 0.5, 1);
-            border: 1px solid var(--border-color);
+            background: var(--white); width: 100%; max-width: 460px; border-radius: 28px; padding: 20px; max-height: 85vh; overflow-y: auto;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.45); animation: smoothFadeIn 0.2s cubic-bezier(0.25, 1, 0.5, 1); border: 1px solid var(--border-color);
         }
         .floating-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; }
         .floating-header h4 { font-size: 1.12rem; font-weight: 900; color: var(--accent); display: flex; align-items: center; gap: 6px; }
@@ -1366,7 +561,6 @@
         [dir="ltr"] .admin-custom-input-group { text-align: left; }
         .admin-custom-input-group label { display: block; font-size: 0.82rem; font-weight: 800; color: var(--main-text); margin-bottom: 5px; }
         .admin-custom-input-group input { width: 100%; padding: 12px 14px; background: var(--bg); border: 1.5px solid var(--border-color); border-radius: 12px; font-size: 0.9rem; color: var(--main-text); outline: none; }
-
         .admin-save-btn { width: 100%; background: var(--accent); color: white; border: none; padding: 13px; border-radius: 12px; font-weight: 900; font-size: 0.92rem; cursor: pointer; margin-top: 8px; box-shadow: 0 4px 12px rgba(27, 77, 62, 0.25); }
 
         .pass-form input { width: 100%; padding: 14px; border-radius: 14px; border: 1px solid var(--border-color); background: var(--bg); color: var(--main-text); margin-bottom: 12px; font-size: 0.95rem; text-align: center; }
@@ -1389,26 +583,38 @@
         .chat-input-bar input { flex: 1; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--bg); color: var(--main-text); font-size: 0.88rem; outline: none; }
         .chat-send-btn { background: var(--accent); color: white; border: none; padding: 10px 16px; border-radius: 12px; font-weight: 800; cursor: pointer; }
 
-        .admin-order-card {
-            background: var(--bg); border: 1px solid var(--border-color);
-            border-radius: 14px; padding: 12px; margin-bottom: 10px;
-        }
-        .admin-order-header {
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid var(--border-color); padding-bottom: 6px; margin-bottom: 6px;
-        }
-        .admin-item-row {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 8px 10px; border-bottom: 1px solid var(--border-color);
-            background: var(--white); border-radius: 10px; margin-bottom: 6px;
-        }
-        .status-toggle-btn {
-            padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 0.75rem;
-            cursor: pointer; border: none; transition: transform 0.1s ease;
-        }
+        .admin-order-card { background: var(--bg); border: 1px solid var(--border-color); border-radius: 14px; padding: 12px; margin-bottom: 10px; }
+        .admin-order-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; margin-bottom: 6px; }
+        .admin-item-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; border-bottom: 1px solid var(--border-color); background: var(--white); border-radius: 10px; margin-bottom: 6px; }
+        .status-toggle-btn { padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 0.75rem; cursor: pointer; border: none; transition: transform 0.1s ease; }
         .status-toggle-btn:active { transform: scale(0.95); }
         .status-toggle-btn.on { background: #dcfce7; color: #15803d; }
         .status-toggle-btn.off { background: #fee2e2; color: #b91c1c; }
+
+        .rank-item-card {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 14px; background: var(--bg); border-radius: 14px;
+            border: 1px solid var(--border-color); margin-bottom: 8px;
+        }
+        .rank-badge {
+            width: 28px; height: 28px; border-radius: 50%;
+            background: var(--accent); color: white;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.78rem; font-weight: 900;
+        }
+        .rank-badge.top-1 { background: #f59e0b; }
+        .rank-badge.top-2 { background: #94a3b8; }
+        .rank-badge.top-3 { background: #b45309; }
+
+        #qrReaderArea, #adminQrReaderArea {
+            width: 100%; border-radius: 16px; overflow: hidden; background: #000; margin-bottom: 12px;
+        }
+        #userQrCodeBox {
+            display: flex; justify-content: center; align-items: center; min-height: 200px;
+        }
+        #userQrCodeBox img, #userQrCodeBox canvas {
+            margin: auto; border-radius: 12px; border: 3px solid #1b4d3e; padding: 6px; background: #fff;
+        }
     </style>
 </head>
 <body>
@@ -1428,6 +634,20 @@
         <div class="loader-content">
             <div class="loading-bar"><span id="progressBarFill"></span></div>
             <div class="creative-counter"><span id="loadPercentage">0</span>%</div>
+        </div>
+    </div>
+
+    <div class="user-phone-gate-modal" id="userPhoneGateModal">
+        <div class="gate-card">
+            <div class="gate-gift-icon">🎁</div>
+            <h2 style="font-size: 1.25rem; font-weight: 900; color: var(--accent); margin-bottom: 4px;">مرحباً بك في ستوريا!</h2>
+            <p style="font-size: 0.82rem; font-weight: 700; color: var(--desc-text); margin-bottom: 14px; line-height: 1.4;">
+                سجل رقم هاتفك للحصول على <b>100 نقطة هدية ترحيبية فوراً</b> وتفعيل محفظة المكافآت.
+            </p>
+            <input type="tel" id="gateUserPhoneInput" placeholder="أدخل رقم هاتفك (مثال: 01014144144)" style="width: 100%; padding: 14px; border-radius: 14px; border: 1.5px solid var(--border-color); background: var(--bg); font-weight: 800; font-size: 0.95rem; text-align: center; margin-bottom: 12px; outline: none;">
+            <button onclick="submitUserGatePhone()" style="width: 100%; padding: 14px; border-radius: 14px; border: none; background: var(--accent); color: white; font-weight: 900; font-size: 0.95rem; cursor: pointer; box-shadow: 0 4px 15px rgba(27, 77, 62, 0.3);">
+                تأكيد واستلام 100 نقطة 🎁
+            </button>
         </div>
     </div>
 
@@ -1460,7 +680,7 @@
         <div class="bottom-install-info">
             <img src="images/logooo.png" alt="Storia App" onerror="this.style.display='none'">
             <div class="bottom-install-text">
-                <span class="bottom-install-title">تطبيق ستوريا</span>
+                <span class="bottom-install-title">Storia Restaurant & lounge</span>
                 <span class="bottom-install-sub">تصفح أسرع وتثبيت على هاتفك</span>
             </div>
         </div>
@@ -1473,7 +693,7 @@
     <div class="ios-install-modal" id="iosInstallModal" onclick="if(event.target===this) closeIosInstallModal()">
         <div class="ios-install-card">
             <h3 class="ios-install-title">تثبيت التطبيق على الآيفون 🍏</h3>
-            <p class="ios-install-desc">لتثبيت التطبيق على شاشة هاتفك الرئيسية، اتبع الخطوات التالية من متصفح Safari:</p>
+            <p class="ios-install-desc">لتثبيت التطبيق على شاشة هاتفك الرئيسية باسم <b>Storia Restaurant & lounge</b>، اتبع الخطوات:</p>
             <div class="ios-steps-box">
                 <div class="ios-step-item">
                     <span>1️⃣</span>
@@ -1555,9 +775,8 @@
                 <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="الوضع الليلي / النهاري">🌙</button>
             </div>
             
-            <!-- اللوجو مع خاصية النقر المزدوج (Double Click) لفتح لوحة التحكم بأمان -->
-            <div class="header-logo-container" id="brandLogoContainer" onclick="handleLogoTap()" title="Storia Cafe">
-                <img src="images/logooo.png" class="header-logo" alt="Storia Cafe" onerror="this.src='https://www.storia-eg.com/images/logo.png'">
+            <div class="header-logo-container" id="brandLogoContainer" onclick="handleLogoTap()" title="Storia Restaurant & lounge">
+                <img src="images/logooo.png" class="header-logo" alt="Storia Restaurant & lounge" onerror="this.src='https://www.storia-eg.com/images/logo.png'">
             </div>
             
             <div class="header-left-actions">
@@ -1573,11 +792,10 @@
             <div class="sub-actions-row">
                 <div class="sub-actions-left-group">
                     <button class="loyalty-sub-btn" onclick="openLoyaltyModal()" title="محفظة نقاط المكافآت">
-                        <span id="t_loyalty_btn_text">🎁 الهدايا والمكافآت</span>
+                        <span id="t_loyalty_btn_text">🎁 محفظة النقاط</span>
                         <span class="pts" id="headerPointsBadge">0</span>
                     </button>
 
-                    <!-- زر التقييم الإجمالي -->
                     <div class="overall-rating-chip" id="overallRatingChip" onclick="openOverallToast()" title="عرض تقييمات وتعليقات العملاء">
                         <span class="star-icon">⭐</span>
                         <span id="overallRatingScore">5.0</span>
@@ -1597,6 +815,7 @@
         <div id="menuLoadingMsg" style="text-align: center; padding: 40px 10px; font-weight: 800; color: var(--accent);">جاري تحميل قائمة المنيو... ☕</div>
     </div>
 
+    <!-- نافذة محفظة النقاط للعميل -->
     <div class="loyalty-modal" id="loyaltyModal" onclick="if(event.target===this) closeLoyaltyModal()">
         <div class="loyalty-box">
             <div class="loyalty-header">
@@ -1605,13 +824,92 @@
             </div>
 
             <div class="loyalty-simple-card">
-                <div class="loyalty-card-lbl" id="t_loyalty_bal_lbl">رصيد نقاطك الحالي (1 ج.م = 1 نقطة)</div>
+                <div class="loyalty-card-lbl">رصيد نقاطك الحالي</div>
                 <div class="loyalty-card-num" id="modalUserPoints">0</div>
-                <div class="loyalty-card-phone" id="modalUserPhoneDisplay">أدخل رقم هاتفك في السلة لتجميع النقاط</div>
+                <div class="loyalty-card-val" id="modalUserPointsValue">قيمتها المادية: 0.00 ج.م</div>
+                <div class="loyalty-card-phone" id="modalUserPhoneDisplay">رقمك المسجل: --</div>
             </div>
 
-            <div style="font-size: 0.85rem; font-weight: 800; margin-bottom: 8px; color: var(--main-text);" id="t_loyalty_red_lbl">استبدل نقاطك بهدايا مجانية فوراً:</div>
-            <div id="simpleRewardsList"></div>
+            <div class="points-action-grid">
+                <button class="pts-btn" onclick="openScanReceiptModal()">
+                    <span style="font-size: 1.5rem;">📷</span>
+                    <span>مسح QR الفاتورة</span>
+                    <small style="opacity: 0.8;">إضافة نقاط الحساب</small>
+                </button>
+                <button class="pts-btn" onclick="openRedeemSetupModal()">
+                    <span style="font-size: 1.5rem;">📲</span>
+                    <span>تبديل النقاط (QR)</span>
+                    <small style="opacity: 0.8;">خصم فوري عند الكاشير</small>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة تحديد النقاط المستبدلة مع حساب القيمة المالية -->
+    <div class="floating-sub-modal" id="redeemSetupModal" style="z-index: 6000;" onclick="if(event.target==this) closeRedeemSetupModal()">
+        <div class="floating-card-box" style="text-align: center;">
+            <div class="floating-header">
+                <h4>📲 استبدال النقاط بخصم كاش</h4>
+                <button class="admin-close" onclick="closeRedeemSetupModal()">✕</button>
+            </div>
+            
+            <p style="font-size: 0.82rem; font-weight: 700; color: var(--desc-text); margin-bottom: 12px;">
+                حدد عدد النقاط التي ترغب في خصمها (كل 10 نقاط = 1 جنيه):
+            </p>
+
+            <div style="background: var(--bg); border: 1.5px solid var(--border-color); border-radius: 16px; padding: 14px; margin-bottom: 14px;">
+                <div style="font-size: 0.85rem; font-weight: 800; color: var(--desc-text); margin-bottom: 6px;">
+                    رصيدك الحالي: <b id="setupMaxPointsLbl" style="color: var(--accent);">0</b> نقطة
+                </div>
+                <input type="number" id="customRedeemPointsInput" placeholder="أدخل عدد النقاط" oninput="calculateRedeemCashValue(this.value)" style="width: 100%; padding: 12px; border-radius: 12px; border: 1.5px solid var(--accent); background: var(--white); font-size: 1.1rem; font-weight: 900; text-align: center; outline: none; margin-bottom: 10px;">
+                
+                <div style="background: rgba(27, 77, 62, 0.08); border-radius: 12px; padding: 10px;">
+                    <span style="font-size: 0.78rem; font-weight: 800; color: var(--desc-text);">قيمة الخصم الذي ستحصل عليه:</span>
+                    <div style="font-size: 1.35rem; font-weight: 900; color: var(--accent); margin-top: 2px;" id="calculatedCashDisplay">0.00 ج.م</div>
+                </div>
+            </div>
+
+            <button class="admin-save-btn" onclick="generateCustomRedeemQr()">إظهار رمز QR للكاشير 📲</button>
+        </div>
+    </div>
+
+    <!-- نافذة مسح QR الفاتورة للعميل -->
+    <div class="floating-sub-modal" id="scanReceiptModal" style="z-index: 6000;" onclick="if(event.target==this) closeScanReceiptModal()">
+        <div class="floating-card-box" style="text-align: center;">
+            <div class="floating-header">
+                <h4>📷 مسح رمز QR الفاتورة</h4>
+                <button class="admin-close" onclick="closeScanReceiptModal()">✕</button>
+            </div>
+            <p style="font-size: 0.82rem; font-weight: 700; color: var(--desc-text); margin-bottom: 12px;">
+                وجه الكاميرا نحو رمز الـ QR الموجود أسفل فاتورة الشيك لإضافة نقاطك تلقائياً:
+            </p>
+            <div id="qrReaderArea"></div>
+            <button class="admin-save-btn" style="background: #64748b;" onclick="closeScanReceiptModal()">إلغاء ✕</button>
+        </div>
+    </div>
+
+    <!-- نافذة إظهار رمز QR العميل للكاشير -->
+    <div class="floating-sub-modal" id="myRedeemQrModal" style="z-index: 6500;" onclick="if(event.target==this) closeMyRedeemQrModal()">
+        <div class="floating-card-box" style="text-align: center;">
+            <div class="floating-header">
+                <h4>📲 رمز خصم النقاط</h4>
+                <button class="admin-close" onclick="closeMyRedeemQrModal()">✕</button>
+            </div>
+            <p style="font-size: 0.82rem; font-weight: 700; color: var(--desc-text); margin-bottom: 14px;">
+                أظهر هذا الكود لكاشير ستوريا لمسحه وتطبيق الخصم فوراً:
+            </p>
+            <div id="userQrCodeBox"></div>
+            
+            <div style="background: rgba(27, 77, 62, 0.08); border-radius: 14px; padding: 10px; margin-bottom: 12px; margin-top: 10px;">
+                <div style="font-weight: 900; color: var(--accent); font-size: 1.05rem;">
+                    النقاط المحددة: <span id="redeemModalPts">0</span> نقطة
+                </div>
+                <div style="font-weight: 800; color: #166534; font-size: 0.95rem; margin-top: 2px;">
+                    خصم مالي: <span id="redeemModalCash">0.00</span> ج.م
+                </div>
+            </div>
+
+            <button class="admin-save-btn" onclick="closeMyRedeemQrModal()">إغلاق ✓</button>
         </div>
     </div>
 
@@ -1674,10 +972,6 @@
             </div>
             <h2 class="success-title" id="t_success_title">تم استلام طلبك بنجاح!</h2>
             
-            <div class="points-earned-celebration-pill" id="successPointsPill">
-                <span>🌟 +0 نقطة جديدة في رصيدك!</span>
-            </div>
-
             <p class="success-sub" id="successOrderText">جاري تجهيز طلبك، يمكنك التحدث مباشرة مع إدارة المطعم من الزر بالأسفل.</p>
             <button class="success-chat-btn" id="clientOpenChatBtn" onclick="openClientChatFromSuccess()">💬 شات وتواصل مع المطعم</button>
             <button class="success-close-btn" id="t_success_close_btn" onclick="closeSuccessModal()">إغلاق ومتابعة</button>
@@ -1704,7 +998,6 @@
         </div>
     </div>
 
-    <!-- لوحة التحكم الإدارية -->
     <div class="admin-modal" id="adminModal" onclick="if(event.target==this) closeAdminPanel()">
         <div class="admin-box">
             <div class="admin-header">
@@ -1715,13 +1008,27 @@
             <div id="adminAuthView">
                 <div class="pass-form">
                     <p style="margin-bottom: 12px; font-weight: 800; font-size: 0.88rem; text-align: center; color: var(--desc-text);">أدخل كلمة المرور الحالية للدخول:</p>
-                    <input type="password" id="adminPassInput" placeholder="كلمة المرور" autofocus>
-                    <button onclick="verifyAdminPassword()">دخول لوحة التحكم</button>
+                    <input type="password" id="adminPassInput" placeholder="كلمة المرور" autofocus onkeydown="if(event.key==='Enter') verifyAdminPassword()">
+                    <button id="adminLoginBtn" onclick="verifyAdminPassword()">دخول لوحة التحكم</button>
                 </div>
             </div>
 
             <div id="adminDashboardView" style="display: none;">
                 <div class="admin-cards-grid">
+                    <div class="admin-nav-card" onclick="openFloatingModal('loyaltyRankModal')">
+                        <div class="card-badge-num">🏆</div>
+                        <div class="card-avatar-box">📊</div>
+                        <div class="card-title">ترتيب نقاط العملاء</div>
+                        <div class="card-subtitle">الترتيب من الأعلى للأقل (توفير القراءة)</div>
+                    </div>
+
+                    <div class="admin-nav-card" onclick="openFloatingModal('adminScanRedeemModal')">
+                        <div class="card-badge-num">📷</div>
+                        <div class="card-avatar-box">💳</div>
+                        <div class="card-title">مسح وتبديل النقاط</div>
+                        <div class="card-subtitle">مسح كود العميل وخصم النقاط</div>
+                    </div>
+
                     <div class="admin-nav-card" onclick="openFloatingModal('priceMarkupModal')">
                         <div class="card-badge-num">📈</div>
                         <div class="card-avatar-box">💵</div>
@@ -1732,8 +1039,8 @@
                     <div class="admin-nav-card" onclick="openFloatingModal('loyaltyAdminModal')">
                         <div class="card-badge-num">🎁</div>
                         <div class="card-avatar-box">👑</div>
-                        <div class="card-title">إدارة نقاط العملاء</div>
-                        <div class="card-subtitle">تعديل وإضافة رصيد النقاط لأي عميل</div>
+                        <div class="card-title">تعديل نقاط عميل</div>
+                        <div class="card-subtitle">تعديل وإضافة رصيد بالرقم</div>
                     </div>
 
                     <div class="admin-nav-card" onclick="openFloatingModal('adminReviewsModal')">
@@ -1754,7 +1061,7 @@
                         <div class="card-badge-num gray">2</div>
                         <div class="card-avatar-box">📜</div>
                         <div class="card-title">الطلبات الواردة</div>
-                        <div class="card-subtitle">عرض الطلبات مع الشات المباشر</div>
+                        <div class="card-subtitle">عرض آخر 50 طلب مع الشات المباشر</div>
                     </div>
 
                     <div class="admin-nav-card" onclick="openFloatingModal('contactsModal')">
@@ -1775,7 +1082,47 @@
         </div>
     </div>
 
-    <!-- نافذة إدارة ومسح تعليقات العملاء في لوحة الإدارة -->
+    <!-- نافذة ترتيب العملاء في لوحة الإدارة -->
+    <div class="floating-sub-modal" id="loyaltyRankModal" onclick="if(event.target==this) closeFloatingModal('loyaltyRankModal')">
+        <div class="floating-card-box">
+            <div class="floating-header">
+                <h4>🏆 ترتيب العملاء حسب رصيد النقاط</h4>
+                <button class="admin-close" onclick="closeFloatingModal('loyaltyRankModal')">✕</button>
+            </div>
+            <div style="font-size: 0.8rem; font-weight: 700; color: var(--desc-text); margin-bottom: 10px;">
+                الترتيب يظهر تنازلياً من الأكثر نقاطاً للأقل. اضغط على الزر أدناه لتحديث القائمة:
+            </div>
+            <button class="admin-save-btn" style="background:#1e293b; margin-bottom: 14px;" onclick="loadTopCustomersRank()">🔄 جلب وتحديث الترتيب الآن</button>
+            <div id="adminCustomersRankList">
+                <div style="text-align: center; color: var(--desc-text); padding: 15px 0;">اضغط الزر بالأعلى لعرض الترتيب.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة مسح QR العميل وتبديل النقاط بواسطة الكاشير -->
+    <div class="floating-sub-modal" id="adminScanRedeemModal" onclick="if(event.target==this) closeAdminScanRedeemModal()">
+        <div class="floating-card-box">
+            <div class="floating-header">
+                <h4>💳 مسح كود العميل وخصم النقاط</h4>
+                <button class="admin-close" onclick="closeAdminScanRedeemModal()">✕</button>
+            </div>
+            <div id="adminQrReaderArea"></div>
+            
+            <div id="adminScannedClientBox" style="display: none; background: #ecfdf5; border: 1.5px solid #1b4d3e; border-radius: 14px; padding: 14px; margin-top: 10px;">
+                <div style="font-weight: 800; font-size: 0.95rem; margin-bottom: 4px;">العميل: <span id="scannedClientPhone" style="color:var(--accent);">--</span></div>
+                <div style="font-weight: 800; font-size: 0.9rem; margin-bottom: 6px;">الرصيد المتاح: <b id="scannedClientCurrentPts" style="color:#1b4d3e; font-size:1.2rem;">0</b> نقطة</div>
+                <div style="font-weight: 800; font-size: 0.88rem; color:#b45309; margin-bottom: 10px;">النقاط المطلوبة للخصم: <b id="scannedClientRequestedPts">0</b> نقطة (<span id="scannedClientCashValue">0.00</span> ج.م)</div>
+                
+                <div class="admin-custom-input-group">
+                    <label>عدد النقاط التي سيتم خصمها فعلياً:</label>
+                    <input type="number" id="ptsToDeductInput" placeholder="أدخل عدد النقاط">
+                </div>
+                <button class="admin-save-btn" onclick="executeRedeemPointsDeduction()">خصم النقاط وتأكيد التبديل ✓</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة إدارة تعليقات العملاء -->
     <div class="floating-sub-modal" id="adminReviewsModal" onclick="if(event.target==this) closeFloatingModal('adminReviewsModal')">
         <div class="floating-card-box">
             <div class="floating-header">
@@ -1811,7 +1158,7 @@
     <div class="floating-sub-modal" id="loyaltyAdminModal" onclick="if(event.target==this) closeFloatingModal('loyaltyAdminModal')">
         <div class="floating-card-box">
             <div class="floating-header">
-                <h4>👑 التحكم في نقاط العملاء</h4>
+                <h4>👑 التحكم في نقاط عميل يدوي</h4>
                 <button class="admin-close" onclick="closeFloatingModal('loyaltyAdminModal')">✕</button>
             </div>
             
@@ -1878,7 +1225,7 @@
     <div class="floating-sub-modal" id="logsModal" onclick="if(event.target==this) closeFloatingModal('logsModal')">
         <div class="floating-card-box">
             <div class="floating-header">
-                <h4>📜 الطلبات الواردة (Live)</h4>
+                <h4>📜 الطلبات الواردة (Live - آخر 50 طلب)</h4>
                 <button class="admin-close" onclick="closeFloatingModal('logsModal')">✕</button>
             </div>
             <div id="adminOrdersLogsList">جاري تحميل الطلبات...</div>
@@ -1915,17 +1262,6 @@
         <div class="modal-content">
             <h2 style="margin-bottom: 20px;" id="t_cart_title">طلباتك</h2>
             <div id="cartItemsList"></div>
-            
-            <div class="cart-points-card-pro">
-                <div class="cart-points-left">
-                    <div class="cart-points-icon-badge">🎁</div>
-                    <div class="cart-points-text-group">
-                        <span class="cart-points-main-label" id="t_cart_pts_main">نقاط ستوريا المكتسبة</span>
-                        <span class="cart-points-sub-label" id="t_cart_pts_sub">تضاف لرصيدك فور تأكيد الطلب</span>
-                    </div>
-                </div>
-                <div class="cart-points-val-pill" id="potentialPointsEarned">+0 نقطة</div>
-            </div>
 
             <div style="margin: 10px 0 15px 0; padding: 15px; background: rgba(27, 77, 62, 0.08); border-radius: 18px; display: flex; flex-direction: column; gap: 6px;">
                 <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
@@ -1940,7 +1276,7 @@
 
             <div class="user-fields">
                 <input type="text" id="uName" placeholder="الاسم بالكامل">
-                <input type="tel" id="uPhone" placeholder="رقم الموبايل" oninput="handlePhoneInput(this.value)">
+                <input type="tel" id="uPhone" placeholder="رقم الموبايل">
                 <input type="text" id="uAddr" placeholder="العنوان بالتفصيل أو رقم الترابيزة">
             </div>
             <button class="submit-btn" id="t_cart_submit_btn" onclick="sendToWA()">تأكيد الطلب 🛒</button>
@@ -2012,14 +1348,6 @@
             { name: "صوص كراميل", nameEn: "Caramel Sauce", price: 29.95 }, { name: "مكسرات مشكلة", nameEn: "Mixed Nuts", price: 44.95 }, { name: "قطع أوريو", nameEn: "Oreo Crumbles", price: 29.95 }
         ];
 
-        const loyaltyRewards = [
-            { id: 'rew_1', title: 'قهوة اسبريسو / تركي ☕', titleEn: 'Espresso / Turkish Coffee ☕', cost: 100 },
-            { id: 'rew_2', title: 'مشروب موهيتو منعش 🍹', titleEn: 'Refreshing Mojito Drink 🍹', cost: 200 },
-            { id: 'rew_3', title: 'قطعة حلى / مولتن كيك 🍰', titleEn: 'Molten Cake / Dessert 🍰', cost: 350 },
-            { id: 'rew_4', title: 'بيتزا وسط من اختيارك 🍕', titleEn: 'Medium Pizza of Choice 🍕', cost: 500 },
-            { id: 'rew_5', title: 'وجبة رئيسية أو مكس جريل 🥩', titleEn: 'Main Dish / Mix Grill 🥩', cost: 800 }
-        ];
-
         function safeGetStorage(key, defaultVal) {
             try {
                 const val = localStorage.getItem(key);
@@ -2054,7 +1382,7 @@
         let selectedAddonsMap = [];
         let selectedItemSizeKey = 'large';
 
-        let userLoyaltyPoints = 0;
+        let userLoyaltyPoints = parseInt(safeGetStorage('storia_user_pts', '0')) || 0;
         let activeUserPhone = safeGetStorage('storia_user_phone', '');
         let deferredPrompt = null;
 
@@ -2064,6 +1392,8 @@
         let currentTotalReviewsCount = 1;
 
         let lastLogoTapTime = 0;
+        let html5QrScannerInstance = null;
+        let adminHtml5QrScannerInstance = null;
 
         let restaurantInfo = { 
             orderPhone: '201014144144', 
@@ -2079,10 +1409,9 @@
                 welcomeSub: 'من فضلك اختر طريقة استلام طلبك للمتابعة:',
                 delAr: 'توصيل للمنازل',
                 takeAr: 'صالة وتيك اواي',
-                loyaltyBtnText: '🎁 الهدايا والمكافآت',
+                loyaltyBtnText: '🎁 محفظة النقاط',
                 loyaltyTitle: '🎁 محفظة مكافآت ستوريا',
-                loyaltyBalLbl: 'رصيد نقاطك الحالي (1 ج.م = 1 نقطة)',
-                loyaltyRedeemLbl: 'استبدل نقاطك بهدايا مجانية فوراً:',
+                loyaltyBalLbl: 'رصيد نقاطك الحالي',
                 addonsTitle: 'إضافات وتخصيص الصنف',
                 addonsSub: 'اختر الإضافات المطلوبة (اختياري):',
                 sizeTitle: 'اختر الحجم المطلوب:',
@@ -2094,9 +1423,6 @@
                 unavailableBtn: 'غير متوفر 🛑',
                 addedBtn: 'تم الإضافة ✓',
                 cartTitle: 'طلباتك',
-                cartPtsMain: 'نقاط ستوريا المكتسبة',
-                cartPtsSub: 'تضاف لرصيدك فور تأكيد الطلب',
-                ptsUnit: 'نقطة',
                 cartSubtotal: 'مجموع الأصناف:',
                 cartTotal: 'الإجمالي الكلي',
                 namePlaceholder: 'الاسم بالكامل',
@@ -2131,10 +1457,9 @@
                 welcomeSub: 'Please choose your order fulfillment type:',
                 delAr: 'Home Delivery',
                 takeAr: 'Dine-in & Takeaway',
-                loyaltyBtnText: '🎁 Rewards Wallet',
+                loyaltyBtnText: '🎁 Points Wallet',
                 loyaltyTitle: '🎁 Storia Rewards Wallet',
-                loyaltyBalLbl: 'Current Points Balance (1 EGP = 1 Pt)',
-                loyaltyRedeemLbl: 'Redeem points for free items instantly:',
+                loyaltyBalLbl: 'Current Points Balance',
                 addonsTitle: 'Item Add-ons & Customization',
                 addonsSub: 'Choose your desired add-ons (Optional):',
                 sizeTitle: 'Choose Size:',
@@ -2146,9 +1471,6 @@
                 unavailableBtn: 'Unavailable 🛑',
                 addedBtn: 'Added ✓',
                 cartTitle: 'Your Order',
-                cartPtsMain: 'Earned Storia Points',
-                cartPtsSub: 'Added to your wallet upon checkout',
-                ptsUnit: 'Points',
                 cartSubtotal: 'Items Subtotal:',
                 cartTotal: 'Total Amount',
                 namePlaceholder: 'Full Name',
@@ -2335,7 +1657,6 @@
             renderCategories();
             renderMenu(true);
             renderCartItems();
-            renderLoyaltyRewardsUI();
             updateRatingFeedbackText(userSelectedOrderRating);
         }
 
@@ -2364,8 +1685,6 @@
             if (tLoyaltyTitle) tLoyaltyTitle.innerText = t.loyaltyTitle;
             const tLoyaltyBalLbl = document.getElementById('t_loyalty_bal_lbl');
             if (tLoyaltyBalLbl) tLoyaltyBalLbl.innerText = t.loyaltyBalLbl;
-            const tLoyaltyRedeemLbl = document.getElementById('t_loyalty_red_lbl');
-            if (tLoyaltyRedeemLbl) tLoyaltyRedeemLbl.innerText = t.loyaltyRedeemLbl;
 
             const tAddonsTitle = document.getElementById('t_addons_title');
             if (tAddonsTitle) tAddonsTitle.innerText = t.addonsTitle;
@@ -2382,10 +1701,6 @@
 
             const tCartTitle = document.getElementById('t_cart_title');
             if (tCartTitle) tCartTitle.innerText = t.cartTitle;
-            const tCartPtsMain = document.getElementById('t_cart_pts_main');
-            if (tCartPtsMain) tCartPtsMain.innerText = t.cartPtsMain;
-            const tCartPtsSub = document.getElementById('t_cart_pts_sub');
-            if (tCartPtsSub) tCartPtsSub.innerText = t.cartPtsSub;
 
             const tCartSubtotalLbl = document.getElementById('t_cart_subtotal_lbl');
             if (tCartSubtotalLbl) tCartSubtotalLbl.innerText = t.cartSubtotal;
@@ -2455,15 +1770,66 @@
                     if (splashScreen) {
                         splashScreen.classList.add('splash-hidden');
                         setTimeout(() => { splashScreen.style.display = 'none'; }, 500);
-                        
-                        showWelcomeModal();
-                        
-                        setTimeout(() => {
-                            checkAndPromptOrderReview();
-                        }, 1000);
+                        checkUserPhoneGate();
                     }
                 }
-            }, 35);
+            }, 30);
+        }
+
+        function checkUserPhoneGate() {
+            if (!activeUserPhone) {
+                document.getElementById('userPhoneGateModal').style.display = 'flex';
+            } else {
+                showWelcomeModal();
+                setTimeout(() => { checkAndPromptOrderReview(); }, 1000);
+            }
+        }
+
+        async function submitUserGatePhone() {
+            const phoneInput = document.getElementById('gateUserPhoneInput');
+            const phone = (phoneInput.value || '').trim();
+            if (!phone || phone.length < 10) {
+                return alert('يرجى إدخال رقم هاتف صحيح للمتابعة');
+            }
+
+            activeUserPhone = phone;
+            safeSetStorage('storia_user_phone', phone);
+
+            if (window.db && window.firebaseModules) {
+                try {
+                    const { doc, getDoc, setDoc } = window.firebaseModules;
+                    const userRef = doc(window.db, "loyalty_users", phone);
+                    const userSnap = await getDoc(userRef);
+
+                    if (!userSnap.exists()) {
+                        await setDoc(userRef, {
+                            phone: phone,
+                            points: 100,
+                            createdAt: new Date().toISOString(),
+                            timestamp: Date.now()
+                        });
+                        userLoyaltyPoints = 100;
+                        safeSetStorage('storia_user_pts', '100');
+                        alert('🎉 مبروك! تم تسجيل حسابك وحصلت على 100 نقطة هدية ترحيبية!');
+                    } else {
+                        userLoyaltyPoints = userSnap.data().points || 0;
+                        safeSetStorage('storia_user_pts', String(userLoyaltyPoints));
+                    }
+                } catch(e) {
+                    console.error("User gate registration error:", e);
+                }
+            } else {
+                userLoyaltyPoints = 100;
+                safeSetStorage('storia_user_pts', '100');
+            }
+
+            updatePointsBadge(userLoyaltyPoints);
+            const uPhoneInput = document.getElementById('uPhone');
+            if (uPhoneInput) uPhoneInput.value = activeUserPhone;
+
+            document.getElementById('userPhoneGateModal').style.display = 'none';
+            showWelcomeModal();
+            setTimeout(() => { checkAndPromptOrderReview(); }, 1000);
         }
 
         function showWelcomeModal() {
@@ -2543,7 +1909,6 @@
             }
         }
 
-        /* فحص التقييم: بعد نصف ساعة كاملة (1800 ثانية) من وقت الأوردر */
         function checkAndPromptOrderReview() {
             try {
                 const rawOrderData = localStorage.getItem('storia_last_order_review');
@@ -2642,7 +2007,6 @@
             feedbackEl.innerText = currentLang === 'ar' ? textAr : textEn;
         }
 
-        /* حفظ التقييم وحساب المتوسط بدقة (1 إلى 5 نجوم) */
         async function submitOrderReview() {
             const notes = document.getElementById('reviewNotesInput').value.trim();
             const modal = document.getElementById('orderReviewModal');
@@ -2790,7 +2154,6 @@
             }, (err) => console.warn("Rating listener fallback:", err));
         }
 
-        /* ميزة النقر المزدوج (Double Tap / Double Click) على اللوجو لفتح لوحة التحكم */
         function handleLogoTap() {
             const currentTime = new Date().getTime();
             const tapGap = currentTime - lastLogoTapTime;
@@ -2883,7 +2246,7 @@
             startCreativeCounter();
             startOrderReviewWatcher();
             fetchMenuFromGoogleSheet();
-            renderLoyaltyRewardsUI();
+            
             if (activeUserPhone) {
                 const phoneInput = document.getElementById('uPhone');
                 if (phoneInput) phoneInput.value = activeUserPhone;
@@ -2901,83 +2264,357 @@
             setupLiveItemsStatusListener();
             setupLivePriceMarkupListener();
             setupLiveReviewsListener();
+            
+            if (window.db && window.firebaseModules) {
+                const { doc, getDoc } = window.firebaseModules;
+                getDoc(doc(window.db, "settings", "admin_config")).then(snap => {
+                    if (snap.exists() && snap.data().password) {
+                        safeSetStorage('storia_admin_pass', String(snap.data().password).trim());
+                    }
+                }).catch(() => {});
+            }
+
+            if (activeUserPhone) {
+                fetchUserPointsFromFirebase(activeUserPhone);
+            }
         });
 
         function updatePointsBadge(pts) {
             userLoyaltyPoints = pts;
+            safeSetStorage('storia_user_pts', String(pts));
             const badge = document.getElementById('headerPointsBadge');
             const modalPts = document.getElementById('modalUserPoints');
+            const modalPtsVal = document.getElementById('modalUserPointsValue');
+            const modalPhoneDisplay = document.getElementById('modalUserPhoneDisplay');
+
             if (badge) badge.innerText = pts;
             if (modalPts) modalPts.innerText = pts;
-            renderLoyaltyRewardsUI();
+
+            const monetaryValue = (pts * 0.1).toFixed(2);
+            if (modalPtsVal) {
+                modalPtsVal.innerText = `قيمتها المادية: ${monetaryValue} ج.م`;
+            }
+
+            if (modalPhoneDisplay) {
+                modalPhoneDisplay.innerText = activeUserPhone ? `رقمك المسجل: ${activeUserPhone}` : 'أدخل رقم هاتفك لتجميع النقاط';
+            }
         }
 
         async function fetchUserPointsFromFirebase(phone) {
-            // معطل مؤقتاً
+            if (!phone || !window.db || !window.firebaseModules) return;
+            try {
+                const { doc, getDoc } = window.firebaseModules;
+                const snap = await getDoc(doc(window.db, "loyalty_users", phone));
+                if (snap.exists()) {
+                    const pts = snap.data().points || 0;
+                    updatePointsBadge(pts);
+                }
+            } catch(e) {
+                console.warn("Error fetching points:", e);
+            }
         }
 
-        function handlePhoneInput(phone) {
-            // معطل مؤقتاً
+        function openLoyaltyModal() { 
+            updatePointsBadge(userLoyaltyPoints);
+            document.getElementById('loyaltyModal').style.display = 'flex'; 
         }
-
-        function openLoyaltyModal() { document.getElementById('loyaltyModal').style.display = 'flex'; }
         function closeLoyaltyModal() { document.getElementById('loyaltyModal').style.display = 'none'; }
 
-        function renderLoyaltyRewardsUI() {
-            const listEl = document.getElementById('simpleRewardsList');
-            if (!listEl) return;
-            listEl.innerHTML = '';
-            const t = translations[currentLang] || translations.ar;
+        function openRedeemSetupModal() {
+            closeLoyaltyModal();
+            document.getElementById('setupMaxPointsLbl').innerText = userLoyaltyPoints;
+            const inputEl = document.getElementById('customRedeemPointsInput');
+            inputEl.value = '';
+            inputEl.max = userLoyaltyPoints;
+            document.getElementById('calculatedCashDisplay').innerText = '0.00 ج.م';
+            document.getElementById('redeemSetupModal').style.display = 'flex';
+        }
 
-            loyaltyRewards.forEach(r => {
-                const canRedeem = userLoyaltyPoints >= r.cost;
-                const row = document.createElement('div');
-                row.className = 'reward-item-row';
-                const rewardTitle = currentLang === 'ar' ? r.title : (r.titleEn || r.title);
-                const redeemBtnText = canRedeem ? (currentLang === 'ar' ? 'استبدال 🎁' : 'Redeem 🎁') : (currentLang === 'ar' ? 'غير كافٍ' : 'Not enough');
+        function closeRedeemSetupModal() {
+            document.getElementById('redeemSetupModal').style.display = 'none';
+        }
 
-                row.innerHTML = `
-                    <div class="reward-item-info">
-                        <div class="reward-item-name">${rewardTitle}</div>
-                        <div class="reward-item-cost">✨ ${r.cost} ${t.ptsUnit}</div>
-                    </div>
-                    <button class="reward-redeem-btn" ${!canRedeem ? 'disabled' : ''} onclick="redeemRewardItem('${r.id}')">
-                        ${redeemBtnText}
-                    </button>
-                `;
-                listEl.appendChild(row);
+        function calculateRedeemCashValue(pointsVal) {
+            let pts = parseInt(pointsVal) || 0;
+            if (pts < 0) pts = 0;
+            const cash = (pts * 0.1).toFixed(2);
+            document.getElementById('calculatedCashDisplay').innerText = `${cash} ج.م`;
+        }
+
+        function generateCustomRedeemQr() {
+            const inputVal = parseInt(document.getElementById('customRedeemPointsInput').value) || 0;
+            
+            if (inputVal <= 0) {
+                return alert("يرجى إدخال عدد نقاط أكبر من الصفر!");
+            }
+            if (inputVal > userLoyaltyPoints) {
+                return alert(`النقاط المحددة (${inputVal}) أكبر من رصيدك الحالي (${userLoyaltyPoints})!`);
+            }
+
+            closeRedeemSetupModal();
+            openMyRedeemQrModal(inputVal);
+        }
+
+        function openScanReceiptModal() {
+            closeLoyaltyModal();
+            const modal = document.getElementById('scanReceiptModal');
+            modal.style.display = 'flex';
+
+            if (!html5QrScannerInstance) {
+                html5QrScannerInstance = new Html5Qrcode("qrReaderArea");
+            }
+
+            html5QrScannerInstance.start(
+                { facingMode: "environment" },
+                { fps: 10, qrbox: { width: 250, height: 250 } },
+                onScanReceiptSuccess,
+                (errorMessage) => {}
+            ).catch(err => {
+                alert("تعذر فتح الكاميرا: يرجى إعطاء الإذن بالوصول للكاميرا من المتصفح.");
+                closeScanReceiptModal();
             });
         }
 
-        async function redeemRewardItem(rewardId) {
-            const r = loyaltyRewards.find(x => x.id === rewardId);
-            if (!r || userLoyaltyPoints < r.cost) return;
-            const rewardTitle = currentLang === 'ar' ? r.title : (r.titleEn || r.title);
+        function closeScanReceiptModal() {
+            if (html5QrScannerInstance) {
+                try {
+                    html5QrScannerInstance.stop().then(() => {
+                        html5QrScannerInstance.clear();
+                    }).catch(() => {});
+                } catch(e) {}
+            }
+            document.getElementById('scanReceiptModal').style.display = 'none';
+        }
 
-            if (confirm(currentLang === 'ar' ? `استبدال ${r.cost} نقطة والحصول على (${rewardTitle}) مجاناً؟` : `Redeem ${r.cost} points for (${rewardTitle}) for free?`)) {
-                const newBalance = userLoyaltyPoints - r.cost;
-                updatePointsBadge(newBalance);
+        async function onScanReceiptSuccess(decodedText) {
+            closeScanReceiptModal();
+            
+            let earnedPoints = 50;
+            let invoiceCode = decodedText.trim();
 
-                if (window.db && window.firebaseModules && activeUserPhone) {
-                    try {
-                        const { doc, setDoc } = window.firebaseModules;
-                        await setDoc(doc(window.db, "loyalty_users", activeUserPhone), { points: newBalance }, { merge: true });
-                    } catch(e) {}
+            if (decodedText.includes(':')) {
+                const parts = decodedText.split(':');
+                if (parts.length >= 3) {
+                    earnedPoints = parseInt(parts[1]) || 50;
+                    invoiceCode = parts[2];
+                }
+            }
+
+            if (!activeUserPhone) {
+                return alert("يرجى التأكد من تسجيل رقم هاتفك أولاً في التطبيق!");
+            }
+
+            if (window.db && window.firebaseModules) {
+                try {
+                    const { doc, getDoc, setDoc } = window.firebaseModules;
+                    const usedRef = doc(window.db, "used_receipt_qrs", invoiceCode);
+                    const usedSnap = await getDoc(usedRef);
+
+                    if (usedSnap.exists()) {
+                        return alert("⚠️ تم مسح هذه الفاتورة وإضافة نقاطها مسبقاً! لا يمكن استخدام الفاتورة مرتين.");
+                    }
+
+                    await setDoc(usedRef, {
+                        usedBy: activeUserPhone,
+                        pointsAdded: earnedPoints,
+                        timestamp: Date.now()
+                    });
+
+                    const userRef = doc(window.db, "loyalty_users", activeUserPhone);
+                    const userSnap = await getDoc(userRef);
+                    let currentPts = userSnap.exists() ? (userSnap.data().points || 0) : 0;
+                    let newPts = currentPts + earnedPoints;
+
+                    await setDoc(userRef, {
+                        phone: activeUserPhone,
+                        points: newPts,
+                        updatedAt: new Date().toISOString()
+                    }, { merge: true });
+
+                    updatePointsBadge(newPts);
+                    alert(`🎉 تم إضافة +${earnedPoints} نقطة إلى محفظتك بنجاح من الفاتورة!`);
+                    openLoyaltyModal();
+                } catch(e) {
+                    console.error("Scan error:", e);
+                    alert("حدث خطأ أثناء الاتصال بقاعدة البيانات.");
+                }
+            }
+        }
+
+        function openMyRedeemQrModal(selectedPointsToRedeem) {
+            const modal = document.getElementById('myRedeemQrModal');
+            document.getElementById('redeemModalPts').innerText = selectedPointsToRedeem;
+            document.getElementById('redeemModalCash').innerText = (selectedPointsToRedeem * 0.1).toFixed(2);
+            
+            const box = document.getElementById('userQrCodeBox');
+            box.innerHTML = '<div style="color:var(--desc-text); font-weight:800; font-size:0.85rem;">جاري إنشاء الرمز...</div>';
+
+            modal.style.display = 'flex';
+
+            const qrPayload = JSON.stringify({
+                app: "storia",
+                phone: activeUserPhone,
+                pts: selectedPointsToRedeem,
+                cash: (selectedPointsToRedeem * 0.1).toFixed(2)
+            });
+
+            setTimeout(() => {
+                box.innerHTML = '';
+                const qrImg = document.createElement('img');
+                qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrPayload)}&color=1b4d3e`;
+                qrImg.alt = "QR Code";
+                qrImg.style.width = "200px";
+                qrImg.style.height = "200px";
+                qrImg.onerror = () => {
+                    box.innerHTML = `<div style="font-weight:900; color:var(--accent); font-size:1.2rem; padding:20px; border:2px dashed var(--accent); border-radius:12px;">الكود: ${activeUserPhone}-${selectedPointsToRedeem}</div>`;
+                };
+                box.appendChild(qrImg);
+            }, 50);
+        }
+
+        function closeMyRedeemQrModal() {
+            document.getElementById('myRedeemQrModal').style.display = 'none';
+        }
+
+        async function loadTopCustomersRank() {
+            const listEl = document.getElementById('adminCustomersRankList');
+            if (!window.db || !window.firebaseModules) return;
+
+            listEl.innerHTML = '<div style="text-align: center; color: var(--desc-text); padding: 15px 0;">جاري تحميل العملاء الأكثر نقاطاً...</div>';
+
+            try {
+                const { collection, getDocs, query, orderBy, limit } = window.firebaseModules;
+                const q = query(collection(window.db, "loyalty_users"), orderBy("points", "desc"), limit(50));
+                const snap = await getDocs(q);
+
+                listEl.innerHTML = '';
+                if (snap.empty) {
+                    listEl.innerHTML = '<div style="text-align: center; color: var(--desc-text); padding: 15px 0;">لا يوجد عملاء مسجلين بنقاط حتى الآن.</div>';
+                    return;
                 }
 
-                cart.push({
-                    cartId: 'c_gift_' + Date.now(),
-                    id: r.id,
-                    name: currentLang === 'ar' ? `🎁 [هدية مكافأة]: ${rewardTitle}` : `🎁 [Gift Reward]: ${rewardTitle}`,
-                    price: 0.00,
-                    sizeLabel: '',
-                    img: '',
-                    addons: []
-                });
+                let rankIndex = 1;
+                snap.forEach(docSnap => {
+                    const u = docSnap.data();
+                    const pts = u.points || 0;
+                    const phone = u.phone || docSnap.id;
+                    const card = document.createElement('div');
+                    card.className = 'rank-item-card';
 
-                updateCartBadge();
-                closeLoyaltyModal();
-                toggleCart(true);
+                    let badgeClass = 'rank-badge';
+                    if (rankIndex === 1) badgeClass += ' top-1';
+                    else if (rankIndex === 2) badgeClass += ' top-2';
+                    else if (rankIndex === 3) badgeClass += ' top-3';
+
+                    card.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div class="${badgeClass}">#${rankIndex}</div>
+                            <div>
+                                <b style="color: var(--accent); font-size: 0.88rem;">📱 ${phone}</b>
+                                <span style="font-size: 0.72rem; color: var(--desc-text); display: block;">قيمة الكاش باك: ${(pts * 0.1).toFixed(2)} ج.م</span>
+                            </div>
+                        </div>
+                        <div style="font-weight: 900; color: #1b4d3e; font-size: 1.05rem;">
+                            ${pts} <small style="font-size:0.75rem;">نقطة</small>
+                        </div>
+                    `;
+                    listEl.appendChild(card);
+                    rankIndex++;
+                });
+            } catch(e) {
+                console.error("Error loading top customers:", e);
+                listEl.innerHTML = '<div style="text-align: center; color: #b91c1c; padding: 15px 0;">حدث خطأ أثناء جلب ترتيب العملاء.</div>';
+            }
+        }
+
+        let scannedCustomerPhone = null;
+        function closeAdminScanRedeemModal() {
+            if (adminHtml5QrScannerInstance) {
+                try {
+                    adminHtml5QrScannerInstance.stop().then(() => {
+                        adminHtml5QrScannerInstance.clear();
+                    }).catch(() => {});
+                } catch(e) {}
+            }
+            document.getElementById('adminScanRedeemModal').style.display = 'none';
+            document.getElementById('adminScannedClientBox').style.display = 'none';
+        }
+
+        function startAdminRedeemCamera() {
+            const area = document.getElementById('adminQrReaderArea');
+            if (!adminHtml5QrScannerInstance) {
+                adminHtml5QrScannerInstance = new Html5Qrcode("adminQrReaderArea");
+            }
+            adminHtml5QrScannerInstance.start(
+                { facingMode: "environment" },
+                { fps: 10, qrbox: { width: 220, height: 220 } },
+                onAdminScanClientSuccess,
+                (err) => {}
+            ).catch(() => {
+                alert("يرجى إعطاء صلاحية الكاميرا للكاشير لمسح الكود.");
+            });
+        }
+
+        async function onAdminScanClientSuccess(decodedText) {
+            try {
+                if (adminHtml5QrScannerInstance) {
+                    await adminHtml5QrScannerInstance.stop();
+                }
+            } catch(e) {}
+
+            try {
+                let clientPhone = decodedText;
+                let requestedPts = 0;
+
+                if (decodedText.startsWith('{')) {
+                    const parsed = JSON.parse(decodedText);
+                    clientPhone = parsed.phone;
+                    requestedPts = parseInt(parsed.pts) || 0;
+                }
+
+                if (!clientPhone) return alert("كود العميل غير صالح!");
+
+                scannedCustomerPhone = clientPhone;
+                if (window.db && window.firebaseModules) {
+                    const { doc, getDoc } = window.firebaseModules;
+                    const snap = await getDoc(doc(window.db, "loyalty_users", clientPhone));
+                    const pts = snap.exists() ? (snap.data().points || 0) : 0;
+
+                    document.getElementById('scannedClientPhone').innerText = clientPhone;
+                    document.getElementById('scannedClientCurrentPts').innerText = pts;
+                    document.getElementById('scannedClientRequestedPts').innerText = requestedPts;
+                    document.getElementById('scannedClientCashValue').innerText = (requestedPts * 0.1).toFixed(2);
+                    document.getElementById('ptsToDeductInput').value = requestedPts > 0 ? requestedPts : '';
+                    document.getElementById('adminScannedClientBox').style.display = 'block';
+                }
+            } catch(e) {
+                alert("رمز غير صالح!");
+            }
+        }
+
+        async function executeRedeemPointsDeduction() {
+            const ptsToDeduct = parseInt(document.getElementById('ptsToDeductInput').value) || 0;
+            if (ptsToDeduct <= 0) return alert("أدخل عدد نقاط صحيح أكبر من الصفر");
+
+            if (!scannedCustomerPhone || !window.db || !window.firebaseModules) return;
+
+            try {
+                const { doc, getDoc, setDoc } = window.firebaseModules;
+                const userRef = doc(window.db, "loyalty_users", scannedCustomerPhone);
+                const snap = await getDoc(userRef);
+                const currentPts = snap.exists() ? (snap.data().points || 0) : 0;
+
+                if (currentPts < ptsToDeduct) {
+                    return alert(`رصيد العميل (${currentPts} نقطة) غير كافٍ لخصم ${ptsToDeduct} نقطة!`);
+                }
+
+                const newBalance = currentPts - ptsToDeduct;
+                await setDoc(userRef, { points: newBalance }, { merge: true });
+
+                alert(`✅ تم استبدال وخصم ${ptsToDeduct} نقطة بنجاح! الرصيد المتبقي للعميل: ${newBalance} نقطة.`);
+                closeAdminScanRedeemModal();
+            } catch(e) {
+                alert("حدث خطأ أثناء خصم النقاط");
             }
         }
 
@@ -3531,7 +3168,6 @@
                 listEl.innerHTML = `<div style="text-align: center; color: var(--desc-text); padding: 20px 0; font-weight: 700;">${t.cartEmptyText}</div>`;
                 document.getElementById('itemsSubtotalAmount').innerText = '0 ' + t.currency;
                 document.getElementById('totalAmount').innerText = '0 ' + t.currency;
-                document.getElementById('potentialPointsEarned').innerText = '+0 ' + t.ptsUnit;
                 return;
             }
 
@@ -3557,7 +3193,6 @@
 
             document.getElementById('itemsSubtotalAmount').innerText = currentTotal.toFixed(2) + ' ' + t.currency;
             document.getElementById('totalAmount').innerText = currentTotal.toFixed(2) + ' ' + t.currency;
-            document.getElementById('potentialPointsEarned').innerText = `+${Math.floor(currentTotal)} ${t.ptsUnit}`;
         }
 
         function removeFromCart(idx) {
@@ -3568,7 +3203,7 @@
 
         async function sendToWA() {
             const name = document.getElementById('uName').value.trim();
-            const phone = document.getElementById('uPhone').value.trim();
+            const phone = document.getElementById('uPhone').value.trim() || activeUserPhone;
             const addr = document.getElementById('uAddr').value.trim();
             const t = translations[currentLang] || translations.ar;
 
@@ -3581,7 +3216,7 @@
             const earnedPts = Math.floor(currentTotal);
             const modeText = selectedOrderType === 'delivery' ? (currentLang==='ar'?'توصيل للمنازل 🛵':'Home Delivery 🛵') : (currentLang==='ar'?'صالة / تيك اواي 🍽️':'Dine-in / Takeaway 🍽️');
 
-            let orderText = `*طلب جديد من Storia Cafe & Restaurant*\n`;
+            let orderText = `*طلب جديد من Storia Restaurant & lounge*\n`;
             orderText += `------------------------------------\n`;
             orderText += `*${currentLang==='ar'?'الاسم:':'Name:'}* ${name}\n`;
             orderText += `*${currentLang==='ar'?'الموبايل:':'Phone:'}* ${phone}\n`;
@@ -3622,7 +3257,7 @@
 
             try {
                 if (window.db && window.firebaseModules) {
-                    const { collection, addDoc } = window.firebaseModules;
+                    const { collection, addDoc, doc, setDoc, getDoc } = window.firebaseModules;
                     const orderDoc = await addDoc(collection(window.db, "orders"), {
                         userName: name,
                         userPhone: phone,
@@ -3630,11 +3265,20 @@
                         orderType: selectedOrderType,
                         items: itemsArrayForLog,
                         totalPrice: currentTotal,
-                        earnedPoints: 0,
+                        earnedPoints: earnedPts,
                         createdAt: new Date().toISOString(),
                         timestamp: Date.now()
                     });
                     
+                    if (phone) {
+                        const userRef = doc(window.db, "loyalty_users", phone);
+                        const userSnap = await getDoc(userRef);
+                        const oldPts = userSnap.exists() ? (userSnap.data().points || 0) : 0;
+                        const newTotalPts = oldPts + earnedPts;
+                        await setDoc(userRef, { phone: phone, points: newTotalPts }, { merge: true });
+                        updatePointsBadge(newTotalPts);
+                    }
+
                     safeSetStorage('storia_active_order_id', orderDoc.id);
                     safeSetStorage('storia_active_user_name', name);
                     showClientHeaderChatButton();
@@ -3758,6 +3402,7 @@
             document.getElementById('adminAuthView').style.display = 'block';
             document.getElementById('adminDashboardView').style.display = 'none';
             document.getElementById('adminPassInput').value = '';
+            setTimeout(() => { document.getElementById('adminPassInput').focus(); }, 100);
         }
 
         function closeAdminPanel() { document.getElementById('adminModal').style.display = 'none'; }
@@ -3766,14 +3411,20 @@
             const pass = document.getElementById('adminPassInput').value.trim();
             if (!pass) return alert(currentLang === 'ar' ? 'من فضلك أدخل كلمة المرور' : 'Please enter password');
 
-            let savedPass = null;
+            const loginBtn = document.getElementById('adminLoginBtn');
+            if (loginBtn) loginBtn.innerText = 'جاري التحقق...';
 
-            if (window.db && window.firebaseModules) {
+            let savedPass = safeGetStorage('storia_admin_pass', null);
+
+            if (!savedPass && window.db && window.firebaseModules) {
                 try {
                     const { doc, getDoc } = window.firebaseModules;
-                    const snap = await getDoc(doc(window.db, "settings", "admin_config"));
-                    if (snap.exists() && snap.data().password) {
+                    const snapPromise = getDoc(doc(window.db, "settings", "admin_config"));
+                    const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject('timeout'), 1200));
+                    const snap = await Promise.race([snapPromise, timeoutPromise]);
+                    if (snap && snap.exists() && snap.data().password) {
                         savedPass = String(snap.data().password).trim();
+                        safeSetStorage('storia_admin_pass', savedPass);
                     }
                 } catch(e) {}
             }
@@ -3782,6 +3433,8 @@
                 savedPass = 'storia2026';
             }
 
+            if (loginBtn) loginBtn.innerText = 'دخول لوحة التحكم';
+
             if (pass === savedPass) {
                 document.getElementById('adminAuthView').style.display = 'none';
                 document.getElementById('adminDashboardView').style.display = 'block';
@@ -3789,9 +3442,9 @@
                 const markupInput = document.getElementById('adminMarkupPercentInput');
                 if (markupInput) markupInput.value = priceMarkupPercentage;
 
-                listenToOrdersLogs();
-                renderAdminItemsList();
-                renderAdminReviewsList();
+                setTimeout(() => {
+                    listenToOrdersLogs();
+                }, 50);
             } else {
                 alert(currentLang === 'ar' ? 'كلمة المرور غير صحيحة!' : 'Incorrect password!');
             }
@@ -3810,6 +3463,9 @@
                 if (id === 'adminReviewsModal') {
                     renderAdminReviewsList();
                 }
+                if (id === 'adminScanRedeemModal') {
+                    startAdminRedeemCamera();
+                }
                 el.style.display = 'flex';
             }
         }
@@ -3821,10 +3477,10 @@
         let ordersUnsubscribe = null;
         function listenToOrdersLogs() {
             if (!window.db || !window.firebaseModules) return;
-            const { collection, onSnapshot, query, orderBy } = window.firebaseModules;
+            const { collection, onSnapshot, query, orderBy, limit } = window.firebaseModules;
             if (ordersUnsubscribe) ordersUnsubscribe();
 
-            const q = query(collection(window.db, "orders"), orderBy("timestamp", "desc"));
+            const q = query(collection(window.db, "orders"), orderBy("timestamp", "desc"), limit(50));
             ordersUnsubscribe = onSnapshot(q, (snapshot) => {
                 const logsEl = document.getElementById('adminOrdersLogsList');
                 if (!logsEl) return;
@@ -4081,6 +3737,7 @@
                 try {
                     const { doc, setDoc } = window.firebaseModules;
                     await setDoc(doc(window.db, "settings", "admin_config"), { password: newP }, { merge: true });
+                    safeSetStorage('storia_admin_pass', newP);
                     alert(currentLang === 'ar' ? 'تم تحديث كلمة المرور بنجاح! لن تفتح اللوحة إلا بها.' : 'Password updated successfully!');
                     document.getElementById('newAdminPass').value = '';
                     closeFloatingModal('passwordModal');
