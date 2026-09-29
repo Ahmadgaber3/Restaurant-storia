@@ -725,7 +725,7 @@
     <div class="order-review-modal" id="orderReviewModal">
         <div class="order-review-card">
             <div class="review-icon-circle">
-                <span>🍽️️</span>
+                <span>🍽</span>
             </div>
             <div class="review-card-title" id="t_rev_title">طمنا.. إيه رأيك في الأكل؟</div>
             <div class="review-card-subtitle" id="t_rev_sub">تقييمك يساعدنا لنقدم لك أفضل جودة دائماً</div>
@@ -1091,7 +1091,7 @@
                 <button class="admin-close" onclick="closeFloatingModal('loyaltyRankModal')">✕</button>
             </div>
             <div style="font-size: 0.8rem; font-weight: 700; color: var(--desc-text); margin-bottom: 10px;">
-                الترتيب يظهر تنازلياً من الأكثر نقاطاً للأقل. اضغط على الزر أدناه لتحديث القائمة:
+                الترتيب يظهر تنازلياً من الأكثر نقاطاً للأقل. اضغط على الزر أدناه لتحديث القائمة فورياً:
             </div>
             <button class="admin-save-btn" style="background:#1e293b; margin-bottom: 14px;" onclick="loadTopCustomersRank()">🔄 جلب وتحديث الترتيب الآن</button>
             <div id="adminCustomersRankList">
@@ -1796,7 +1796,6 @@
             activeUserPhone = phone;
             safeSetStorage('storia_user_phone', phone);
 
-            // ضمان إضافة 100 نقطة كاملة للحساب الجديد أو تحديثه إذا كان أقل من 100
             if (window.db && window.firebaseModules) {
                 try {
                     const { doc, getDoc, setDoc } = window.firebaseModules;
@@ -2093,15 +2092,23 @@
             if (commentsArea && window.db && window.firebaseModules) {
                 commentsArea.innerHTML = `<div style="text-align:center; padding:15px 0; color:var(--desc-text); font-size:0.75rem; font-weight:700;">${currentLang === 'ar' ? 'جاري تحميل الآراء...' : 'Loading reviews...'}</div>`;
                 try {
-                    const { collection, getDocs, query, orderBy, limit } = window.firebaseModules;
-                    const q = query(collection(window.db, "restaurant_reviews"), orderBy("timestamp", "desc"), limit(15));
+                    const { collection, getDocs, limit } = window.firebaseModules;
+                    // جلب سريع بدون تعقيدات فهارس
+                    const q = query(collection(window.db, "restaurant_reviews"), limit(25));
                     const snap = await getDocs(q);
 
                     commentsArea.innerHTML = '';
                     let hasComments = false;
+                    let reviewsArr = [];
 
                     snap.forEach(docSnap => {
-                        const r = docSnap.data();
+                        reviewsArr.push(docSnap.data());
+                    });
+
+                    // ترتيب محلي فوري
+                    reviewsArr.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+                    reviewsArr.forEach(r => {
                         if (r.notes && r.notes.trim() !== '') {
                             hasComments = true;
                             const dateStr = r.timestamp ? new Date(r.timestamp).toLocaleDateString(currentLang === 'ar' ? 'ar-EG' : 'en-US') : '';
@@ -2175,8 +2182,8 @@
             area.innerHTML = '<div style="text-align:center; padding:15px; color:var(--desc-text);">جاري تحميل التعليقات...</div>';
 
             try {
-                const { collection, getDocs, query, orderBy, limit } = window.firebaseModules;
-                const q = query(collection(window.db, "restaurant_reviews"), orderBy("timestamp", "desc"), limit(30));
+                const { collection, getDocs, limit } = window.firebaseModules;
+                const q = query(collection(window.db, "restaurant_reviews"), limit(40));
                 const snap = await getDocs(q);
 
                 area.innerHTML = '';
@@ -2185,8 +2192,14 @@
                     return;
                 }
 
+                let reviewsList = [];
                 snap.forEach(docSnap => {
-                    const r = docSnap.data();
+                    reviewsList.push({ id: docSnap.id, ...docSnap.data() });
+                });
+
+                reviewsList.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+                reviewsList.forEach(r => {
                     const dateStr = r.timestamp ? new Date(r.timestamp).toLocaleDateString('ar-EG') : '';
                     const card = document.createElement('div');
                     card.className = 'admin-review-card';
@@ -2201,7 +2214,7 @@
                             </div>
                             <span style="font-size:0.65rem; color:var(--desc-text);">${dateStr}</span>
                         </div>
-                        <button class="admin-del-rev-btn" onclick="deleteCustomerReview('${docSnap.id}', ${r.rating || 5})">حذف التعليق ✕</button>
+                        <button class="admin-del-rev-btn" onclick="deleteCustomerReview('${r.id}', ${r.rating || 5})">حذف التعليق ✕</button>
                     `;
                     area.appendChild(card);
                 });
@@ -2480,8 +2493,9 @@
             listEl.innerHTML = '<div style="text-align: center; color: var(--desc-text); padding: 15px 0;">جاري تحميل العملاء الأكثر نقاطاً...</div>';
 
             try {
-                const { collection, getDocs, query, orderBy, limit } = window.firebaseModules;
-                const q = query(collection(window.db, "loyalty_users"), orderBy("points", "desc"), limit(50));
+                const { collection, getDocs, limit } = window.firebaseModules;
+                // جلب فوري لـ 50 عميل دون إجبار Firestore على بناء فهارس تؤخر الاتصال
+                const q = query(collection(window.db, "loyalty_users"), limit(50));
                 const snap = await getDocs(q);
 
                 listEl.innerHTML = '';
@@ -2490,11 +2504,22 @@
                     return;
                 }
 
-                let rankIndex = 1;
+                let usersList = [];
                 snap.forEach(docSnap => {
                     const u = docSnap.data();
-                    const pts = u.points || 0;
-                    const phone = u.phone || docSnap.id;
+                    usersList.push({
+                        phone: u.phone || docSnap.id,
+                        points: u.points || 0
+                    });
+                });
+
+                // ترتيب سريع وفوري في المتصفح من الأعلى للأقل
+                usersList.sort((a, b) => b.points - a.points);
+
+                let rankIndex = 1;
+                usersList.forEach(u => {
+                    const pts = u.points;
+                    const phone = u.phone;
                     const card = document.createElement('div');
                     card.className = 'rank-item-card';
 
@@ -3395,7 +3420,6 @@
         }
 
         function openAdminPanel() {
-            // فحص هل المستخدم تم حفظه للدخول التلقائي
             const isAutoAuth = safeGetStorage('storia_admin_auto_auth', 'false');
             if (isAutoAuth === 'true') {
                 document.getElementById('adminModal').style.display = 'flex';
@@ -3418,16 +3442,13 @@
             const pass = document.getElementById('adminPassInput').value.trim();
             if (!pass) return alert(currentLang === 'ar' ? 'من فضلك أدخل كلمة المرور' : 'Please enter password');
 
-            // الباسورد المعتمد رسمياً: 123321
             const officialPass = '123321';
 
             if (pass === officialPass) {
-                // احتساب مرات الدخول الصحيحة
                 let loginCount = parseInt(safeGetStorage('storia_login_success_count', '0')) || 0;
                 loginCount += 1;
                 safeSetStorage('storia_login_success_count', String(loginCount));
 
-                // إذا وصل لـ 5 مرات يتم تفعيل الدخول التلقائي بدون باسورد نهائياً
                 if (loginCount >= 5) {
                     safeSetStorage('storia_admin_auto_auth', 'true');
                 }
