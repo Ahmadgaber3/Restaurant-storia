@@ -19,6 +19,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <style>
         :root {
@@ -428,9 +429,6 @@
         .review-icon-circle { width: 55px; height: 55px; background: rgba(27, 77, 62, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; border: 2px solid var(--accent); font-size: 1.6rem; }
         .review-card-title { font-size: 1.05rem; font-weight: 900; color: var(--main-text); margin-bottom: 3px; line-height: 1.3; }
         .review-card-subtitle { font-size: 0.74rem; color: var(--desc-text); font-weight: 700; margin-bottom: 12px; }
-        .review-items-box { background: var(--bg); border: 1.5px solid var(--border-color); border-radius: 14px; padding: 8px 12px; margin-bottom: 12px; width: 100%; text-align: center; }
-        .review-items-caption { font-size: 0.68rem; color: var(--accent); font-weight: 800; display: block; margin-bottom: 2px; }
-        .review-items-text { font-size: 0.76rem; font-weight: 800; color: var(--main-text); line-height: 1.35; }
         .review-stars-box { display: flex; justify-content: center; align-items: center; gap: 6px; margin-bottom: 6px; direction: ltr; }
         .review-star-btn { background: transparent; border: none; font-size: 2.1rem; cursor: pointer; color: #cbd5e1; transition: transform 0.12s ease, color 0.12s ease; user-select: none; position: relative; line-height: 1; padding: 0 2px; }
         .review-star-btn.full { color: #f59e0b; }
@@ -721,19 +719,14 @@
         </div>
     </div>
 
-    <!-- نافذة تقييم الأوردر -->
+    <!-- نافذة تقييم الأوردر الفورية (تم إلغاء شرط النصف ساعة) -->
     <div class="order-review-modal" id="orderReviewModal">
         <div class="order-review-card">
             <div class="review-icon-circle">
-                <span>🍽</span>
+                <span>🍽️</span>
             </div>
-            <div class="review-card-title" id="t_rev_title">طمنا.. إيه رأيك في الأكل؟</div>
+            <div class="review-card-title" id="t_rev_title">طمنا.. إيه رأيك في ستوريا؟</div>
             <div class="review-card-subtitle" id="t_rev_sub">تقييمك يساعدنا لنقدم لك أفضل جودة دائماً</div>
-            
-            <div class="review-items-box">
-                <span class="review-items-caption" id="t_rev_reminder_lbl">طلبك السابق كان:</span>
-                <span class="review-items-text" id="reviewOrderItemsList">جاري التحميل...</span>
-            </div>
 
             <div class="review-stars-box" id="starRatingRow">
                 <button class="review-star-btn full" onclick="handleStarClick(1)">★</button>
@@ -745,11 +738,11 @@
 
             <div class="review-rating-status" id="ratingLevelFeedback">ممتاز جداً! ⭐⭐⭐⭐⭐</div>
 
-            <input type="text" class="review-input-simple" id="reviewNotesInput" placeholder="ملاحظاتك على الطعم أو الأوردر (اختياري)">
+            <input type="text" class="review-input-simple" id="reviewNotesInput" placeholder="ملاحظاتك على الخدمة أو الأكل (اختياري)">
 
             <div class="review-btn-row">
                 <button class="review-confirm-btn" id="t_rev_submit_btn" onclick="submitOrderReview()">تأكيد التقييم ✓</button>
-                <button class="review-skip-btn" id="t_rev_dismiss_btn" onclick="dismissOrderReview()">تخطي</button>
+                <button class="review-skip-btn" id="t_rev_dismiss_btn" onclick="dismissOrderReview()">إلغاء</button>
             </div>
         </div>
     </div>
@@ -796,7 +789,8 @@
                         <span class="pts" id="headerPointsBadge">0</span>
                     </button>
 
-                    <div class="overall-rating-chip" id="overallRatingChip" onclick="openOverallToast()" title="عرض تقييمات وتعليقات العملاء">
+                    <!-- زر التقييم يفتح التقييم الفوري للعميل أو عرض الآراء -->
+                    <div class="overall-rating-chip" id="overallRatingChip" onclick="openReviewModalDirect()" title="تقييم ستوريا">
                         <span class="star-icon">⭐</span>
                         <span id="overallRatingScore">5.0</span>
                     </div>
@@ -824,7 +818,7 @@
             </div>
 
             <div class="loyalty-simple-card">
-                <div class="loyalty-card-lbl">رصيد نقاطك الحالي</div>
+                <div class="loyalty-card-lbl">رصيد نقاطك الفعلي</div>
                 <div class="loyalty-card-num" id="modalUserPoints">0</div>
                 <div class="loyalty-card-val" id="modalUserPointsValue">قيمتها المادية: 0.00 ج.م</div>
                 <div class="loyalty-card-phone" id="modalUserPhoneDisplay">رقمك المسجل: --</div>
@@ -859,7 +853,7 @@
 
             <div style="background: var(--bg); border: 1.5px solid var(--border-color); border-radius: 16px; padding: 14px; margin-bottom: 14px;">
                 <div style="font-size: 0.85rem; font-weight: 800; color: var(--desc-text); margin-bottom: 6px;">
-                    رصيدك الحالي: <b id="setupMaxPointsLbl" style="color: var(--accent);">0</b> نقطة
+                    رصيدك الحالي المتاح: <b id="setupMaxPointsLbl" style="color: var(--accent);">0</b> نقطة
                 </div>
                 <input type="number" id="customRedeemPointsInput" placeholder="أدخل عدد النقاط" oninput="calculateRedeemCashValue(this.value)" style="width: 100%; padding: 12px; border-radius: 12px; border: 1.5px solid var(--accent); background: var(--white); font-size: 1.1rem; font-weight: 900; text-align: center; outline: none; margin-bottom: 10px;">
                 
@@ -1020,7 +1014,7 @@
                         <div class="card-badge-num">🏆</div>
                         <div class="card-avatar-box">📊</div>
                         <div class="card-title">ترتيب نقاط العملاء</div>
-                        <div class="card-subtitle">الترتيب من الأعلى للأقل (توفير القراءة)</div>
+                        <div class="card-subtitle">الترتيب من الأعلى للأقل (تحميل فوري)</div>
                     </div>
 
                     <div class="admin-nav-card" onclick="openFloatingModal('adminScanRedeemModal')">
@@ -1030,11 +1024,11 @@
                         <div class="card-subtitle">مسح كود العميل وخصم النقاط</div>
                     </div>
 
-                    <div class="admin-nav-card" onclick="openFloatingModal('priceMarkupModal')">
-                        <div class="card-badge-num">📈</div>
-                        <div class="card-avatar-box">💵</div>
-                        <div class="card-title">نسبة زيادة الأسعار</div>
-                        <div class="card-subtitle">تعديل نسبة مئوية لجميع الأصناف</div>
+                    <div class="admin-nav-card" onclick="openFloatingModal('adminCreateQrModal')">
+                        <div class="card-badge-num">🧾</div>
+                        <div class="card-avatar-box">🖨️</div>
+                        <div class="card-title">توليد QR فاتورة</div>
+                        <div class="card-subtitle">طباعة QR النقاط للزبون</div>
                     </div>
 
                     <div class="admin-nav-card" onclick="openFloatingModal('loyaltyAdminModal')">
@@ -1042,6 +1036,13 @@
                         <div class="card-avatar-box">👑</div>
                         <div class="card-title">تعديل نقاط عميل</div>
                         <div class="card-subtitle">تعديل وإضافة رصيد بالرقم</div>
+                    </div>
+
+                    <div class="admin-nav-card" onclick="openFloatingModal('priceMarkupModal')">
+                        <div class="card-badge-num">📈</div>
+                        <div class="card-avatar-box">💵</div>
+                        <div class="card-title">نسبة زيادة الأسعار</div>
+                        <div class="card-subtitle">تعديل نسبة مئوية لجميع الأصناف</div>
                     </div>
 
                     <div class="admin-nav-card" onclick="openFloatingModal('adminReviewsModal')">
@@ -1072,7 +1073,7 @@
                         <div class="card-subtitle">تعديل رقم واتساب والأرقام</div>
                     </div>
 
-                    <div class="admin-nav-card" onclick="openFloatingModal('passwordModal')" style="grid-column: span 2;">
+                    <div class="admin-nav-card" onclick="openFloatingModal('passwordModal')">
                         <div class="card-badge-num gray">4</div>
                         <div class="card-avatar-box">👨‍💼</div>
                         <div class="card-title">تغيير كلمة المرور</div>
@@ -1080,6 +1081,27 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- نافذة توليد كود فاتورة رسمي محمي من الغش -->
+    <div class="floating-sub-modal" id="adminCreateQrModal" onclick="if(event.target==this) closeFloatingModal('adminCreateQrModal')">
+        <div class="floating-card-box" style="text-align: center;">
+            <div class="floating-header">
+                <h4>🧾 توليد رمز QR رسمي للفاتورة</h4>
+                <button class="admin-close" onclick="closeFloatingModal('adminCreateQrModal')">✕</button>
+            </div>
+            <div class="admin-custom-input-group">
+                <label>رقم الفاتورة (Invoice Number):</label>
+                <input type="text" id="adminGenInvNumber" placeholder="مثال: 5420">
+            </div>
+            <div class="admin-custom-input-group">
+                <label>عدد النقاط الممنوحة للفاتورة:</label>
+                <input type="number" id="adminGenInvPoints" placeholder="مثال: 50" value="50">
+            </div>
+            <button class="admin-save-btn" onclick="generateOfficialInvoiceQr()">توليد رمز QR الرسمي 🖨️</button>
+
+            <div id="generatedInvoiceQrBox" style="margin-top: 14px; display: flex; justify-content: center;"></div>
         </div>
     </div>
 
@@ -1091,7 +1113,7 @@
                 <button class="admin-close" onclick="closeFloatingModal('loyaltyRankModal')">✕</button>
             </div>
             <div style="font-size: 0.8rem; font-weight: 700; color: var(--desc-text); margin-bottom: 10px;">
-                الترتيب يظهر تنازلياً من الأكثر نقاطاً للأقل. اضغط على الزر أدناه لتحديث القائمة فورياً:
+                الترتيب يظهر تنازلياً من الأكثر نقاطاً للأقل:
             </div>
             <button class="admin-save-btn" style="background:#1e293b; margin-bottom: 14px;" onclick="loadTopCustomersRank()">🔄 جلب وتحديث الترتيب الآن</button>
             <div id="adminCustomersRankList">
@@ -1287,7 +1309,7 @@
     <!-- كود إعدادات Firebase -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, onSnapshot, addDoc, deleteDoc, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, onSnapshot, addDoc, deleteDoc, getDocs, query, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyBq3bpV6hNVAsHlmBPzn9GAaF4K4r06REM",
@@ -1304,7 +1326,7 @@
             const db = getFirestore(app);
 
             window.db = db;
-            window.firebaseModules = { doc, getDoc, setDoc, updateDoc, collection, onSnapshot, addDoc, deleteDoc, getDocs, query, orderBy, limit };
+            window.firebaseModules = { doc, getDoc, setDoc, updateDoc, collection, onSnapshot, addDoc, deleteDoc, getDocs, query, limit };
             window.dispatchEvent(new Event('firebase-ready'));
         } catch(e) {
             console.warn("Firebase Init Error:", e);
@@ -1388,8 +1410,6 @@
         let deferredPrompt = null;
 
         let userSelectedOrderRating = 5.0;
-        let pendingReviewOrderData = null;
-        let reviewCheckInterval = null;
         let currentTotalReviewsCount = 1;
 
         let lastLogoTapTime = 0;
@@ -1412,7 +1432,7 @@
                 takeAr: 'صالة وتيك اواي',
                 loyaltyBtnText: '🎁 محفظة النقاط',
                 loyaltyTitle: '🎁 محفظة مكافآت ستوريا',
-                loyaltyBalLbl: 'رصيد نقاطك الحالي',
+                loyaltyBalLbl: 'رصيد نقاطك الفعلي',
                 addonsTitle: 'إضافات وتخصيص الصنف',
                 addonsSub: 'اختر الإضافات المطلوبة (اختياري):',
                 sizeTitle: 'اختر الحجم المطلوب:',
@@ -1443,12 +1463,11 @@
                 sizeLarge: 'كبير (Large)',
                 sizeMedium: 'وسط (Medium)',
                 sizeConfirmBtn: '🛒 تأكيد وإضافة للسلة',
-                revTitle: 'طمنا.. إيه رأيك في الأكل؟',
+                revTitle: 'طمنا.. إيه رأيك في ستوريا؟',
                 revSub: 'تقييمك يساعدنا لنقدم لك أفضل جودة دائماً',
-                revReminderLbl: 'طلبك السابق كان:',
                 revSubmitBtn: 'تأكيد التقييم ✓',
-                revDismissBtn: 'تخطي',
-                revPlaceholder: 'ملاحظاتك على الطعم أو الأوردر (اختياري)',
+                revDismissBtn: 'إلغاء',
+                revPlaceholder: 'ملاحظاتك على الخدمة أو الأكل (اختياري)',
                 toastPopupBase: 'بناءً على {count} تقييم حقيقي للعملاء',
                 noReviewsYet: 'لا توجد تعليقات مكتوبة حتى الآن، كن أول من يقيم!'
             },
@@ -1491,12 +1510,11 @@
                 sizeLarge: 'Large (L)',
                 sizeMedium: 'Medium (M)',
                 sizeConfirmBtn: '🛒 Confirm & Add to Cart',
-                revTitle: 'How was the food?',
+                revTitle: 'How was Storia?',
                 revSub: 'Your review helps us keep the best quality',
-                revReminderLbl: 'Your last order was:',
                 revSubmitBtn: 'Confirm Review ✓',
-                revDismissBtn: 'Skip',
-                revPlaceholder: 'Notes on food taste or packaging (optional)',
+                revDismissBtn: 'Cancel',
+                revPlaceholder: 'Notes on food or service (optional)',
                 toastPopupBase: 'Based on {count} real customer reviews',
                 noReviewsYet: 'No written reviews yet. Be the first to review!'
             }
@@ -1733,8 +1751,6 @@
             if (tRevTitle) tRevTitle.innerText = t.revTitle;
             const tRevSub = document.getElementById('t_rev_sub');
             if (tRevSub) tRevSub.innerText = t.revSub;
-            const tRevReminderLbl = document.getElementById('t_rev_reminder_lbl');
-            if (tRevReminderLbl) tRevReminderLbl.innerText = t.revReminderLbl;
             const tRevSubmitBtn = document.getElementById('t_rev_submit_btn');
             if (tRevSubmitBtn) tRevSubmitBtn.innerText = t.revSubmitBtn;
             const tRevDismissBtn = document.getElementById('t_rev_dismiss_btn');
@@ -1782,7 +1798,6 @@
                 document.getElementById('userPhoneGateModal').style.display = 'flex';
             } else {
                 showWelcomeModal();
-                setTimeout(() => { checkAndPromptOrderReview(); }, 1000);
             }
         }
 
@@ -1796,24 +1811,25 @@
             activeUserPhone = phone;
             safeSetStorage('storia_user_phone', phone);
 
+            // إضافة 100 نقطة ترحيبية فوراً
             if (window.db && window.firebaseModules) {
                 try {
                     const { doc, getDoc, setDoc } = window.firebaseModules;
                     const userRef = doc(window.db, "loyalty_users", phone);
                     const userSnap = await getDoc(userRef);
 
-                    if (!userSnap.exists() || (userSnap.data().points || 0) < 100) {
+                    if (!userSnap.exists()) {
                         await setDoc(userRef, {
                             phone: phone,
                             points: 100,
                             createdAt: new Date().toISOString(),
                             timestamp: Date.now()
-                        }, { merge: true });
+                        });
                         userLoyaltyPoints = 100;
                         safeSetStorage('storia_user_pts', '100');
                         alert('🎉 مبروك! تم تسجيل حسابك وحصلت على 100 نقطة هدية ترحيبية!');
                     } else {
-                        userLoyaltyPoints = userSnap.data().points || 100;
+                        userLoyaltyPoints = userSnap.data().points !== undefined ? userSnap.data().points : 100;
                         safeSetStorage('storia_user_pts', String(userLoyaltyPoints));
                     }
                 } catch(e) {
@@ -1831,7 +1847,6 @@
 
             document.getElementById('userPhoneGateModal').style.display = 'none';
             showWelcomeModal();
-            setTimeout(() => { checkAndPromptOrderReview(); }, 1000);
         }
 
         function showWelcomeModal() {
@@ -1911,54 +1926,12 @@
             }
         }
 
-        function checkAndPromptOrderReview() {
-            try {
-                const rawOrderData = localStorage.getItem('storia_last_order_review');
-                if (!rawOrderData) return false;
-
-                const orderData = JSON.parse(rawOrderData);
-                if (!orderData || orderData.reviewed === true) return false;
-
-                const now = Date.now();
-                const orderTime = orderData.timestamp || 0;
-                const elapsedSeconds = (now - orderTime) / 1000;
-
-                if (elapsedSeconds >= 1800) {
-                    pendingReviewOrderData = orderData;
-                    displayOrderReviewModal(orderData);
-                    return true;
-                }
-            } catch(e) {
-                console.error("Review check error:", e);
-            }
-            return false;
-        }
-
-        function startOrderReviewWatcher() {
-            if (reviewCheckInterval) clearInterval(reviewCheckInterval);
-            reviewCheckInterval = setInterval(() => {
-                const reviewModal = document.getElementById('orderReviewModal');
-                if (reviewModal && reviewModal.style.display === 'flex') return;
-                checkAndPromptOrderReview();
-            }, 10000);
-        }
-
-        function displayOrderReviewModal(orderData) {
-            const modal = document.getElementById('orderReviewModal');
-            const itemsListEl = document.getElementById('reviewOrderItemsList');
-            if (!modal) return;
-
-            const welcomeModal = document.getElementById('welcomeOrderModal');
-            if (welcomeModal) welcomeModal.style.display = 'none';
-
-            if (itemsListEl && orderData.items && orderData.items.length > 0) {
-                itemsListEl.innerText = orderData.items.join(' ، ');
-            } else if (itemsListEl) {
-                itemsListEl.innerText = 'وجبات ومشروبات ستوريا';
-            }
-
-            renderStarsUI(5.0);
-            modal.style.display = 'flex';
+        // فتح نافذة التقييم الفوري مباشرة لأي عميل
+        function openReviewModalDirect() {
+            renderStarsUI(userSelectedOrderRating || 5.0);
+            const notesInp = document.getElementById('reviewNotesInput');
+            if (notesInp) notesInp.value = '';
+            document.getElementById('orderReviewModal').style.display = 'flex';
         }
 
         function handleStarClick(starIndex) {
@@ -1999,11 +1972,11 @@
                 textAr = `لذيذ وجيد جداً (${ratingNum}) 👍`;
                 textEn = `Very Good (${ratingNum}) 👍`;
             } else if (ratingNum >= 2.5) {
-                textAr = `مقبول وبحاجة لتحسين (${ratingNum}) 😐`;
+                textAr = `مقبول (${ratingNum}) 😐`;
                 textEn = `Fair (${ratingNum}) 😐`;
             } else {
-                textAr = `نعتذر منك، سنطور الجودة (${ratingNum}) 😞`;
-                textEn = `We apologize, we will improve (${ratingNum}) 😞`;
+                textAr = `سنطور الجودة بإذن الله (${ratingNum}) 😞`;
+                textEn = `We will improve (${ratingNum}) 😞`;
             }
 
             feedbackEl.innerText = currentLang === 'ar' ? textAr : textEn;
@@ -2013,65 +1986,51 @@
             const notes = document.getElementById('reviewNotesInput').value.trim();
             const modal = document.getElementById('orderReviewModal');
 
-            if (pendingReviewOrderData) {
-                pendingReviewOrderData.reviewed = true;
-                pendingReviewOrderData.rating = userSelectedOrderRating;
-                pendingReviewOrderData.notes = notes;
-                pendingReviewOrderData.reviewedAt = new Date().toISOString();
-                safeSetStorage('storia_last_order_review', JSON.stringify(pendingReviewOrderData));
+            if (window.db && window.firebaseModules) {
+                try {
+                    const { collection, addDoc, doc, getDoc, setDoc } = window.firebaseModules;
+                    await addDoc(collection(window.db, "restaurant_reviews"), {
+                        userName: safeGetStorage('storia_active_user_name', 'عميل ستوريا'),
+                        userPhone: activeUserPhone || '',
+                        rating: userSelectedOrderRating,
+                        notes: notes,
+                        createdAt: new Date().toISOString(),
+                        timestamp: Date.now()
+                    });
 
-                if (window.db && window.firebaseModules) {
-                    try {
-                        const { collection, addDoc, doc, getDoc, setDoc } = window.firebaseModules;
-                        await addDoc(collection(window.db, "restaurant_reviews"), {
-                            orderId: pendingReviewOrderData.orderId || 'web_order',
-                            userName: pendingReviewOrderData.userName || 'زبون ستوريا',
-                            userPhone: pendingReviewOrderData.userPhone || '',
-                            rating: userSelectedOrderRating,
-                            notes: notes,
-                            items: pendingReviewOrderData.items || [],
-                            createdAt: new Date().toISOString(),
-                            timestamp: Date.now()
-                        });
+                    const statsRef = doc(window.db, "settings", "overall_rating");
+                    const statsSnap = await getDoc(statsRef);
+                    let totalSum = userSelectedOrderRating;
+                    let totalCount = 1;
 
-                        const statsRef = doc(window.db, "settings", "overall_rating");
-                        const statsSnap = await getDoc(statsRef);
-                        let totalSum = userSelectedOrderRating;
-                        let totalCount = 1;
-
-                        if (statsSnap.exists()) {
-                            const sData = statsSnap.data();
-                            totalSum += (parseFloat(sData.totalScoreSum) || 0);
-                            totalCount += (parseInt(sData.totalCount) || 0);
-                        }
-
-                        let finalAvg = (totalSum / totalCount).toFixed(1);
-                        if (parseFloat(finalAvg) > 5.0) finalAvg = "5.0";
-
-                        await setDoc(statsRef, {
-                            averageRating: finalAvg,
-                            totalScoreSum: totalSum,
-                            totalCount: totalCount
-                        }, { merge: true });
-
-                        updateOverallRatingDisplay(finalAvg, totalCount);
-                    } catch(e) {
-                        console.error("Error saving review:", e);
+                    if (statsSnap.exists()) {
+                        const sData = statsSnap.data();
+                        totalSum += (parseFloat(sData.totalScoreSum) || 0);
+                        totalCount += (parseInt(sData.totalCount) || 0);
                     }
+
+                    let finalAvg = (totalSum / totalCount).toFixed(1);
+                    if (parseFloat(finalAvg) > 5.0) finalAvg = "5.0";
+
+                    await setDoc(statsRef, {
+                        averageRating: finalAvg,
+                        totalScoreSum: totalSum,
+                        totalCount: totalCount
+                    }, { merge: true });
+
+                    updateOverallRatingDisplay(finalAvg, totalCount);
+                } catch(e) {
+                    console.error("Error saving review:", e);
                 }
             }
 
             if (modal) modal.style.display = 'none';
-            alert(currentLang === 'ar' ? 'شكراً جزيلاً لتقييمك! رأيك يسعدنا دائماً 💚' : 'Thank you so much for your review! 💚');
+            alert(currentLang === 'ar' ? 'شكراً جزيلاً لتقييمك! رأيك يهمنا دائماً 💚' : 'Thank you for your review! 💚');
         }
 
         function dismissOrderReview() {
             const modal = document.getElementById('orderReviewModal');
             if (modal) modal.style.display = 'none';
-            if (pendingReviewOrderData) {
-                pendingReviewOrderData.timestamp = Date.now() + (10 * 60 * 1000);
-                safeSetStorage('storia_last_order_review', JSON.stringify(pendingReviewOrderData));
-            }
         }
 
         async function openOverallToast() {
@@ -2093,7 +2052,6 @@
                 commentsArea.innerHTML = `<div style="text-align:center; padding:15px 0; color:var(--desc-text); font-size:0.75rem; font-weight:700;">${currentLang === 'ar' ? 'جاري تحميل الآراء...' : 'Loading reviews...'}</div>`;
                 try {
                     const { collection, getDocs, limit } = window.firebaseModules;
-                    // جلب سريع بدون تعقيدات فهارس
                     const q = query(collection(window.db, "restaurant_reviews"), limit(25));
                     const snap = await getDocs(q);
 
@@ -2105,7 +2063,6 @@
                         reviewsArr.push(docSnap.data());
                     });
 
-                    // ترتيب محلي فوري
                     reviewsArr.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
 
                     reviewsArr.forEach(r => {
@@ -2260,7 +2217,6 @@
         function initializeAppCore() {
             applyLanguageSettings();
             startCreativeCounter();
-            startOrderReviewWatcher();
             fetchMenuFromGoogleSheet();
             
             if (activeUserPhone) {
@@ -2286,18 +2242,20 @@
             }
         });
 
+        // تحديث رصيد النقاط الحقيقي للعميل (يسمح بالنقصان الفعلي حتى 0)
         function updatePointsBadge(pts) {
-            userLoyaltyPoints = pts;
-            safeSetStorage('storia_user_pts', String(pts));
+            userLoyaltyPoints = Math.max(0, parseInt(pts) || 0);
+            safeSetStorage('storia_user_pts', String(userLoyaltyPoints));
+            
             const badge = document.getElementById('headerPointsBadge');
             const modalPts = document.getElementById('modalUserPoints');
             const modalPtsVal = document.getElementById('modalUserPointsValue');
             const modalPhoneDisplay = document.getElementById('modalUserPhoneDisplay');
 
-            if (badge) badge.innerText = pts;
-            if (modalPts) modalPts.innerText = pts;
+            if (badge) badge.innerText = userLoyaltyPoints;
+            if (modalPts) modalPts.innerText = userLoyaltyPoints;
 
-            const monetaryValue = (pts * 0.1).toFixed(2);
+            const monetaryValue = (userLoyaltyPoints * 0.1).toFixed(2);
             if (modalPtsVal) {
                 modalPtsVal.innerText = `قيمتها المادية: ${monetaryValue} ج.م`;
             }
@@ -2307,16 +2265,14 @@
             }
         }
 
+        // جلب الرصيد الحقيقي من Firebase دون فرض 100 نقطة وهمية
         async function fetchUserPointsFromFirebase(phone) {
             if (!phone || !window.db || !window.firebaseModules) return;
             try {
                 const { doc, getDoc } = window.firebaseModules;
                 const snap = await getDoc(doc(window.db, "loyalty_users", phone));
                 if (snap.exists()) {
-                    let pts = snap.data().points || 0;
-                    if (pts < 100) {
-                        pts = 100;
-                    }
+                    let pts = snap.data().points !== undefined ? snap.data().points : 0;
                     updatePointsBadge(pts);
                 }
             } catch(e) {
@@ -2396,18 +2352,27 @@
             document.getElementById('scanReceiptModal').style.display = 'none';
         }
 
+        // مسح الفاتورة مع منع الـ Fake QR بالكامل
         async function onScanReceiptSuccess(decodedText) {
             closeScanReceiptModal();
             
-            let earnedPoints = 50;
-            let invoiceCode = decodedText.trim();
+            const raw = (decodedText || '').trim();
+            // يجب أن يبدأ الكود بالبادئة الرسمية: STORIA-INVOICE:رقم_الفاتورة:عدد_النقاط:كود_الحماية
+            if (!raw.startsWith('STORIA-INVOICE:')) {
+                return alert("⚠️ رمز QR غير صالح أو غير معتمد من مطعم ستوريا!");
+            }
 
-            if (decodedText.includes(':')) {
-                const parts = decodedText.split(':');
-                if (parts.length >= 3) {
-                    earnedPoints = parseInt(parts[1]) || 50;
-                    invoiceCode = parts[2];
-                }
+            const parts = raw.split(':');
+            if (parts.length < 4) {
+                return alert("⚠️ رمز QR غير مكتمل أو غير صالح!");
+            }
+
+            const invId = parts[1].trim();
+            const earnedPoints = parseInt(parts[2]) || 0;
+            const secretSig = parts[3].trim();
+
+            if (!invId || earnedPoints <= 0 || secretSig !== 'SECURE_OK') {
+                return alert("⚠️ رمز QR غير صالح أو مزيف!");
             }
 
             if (!activeUserPhone) {
@@ -2417,22 +2382,24 @@
             if (window.db && window.firebaseModules) {
                 try {
                     const { doc, getDoc, setDoc } = window.firebaseModules;
-                    const usedRef = doc(window.db, "used_receipt_qrs", invoiceCode);
+                    const usedRef = doc(window.db, "used_receipt_qrs", invId);
                     const usedSnap = await getDoc(usedRef);
 
                     if (usedSnap.exists()) {
                         return alert("⚠️ تم مسح هذه الفاتورة وإضافة نقاطها مسبقاً! لا يمكن استخدام الفاتورة مرتين.");
                     }
 
+                    // قفل الفاتورة فوراً
                     await setDoc(usedRef, {
                         usedBy: activeUserPhone,
                         pointsAdded: earnedPoints,
                         timestamp: Date.now()
                     });
 
+                    // إضافة النقاط للعميل
                     const userRef = doc(window.db, "loyalty_users", activeUserPhone);
                     const userSnap = await getDoc(userRef);
-                    let currentPts = userSnap.exists() ? (userSnap.data().points || 0) : 0;
+                    let currentPts = userSnap.exists() && userSnap.data().points !== undefined ? userSnap.data().points : 0;
                     let newPts = currentPts + earnedPoints;
 
                     await setDoc(userRef, {
@@ -2442,7 +2409,7 @@
                     }, { merge: true });
 
                     updatePointsBadge(newPts);
-                    alert(`🎉 تم إضافة +${earnedPoints} نقطة إلى محفظتك بنجاح من الفاتورة!`);
+                    alert(`🎉 تم إضافة +${earnedPoints} نقطة إلى محفظتك بنجاح من الفاتورة رقم (${invId})!`);
                     openLoyaltyModal();
                 } catch(e) {
                     console.error("Scan error:", e);
@@ -2451,13 +2418,14 @@
             }
         }
 
+        // توليد QR العميل للاستبدال مع رسم فوري لا يعلق
         function openMyRedeemQrModal(selectedPointsToRedeem) {
             const modal = document.getElementById('myRedeemQrModal');
             document.getElementById('redeemModalPts').innerText = selectedPointsToRedeem;
             document.getElementById('redeemModalCash').innerText = (selectedPointsToRedeem * 0.1).toFixed(2);
             
             const box = document.getElementById('userQrCodeBox');
-            box.innerHTML = '<div style="color:var(--desc-text); font-weight:800; font-size:0.85rem;">جاري إنشاء الرمز...</div>';
+            box.innerHTML = '';
 
             modal.style.display = 'flex';
 
@@ -2465,42 +2433,70 @@
                 app: "storia",
                 phone: activeUserPhone,
                 pts: selectedPointsToRedeem,
-                cash: (selectedPointsToRedeem * 0.1).toFixed(2)
+                cash: (selectedPointsToRedeem * 0.1).toFixed(2),
+                ts: Date.now()
             });
 
-            setTimeout(() => {
-                box.innerHTML = '';
-                const qrImg = document.createElement('img');
-                qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrPayload)}&color=1b4d3e`;
-                qrImg.alt = "QR Code";
-                qrImg.style.width = "200px";
-                qrImg.style.height = "200px";
-                qrImg.onerror = () => {
-                    box.innerHTML = `<div style="font-weight:900; color:var(--accent); font-size:1.2rem; padding:20px; border:2px dashed var(--accent); border-radius:12px;">الكود: ${activeUserPhone}-${selectedPointsToRedeem}</div>`;
-                };
-                box.appendChild(qrImg);
-            }, 50);
+            try {
+                new QRCode(box, {
+                    text: qrPayload,
+                    width: 190,
+                    height: 190,
+                    colorDark: "#1b4d3e",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.M
+                });
+            } catch(e) {
+                box.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=190x190&data=${encodeURIComponent(qrPayload)}&color=1b4d3e" style="width:190px; height:190px;" alt="QR Code">`;
+            }
         }
 
         function closeMyRedeemQrModal() {
             document.getElementById('myRedeemQrModal').style.display = 'none';
         }
 
+        // توليد QR فاتورة رسمي من لوحة الإدارة
+        function generateOfficialInvoiceQr() {
+            const inv = document.getElementById('adminGenInvNumber').value.trim();
+            const pts = parseInt(document.getElementById('adminGenInvPoints').value) || 0;
+            if (!inv || pts <= 0) {
+                return alert("يرجى إدخال رقم الفاتورة وعدد النقاط بشكل صحيح");
+            }
+
+            const box = document.getElementById('generatedInvoiceQrBox');
+            box.innerHTML = '';
+
+            const qrData = `STORIA-INVOICE:${inv}:${pts}:SECURE_OK`;
+
+            try {
+                new QRCode(box, {
+                    text: qrData,
+                    width: 180,
+                    height: 180,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.M
+                });
+            } catch(e) {
+                box.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrData)}" alt="QR">`;
+            }
+        }
+
+        // تحميل سريع وترتيب العملاء من الأعلى للأقل (بدون تعليق وبدون أخطاء)
         async function loadTopCustomersRank() {
             const listEl = document.getElementById('adminCustomersRankList');
             if (!window.db || !window.firebaseModules) return;
 
-            listEl.innerHTML = '<div style="text-align: center; color: var(--desc-text); padding: 15px 0;">جاري تحميل العملاء الأكثر نقاطاً...</div>';
+            listEl.innerHTML = '<div style="text-align: center; color: var(--desc-text); padding: 15px 0;">جاري تحميل العملاء...</div>';
 
             try {
                 const { collection, getDocs, limit } = window.firebaseModules;
-                // جلب فوري لـ 50 عميل دون إجبار Firestore على بناء فهارس تؤخر الاتصال
-                const q = query(collection(window.db, "loyalty_users"), limit(50));
+                const q = query(collection(window.db, "loyalty_users"), limit(100));
                 const snap = await getDocs(q);
 
                 listEl.innerHTML = '';
                 if (snap.empty) {
-                    listEl.innerHTML = '<div style="text-align: center; color: var(--desc-text); padding: 15px 0;">لا يوجد عملاء مسجلين بنقاط حتى الآن.</div>';
+                    listEl.innerHTML = '<div style="text-align: center; color: var(--desc-text); padding: 15px 0;">لا يوجد عملاء مسجلين حتى الآن.</div>';
                     return;
                 }
 
@@ -2509,11 +2505,11 @@
                     const u = docSnap.data();
                     usersList.push({
                         phone: u.phone || docSnap.id,
-                        points: u.points || 0
+                        points: u.points !== undefined ? u.points : 0
                     });
                 });
 
-                // ترتيب سريع وفوري في المتصفح من الأعلى للأقل
+                // ترتيب سريع ودقيق في ثوانٍ معدودة من الأعلى للأقل
                 usersList.sort((a, b) => b.points - a.points);
 
                 let rankIndex = 1;
@@ -2585,13 +2581,15 @@
             } catch(e) {}
 
             try {
-                let clientPhone = decodedText;
+                let clientPhone = null;
                 let requestedPts = 0;
 
                 if (decodedText.startsWith('{')) {
                     const parsed = JSON.parse(decodedText);
                     clientPhone = parsed.phone;
                     requestedPts = parseInt(parsed.pts) || 0;
+                } else {
+                    clientPhone = decodedText;
                 }
 
                 if (!clientPhone) return alert("كود العميل غير صالح!");
@@ -2600,7 +2598,7 @@
                 if (window.db && window.firebaseModules) {
                     const { doc, getDoc } = window.firebaseModules;
                     const snap = await getDoc(doc(window.db, "loyalty_users", clientPhone));
-                    const pts = snap.exists() ? (snap.data().points || 0) : 0;
+                    const pts = snap.exists() && snap.data().points !== undefined ? snap.data().points : 0;
 
                     document.getElementById('scannedClientPhone').innerText = clientPhone;
                     document.getElementById('scannedClientCurrentPts').innerText = pts;
@@ -2624,14 +2622,19 @@
                 const { doc, getDoc, setDoc } = window.firebaseModules;
                 const userRef = doc(window.db, "loyalty_users", scannedCustomerPhone);
                 const snap = await getDoc(userRef);
-                const currentPts = snap.exists() ? (snap.data().points || 0) : 0;
+                const currentPts = snap.exists() && snap.data().points !== undefined ? snap.data().points : 0;
 
                 if (currentPts < ptsToDeduct) {
                     return alert(`رصيد العميل (${currentPts} نقطة) غير كافٍ لخصم ${ptsToDeduct} نقطة!`);
                 }
 
-                const newBalance = currentPts - ptsToDeduct;
+                const newBalance = Math.max(0, currentPts - ptsToDeduct);
                 await setDoc(userRef, { points: newBalance }, { merge: true });
+
+                // إذا كان الهاتف المخصوم منه هو هاتف العميل المفتوح حالياً نقوم بتحديث العداد
+                if (activeUserPhone === scannedCustomerPhone) {
+                    updatePointsBadge(newBalance);
+                }
 
                 alert(`✅ تم استبدال وخصم ${ptsToDeduct} نقطة بنجاح! الرصيد المتبقي للعميل: ${newBalance} نقطة.`);
                 closeAdminScanRedeemModal();
@@ -3266,17 +3269,6 @@
             orderText += `------------------------------------\n`;
             orderText += `*${currentLang==='ar'?'الإجمالي الكلي:':'Total Amount:'}* ${currentTotal.toFixed(2)} ${t.currency}\n`;
 
-            const tempOrderId = 'ord_' + Date.now();
-            const reviewData = {
-                orderId: tempOrderId,
-                userName: name,
-                userPhone: phone,
-                items: itemsShortNames,
-                timestamp: Date.now(),
-                reviewed: false
-            };
-            safeSetStorage('storia_last_order_review', JSON.stringify(reviewData));
-
             try {
                 if (window.db && window.firebaseModules) {
                     const { collection, addDoc, doc, setDoc, getDoc } = window.firebaseModules;
@@ -3295,7 +3287,7 @@
                     if (phone) {
                         const userRef = doc(window.db, "loyalty_users", phone);
                         const userSnap = await getDoc(userRef);
-                        const oldPts = userSnap.exists() ? (userSnap.data().points || 0) : 0;
+                        const oldPts = userSnap.exists() && userSnap.data().points !== undefined ? userSnap.data().points : 0;
                         const newTotalPts = oldPts + earnedPts;
                         await setDoc(userRef, { phone: phone, points: newTotalPts }, { merge: true });
                         updatePointsBadge(newTotalPts);
@@ -3304,9 +3296,6 @@
                     safeSetStorage('storia_active_order_id', orderDoc.id);
                     safeSetStorage('storia_active_user_name', name);
                     showClientHeaderChatButton();
-
-                    reviewData.orderId = orderDoc.id;
-                    safeSetStorage('storia_last_order_review', JSON.stringify(reviewData));
                 }
             } catch(e) {
                 console.error("Error saving order:", e);
@@ -3494,10 +3483,10 @@
         let ordersUnsubscribe = null;
         function listenToOrdersLogs() {
             if (!window.db || !window.firebaseModules) return;
-            const { collection, onSnapshot, query, orderBy, limit } = window.firebaseModules;
+            const { collection, onSnapshot, query, limit } = window.firebaseModules;
             if (ordersUnsubscribe) ordersUnsubscribe();
 
-            const q = query(collection(window.db, "orders"), orderBy("timestamp", "desc"), limit(50));
+            const q = query(collection(window.db, "orders"), limit(50));
             ordersUnsubscribe = onSnapshot(q, (snapshot) => {
                 const logsEl = document.getElementById('adminOrdersLogsList');
                 if (!logsEl) return;
@@ -3508,8 +3497,14 @@
                     return;
                 }
 
+                let ordersArr = [];
                 snapshot.forEach((d) => {
-                    const ord = d.data();
+                    ordersArr.push({ id: d.id, ...d.data() });
+                });
+
+                ordersArr.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+                ordersArr.forEach((ord) => {
                     const card = document.createElement('div');
                     card.className = 'admin-order-card';
                     const timeStr = ord.timestamp ? new Date(ord.timestamp).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }) : '';
@@ -3527,8 +3522,8 @@
                         </div>
                         ${ord.userAddr ? `<div style="font-size:0.75rem; color:#b91c1c; margin-bottom:8px;">📍 ${ord.userAddr}</div>` : ''}
                         <div style="display:flex; gap:6px;">
-                            <button style="flex:1; background:#25D366; color:#fff; border:none; padding:6px; border-radius:8px; font-weight:800; cursor:pointer;" onclick="openChatModal('${d.id}', 'admin', '${(ord.userName||'العميل').replace(/'/g, "\\'")}')">💬 فتح الشات</button>
-                            <button style="background:#ef4444; color:#fff; border:none; padding:6px 12px; border-radius:8px; font-weight:800; cursor:pointer;" onclick="deleteOrderRecord('${d.id}')">حذف ✕</button>
+                            <button style="flex:1; background:#25D366; color:#fff; border:none; padding:6px; border-radius:8px; font-weight:800; cursor:pointer;" onclick="openChatModal('${ord.id}', 'admin', '${(ord.userName||'العميل').replace(/'/g, "\\'")}')">💬 فتح الشات</button>
+                            <button style="background:#ef4444; color:#fff; border:none; padding:6px 12px; border-radius:8px; font-weight:800; cursor:pointer;" onclick="deleteOrderRecord('${ord.id}')">حذف ✕</button>
                         </div>
                     `;
                     logsEl.appendChild(card);
@@ -3718,7 +3713,7 @@
             if (window.db && window.firebaseModules) {
                 const { doc, getDoc } = window.firebaseModules;
                 const snap = await getDoc(doc(window.db, "loyalty_users", phone));
-                const pts = snap.exists() ? (snap.data().points || 0) : 0;
+                const pts = snap.exists() && snap.data().points !== undefined ? snap.data().points : 0;
                 document.getElementById('adminClientCurrentPts').innerText = pts;
                 document.getElementById('adminClientNewPtsInput').value = pts;
                 document.getElementById('adminLoyaltyResultBox').style.display = 'block';
@@ -3754,6 +3749,7 @@
                 try {
                     const { doc, setDoc } = window.firebaseModules;
                     await setDoc(doc(window.db, "settings", "admin_config"), { password: newP }, { merge: true });
+                    safeSetStorage('storia_admin_pass', newP);
                     alert(currentLang === 'ar' ? 'تم تحديث كلمة المرور بنجاح!' : 'Password updated successfully!');
                     document.getElementById('newAdminPass').value = '';
                     closeFloatingModal('passwordModal');
