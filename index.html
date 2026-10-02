@@ -425,7 +425,7 @@
         .toast-added-title { font-size: 1.05rem; font-weight: 900; color: var(--main-text); margin-bottom: 4px; }
 
         .order-review-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.55); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 9900; display: none; justify-content: center; align-items: center; padding: 16px; }
-        .order-review-card { background: var(--white); width: 100%; max-width: 310px; border-radius: 24px; padding: 22px 18px; text-align: center; box-shadow: 0 20px 45px rgba(0, 0, 0, 0.28); animation: smoothFadeIn 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); display: flex; flex-direction: column; align-items: center; border: 1px solid var(--border-color); }
+        .order-review-card { background: var(--white); width: 100%; max-width: 320px; border-radius: 24px; padding: 22px 18px; text-align: center; box-shadow: 0 20px 45px rgba(0, 0, 0, 0.28); animation: smoothFadeIn 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); display: flex; flex-direction: column; align-items: center; border: 1px solid var(--border-color); }
         .review-icon-circle { width: 55px; height: 55px; background: rgba(27, 77, 62, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; border: 2px solid var(--accent); font-size: 1.6rem; }
         .review-card-title { font-size: 1.05rem; font-weight: 900; color: var(--main-text); margin-bottom: 3px; line-height: 1.3; }
         .review-card-subtitle { font-size: 0.74rem; color: var(--desc-text); font-weight: 700; margin-bottom: 12px; }
@@ -457,6 +457,7 @@
         .comment-star-badge { font-size: 0.76rem; font-weight: 900; color: #f59e0b; }
         .comment-text-content { font-size: 0.78rem; font-weight: 700; color: var(--main-text); line-height: 1.35; }
         .comment-date-sub { font-size: 0.65rem; color: var(--desc-text); font-weight: 600; }
+        .overall-toast-add-btn { background: #f59e0b; color: white; border: none; padding: 10px 18px; border-radius: 12px; font-weight: 900; font-size: 0.84rem; cursor: pointer; width: 100%; margin-bottom: 8px; box-shadow: 0 3px 10px rgba(245, 158, 11, 0.3); }
         .overall-toast-close { background: var(--accent); color: white; border: none; padding: 9px 24px; border-radius: 12px; font-weight: 800; font-size: 0.85rem; cursor: pointer; width: 100%; }
 
         .admin-review-card { background: var(--white); border: 1px solid var(--border-color); border-radius: 14px; padding: 10px 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
@@ -719,7 +720,7 @@
         </div>
     </div>
 
-    <!-- نافذة تقييم الأوردر الفورية (تم إلغاء شرط النصف ساعة) -->
+    <!-- نافذة تقييم الأوردر الفورية -->
     <div class="order-review-modal" id="orderReviewModal">
         <div class="order-review-card">
             <div class="review-icon-circle">
@@ -754,6 +755,8 @@
             <div class="overall-toast-title"><span id="popupOverallScore">5.0</span> / 5.0</div>
             <div class="overall-toast-count" id="popupOverallCount">بناءً على 1 تقييم حقيقي للعملاء</div>
             
+            <button class="overall-toast-add-btn" onclick="openDirectRatingFromPopup()">⭐ أضف تقييمك ورأيك الآن</button>
+
             <div class="overall-comments-list" id="customerCommentsFeed">
                 <div style="text-align:center; padding:15px 0; color:var(--desc-text); font-size:0.75rem; font-weight:700;">جاري تحميل آراء الزبائن...</div>
             </div>
@@ -789,8 +792,7 @@
                         <span class="pts" id="headerPointsBadge">0</span>
                     </button>
 
-                    <!-- زر التقييم يفتح التقييم الفوري للعميل أو عرض الآراء -->
-                    <div class="overall-rating-chip" id="overallRatingChip" onclick="openReviewModalDirect()" title="تقييم ستوريا">
+                    <div class="overall-rating-chip" id="overallRatingChip" onclick="openOverallToast()" title="عرض التقييمات وإضافة رأيك">
                         <span class="star-icon">⭐</span>
                         <span id="overallRatingScore">5.0</span>
                     </div>
@@ -1145,7 +1147,7 @@
         </div>
     </div>
 
-    <!-- نافذة إدارة تعليقات العملاء -->
+    <!-- نافذة إدارة تعليقات العملاء مع معالجة سريعة تمنع الخطأ -->
     <div class="floating-sub-modal" id="adminReviewsModal" onclick="if(event.target==this) closeFloatingModal('adminReviewsModal')">
         <div class="floating-card-box">
             <div class="floating-header">
@@ -1811,7 +1813,6 @@
             activeUserPhone = phone;
             safeSetStorage('storia_user_phone', phone);
 
-            // إضافة 100 نقطة ترحيبية فوراً
             if (window.db && window.firebaseModules) {
                 try {
                     const { doc, getDoc, setDoc } = window.firebaseModules;
@@ -1926,8 +1927,9 @@
             }
         }
 
-        // فتح نافذة التقييم الفوري مباشرة لأي عميل
-        function openReviewModalDirect() {
+        // فتح نافذة كتابة التقييم من داخل نافذة عرض الآراء
+        function openDirectRatingFromPopup() {
+            closeOverallToast();
             renderStarsUI(userSelectedOrderRating || 5.0);
             const notesInp = document.getElementById('reviewNotesInput');
             if (notesInp) notesInp.value = '';
@@ -2026,6 +2028,7 @@
 
             if (modal) modal.style.display = 'none';
             alert(currentLang === 'ar' ? 'شكراً جزيلاً لتقييمك! رأيك يهمنا دائماً 💚' : 'Thank you for your review! 💚');
+            openOverallToast();
         }
 
         function dismissOrderReview() {
@@ -2033,6 +2036,7 @@
             if (modal) modal.style.display = 'none';
         }
 
+        // عرض التعليقات والتقييمات للعملاء بشكل محمي ومباشر دون أخطاء
         async function openOverallToast() {
             const score = document.getElementById('overallRatingScore').innerText || '5.0';
             const popupScore = document.getElementById('popupOverallScore');
@@ -2051,9 +2055,9 @@
             if (commentsArea && window.db && window.firebaseModules) {
                 commentsArea.innerHTML = `<div style="text-align:center; padding:15px 0; color:var(--desc-text); font-size:0.75rem; font-weight:700;">${currentLang === 'ar' ? 'جاري تحميل الآراء...' : 'Loading reviews...'}</div>`;
                 try {
-                    const { collection, getDocs, limit } = window.firebaseModules;
-                    const q = query(collection(window.db, "restaurant_reviews"), limit(25));
-                    const snap = await getDocs(q);
+                    const { collection, getDocs } = window.firebaseModules;
+                    const collRef = collection(window.db, "restaurant_reviews");
+                    const snap = await getDocs(collRef);
 
                     commentsArea.innerHTML = '';
                     let hasComments = false;
@@ -2063,6 +2067,7 @@
                         reviewsArr.push(docSnap.data());
                     });
 
+                    // فرز تنازلي حسب الوقت في الذاكرة
                     reviewsArr.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
 
                     reviewsArr.forEach(r => {
@@ -2087,6 +2092,7 @@
                         commentsArea.innerHTML = `<div style="text-align:center; padding:15px 0; color:var(--desc-text); font-size:0.75rem; font-weight:700;">${t.noReviewsYet}</div>`;
                     }
                 } catch(e) {
+                    console.error("Reviews load error:", e);
                     commentsArea.innerHTML = `<div style="text-align:center; padding:10px 0; color:var(--desc-text); font-size:0.75rem;">${t.noReviewsYet}</div>`;
                 }
             }
@@ -2133,15 +2139,22 @@
             }
         }
 
+        // عرض تعليقات الإدارة مع الحذف السريع وحل مشكلة "حدث خطأ في تحميل التعليقات" نهائياً
         async function renderAdminReviewsList() {
             const area = document.getElementById('adminReviewsListArea');
-            if (!area || !window.db || !window.firebaseModules) return;
+            if (!area) return;
+
+            if (!window.db || !window.firebaseModules) {
+                area.innerHTML = '<div style="text-align:center; padding:10px; color:#ef4444;">قاعدة البيانات غير متصلة</div>';
+                return;
+            }
+
             area.innerHTML = '<div style="text-align:center; padding:15px; color:var(--desc-text);">جاري تحميل التعليقات...</div>';
 
             try {
-                const { collection, getDocs, limit } = window.firebaseModules;
-                const q = query(collection(window.db, "restaurant_reviews"), limit(40));
-                const snap = await getDocs(q);
+                const { collection, getDocs } = window.firebaseModules;
+                const collRef = collection(window.db, "restaurant_reviews");
+                const snap = await getDocs(collRef);
 
                 area.innerHTML = '';
                 if (snap.empty) {
@@ -2154,6 +2167,7 @@
                     reviewsList.push({ id: docSnap.id, ...docSnap.data() });
                 });
 
+                // ترتيب زمني فوري في الذاكرة
                 reviewsList.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
 
                 reviewsList.forEach(r => {
@@ -2176,7 +2190,8 @@
                     area.appendChild(card);
                 });
             } catch(e) {
-                area.innerHTML = '<div style="text-align:center; padding:10px; color:#ef4444;">حدث خطأ في تحميل التعليقات</div>';
+                console.error("Admin reviews error:", e);
+                area.innerHTML = `<div style="text-align:center; padding:10px; color:#ef4444;">حدث خطأ: ${e.message || 'تعذر التحميل'}</div>`;
             }
         }
 
@@ -2242,7 +2257,7 @@
             }
         });
 
-        // تحديث رصيد النقاط الحقيقي للعميل (يسمح بالنقصان الفعلي حتى 0)
+        // تحديث رصيد النقاط الفعلي
         function updatePointsBadge(pts) {
             userLoyaltyPoints = Math.max(0, parseInt(pts) || 0);
             safeSetStorage('storia_user_pts', String(userLoyaltyPoints));
@@ -2265,7 +2280,6 @@
             }
         }
 
-        // جلب الرصيد الحقيقي من Firebase دون فرض 100 نقطة وهمية
         async function fetchUserPointsFromFirebase(phone) {
             if (!phone || !window.db || !window.firebaseModules) return;
             try {
@@ -2352,12 +2366,10 @@
             document.getElementById('scanReceiptModal').style.display = 'none';
         }
 
-        // مسح الفاتورة مع منع الـ Fake QR بالكامل
         async function onScanReceiptSuccess(decodedText) {
             closeScanReceiptModal();
             
             const raw = (decodedText || '').trim();
-            // يجب أن يبدأ الكود بالبادئة الرسمية: STORIA-INVOICE:رقم_الفاتورة:عدد_النقاط:كود_الحماية
             if (!raw.startsWith('STORIA-INVOICE:')) {
                 return alert("⚠️ رمز QR غير صالح أو غير معتمد من مطعم ستوريا!");
             }
@@ -2386,17 +2398,15 @@
                     const usedSnap = await getDoc(usedRef);
 
                     if (usedSnap.exists()) {
-                        return alert("⚠️ تم مسح هذه الفاتورة وإضافة نقاطها مسبقاً! لا يمكن استخدام الفاتورة مرتين.");
+                        return alert("⚠️️ تم مسح هذه الفاتورة وإضافة نقاطها مسبقاً! لا يمكن استخدام الفاتورة مرتين.");
                     }
 
-                    // قفل الفاتورة فوراً
                     await setDoc(usedRef, {
                         usedBy: activeUserPhone,
                         pointsAdded: earnedPoints,
                         timestamp: Date.now()
                     });
 
-                    // إضافة النقاط للعميل
                     const userRef = doc(window.db, "loyalty_users", activeUserPhone);
                     const userSnap = await getDoc(userRef);
                     let currentPts = userSnap.exists() && userSnap.data().points !== undefined ? userSnap.data().points : 0;
@@ -2418,7 +2428,6 @@
             }
         }
 
-        // توليد QR العميل للاستبدال مع رسم فوري لا يعلق
         function openMyRedeemQrModal(selectedPointsToRedeem) {
             const modal = document.getElementById('myRedeemQrModal');
             document.getElementById('redeemModalPts').innerText = selectedPointsToRedeem;
@@ -2455,7 +2464,6 @@
             document.getElementById('myRedeemQrModal').style.display = 'none';
         }
 
-        // توليد QR فاتورة رسمي من لوحة الإدارة
         function generateOfficialInvoiceQr() {
             const inv = document.getElementById('adminGenInvNumber').value.trim();
             const pts = parseInt(document.getElementById('adminGenInvPoints').value) || 0;
@@ -2482,17 +2490,20 @@
             }
         }
 
-        // تحميل سريع وترتيب العملاء من الأعلى للأقل (بدون تعليق وبدون أخطاء)
+        // جلب وترتيب العملاء التنازلي المباشر (سريع وبدون أي أخطاء)
         async function loadTopCustomersRank() {
             const listEl = document.getElementById('adminCustomersRankList');
-            if (!window.db || !window.firebaseModules) return;
+            if (!window.db || !window.firebaseModules) {
+                listEl.innerHTML = '<div style="text-align: center; color: #b91c1c; padding: 15px 0;">قاعدة البيانات غير متصلة. تأكد من اتصال الإنترنت.</div>';
+                return;
+            }
 
-            listEl.innerHTML = '<div style="text-align: center; color: var(--desc-text); padding: 15px 0;">جاري تحميل العملاء...</div>';
+            listEl.innerHTML = '<div style="text-align: center; color: var(--desc-text); padding: 15px 0;">جاري جلب العملاء والترتيب...</div>';
 
             try {
-                const { collection, getDocs, limit } = window.firebaseModules;
-                const q = query(collection(window.db, "loyalty_users"), limit(100));
-                const snap = await getDocs(q);
+                const { collection, getDocs } = window.firebaseModules;
+                const collRef = collection(window.db, "loyalty_users");
+                const snap = await getDocs(collRef);
 
                 listEl.innerHTML = '';
                 if (snap.empty) {
@@ -2505,15 +2516,16 @@
                     const u = docSnap.data();
                     usersList.push({
                         phone: u.phone || docSnap.id,
-                        points: u.points !== undefined ? u.points : 0
+                        points: u.points !== undefined ? Number(u.points) : 0
                     });
                 });
 
-                // ترتيب سريع ودقيق في ثوانٍ معدودة من الأعلى للأقل
+                // ترتيب تنازلي فوري
                 usersList.sort((a, b) => b.points - a.points);
+                const top50 = usersList.slice(0, 50);
 
                 let rankIndex = 1;
-                usersList.forEach(u => {
+                top50.forEach(u => {
                     const pts = u.points;
                     const phone = u.phone;
                     const card = document.createElement('div');
@@ -2541,7 +2553,7 @@
                 });
             } catch(e) {
                 console.error("Error loading top customers:", e);
-                listEl.innerHTML = '<div style="text-align: center; color: #b91c1c; padding: 15px 0;">حدث خطأ أثناء جلب ترتيب العملاء.</div>';
+                listEl.innerHTML = `<div style="text-align: center; color: #b91c1c; padding: 15px 0;">حدث خطأ: ${e.message || 'تعذر جلب البيانات'}</div>`;
             }
         }
 
@@ -2631,7 +2643,6 @@
                 const newBalance = Math.max(0, currentPts - ptsToDeduct);
                 await setDoc(userRef, { points: newBalance }, { merge: true });
 
-                // إذا كان الهاتف المخصوم منه هو هاتف العميل المفتوح حالياً نقوم بتحديث العداد
                 if (activeUserPhone === scannedCustomerPhone) {
                     updatePointsBadge(newBalance);
                 }
@@ -3713,7 +3724,7 @@
             if (window.db && window.firebaseModules) {
                 const { doc, getDoc } = window.firebaseModules;
                 const snap = await getDoc(doc(window.db, "loyalty_users", phone));
-                const pts = snap.exists() && snap.data().points !== undefined ? snap.data().points : 0;
+                const pts = snap.exists() ? (snap.data().points || 0) : 0;
                 document.getElementById('adminClientCurrentPts').innerText = pts;
                 document.getElementById('adminClientNewPtsInput').value = pts;
                 document.getElementById('adminLoyaltyResultBox').style.display = 'block';
@@ -3750,7 +3761,7 @@
                     const { doc, setDoc } = window.firebaseModules;
                     await setDoc(doc(window.db, "settings", "admin_config"), { password: newP }, { merge: true });
                     safeSetStorage('storia_admin_pass', newP);
-                    alert(currentLang === 'ar' ? 'تم تحديث كلمة المرور بنجاح!' : 'Password updated successfully!');
+                    alert(currentLang === 'ar' ? 'تم تحديث كلمة المرور بنجاح! لن تفتح اللوحة إلا بها.' : 'Password updated successfully!');
                     document.getElementById('newAdminPass').value = '';
                     closeFloatingModal('passwordModal');
                 } catch(e) {
