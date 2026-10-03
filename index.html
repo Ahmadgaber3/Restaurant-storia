@@ -18,8 +18,9 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     
+    <!-- مكتبات قراءة الباركود وتوليد الباركود الخطي Code128 -->
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 
     <style>
         :root {
@@ -435,7 +436,7 @@
         .review-star-btn.half { background: linear-gradient(90deg, #f59e0b 50%, #cbd5e1 50%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .review-star-btn:active { transform: scale(1.2); }
         .review-rating-status { font-size: 0.82rem; font-weight: 900; color: var(--accent); margin-bottom: 10px; min-height: 20px; }
-        .review-input-simple { width: 100%; background: var(--bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 8px 12px; font-size: 0.76rem; font-weight: 700; color: var(--main-text); outline: none; margin-bottom: 12px; text-align: center; }
+        .review-input-simple { width: 100%; background: var(--bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 8px 12px; font-size: 0.76rem; font-weight: 700; color: var(--main-text); outline: none; margin-bottom: 8px; text-align: center; }
         .review-btn-row { display: flex; gap: 6px; width: 100%; }
         .review-confirm-btn { flex: 2; background: var(--accent); color: #ffffff; border: none; padding: 10px; border-radius: 12px; font-weight: 900; font-size: 0.85rem; cursor: pointer; box-shadow: 0 2px 8px rgba(27, 77, 62, 0.25); }
         .review-confirm-btn:active { transform: scale(0.96); }
@@ -609,10 +610,10 @@
             width: 100%; border-radius: 16px; overflow: hidden; background: #000; margin-bottom: 12px;
         }
         #userQrCodeBox {
-            display: flex; justify-content: center; align-items: center; min-height: 200px;
+            display: flex; justify-content: center; align-items: center; min-height: 140px; padding: 10px;
         }
-        #userQrCodeBox img, #userQrCodeBox canvas {
-            margin: auto; border-radius: 12px; border: 3px solid #1b4d3e; padding: 6px; background: #fff;
+        #userQrCodeBox svg, #generatedInvoiceQrBox svg {
+            margin: auto; border-radius: 8px; border: 2px solid #1b4d3e; padding: 4px; background: #fff; max-width: 100%;
         }
     </style>
 </head>
@@ -720,7 +721,7 @@
         </div>
     </div>
 
-    <!-- نافذة تقييم الأوردر الفورية -->
+    <!-- نافذة تقييم الأوردر مع إدخال الاسم المخصص للعميل -->
     <div class="order-review-modal" id="orderReviewModal">
         <div class="order-review-card">
             <div class="review-icon-circle">
@@ -739,6 +740,7 @@
 
             <div class="review-rating-status" id="ratingLevelFeedback">ممتاز جداً! ⭐⭐⭐⭐⭐</div>
 
+            <input type="text" class="review-input-simple" id="reviewAuthorNameInput" placeholder="اسمك الكريم (مثال: أحمد محمد)">
             <input type="text" class="review-input-simple" id="reviewNotesInput" placeholder="ملاحظاتك على الخدمة أو الأكل (اختياري)">
 
             <div class="review-btn-row">
@@ -748,7 +750,7 @@
         </div>
     </div>
 
-    <!-- نافذة عرض التقييم الإجمالي والتعليقات الحية للعملاء -->
+    <!-- نافذة عرض التقييم الإجمالي والتعليقات الحية للعملاء مع زر إضافة تقييم -->
     <div class="overall-toast-modal" id="overallToastModal" onclick="if(event.target===this) closeOverallToast()">
         <div class="overall-toast-card">
             <div class="overall-toast-icon">⭐</div>
@@ -829,12 +831,12 @@
             <div class="points-action-grid">
                 <button class="pts-btn" onclick="openScanReceiptModal()">
                     <span style="font-size: 1.5rem;">📷</span>
-                    <span>مسح QR الفاتورة</span>
+                    <span>مسح باركود الفاتورة</span>
                     <small style="opacity: 0.8;">إضافة نقاط الحساب</small>
                 </button>
                 <button class="pts-btn" onclick="openRedeemSetupModal()">
                     <span style="font-size: 1.5rem;">📲</span>
-                    <span>تبديل النقاط (QR)</span>
+                    <span>تبديل النقاط (باركود)</span>
                     <small style="opacity: 0.8;">خصم فوري عند الكاشير</small>
                 </button>
             </div>
@@ -865,36 +867,38 @@
                 </div>
             </div>
 
-            <button class="admin-save-btn" onclick="generateCustomRedeemQr()">إظهار رمز QR للكاشير 📲</button>
+            <button class="admin-save-btn" onclick="generateCustomRedeemBarcode()">إظهار الباركود للكاشير 📲</button>
         </div>
     </div>
 
-    <!-- نافذة مسح QR الفاتورة للعميل -->
+    <!-- نافذة مسح باركود الفاتورة للعميل -->
     <div class="floating-sub-modal" id="scanReceiptModal" style="z-index: 6000;" onclick="if(event.target==this) closeScanReceiptModal()">
         <div class="floating-card-box" style="text-align: center;">
             <div class="floating-header">
-                <h4>📷 مسح رمز QR الفاتورة</h4>
+                <h4>📷 مسح باركود الفاتورة</h4>
                 <button class="admin-close" onclick="closeScanReceiptModal()">✕</button>
             </div>
             <p style="font-size: 0.82rem; font-weight: 700; color: var(--desc-text); margin-bottom: 12px;">
-                وجه الكاميرا نحو رمز الـ QR الموجود أسفل فاتورة الشيك لإضافة نقاطك تلقائياً:
+                وجه الكاميرا نحو باركود الفاتورة المطبوعة لإضافة نقاطك تلقائياً:
             </p>
             <div id="qrReaderArea"></div>
             <button class="admin-save-btn" style="background: #64748b;" onclick="closeScanReceiptModal()">إلغاء ✕</button>
         </div>
     </div>
 
-    <!-- نافذة إظهار رمز QR العميل للكاشير -->
+    <!-- نافذة إظهار باركود العميل للكاشير -->
     <div class="floating-sub-modal" id="myRedeemQrModal" style="z-index: 6500;" onclick="if(event.target==this) closeMyRedeemQrModal()">
         <div class="floating-card-box" style="text-align: center;">
             <div class="floating-header">
-                <h4>📲 رمز خصم النقاط</h4>
+                <h4>📲 باركود خصم النقاط</h4>
                 <button class="admin-close" onclick="closeMyRedeemQrModal()">✕</button>
             </div>
             <p style="font-size: 0.82rem; font-weight: 700; color: var(--desc-text); margin-bottom: 14px;">
-                أظهر هذا الكود لكاشير ستوريا لمسحه وتطبيق الخصم فوراً:
+                أظهر هذا الباركود لكاشير ستوريا لمسحه وتطبيق الخصم فوراً:
             </p>
-            <div id="userQrCodeBox"></div>
+            <div id="userQrCodeBox">
+                <svg id="userBarcodeCanvas"></svg>
+            </div>
             
             <div style="background: rgba(27, 77, 62, 0.08); border-radius: 14px; padding: 10px; margin-bottom: 12px; margin-top: 10px;">
                 <div style="font-weight: 900; color: var(--accent); font-size: 1.05rem;">
@@ -1015,7 +1019,7 @@
                     <div class="admin-nav-card" onclick="openFloatingModal('loyaltyRankModal')">
                         <div class="card-badge-num">🏆</div>
                         <div class="card-avatar-box">📊</div>
-                        <div class="card-title">ترتيب نقاط العملاء</div>
+                        <div class="card-title">ترتيب نقاط العملاء (أول 100)</div>
                         <div class="card-subtitle">الترتيب من الأعلى للأقل (تحميل فوري)</div>
                     </div>
 
@@ -1023,7 +1027,7 @@
                         <div class="card-badge-num">📷</div>
                         <div class="card-avatar-box">💳</div>
                         <div class="card-title">مسح وتبديل النقاط</div>
-                        <div class="card-subtitle">مسح كود العميل وخصم النقاط</div>
+                        <div class="card-subtitle">مسح باركود العميل وخصم النقاط</div>
                     </div>
 
                     <div class="admin-nav-card" onclick="openFloatingModal('pointsRateModal')">
@@ -1036,8 +1040,8 @@
                     <div class="admin-nav-card" onclick="openFloatingModal('adminCreateQrModal')">
                         <div class="card-badge-num">🧾</div>
                         <div class="card-avatar-box">🖨️</div>
-                        <div class="card-title">توليد QR فاتورة</div>
-                        <div class="card-subtitle">طباعة QR النقاط للزبون</div>
+                        <div class="card-title">توليد باركود فاتورة</div>
+                        <div class="card-subtitle">طباعة باركود النقاط للزبون</div>
                     </div>
 
                     <div class="admin-nav-card" onclick="openFloatingModal('loyaltyAdminModal')">
@@ -1105,7 +1109,7 @@
                 <label>القيمة المالية لكل 10 نقاط (بالجنيه):</label>
                 <input type="number" id="adminPointsRateInput" placeholder="مثال: 1 (أي كل 10 نقاط = 1 جنيه)" step="0.1" min="0.01">
                 <small style="color: var(--desc-text); font-weight: 700; display: block; margin-top: 5px;">
-                    * مثال: إذا كتبت <b>1</b> سيكون سعر كل 10 نقاط = 1.00 ج.م (كل نقطة = 0.10 ج.م).<br>
+                    * مثال: إذا كتبت <b>1</b> سيكون سعر كل 10 نقاط = 1.00 ج.م.<br>
                     * إذا كتبت <b>10</b> سيكون سعر كل نقطة = 1.00 ج.م بالكامل.
                 </small>
             </div>
@@ -1114,11 +1118,11 @@
         </div>
     </div>
 
-    <!-- نافذة توليد كود فاتورة رسمي دقيق لا يتبدل -->
+    <!-- نافذة توليد باركود فاتورة رسمي دقيق لا يتبدل -->
     <div class="floating-sub-modal" id="adminCreateQrModal" onclick="if(event.target==this) closeFloatingModal('adminCreateQrModal')">
         <div class="floating-card-box" style="text-align: center;">
             <div class="floating-header">
-                <h4>🧾 توليد رمز QR رسمي للفاتورة</h4>
+                <h4>🧾 توليد باركود رسمي للفاتورة</h4>
                 <button class="admin-close" onclick="closeFloatingModal('adminCreateQrModal')">✕</button>
             </div>
             <div class="admin-custom-input-group">
@@ -1129,21 +1133,23 @@
                 <label>عدد النقاط الممنوحة للفاتورة:</label>
                 <input type="number" id="adminGenInvPoints" placeholder="مثال: 68" value="68">
             </div>
-            <button class="admin-save-btn" onclick="generateOfficialInvoiceQr()">توليد رمز QR الرسمي 🖨️</button>
+            <button class="admin-save-btn" onclick="generateOfficialInvoiceBarcode()">توليد الباركود الرسمي 🖨️</button>
 
-            <div id="generatedInvoiceQrBox" style="margin-top: 14px; display: flex; justify-content: center;"></div>
+            <div id="generatedInvoiceQrBox" style="margin-top: 14px; display: flex; justify-content: center;">
+                <svg id="adminGeneratedBarcodeSvg"></svg>
+            </div>
         </div>
     </div>
 
-    <!-- نافذة ترتيب العملاء في لوحة الإدارة -->
+    <!-- نافذة ترتيب العملاء في لوحة الإدارة (أول 100 عميل) -->
     <div class="floating-sub-modal" id="loyaltyRankModal" onclick="if(event.target==this) closeFloatingModal('loyaltyRankModal')">
         <div class="floating-card-box">
             <div class="floating-header">
-                <h4>🏆 ترتيب العملاء حسب رصيد النقاط</h4>
+                <h4>🏆 ترتيب العملاء حسب النقاط (أول 100)</h4>
                 <button class="admin-close" onclick="closeFloatingModal('loyaltyRankModal')">✕</button>
             </div>
             <div style="font-size: 0.8rem; font-weight: 700; color: var(--desc-text); margin-bottom: 10px;">
-                الترتيب يظهر تنازلياً من الأكثر نقاطاً للأقل:
+                الترتيب يظهر تنازلياً لأعلى 100 عميل نقاطاً:
             </div>
             <button class="admin-save-btn" style="background:#1e293b; margin-bottom: 14px;" onclick="loadTopCustomersRank()">🔄 جلب وتحديث الترتيب الآن</button>
             <div id="adminCustomersRankList">
@@ -1152,11 +1158,11 @@
         </div>
     </div>
 
-    <!-- نافذة مسح QR العميل وتبديل النقاط بواسطة الكاشير -->
+    <!-- نافذة مسح باركود العميل وتبديل النقاط بواسطة الكاشير -->
     <div class="floating-sub-modal" id="adminScanRedeemModal" onclick="if(event.target==this) closeAdminScanRedeemModal()">
         <div class="floating-card-box">
             <div class="floating-header">
-                <h4>💳 مسح كود العميل وخصم النقاط</h4>
+                <h4>💳 مسح باركود العميل وخصم النقاط</h4>
                 <button class="admin-close" onclick="closeAdminScanRedeemModal()">✕</button>
             </div>
             <div id="adminQrReaderArea"></div>
@@ -1252,7 +1258,7 @@
                 <input type="tel" id="edit_nasr_display_phone2" placeholder="01014144144">
             </div>
             <div class="admin-custom-input-group">
-                <label>⚠️️ رقم الشكاوى:</label>
+                <label>⚠ رقم الشكاوى:</label>
                 <input type="tel" id="edit_nasr_complaint_phone" placeholder="01014144144">
             </div>
 
@@ -1417,7 +1423,7 @@
 
         let currentLang = safeGetStorage('storia_lang', 'ar');
         let priceMarkupPercentage = parseFloat(safeGetStorage('storia_price_markup', '0')) || 0;
-        let pointsMultiplierRate = parseFloat(safeGetStorage('storia_points_rate', '1.0')) || 1.0; // كل 10 نقاط = 1 جنيه افتراضياً
+        let pointsMultiplierRate = parseFloat(safeGetStorage('storia_points_rate', '1.0')) || 1.0;
         let menuData = [];
         let cart = [];
         let currentTotal = 0; 
@@ -1701,7 +1707,7 @@
         }
 
         function toggleLanguage() {
-            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            currentLang = currentLang === 'ar' ? 'en' : 'ار';
             safeSetStorage('storia_lang', currentLang);
             applyLanguageSettings();
             renderCategories();
@@ -1842,7 +1848,6 @@
             activeUserPhone = phone;
             safeSetStorage('storia_user_phone', phone);
 
-            // إضافة 100 نقطة ترحيبية فوراً
             if (window.db && window.firebaseModules) {
                 try {
                     const { doc, getDoc, setDoc } = window.firebaseModules;
@@ -1881,16 +1886,16 @@
         }
 
         function showWelcomeModal() {
-            const welcomeModal = document.getElementById('welcomeOrderModal');
-            if (welcomeModal) welcomeModal.style.display = 'flex';
+            const welcomeOrderModal = document.getElementById('welcomeOrderModal');
+            if (welcomeOrderModal) welcomeOrderModal.style.display = 'flex';
         }
 
         function selectInitialOrderType(type) {
             selectedOrderType = type;
             safeSetStorage('storia_order_type', type);
             setInitialOrderTypeUI(type);
-            const welcomeModal = document.getElementById('welcomeOrderModal');
-            if (welcomeModal) welcomeModal.style.display = 'none';
+            const welcomeOrderModal = document.getElementById('welcomeOrderModal');
+            if (welcomeOrderModal) welcomeOrderModal.style.display = 'none';
 
             if (deferredPrompt || (isIosDevice() && !window.navigator.standalone)) {
                 const bar = document.getElementById('bottomInstallBar');
@@ -1960,6 +1965,8 @@
         function openDirectRatingFromPopup() {
             closeOverallToast();
             renderStarsUI(userSelectedOrderRating || 5.0);
+            const authorInp = document.getElementById('reviewAuthorNameInput');
+            if (authorInp) authorInp.value = safeGetStorage('storia_active_user_name', '');
             const notesInp = document.getElementById('reviewNotesInput');
             if (notesInp) notesInp.value = '';
             document.getElementById('orderReviewModal').style.display = 'flex';
@@ -2013,7 +2020,9 @@
             feedbackEl.innerText = currentLang === 'ar' ? textAr : textEn;
         }
 
+        // كتابة التقييم مع حفظ اسم العميل الشخصي بشكل صريح
         async function submitOrderReview() {
+            const authorName = (document.getElementById('reviewAuthorNameInput').value || '').trim() || safeGetStorage('storia_active_user_name', 'عميل ستوريا');
             const notes = document.getElementById('reviewNotesInput').value.trim();
             const modal = document.getElementById('orderReviewModal');
 
@@ -2021,7 +2030,7 @@
                 try {
                     const { collection, addDoc, doc, getDoc, setDoc } = window.firebaseModules;
                     await addDoc(collection(window.db, "restaurant_reviews"), {
-                        userName: safeGetStorage('storia_active_user_name', 'عميل ستوريا'),
+                        userName: authorName,
                         userPhone: activeUserPhone || '',
                         rating: userSelectedOrderRating,
                         notes: notes,
@@ -2065,6 +2074,7 @@
             if (modal) modal.style.display = 'none';
         }
 
+        // جلب وعرض تعليقات العملاء في النافذة العامة
         async function openOverallToast() {
             const score = document.getElementById('overallRatingScore').innerText || '5.0';
             const popupScore = document.getElementById('popupOverallScore');
@@ -2166,6 +2176,7 @@
             }
         }
 
+        // عرض التعليقات في لوحة الإدارة مع إظهار الأسماء الحقيقية
         async function renderAdminReviewsList() {
             const area = document.getElementById('adminReviewsListArea');
             if (!area) return;
@@ -2202,7 +2213,7 @@
                     card.innerHTML = `
                         <div style="flex:1; text-align:right;">
                             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;">
-                                <b style="color:var(--accent); font-size:0.85rem;">${r.userName || 'بدون اسم'} (📞 ${r.userPhone || 'غير مسجل'})</b>
+                                <b style="color:var(--accent); font-size:0.85rem;">👤 ${r.userName || 'عميل'} (📞 ${r.userPhone || 'غير مسجل'})</b>
                                 <span style="color:#f59e0b; font-weight:900; font-size:0.8rem;">⭐ ${r.rating || 5}</span>
                             </div>
                             <div style="font-size:0.80rem; font-weight:700; color:var(--main-text); margin-bottom:2px;">
@@ -2216,7 +2227,7 @@
                 });
             } catch(e) {
                 console.error("Admin reviews error:", e);
-                area.innerHTML = `<div style="text-align:center; padding:10px; color:#ef4444;">حدث خطأ: ${e.message || 'تعذر التحميل'}</div>`;
+                area.innerHTML = `<div style="text-align:center; padding:10px; color:#ef4444;">حدث خطأ أثناء تحميل التعليقات</div>`;
             }
         }
 
@@ -2283,7 +2294,6 @@
             }
         });
 
-        // الاستماع المباشر لقيمة النقطة بالجنيه وتحديثها فورياً
         function setupLivePointsRateListener() {
             if (!window.db || !window.firebaseModules) return;
             const { doc, onSnapshot } = window.firebaseModules;
@@ -2296,7 +2306,6 @@
             }, (err) => console.warn("Points rate listener fallback:", err));
         }
 
-        // تحديث رصيد النقاط والقيمة المالية بدقة بناءً على النسبة التي حددها الأدمن
         function updatePointsBadge(pts) {
             userLoyaltyPoints = Math.max(0, parseInt(pts) || 0);
             safeSetStorage('storia_user_pts', String(userLoyaltyPoints));
@@ -2309,7 +2318,6 @@
             if (badge) badge.innerText = userLoyaltyPoints;
             if (modalPts) modalPts.innerText = userLoyaltyPoints;
 
-            // حساب القيمة المالية بالجنيه حسب النسبة المحددة
             const singlePointValue = pointsMultiplierRate / 10;
             const monetaryValue = (userLoyaltyPoints * singlePointValue).toFixed(2);
             if (modalPtsVal) {
@@ -2363,7 +2371,7 @@
             document.getElementById('calculatedCashDisplay').innerText = `${cash} ج.م`;
         }
 
-        function generateCustomRedeemQr() {
+        function generateCustomRedeemBarcode() {
             const inputVal = parseInt(document.getElementById('customRedeemPointsInput').value) || 0;
             
             if (inputVal <= 0) {
@@ -2374,7 +2382,7 @@
             }
 
             closeRedeemSetupModal();
-            openMyRedeemQrModal(inputVal);
+            openMyRedeemBarcodeModal(inputVal);
         }
 
         function openScanReceiptModal() {
@@ -2388,7 +2396,7 @@
 
             html5QrScannerInstance.start(
                 { facingMode: "environment" },
-                { fps: 10, qrbox: { width: 250, height: 250 } },
+                { fps: 10, qrbox: { width: 280, height: 160 } },
                 onScanReceiptSuccess,
                 (errorMessage) => {}
             ).catch(err => {
@@ -2408,13 +2416,13 @@
             document.getElementById('scanReceiptModal').style.display = 'none';
         }
 
-        // مسح الفاتورة مع فك الشفرة بدقة ومنع أي عكس بين رقم الفاتورة وعدد النقاط
+        // مسح الباركود مع فك الشفرة بدقة ومنع أي عكس بين رقم الفاتورة وعدد النقاط
         async function onScanReceiptSuccess(decodedText) {
             closeScanReceiptModal();
             
             const raw = (decodedText || '').trim();
             if (!raw.startsWith('STORIA-INVOICE:')) {
-                return alert("⚠️ رمز QR غير صالح أو غير معتمد من مطعم ستوريا!");
+                return alert("⚠️ رمز باركود غير صالح أو غير معتمد من مطعم ستوريا!");
             }
 
             const parts = raw.split(':');
@@ -2422,21 +2430,20 @@
             let earnedPoints = 0;
             let isValidSig = false;
 
-            // فحص دقيق يدعم كلا التنسيقين: الصريح (INV/PTS) والترتيبي
             if (parts.length >= 4) {
                 if (parts[1].startsWith('INV=') && parts[2].startsWith('PTS=')) {
                     invId = parts[1].replace('INV=', '').trim();
                     earnedPoints = parseInt(parts[2].replace('PTS=', '')) || 0;
                     isValidSig = parts[3].trim() === 'SECURE_OK';
                 } else {
-                    invId = parts[1].trim(); // الجزء الأول دائماً هو رقم الفاتورة
-                    earnedPoints = parseInt(parts[2]) || 0; // الجزء الثاني دائماً هو عدد النقاط
+                    invId = parts[1].trim(); 
+                    earnedPoints = parseInt(parts[2]) || 0; 
                     isValidSig = parts[3].trim() === 'SECURE_OK';
                 }
             }
 
             if (!invId || earnedPoints <= 0 || !isValidSig) {
-                return alert("⚠️ رمز QR غير صالح أو به بيانات ناقصة!");
+                return alert("⚠️ رمز باركود غير صالح أو به بيانات ناقصة!");
             }
 
             if (!activeUserPhone) {
@@ -2450,17 +2457,15 @@
                     const usedSnap = await getDoc(usedRef);
 
                     if (usedSnap.exists()) {
-                        return alert("⚠️ تم مسح هذه الفاتورة وإضافة نقاطها مسبقاً! لا يمكن استخدام الفاتورة مرتين.");
+                        return alert("⚠️ تم مسح هذا الباركود وإضافة نقاط الفاتورة مسبقاً! لا يمكن استخدامه مرتين.");
                     }
 
-                    // قفل رقم الفاتورة للأبد
                     await setDoc(usedRef, {
                         usedBy: activeUserPhone,
                         pointsAdded: earnedPoints,
                         timestamp: Date.now()
                     });
 
-                    // إضافة النقاط للعميل
                     const userRef = doc(window.db, "loyalty_users", activeUserPhone);
                     const userSnap = await getDoc(userRef);
                     let currentPts = userSnap.exists() && userSnap.data().points !== undefined ? userSnap.data().points : 0;
@@ -2482,36 +2487,29 @@
             }
         }
 
-        function openMyRedeemQrModal(selectedPointsToRedeem) {
+        // توليد باركود خطي (Barcode Code128) لاستبدال النقاط
+        function openMyRedeemBarcodeModal(selectedPointsToRedeem) {
             const modal = document.getElementById('myRedeemQrModal');
             document.getElementById('redeemModalPts').innerText = selectedPointsToRedeem;
             const singlePointValue = pointsMultiplierRate / 10;
             document.getElementById('redeemModalCash').innerText = (selectedPointsToRedeem * singlePointValue).toFixed(2);
             
-            const box = document.getElementById('userQrCodeBox');
-            box.innerHTML = '';
-
             modal.style.display = 'flex';
 
-            const qrPayload = JSON.stringify({
-                app: "storia",
-                phone: activeUserPhone,
-                pts: selectedPointsToRedeem,
-                cash: (selectedPointsToRedeem * singlePointValue).toFixed(2),
-                ts: Date.now()
-            });
+            const barcodeData = `REDEEM-${activeUserPhone}-${selectedPointsToRedeem}`;
 
             try {
-                new QRCode(box, {
-                    text: qrPayload,
-                    width: 190,
-                    height: 190,
-                    colorDark: "#1b4d3e",
-                    colorLight: "#ffffff",
-                    correctLevel: QRCode.CorrectLevel.M
+                JsBarcode("#userBarcodeCanvas", barcodeData, {
+                    format: "CODE128",
+                    lineColor: "#1b4d3e",
+                    width: 2,
+                    height: 80,
+                    displayValue: true,
+                    fontSize: 14,
+                    text: `خصم ${selectedPointsToRedeem} نقطة`
                 });
             } catch(e) {
-                box.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=190x190&data=${encodeURIComponent(qrPayload)}&color=1b4d3e" style="width:190px; height:190px;" alt="QR Code">`;
+                console.error("Barcode generate error:", e);
             }
         }
 
@@ -2519,35 +2517,31 @@
             document.getElementById('myRedeemQrModal').style.display = 'none';
         }
 
-        // توليد باركود رسمي مشفر بصيغة لا تحتمل العكس نهائياً
-        function generateOfficialInvoiceQr() {
+        // توليد باركود رسمي للفاتورة بواسطة الإدارة
+        function generateOfficialInvoiceBarcode() {
             const inv = document.getElementById('adminGenInvNumber').value.trim();
             const pts = parseInt(document.getElementById('adminGenInvPoints').value) || 0;
             if (!inv || pts <= 0) {
                 return alert("يرجى إدخال رقم الفاتورة وعدد النقاط بشكل صحيح");
             }
 
-            const box = document.getElementById('generatedInvoiceQrBox');
-            box.innerHTML = '';
-
-            // كود رسمي يحمل علامات صريحة تمنع العكس
-            const qrData = `STORIA-INVOICE:INV=${inv}:PTS=${pts}:SECURE_OK`;
+            const barcodeData = `STORIA-INVOICE:INV=${inv}:PTS=${pts}:SECURE_OK`;
 
             try {
-                new QRCode(box, {
-                    text: qrData,
-                    width: 180,
-                    height: 180,
-                    colorDark: "#000000",
-                    colorLight: "#ffffff",
-                    correctLevel: QRCode.CorrectLevel.M
+                JsBarcode("#adminGeneratedBarcodeSvg", barcodeData, {
+                    format: "CODE128",
+                    lineColor: "#000000",
+                    width: 2,
+                    height: 80,
+                    displayValue: true,
+                    fontSize: 14,
+                    text: `فاتورة ${inv} - ${pts} نقطة`
                 });
             } catch(e) {
-                box.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrData)}" alt="QR">`;
+                console.error("Error creating barcode:", e);
             }
         }
 
-        // حفظ سعر تحويل النقاط من قبل الإدارة
         async function adminSavePointsRate() {
             const inputVal = parseFloat(document.getElementById('adminPointsRateInput').value) || 1.0;
             pointsMultiplierRate = Math.max(0.01, inputVal);
@@ -2567,7 +2561,7 @@
             closeFloatingModal('pointsRateModal');
         }
 
-        // جلب وترتيب العملاء التنازلي المباشر والسريع
+        // جلب وترتيب أعلى 100 عميل نقاطاً بشكل سريع ومحمي
         async function loadTopCustomersRank() {
             const listEl = document.getElementById('adminCustomersRankList');
             if (!window.db || !window.firebaseModules) {
@@ -2575,7 +2569,7 @@
                 return;
             }
 
-            listEl.innerHTML = '<div style="text-align: center; color: var(--desc-text); padding: 15px 0;">جاري جلب العملاء والترتيب...</div>';
+            listEl.innerHTML = '<div style="text-align: center; color: var(--desc-text); padding: 15px 0;">جاري جلب العملاء وترتيب أول 100...</div>';
 
             try {
                 const { collection, getDocs } = window.firebaseModules;
@@ -2598,11 +2592,11 @@
                 });
 
                 usersList.sort((a, b) => b.points - a.points);
-                const top50 = usersList.slice(0, 50);
+                const top100 = usersList.slice(0, 100);
 
                 let rankIndex = 1;
                 const singlePointValue = pointsMultiplierRate / 10;
-                top50.forEach(u => {
+                top100.forEach(u => {
                     const pts = u.points;
                     const phone = u.phone;
                     const card = document.createElement('div');
@@ -2654,11 +2648,11 @@
             }
             adminHtml5QrScannerInstance.start(
                 { facingMode: "environment" },
-                { fps: 10, qrbox: { width: 220, height: 220 } },
+                { fps: 10, qrbox: { width: 280, height: 160 } },
                 onAdminScanClientSuccess,
                 (err) => {}
             ).catch(() => {
-                alert("يرجى إعطاء صلاحية الكاميرا للكاشير لمسح الكود.");
+                alert("يرجى إعطاء صلاحية الكاميرا للكاشير لمسح الباركود.");
             });
         }
 
@@ -2673,7 +2667,11 @@
                 let clientPhone = null;
                 let requestedPts = 0;
 
-                if (decodedText.startsWith('{')) {
+                if (decodedText.startsWith('REDEEM-')) {
+                    const parts = decodedText.split('-');
+                    clientPhone = parts[1];
+                    requestedPts = parseInt(parts[2]) || 0;
+                } else if (decodedText.startsWith('{')) {
                     const parsed = JSON.parse(decodedText);
                     clientPhone = parsed.phone;
                     requestedPts = parseInt(parsed.pts) || 0;
@@ -3315,7 +3313,6 @@
             renderCartItems();
         }
 
-        // تم إلغاء إضافة النقاط نهائياً من إتمام الطلب لمنع أي ثغرات أو ازدواجية (النقاط بالكيو ار فقط)
         async function sendToWA() {
             const name = document.getElementById('uName').value.trim();
             const phone = document.getElementById('uPhone').value.trim() || activeUserPhone;
@@ -3368,7 +3365,7 @@
                         orderType: selectedOrderType,
                         items: itemsArrayForLog,
                         totalPrice: currentTotal,
-                        earnedPoints: 0, // لا نقاط تضاف هنا نهائياً
+                        earnedPoints: 0,
                         createdAt: new Date().toISOString(),
                         timestamp: Date.now()
                     });
