@@ -269,7 +269,6 @@
         .badge { position: absolute; top: -5px; right: -5px; background: #ef4444; color: #fff; font-size: 10px; font-weight: 800; width: 19px; height: 19px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--white); transform: scale(0); transition: 0.2s ease; }
         .badge.show { transform: scale(1); }
 
-        /* زر سري صغير للكاشير في الهيدر */
         .secret-cashier-trigger {
             width: 22px; height: 22px; opacity: 0.05; cursor: pointer;
             border-radius: 6px; display: flex; align-items: center; justify-content: center;
@@ -495,7 +494,6 @@
         .log-badge-type.in { background: #dcfce7; color: #15803d; }
         .log-badge-type.out { background: #fee2e2; color: #b91c1c; }
 
-        /* ستايل شاشة الكاشير والإنذار */
         .cashier-alarm-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(185, 28, 28, 0.95); z-index: 100000;
@@ -835,7 +833,6 @@
             </div>
             
             <div class="header-left-actions">
-                <!-- زر سري صغير بجانب زر اللغة يفتح شاشة الكاشير بضغطة مزدوجة -->
                 <div class="secret-cashier-trigger" onclick="handleSecretCashierTap()" title="·">🔒</div>
 
                 <button class="lang-toggle" onclick="toggleLanguage()" id="langBtn" title="تبديل اللغة / Switch Language">EN</button>
@@ -1472,7 +1469,7 @@
     <!-- كود إعدادات Firebase -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, onSnapshot, addDoc, deleteDoc, getDocs, query, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, onSnapshot, addDoc, deleteDoc, getDocs, query, limit, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyBq3bpV6hNVAsHlmBPzn9GAaF4K4r06REM",
@@ -1489,7 +1486,7 @@
             const db = getFirestore(app);
 
             window.db = db;
-            window.firebaseModules = { doc, getDoc, setDoc, updateDoc, collection, onSnapshot, addDoc, deleteDoc, getDocs, query, limit };
+            window.firebaseModules = { doc, getDoc, setDoc, updateDoc, collection, onSnapshot, addDoc, deleteDoc, getDocs, query, limit, orderBy };
             window.dispatchEvent(new Event('firebase-ready'));
         } catch(e) {
             console.warn("Firebase Init Error:", e);
@@ -1584,12 +1581,12 @@
         let pointsLogsLimit = 20;
         let allCachedLogs = [];
 
-        // متغيرات تنبيه جرس الكاشير المستمر
+        // متغيرات تنبيه جرس الكاشير المستمر وسرعة الاستجابة
         let isCashierAlarmActive = safeGetStorage('storia_cashier_alarm_enabled', 'false') === 'true';
         let audioContext = null;
         let alarmIntervalTimer = null;
         let isAlarmCurrentlyRinging = false;
-        let lastKnownOrderTimestamp = parseInt(safeGetStorage('storia_last_order_ts', '0')) || Date.now();
+        let isCashierFirstSnapshotLoad = true;
 
         let restaurantInfo = { 
             orderPhone: '201014144144', 
@@ -1976,7 +1973,6 @@
             }
         }
 
-        // دالة مساعدة لتسجيل حركة النقاط
         async function recordPointsLog(type, phone, points, invoiceId, details) {
             if (!window.db || !window.firebaseModules || !phone) return;
             try {
@@ -2330,7 +2326,6 @@
             }
         }
 
-        // نقرة مزدوجة على الزر السري في الهيدر لفتح شاشة الكاشير
         function handleSecretCashierTap() {
             const currentTime = new Date().getTime();
             const tapGap = currentTime - lastSecretTapTime;
@@ -2978,15 +2973,24 @@
             }
         }
 
-        /* ------------------ نظام صوت وجرس الكاشير المستمر ------------------ */
+        /* ------------------ نظام صوت وجرس الكاشير المستمر وسرعة الاستجابة ------------------ */
         function initAudioContext() {
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioContext && audioContext.state === 'suspended') {
-                audioContext.resume();
-            }
+            try {
+                if (!audioContext) {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioContext && audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+            } catch(e) {}
         }
+
+        // إتاحة تشغيل الصوت فور نقر المستخدم في أي مكان
+        ['click', 'touchstart'].forEach(evt => {
+            window.addEventListener(evt, () => {
+                if (isCashierAlarmActive) initAudioContext();
+            }, { once: false, passive: true });
+        });
 
         function playBeepSound() {
             try {
@@ -2995,7 +2999,7 @@
                 const osc = audioContext.createOscillator();
                 const gain = audioContext.createGain();
                 osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(880, audioContext.currentTime); // نغمة إنذار حادة
+                osc.frequency.setValueAtTime(880, audioContext.currentTime);
                 gain.gain.setValueAtTime(0.3, audioContext.currentTime);
                 osc.connect(gain);
                 gain.connect(audioContext.destination);
@@ -3017,7 +3021,7 @@
             if (alarmIntervalTimer) clearInterval(alarmIntervalTimer);
             alarmIntervalTimer = setInterval(() => {
                 playBeepSound();
-            }, 650); // يرن بشكل مستمر كل ثانية تقريباً
+            }, 650);
         }
 
         function stopCashierAlarm() {
@@ -3057,16 +3061,30 @@
             }
         }
 
-        // الاستماع المباشر لطلبات الكاشير مع تشغيل الجرس عند أي طلب جديد
+        // استماع فوري عالي السرعة لطلبات الكاشير مع تشغيل الجرس عند أي طلب جديد لحظياً
         let cashierOrdersUnsubscribe = null;
         function setupLiveCashierOrdersListener() {
             if (!window.db || !window.firebaseModules) return;
-            const { collection, onSnapshot, query, limit } = window.firebaseModules;
+            const { collection, onSnapshot, query, limit, orderBy } = window.firebaseModules;
             if (cashierOrdersUnsubscribe) cashierOrdersUnsubscribe();
 
-            const q = query(collection(window.db, "orders"), limit(50));
+            isCashierFirstSnapshotLoad = true;
+
+            const q = query(collection(window.db, "orders"), orderBy("timestamp", "desc"), limit(50));
             cashierOrdersUnsubscribe = onSnapshot(q, (snapshot) => {
                 const logsEl = document.getElementById('cashierOrdersLogsList');
+                
+                // رصد الطلبات الجديدة فورياً بالـ docChanges
+                if (!isCashierFirstSnapshotLoad) {
+                    snapshot.docChanges().forEach((change) => {
+                        if (change.type === "added") {
+                            const newOrd = change.doc.data();
+                            startContinuousAlarm(`أوردر جديد: ${newOrd.userName || 'زبون'} (${newOrd.totalPrice || 0} ج.م)`);
+                        }
+                    });
+                }
+                isCashierFirstSnapshotLoad = false;
+
                 if (logsEl) logsEl.innerHTML = '';
 
                 if (snapshot.empty) {
@@ -3074,29 +3092,9 @@
                     return;
                 }
 
-                let ordersArr = [];
-                let newestTimestamp = lastKnownOrderTimestamp;
-
-                snapshot.forEach((d) => {
-                    const data = d.data();
-                    ordersArr.push({ id: d.id, ...data });
-                    if (data.timestamp && data.timestamp > newestTimestamp) {
-                        newestTimestamp = data.timestamp;
-                    }
-                });
-
-                ordersArr.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-
-                // فحص إذا وصل طلب جديد بعد فتح وضع الكاشير لتشغيل الجرس المستمر
-                if (newestTimestamp > lastKnownOrderTimestamp) {
-                    const latestOrder = ordersArr[0];
-                    lastKnownOrderTimestamp = newestTimestamp;
-                    safeSetStorage('storia_last_order_ts', String(newestTimestamp));
-                    startContinuousAlarm(`أوردر جديد: ${latestOrder.userName || 'زبون'} (${latestOrder.totalPrice || 0} ج.م)`);
-                }
-
                 if (logsEl) {
-                    ordersArr.forEach((ord) => {
+                    snapshot.forEach((d) => {
+                        const ord = d.data();
                         const card = document.createElement('div');
                         card.className = 'admin-order-card';
                         const timeStr = ord.timestamp ? new Date(ord.timestamp).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }) : '';
@@ -3114,13 +3112,13 @@
                             </div>
                             ${ord.userAddr ? `<div style="font-size:0.75rem; color:#b91c1c; margin-bottom:8px;">📍 ${ord.userAddr}</div>` : ''}
                             <div style="display:flex; gap:6px;">
-                                <button style="flex:1; background:#25D366; color:#fff; border:none; padding:6px; border-radius:8px; font-weight:800; cursor:pointer;" onclick="openChatModal('${ord.id}', 'admin', '${(ord.userName||'العميل').replace(/'/g, "\\'")}')">💬 فتح الشات</button>
+                                <button style="flex:1; background:#25D366; color:#fff; border:none; padding:6px; border-radius:8px; font-weight:800; cursor:pointer;" onclick="openChatModal('${d.id}', 'admin', '${(ord.userName||'العميل').replace(/'/g, "\\'")}')">💬 فتح الشات</button>
                             </div>
                         `;
                         logsEl.appendChild(card);
                     });
                 }
-            }, (err) => console.warn("Cashier orders fallback:", err));
+            }, (err) => console.warn("Cashier orders listener:", err));
         }
 
         /* ------------------ التحقق من كلمة مرور الكاشير ------------------ */
@@ -3148,10 +3146,11 @@
             }
 
             if (!savedPass) {
-                savedPass = '123'; // الباسورد الافتراضي
+                savedPass = '123';
             }
 
             if (pass === savedPass) {
+                initAudioContext();
                 document.getElementById('cashierAuthModal').style.display = 'none';
                 document.getElementById('cashierOrdersModal').style.display = 'flex';
                 updateCashierAlarmUI();
@@ -3803,27 +3802,29 @@
             orderText += `------------------------------------\n`;
             orderText += `*${currentLang==='ar'?'الإجمالي الكلي:':'Total Amount:'}* ${currentTotal.toFixed(2)} ${t.currency}\n`;
 
-            try {
-                if (window.db && window.firebaseModules) {
-                    const { collection, addDoc } = window.firebaseModules;
-                    const orderDoc = await addDoc(collection(window.db, "orders"), {
-                        userName: name,
-                        userPhone: phone,
-                        userAddr: addr || '',
-                        orderType: selectedOrderType,
-                        items: itemsArrayForLog,
-                        totalPrice: currentTotal,
-                        earnedPoints: 0,
-                        createdAt: new Date().toISOString(),
-                        timestamp: Date.now()
-                    });
+            const activeOrderTotal = currentTotal;
+            const activeOrderCart = [...cart];
 
+            // حفظ الطلب في فايربيس فورياً
+            if (window.db && window.firebaseModules) {
+                const { collection, addDoc } = window.firebaseModules;
+                addDoc(collection(window.db, "orders"), {
+                    userName: name,
+                    userPhone: phone,
+                    userAddr: addr || '',
+                    orderType: selectedOrderType,
+                    items: itemsArrayForLog,
+                    totalPrice: activeOrderTotal,
+                    earnedPoints: 0,
+                    createdAt: new Date().toISOString(),
+                    timestamp: Date.now()
+                }).then(orderDoc => {
                     safeSetStorage('storia_active_order_id', orderDoc.id);
                     safeSetStorage('storia_active_user_name', name);
                     showClientHeaderChatButton();
-                }
-            } catch(e) {
-                console.error("Error saving order:", e);
+                }).catch(e => {
+                    console.error("Error saving order:", e);
+                });
             }
 
             toggleCart(false);
