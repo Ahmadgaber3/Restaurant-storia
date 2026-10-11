@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -463,6 +463,31 @@
         .admin-review-card { background: var(--white); border: 1px solid var(--border-color); border-radius: 14px; padding: 10px 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
         .admin-del-rev-btn { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; padding: 6px 10px; border-radius: 10px; font-weight: 800; font-size: 0.75rem; cursor: pointer; white-space: nowrap; }
         .admin-del-rev-btn:active { transform: scale(0.95); }
+
+        /* ستايل سجل حركات النقاط للإدارة */
+        .log-item-card {
+            background: var(--bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .log-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .log-badge-type {
+            font-size: 0.75rem;
+            font-weight: 900;
+            padding: 3px 8px;
+            border-radius: 8px;
+        }
+        .log-badge-type.in { background: #dcfce7; color: #15803d; }
+        .log-badge-type.out { background: #fee2e2; color: #b91c1c; }
 
         .restaurant-footer { padding: 26px 16px 30px 16px; text-align: center; background: var(--white); border-top: 1px solid var(--border-color); margin-top: 25px; width: 100%; }
         .footer-rights { font-size: 0.90rem; color: var(--main-text); font-weight: 900; margin-bottom: 4px; }
@@ -1019,6 +1044,13 @@
                         <div class="card-subtitle">الترتيب من الأعلى للأقل (تحميل فوري)</div>
                     </div>
 
+                    <div class="admin-nav-card" onclick="openFloatingModal('pointsLogsModal')">
+                        <div class="card-badge-num">📜</div>
+                        <div class="card-avatar-box">🔄</div>
+                        <div class="card-title">سجل حركات النقاط</div>
+                        <div class="card-subtitle">إضافة وخصم النقاط بالتفصيل</div>
+                    </div>
+
                     <div class="admin-nav-card" onclick="openFloatingModal('adminScanRedeemModal')">
                         <div class="card-badge-num">📷</div>
                         <div class="card-avatar-box">💳</div>
@@ -1090,6 +1122,27 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- نافذة سجل حركات النقاط المُنظمة مع عرض المزيد للحفاظ على الباقة -->
+    <div class="floating-sub-modal" id="pointsLogsModal" onclick="if(event.target==this) closeFloatingModal('pointsLogsModal')">
+        <div class="floating-card-box">
+            <div class="floating-header">
+                <h4>📜 سجل حركات وعمليات النقاط</h4>
+                <button class="admin-close" onclick="closeFloatingModal('pointsLogsModal')">✕</button>
+            </div>
+            <div style="font-size: 0.8rem; font-weight: 700; color: var(--desc-text); margin-bottom: 10px;">
+                يظهر أدناه كل ما يخص إضافة وخصم النقاط للعملاء بالتاريخ والوقت:
+            </div>
+            
+            <div id="adminPointsLogsArea">
+                <div style="text-align: center; color: var(--desc-text); padding: 15px 0;">جاري تحميل السجل...</div>
+            </div>
+
+            <button id="loadMoreLogsBtn" style="display: none; width: 100%; padding: 10px; margin-top: 8px; border-radius: 12px; background: #e2e8f0; border: 1px solid #cbd5e1; font-weight: 800; cursor: pointer; color: var(--main-text);" onclick="fetchPointsLogs(true)">
+                عرض المزيد ⬇️
+            </button>
         </div>
     </div>
 
@@ -1252,7 +1305,7 @@
                 <input type="tel" id="edit_nasr_display_phone2" placeholder="01014144144">
             </div>
             <div class="admin-custom-input-group">
-                <label>⚠️️ رقم الشكاوى:</label>
+                <label>⚠️ رقم الشكاوى:</label>
                 <input type="tel" id="edit_nasr_complaint_phone" placeholder="01014144144">
             </div>
 
@@ -1417,7 +1470,7 @@
 
         let currentLang = safeGetStorage('storia_lang', 'ar');
         let priceMarkupPercentage = parseFloat(safeGetStorage('storia_price_markup', '0')) || 0;
-        let pointsMultiplierRate = parseFloat(safeGetStorage('storia_points_rate', '1.0')) || 1.0; // كل 10 نقاط = 1 جنيه افتراضياً
+        let pointsMultiplierRate = parseFloat(safeGetStorage('storia_points_rate', '1.0')) || 1.0;
         let menuData = [];
         let cart = [];
         let currentTotal = 0; 
@@ -1446,6 +1499,10 @@
         let lastLogoTapTime = 0;
         let html5QrScannerInstance = null;
         let adminHtml5QrScannerInstance = null;
+
+        // متغيرات تتبع تصفح سجل حركات النقاط لتوفير استهلاك Firebase
+        let pointsLogsLimit = 20;
+        let allCachedLogs = [];
 
         let restaurantInfo = { 
             orderPhone: '201014144144', 
@@ -1832,6 +1889,26 @@
             }
         }
 
+        // دالة مساعدة لتسجيل حركة النقاط في قاعدة البيانات
+        async function recordPointsLog(type, phone, points, invoiceId, details) {
+            if (!window.db || !window.firebaseModules || !phone) return;
+            try {
+                const { collection, addDoc } = window.firebaseModules;
+                await addDoc(collection(window.db, "loyalty_logs"), {
+                    type: type, // 'in' لإضافة أو 'out' لخصم
+                    phone: phone,
+                    userName: safeGetStorage('storia_active_user_name', 'عميل ستوريا'),
+                    points: Number(points),
+                    invoiceId: invoiceId || 'بدون فاتورة',
+                    details: details || '',
+                    timestamp: Date.now(),
+                    dateStr: new Date().toLocaleString('ar-EG', { dateStyle: 'short', timeStyle: 'short' })
+                });
+            } catch(e) {
+                console.warn("Log saving fallback:", e);
+            }
+        }
+
         async function submitUserGatePhone() {
             const phoneInput = document.getElementById('gateUserPhoneInput');
             const phone = (phoneInput.value || '').trim();
@@ -1842,7 +1919,7 @@
             activeUserPhone = phone;
             safeSetStorage('storia_user_phone', phone);
 
-            // إضافة 100 نقطة ترحيبية فوراً
+            // إضافة 100 نقطة ترحيبية فوراً مع تسجيلها في السجل
             if (window.db && window.firebaseModules) {
                 try {
                     const { doc, getDoc, setDoc } = window.firebaseModules;
@@ -1858,6 +1935,7 @@
                         });
                         userLoyaltyPoints = 100;
                         safeSetStorage('storia_user_pts', '100');
+                        recordPointsLog('in', phone, 100, 'هدية ترحيبية', 'تسجيل حساب جديد في التطبيق');
                         alert('🎉 مبروك! تم تسجيل حسابك وحصلت على 100 نقطة هدية ترحيبية!');
                     } else {
                         userLoyaltyPoints = userSnap.data().points !== undefined ? userSnap.data().points : 100;
@@ -2283,7 +2361,6 @@
             }
         });
 
-        // الاستماع المباشر لقيمة النقطة بالجنيه وتحديثها فورياً
         function setupLivePointsRateListener() {
             if (!window.db || !window.firebaseModules) return;
             const { doc, onSnapshot } = window.firebaseModules;
@@ -2296,7 +2373,6 @@
             }, (err) => console.warn("Points rate listener fallback:", err));
         }
 
-        // تحديث رصيد النقاط والقيمة المالية بدقة بناءً على النسبة التي حددها الأدمن
         function updatePointsBadge(pts) {
             userLoyaltyPoints = Math.max(0, parseInt(pts) || 0);
             safeSetStorage('storia_user_pts', String(userLoyaltyPoints));
@@ -2309,7 +2385,6 @@
             if (badge) badge.innerText = userLoyaltyPoints;
             if (modalPts) modalPts.innerText = userLoyaltyPoints;
 
-            // حساب القيمة المالية بالجنيه حسب النسبة المحددة
             const singlePointValue = pointsMultiplierRate / 10;
             const monetaryValue = (userLoyaltyPoints * singlePointValue).toFixed(2);
             if (modalPtsVal) {
@@ -2408,7 +2483,7 @@
             document.getElementById('scanReceiptModal').style.display = 'none';
         }
 
-        // مسح الفاتورة مع فك الشفرة بدقة ومنع أي عكس بين رقم الفاتورة وعدد النقاط
+        // مسح الفاتورة مع فك الشفرة بدقة وتسجيل الحركة في السجل
         async function onScanReceiptSuccess(decodedText) {
             closeScanReceiptModal();
             
@@ -2422,15 +2497,14 @@
             let earnedPoints = 0;
             let isValidSig = false;
 
-            // فحص دقيق يدعم كلا التنسيقين: الصريح (INV/PTS) والترتيبي
             if (parts.length >= 4) {
                 if (parts[1].startsWith('INV=') && parts[2].startsWith('PTS=')) {
                     invId = parts[1].replace('INV=', '').trim();
                     earnedPoints = parseInt(parts[2].replace('PTS=', '')) || 0;
                     isValidSig = parts[3].trim() === 'SECURE_OK';
                 } else {
-                    invId = parts[1].trim(); // الجزء الأول دائماً هو رقم الفاتورة
-                    earnedPoints = parseInt(parts[2]) || 0; // الجزء الثاني دائماً هو عدد النقاط
+                    invId = parts[1].trim();
+                    earnedPoints = parseInt(parts[2]) || 0;
                     isValidSig = parts[3].trim() === 'SECURE_OK';
                 }
             }
@@ -2473,6 +2547,10 @@
                     }, { merge: true });
 
                     updatePointsBadge(newPts);
+
+                    // تسجيل الحركة فورياً في سجل العمليات
+                    recordPointsLog('in', activeUserPhone, earnedPoints, invId, 'مسح كود الفاتورة وإضافة نقاط');
+
                     alert(`🎉 تم إضافة +${earnedPoints} نقطة إلى محفظتك بنجاح من الفاتورة رقم (${invId})!`);
                     openLoyaltyModal();
                 } catch(e) {
@@ -2519,7 +2597,6 @@
             document.getElementById('myRedeemQrModal').style.display = 'none';
         }
 
-        // توليد باركود رسمي مشفر بصيغة لا تحتمل العكس نهائياً
         function generateOfficialInvoiceQr() {
             const inv = document.getElementById('adminGenInvNumber').value.trim();
             const pts = parseInt(document.getElementById('adminGenInvPoints').value) || 0;
@@ -2530,7 +2607,6 @@
             const box = document.getElementById('generatedInvoiceQrBox');
             box.innerHTML = '';
 
-            // كود رسمي يحمل علامات صريحة تمنع العكس
             const qrData = `STORIA-INVOICE:INV=${inv}:PTS=${pts}:SECURE_OK`;
 
             try {
@@ -2547,7 +2623,6 @@
             }
         }
 
-        // حفظ سعر تحويل النقاط من قبل الإدارة
         async function adminSavePointsRate() {
             const inputVal = parseFloat(document.getElementById('adminPointsRateInput').value) || 1.0;
             pointsMultiplierRate = Math.max(0.01, inputVal);
@@ -2567,7 +2642,6 @@
             closeFloatingModal('pointsRateModal');
         }
 
-        // جلب وترتيب العملاء التنازلي المباشر والسريع
         async function loadTopCustomersRank() {
             const listEl = document.getElementById('adminCustomersRankList');
             if (!window.db || !window.firebaseModules) {
@@ -2631,6 +2705,84 @@
             } catch(e) {
                 console.error("Error loading top customers:", e);
                 listEl.innerHTML = `<div style="text-align: center; color: #b91c1c; padding: 15px 0;">حدث خطأ: ${e.message || 'تعذر جلب البيانات'}</div>`;
+            }
+        }
+
+        // دالة جلب وعرض سجل حركات النقاط مع Pagination لتوفير الحصة المجانية
+        async function fetchPointsLogs(loadMore = false) {
+            const area = document.getElementById('adminPointsLogsArea');
+            const loadMoreBtn = document.getElementById('loadMoreLogsBtn');
+            if (!area) return;
+
+            if (!loadMore) {
+                pointsLogsLimit = 20;
+                area.innerHTML = '<div style="text-align: center; color: var(--desc-text); padding: 15px 0;">جاري تحميل العمليات...</div>';
+            } else {
+                pointsLogsLimit += 20;
+            }
+
+            try {
+                if (!loadMore || allCachedLogs.length === 0) {
+                    const { collection, getDocs } = window.firebaseModules;
+                    const snap = await getDocs(collection(window.db, "loyalty_logs"));
+
+                    allCachedLogs = [];
+                    snap.forEach(docSnap => {
+                        allCachedLogs.push({ id: docSnap.id, ...docSnap.data() });
+                    });
+
+                    // ترتيب العمليات من الأحدث للأقدم
+                    allCachedLogs.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                }
+
+                area.innerHTML = '';
+                if (allCachedLogs.length === 0) {
+                    area.innerHTML = '<div style="text-align: center; color: var(--desc-text); padding: 15px 0;">لا توجد أي حركات نقاط مسجلة حتى الآن.</div>';
+                    if (loadMoreBtn) loadMoreBtn.style.display = 'none';
+                    return;
+                }
+
+                const currentLogsToShow = allCachedLogs.slice(0, pointsLogsLimit);
+
+                currentLogsToShow.forEach(log => {
+                    const isAddition = log.type === 'in';
+                    const card = document.createElement('div');
+                    card.className = 'log-item-card';
+
+                    const sign = isAddition ? '+' : '-';
+                    const badgeText = isAddition ? 'إضافة نقاط 🟢' : 'خصم نقاط 🔴';
+                    const badgeClass = isAddition ? 'in' : 'out';
+
+                    card.innerHTML = `
+                        <div class="log-header-row">
+                            <span class="log-badge-type ${badgeClass}">${badgeText}</span>
+                            <span style="font-size: 0.72rem; color: var(--desc-text); font-weight: 700;">${log.dateStr || ''}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 3px;">
+                            <div>
+                                <b style="font-size: 0.88rem; color: var(--main-text);">${log.userName || 'عميل'}</b>
+                                <span style="font-size: 0.75rem; color: var(--desc-text); display: block;">📱 ${log.phone || ''}</span>
+                            </div>
+                            <div style="font-weight: 900; font-size: 1.15rem; color: ${isAddition ? '#15803d' : '#b91c1c'}; direction: ltr;">
+                                ${sign}${log.points} نقطة
+                            </div>
+                        </div>
+                        <div style="font-size: 0.72rem; color: var(--desc-text); margin-top: 2px;">
+                            🧾 رقم الفاتورة: <b style="color: var(--accent);">${log.invoiceId || 'بدون'}</b> | ${log.details || ''}
+                        </div>
+                    `;
+                    area.appendChild(card);
+                });
+
+                // إظهار أو إخفاء زر عرض المزيد
+                if (loadMoreBtn) {
+                    loadMoreBtn.style.display = (pointsLogsLimit < allCachedLogs.length) ? 'block' : 'none';
+                }
+
+            } catch(e) {
+                console.error("Error fetching logs:", e);
+                area.innerHTML = `<div style="text-align: center; color: #b91c1c; padding: 10px 0;">حدث خطأ في تحميل السجل: ${e.message || ''}</div>`;
+                if (loadMoreBtn) loadMoreBtn.style.display = 'none';
             }
         }
 
@@ -2720,6 +2872,9 @@
 
                 const newBalance = Math.max(0, currentPts - ptsToDeduct);
                 await setDoc(userRef, { points: newBalance }, { merge: true });
+
+                // تسجيل حركة الخصم في سجل العمليات
+                recordPointsLog('out', scannedCustomerPhone, ptsToDeduct, 'استبدال كاشير', 'خصم نقاط مقابل مشتريات');
 
                 if (activeUserPhone === scannedCustomerPhone) {
                     updatePointsBadge(newBalance);
@@ -3315,7 +3470,6 @@
             renderCartItems();
         }
 
-        // تم إلغاء إضافة النقاط نهائياً من إتمام الطلب لمنع أي ثغرات أو ازدواجية (النقاط بالكيو ار فقط)
         async function sendToWA() {
             const name = document.getElementById('uName').value.trim();
             const phone = document.getElementById('uPhone').value.trim() || activeUserPhone;
@@ -3368,7 +3522,7 @@
                         orderType: selectedOrderType,
                         items: itemsArrayForLog,
                         totalPrice: currentTotal,
-                        earnedPoints: 0, // لا نقاط تضاف هنا نهائياً
+                        earnedPoints: 0,
                         createdAt: new Date().toISOString(),
                         timestamp: Date.now()
                     });
@@ -3554,6 +3708,9 @@
                 }
                 if (id === 'adminReviewsModal') {
                     renderAdminReviewsList();
+                }
+                if (id === 'pointsLogsModal') {
+                    fetchPointsLogs(false);
                 }
                 if (id === 'adminScanRedeemModal') {
                     startAdminRedeemCamera();
@@ -3799,7 +3956,7 @@
             if (window.db && window.firebaseModules) {
                 const { doc, getDoc } = window.firebaseModules;
                 const snap = await getDoc(doc(window.db, "loyalty_users", phone));
-                const pts = snap.exists() && snap.data().points !== undefined ? snap.data().points : 0;
+                const pts = snap.exists() ? (snap.data().points || 0) : 0;
                 document.getElementById('adminClientCurrentPts').innerText = pts;
                 document.getElementById('adminClientNewPtsInput').value = pts;
                 document.getElementById('adminLoyaltyResultBox').style.display = 'block';
@@ -3809,9 +3966,21 @@
         async function adminSaveClientPoints() {
             const newPts = parseInt(document.getElementById('adminClientNewPtsInput').value) || 0;
             if (window.db && window.firebaseModules && adminSearchedPhone) {
-                const { doc, setDoc } = window.firebaseModules;
+                const { doc, setDoc, getDoc } = window.firebaseModules;
+                
+                // معرفة الفرق لتسجيله في الحركات
+                const snap = await getDoc(doc(window.db, "loyalty_users", adminSearchedPhone));
+                const oldPts = snap.exists() && snap.data().points !== undefined ? snap.data().points : 0;
+                const diff = newPts - oldPts;
+
                 await setDoc(doc(window.db, "loyalty_users", adminSearchedPhone), { points: newPts }, { merge: true });
                 document.getElementById('adminClientCurrentPts').innerText = newPts;
+
+                if (diff !== 0) {
+                    const isPlus = diff > 0;
+                    recordPointsLog(isPlus ? 'in' : 'out', adminSearchedPhone, Math.abs(diff), 'تعديل إدارة', 'تعديل رصيد يدوي من الإدارة');
+                }
+
                 alert(currentLang === 'ar' ? 'تم تعديل رصيد العميل بنجاح!' : 'Client points balance updated successfully!');
             }
         }
