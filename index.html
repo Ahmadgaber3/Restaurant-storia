@@ -269,6 +269,13 @@
         .badge { position: absolute; top: -5px; right: -5px; background: #ef4444; color: #fff; font-size: 10px; font-weight: 800; width: 19px; height: 19px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--white); transform: scale(0); transition: 0.2s ease; }
         .badge.show { transform: scale(1); }
 
+        /* زر سري صغير للكاشير في الهيدر */
+        .secret-cashier-trigger {
+            width: 22px; height: 22px; opacity: 0.05; cursor: pointer;
+            border-radius: 6px; display: flex; align-items: center; justify-content: center;
+            font-size: 0.6rem; user-select: none;
+        }
+
         .header-logo-container { 
             position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); -webkit-transform: translate(-50%, -50%);
             width: 105px; height: 105px; border-radius: 20px; background: var(--white); padding: 6px; box-shadow: 0 4px 15px var(--card-shadow); 
@@ -464,7 +471,6 @@
         .admin-del-rev-btn { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; padding: 6px 10px; border-radius: 10px; font-weight: 800; font-size: 0.75rem; cursor: pointer; white-space: nowrap; }
         .admin-del-rev-btn:active { transform: scale(0.95); }
 
-        /* ستايل سجل حركات النقاط للإدارة */
         .log-item-card {
             background: var(--bg);
             border: 1px solid var(--border-color);
@@ -488,6 +494,26 @@
         }
         .log-badge-type.in { background: #dcfce7; color: #15803d; }
         .log-badge-type.out { background: #fee2e2; color: #b91c1c; }
+
+        /* ستايل شاشة الكاشير والإنذار */
+        .cashier-alarm-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(185, 28, 28, 0.95); z-index: 100000;
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            padding: 24px; text-align: center; color: #fff;
+            animation: pulseBg 1s infinite alternate;
+        }
+        @keyframes pulseBg {
+            from { background: rgba(185, 28, 28, 0.92); }
+            to { background: rgba(239, 68, 68, 0.98); }
+        }
+        .stop-alarm-btn {
+            background: #ffffff; color: #b91c1c; border: none;
+            padding: 18px 36px; border-radius: 20px; font-weight: 900;
+            font-size: 1.25rem; cursor: pointer; margin-top: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+        .stop-alarm-btn:active { transform: scale(0.95); }
 
         .restaurant-footer { padding: 26px 16px 30px 16px; text-align: center; background: var(--white); border-top: 1px solid var(--border-color); margin-top: 25px; width: 100%; }
         .footer-rights { font-size: 0.90rem; color: var(--main-text); font-weight: 900; margin-bottom: 4px; }
@@ -642,6 +668,14 @@
     </style>
 </head>
 <body>
+
+    <!-- شاشة الإنذار المستمرة للطلب الجديد الخاص بالكاشير -->
+    <div class="cashier-alarm-overlay" id="cashierAlarmOverlay">
+        <span style="font-size: 4rem;">🚨</span>
+        <h1 style="font-size: 1.8rem; font-weight: 900; margin-top: 10px;">أوردر جديد وارد الآن!</h1>
+        <p style="font-size: 1rem; opacity: 0.95; margin-top: 6px;" id="alarmOrderSummary">يرجى فحص شاشة الكاشير فوراً</p>
+        <button class="stop-alarm-btn" onclick="stopCashierAlarm()">🔕 إيقاف الجرس واستلام الطلب</button>
+    </div>
 
     <div class="ios-inapp-banner" id="iosInAppBanner">
         <div class="ios-inapp-content">
@@ -801,6 +835,9 @@
             </div>
             
             <div class="header-left-actions">
+                <!-- زر سري صغير بجانب زر اللغة يفتح شاشة الكاشير بضغطة مزدوجة -->
+                <div class="secret-cashier-trigger" onclick="handleSecretCashierTap()" title="·">🔒</div>
+
                 <button class="lang-toggle" onclick="toggleLanguage()" id="langBtn" title="تبديل اللغة / Switch Language">EN</button>
                 <div class="cart-trigger" onclick="toggleCart(true)" id="cartBtn" title="عربة الطلبات">
                     <span class="badge" id="cartBadge">0</span>
@@ -1019,7 +1056,45 @@
         </div>
     </div>
 
-    <!-- لوحة التحكم الإدارية -->
+    <!-- نافذة تسجيل دخول الكاشير المستقلة (باسورد: 123) -->
+    <div class="floating-sub-modal" id="cashierAuthModal" style="z-index: 8200;" onclick="if(event.target==this) closeFloatingModal('cashierAuthModal')">
+        <div class="floating-card-box" style="text-align: center; max-width: 360px;">
+            <div class="floating-header">
+                <h4>🔒 شاشة كاشير ستوريا</h4>
+                <button class="admin-close" onclick="closeFloatingModal('cashierAuthModal')">✕</button>
+            </div>
+            <div class="pass-form">
+                <p style="margin-bottom: 12px; font-weight: 800; font-size: 0.88rem; color: var(--desc-text);">أدخل كلمة مرور الكاشير للمتابعة:</p>
+                <input type="password" id="cashierPassInput" placeholder="كلمة المرور" autofocus onkeydown="if(event.key==='Enter') verifyCashierPassword()">
+                <button onclick="verifyCashierPassword()">دخول شاشة الكاشير</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- شاشة سجل الأوردرات المستقلة الخاصة بالكاشير فقط مع تنبيه الجرس -->
+    <div class="floating-sub-modal" id="cashierOrdersModal" style="z-index: 8300;" onclick="if(event.target==this) closeFloatingModal('cashierOrdersModal')">
+        <div class="floating-card-box">
+            <div class="floating-header">
+                <h4>🛎️ سجل طلبات الكاشير (Live)</h4>
+                <button class="admin-close" onclick="closeFloatingModal('cashierOrdersModal')">✕</button>
+            </div>
+
+            <!-- زر تفعيل وضع الجرس المستمر لجهاز الكاشير -->
+            <div style="background: rgba(27, 77, 62, 0.08); border: 1.5px solid var(--accent); border-radius: 14px; padding: 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                    <b style="font-size: 0.88rem; color: var(--accent);">جرس التنبيه المستمر</b>
+                    <span style="font-size: 0.72rem; color: var(--desc-text); display: block;">يرن تلقائياً عند وصول أي أوردر جديد</span>
+                </div>
+                <button id="toggleAlarmModeBtn" onclick="toggleCashierAlarmSystem()" style="background: #1b4d3e; color: white; border: none; padding: 8px 14px; border-radius: 10px; font-weight: 900; font-size: 0.8rem; cursor: pointer;">
+                    🔔 تفعيل التنبيه
+                </button>
+            </div>
+
+            <div id="cashierOrdersLogsList">جاري تحميل الطلبات...</div>
+        </div>
+    </div>
+
+    <!-- لوحة التحكم الإدارية الكاملة للمدير -->
     <div class="admin-modal" id="adminModal" onclick="if(event.target==this) closeAdminPanel()">
         <div class="admin-box">
             <div class="admin-header">
@@ -1100,11 +1175,11 @@
                         <div class="card-subtitle">تشغيل وإيقاف الوجبات والمشروبات</div>
                     </div>
 
-                    <div class="admin-nav-card" onclick="openFloatingModal('logsModal')">
+                    <div class="admin-nav-card" onclick="openFloatingModal('cashierPasswordModal')">
                         <div class="card-badge-num gray">2</div>
-                        <div class="card-avatar-box">📜</div>
-                        <div class="card-title">الطلبات الواردة</div>
-                        <div class="card-subtitle">عرض آخر 50 طلب مع الشات المباشر</div>
+                        <div class="card-avatar-box">🔑</div>
+                        <div class="card-title">باسورد شاشة الكاشير</div>
+                        <div class="card-subtitle">تغيير رمز دخول الكاشير</div>
                     </div>
 
                     <div class="admin-nav-card" onclick="openFloatingModal('contactsModal')">
@@ -1114,10 +1189,10 @@
                         <div class="card-subtitle">تعديل رقم واتساب والأرقام</div>
                     </div>
 
-                    <div class="admin-nav-card" onclick="openFloatingModal('passwordModal')" style="grid-column: span 2;">
+                    <div class="admin-nav-card" onclick="openFloatingModal('passwordModal')">
                         <div class="card-badge-num gray">4</div>
                         <div class="card-avatar-box">👨‍💼</div>
-                        <div class="card-title">تغيير كلمة المرور</div>
+                        <div class="card-title">تغيير باسورد المدير</div>
                         <div class="card-subtitle">تغيير كلمة سر الدخول للوحة</div>
                     </div>
                 </div>
@@ -1125,7 +1200,22 @@
         </div>
     </div>
 
-    <!-- نافذة سجل حركات النقاط المُنظمة مع عرض المزيد للحفاظ على الباقة -->
+    <!-- نافذة تغيير باسورد شاشة الكاشير من داخل الداشبورد -->
+    <div class="floating-sub-modal" id="cashierPasswordModal" onclick="if(event.target==this) closeFloatingModal('cashierPasswordModal')">
+        <div class="floating-card-box">
+            <div class="floating-header">
+                <h4>🔑 تغيير كلمة مرور شاشة الكاشير</h4>
+                <button class="admin-close" onclick="closeFloatingModal('cashierPasswordModal')">✕</button>
+            </div>
+            <div class="admin-custom-input-group">
+                <label>كلمة المرور الجديدة لشاشة الكاشير:</label>
+                <input type="text" id="newCashierPassInput" placeholder="أدخل كلمة المرور (الحالي: 123)">
+            </div>
+            <button class="admin-save-btn" onclick="updateCashierPassword()">حفظ باسورد الكاشير</button>
+        </div>
+    </div>
+
+    <!-- نافذة سجل حركات النقاط المنظمة -->
     <div class="floating-sub-modal" id="pointsLogsModal" onclick="if(event.target==this) closeFloatingModal('pointsLogsModal')">
         <div class="floating-card-box">
             <div class="floating-header">
@@ -1328,16 +1418,6 @@
         </div>
     </div>
 
-    <div class="floating-sub-modal" id="logsModal" onclick="if(event.target==this) closeFloatingModal('logsModal')">
-        <div class="floating-card-box">
-            <div class="floating-header">
-                <h4>📜 الطلبات الواردة (Live - آخر 50 طلب)</h4>
-                <button class="admin-close" onclick="closeFloatingModal('logsModal')">✕</button>
-            </div>
-            <div id="adminOrdersLogsList">جاري تحميل الطلبات...</div>
-        </div>
-    </div>
-
     <div class="floating-sub-modal" id="passwordModal" onclick="if(event.target==this) closeFloatingModal('passwordModal')">
         <div class="floating-card-box">
             <div class="floating-header">
@@ -1497,12 +1577,19 @@
         let currentTotalReviewsCount = 1;
 
         let lastLogoTapTime = 0;
+        let lastSecretTapTime = 0;
         let html5QrScannerInstance = null;
         let adminHtml5QrScannerInstance = null;
 
-        // متغيرات تتبع تصفح سجل حركات النقاط لتوفير استهلاك Firebase
         let pointsLogsLimit = 20;
         let allCachedLogs = [];
+
+        // متغيرات تنبيه جرس الكاشير المستمر
+        let isCashierAlarmActive = safeGetStorage('storia_cashier_alarm_enabled', 'false') === 'true';
+        let audioContext = null;
+        let alarmIntervalTimer = null;
+        let isAlarmCurrentlyRinging = false;
+        let lastKnownOrderTimestamp = parseInt(safeGetStorage('storia_last_order_ts', '0')) || Date.now();
 
         let restaurantInfo = { 
             orderPhone: '201014144144', 
@@ -1889,13 +1976,13 @@
             }
         }
 
-        // دالة مساعدة لتسجيل حركة النقاط في قاعدة البيانات
+        // دالة مساعدة لتسجيل حركة النقاط
         async function recordPointsLog(type, phone, points, invoiceId, details) {
             if (!window.db || !window.firebaseModules || !phone) return;
             try {
                 const { collection, addDoc } = window.firebaseModules;
                 await addDoc(collection(window.db, "loyalty_logs"), {
-                    type: type, // 'in' لإضافة أو 'out' لخصم
+                    type: type,
                     phone: phone,
                     userName: safeGetStorage('storia_active_user_name', 'عميل ستوريا'),
                     points: Number(points),
@@ -1919,7 +2006,6 @@
             activeUserPhone = phone;
             safeSetStorage('storia_user_phone', phone);
 
-            // إضافة 100 نقطة ترحيبية فوراً مع تسجيلها في السجل
             if (window.db && window.firebaseModules) {
                 try {
                     const { doc, getDoc, setDoc } = window.firebaseModules;
@@ -2244,6 +2330,19 @@
             }
         }
 
+        // نقرة مزدوجة على الزر السري في الهيدر لفتح شاشة الكاشير
+        function handleSecretCashierTap() {
+            const currentTime = new Date().getTime();
+            const tapGap = currentTime - lastSecretTapTime;
+            
+            if (tapGap < 500 && tapGap > 0) {
+                openCashierPortal();
+                lastSecretTapTime = 0;
+            } else {
+                lastSecretTapTime = currentTime;
+            }
+        }
+
         async function renderAdminReviewsList() {
             const area = document.getElementById('adminReviewsListArea');
             if (!area) return;
@@ -2355,6 +2454,7 @@
             setupLivePriceMarkupListener();
             setupLiveReviewsListener();
             setupLivePointsRateListener();
+            setupLiveCashierOrdersListener();
 
             if (activeUserPhone) {
                 fetchUserPointsFromFirebase(activeUserPhone);
@@ -2483,7 +2583,6 @@
             document.getElementById('scanReceiptModal').style.display = 'none';
         }
 
-        // مسح الفاتورة مع فك الشفرة بدقة وتسجيل الحركة في السجل
         async function onScanReceiptSuccess(decodedText) {
             closeScanReceiptModal();
             
@@ -2527,14 +2626,12 @@
                         return alert("⚠️ تم مسح هذه الفاتورة وإضافة نقاطها مسبقاً! لا يمكن استخدام الفاتورة مرتين.");
                     }
 
-                    // قفل رقم الفاتورة للأبد
                     await setDoc(usedRef, {
                         usedBy: activeUserPhone,
                         pointsAdded: earnedPoints,
                         timestamp: Date.now()
                     });
 
-                    // إضافة النقاط للعميل
                     const userRef = doc(window.db, "loyalty_users", activeUserPhone);
                     const userSnap = await getDoc(userRef);
                     let currentPts = userSnap.exists() && userSnap.data().points !== undefined ? userSnap.data().points : 0;
@@ -2547,8 +2644,6 @@
                     }, { merge: true });
 
                     updatePointsBadge(newPts);
-
-                    // تسجيل الحركة فورياً في سجل العمليات
                     recordPointsLog('in', activeUserPhone, earnedPoints, invId, 'مسح كود الفاتورة وإضافة نقاط');
 
                     alert(`🎉 تم إضافة +${earnedPoints} نقطة إلى محفظتك بنجاح من الفاتورة رقم (${invId})!`);
@@ -2708,7 +2803,6 @@
             }
         }
 
-        // دالة جلب وعرض سجل حركات النقاط مع Pagination لتوفير الحصة المجانية
         async function fetchPointsLogs(loadMore = false) {
             const area = document.getElementById('adminPointsLogsArea');
             const loadMoreBtn = document.getElementById('loadMoreLogsBtn');
@@ -2731,7 +2825,6 @@
                         allCachedLogs.push({ id: docSnap.id, ...docSnap.data() });
                     });
 
-                    // ترتيب العمليات من الأحدث للأقدم
                     allCachedLogs.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
                 }
 
@@ -2774,7 +2867,6 @@
                     area.appendChild(card);
                 });
 
-                // إظهار أو إخفاء زر عرض المزيد
                 if (loadMoreBtn) {
                     loadMoreBtn.style.display = (pointsLogsLimit < allCachedLogs.length) ? 'block' : 'none';
                 }
@@ -2873,7 +2965,6 @@
                 const newBalance = Math.max(0, currentPts - ptsToDeduct);
                 await setDoc(userRef, { points: newBalance }, { merge: true });
 
-                // تسجيل حركة الخصم في سجل العمليات
                 recordPointsLog('out', scannedCustomerPhone, ptsToDeduct, 'استبدال كاشير', 'خصم نقاط مقابل مشتريات');
 
                 if (activeUserPhone === scannedCustomerPhone) {
@@ -2884,6 +2975,206 @@
                 closeAdminScanRedeemModal();
             } catch(e) {
                 alert("حدث خطأ أثناء خصم النقاط");
+            }
+        }
+
+        /* ------------------ نظام صوت وجرس الكاشير المستمر ------------------ */
+        function initAudioContext() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioContext && audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+        }
+
+        function playBeepSound() {
+            try {
+                initAudioContext();
+                if (!audioContext) return;
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(880, audioContext.currentTime); // نغمة إنذار حادة
+                gain.gain.setValueAtTime(0.3, audioContext.currentTime);
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+                osc.start();
+                osc.stop(audioContext.currentTime + 0.35);
+            } catch(e) {}
+        }
+
+        function startContinuousAlarm(orderInfoText) {
+            if (!isCashierAlarmActive || isAlarmCurrentlyRinging) return;
+            isAlarmCurrentlyRinging = true;
+
+            const overlay = document.getElementById('cashierAlarmOverlay');
+            const summary = document.getElementById('alarmOrderSummary');
+            if (summary) summary.innerText = orderInfoText || 'طلب جديد وارد الآن!';
+            if (overlay) overlay.style.display = 'flex';
+
+            playBeepSound();
+            if (alarmIntervalTimer) clearInterval(alarmIntervalTimer);
+            alarmIntervalTimer = setInterval(() => {
+                playBeepSound();
+            }, 650); // يرن بشكل مستمر كل ثانية تقريباً
+        }
+
+        function stopCashierAlarm() {
+            isAlarmCurrentlyRinging = false;
+            if (alarmIntervalTimer) {
+                clearInterval(alarmIntervalTimer);
+                alarmIntervalTimer = null;
+            }
+            const overlay = document.getElementById('cashierAlarmOverlay');
+            if (overlay) overlay.style.display = 'none';
+        }
+
+        function toggleCashierAlarmSystem() {
+            initAudioContext();
+            isCashierAlarmActive = !isCashierAlarmActive;
+            safeSetStorage('storia_cashier_alarm_enabled', isCashierAlarmActive ? 'true' : 'false');
+            updateCashierAlarmUI();
+
+            if (isCashierAlarmActive) {
+                playBeepSound();
+                alert("🔔 تم تفعيل وضع جرس الكاشير المستمر بنجاح على هذا الجهاز! سيرن باستمرار عند أي أوردر جديد.");
+            } else {
+                stopCashierAlarm();
+                alert("🔕 تم إيقاف وضع التنبيه الصوتي.");
+            }
+        }
+
+        function updateCashierAlarmUI() {
+            const btn = document.getElementById('toggleAlarmModeBtn');
+            if (!btn) return;
+            if (isCashierAlarmActive) {
+                btn.style.background = '#15803d';
+                btn.innerText = '✅ التنبيه مفعل (اضغط للإلغاء)';
+            } else {
+                btn.style.background = '#1b4d3e';
+                btn.innerText = '🔔 تفعيل التنبيه';
+            }
+        }
+
+        // الاستماع المباشر لطلبات الكاشير مع تشغيل الجرس عند أي طلب جديد
+        let cashierOrdersUnsubscribe = null;
+        function setupLiveCashierOrdersListener() {
+            if (!window.db || !window.firebaseModules) return;
+            const { collection, onSnapshot, query, limit } = window.firebaseModules;
+            if (cashierOrdersUnsubscribe) cashierOrdersUnsubscribe();
+
+            const q = query(collection(window.db, "orders"), limit(50));
+            cashierOrdersUnsubscribe = onSnapshot(q, (snapshot) => {
+                const logsEl = document.getElementById('cashierOrdersLogsList');
+                if (logsEl) logsEl.innerHTML = '';
+
+                if (snapshot.empty) {
+                    if (logsEl) logsEl.innerHTML = '<div style="text-align:center; padding:20px 0; color:var(--desc-text); font-weight:700;">لا توجد طلبات مسجلة حتى الآن.</div>';
+                    return;
+                }
+
+                let ordersArr = [];
+                let newestTimestamp = lastKnownOrderTimestamp;
+
+                snapshot.forEach((d) => {
+                    const data = d.data();
+                    ordersArr.push({ id: d.id, ...data });
+                    if (data.timestamp && data.timestamp > newestTimestamp) {
+                        newestTimestamp = data.timestamp;
+                    }
+                });
+
+                ordersArr.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+                // فحص إذا وصل طلب جديد بعد فتح وضع الكاشير لتشغيل الجرس المستمر
+                if (newestTimestamp > lastKnownOrderTimestamp) {
+                    const latestOrder = ordersArr[0];
+                    lastKnownOrderTimestamp = newestTimestamp;
+                    safeSetStorage('storia_last_order_ts', String(newestTimestamp));
+                    startContinuousAlarm(`أوردر جديد: ${latestOrder.userName || 'زبون'} (${latestOrder.totalPrice || 0} ج.م)`);
+                }
+
+                if (logsEl) {
+                    ordersArr.forEach((ord) => {
+                        const card = document.createElement('div');
+                        card.className = 'admin-order-card';
+                        const timeStr = ord.timestamp ? new Date(ord.timestamp).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }) : '';
+                        
+                        card.innerHTML = `
+                            <div class="admin-order-header">
+                                <div>
+                                    <b style="color:var(--accent); font-size:0.95rem;">${ord.userName || 'بدون اسم'}</b>
+                                    <span style="font-size:0.75rem; color:var(--desc-text); display:block;">📞 ${ord.userPhone || ''} | ${timeStr}</span>
+                                </div>
+                                <span style="font-weight:900; color:#1b4d3e;">${ord.totalPrice ? ord.totalPrice.toFixed(2) : 0} ج.م</span>
+                            </div>
+                            <div style="font-size:0.75rem; margin-bottom:8px; line-height:1.4;">
+                                ${(ord.items || []).join('<br>')}
+                            </div>
+                            ${ord.userAddr ? `<div style="font-size:0.75rem; color:#b91c1c; margin-bottom:8px;">📍 ${ord.userAddr}</div>` : ''}
+                            <div style="display:flex; gap:6px;">
+                                <button style="flex:1; background:#25D366; color:#fff; border:none; padding:6px; border-radius:8px; font-weight:800; cursor:pointer;" onclick="openChatModal('${ord.id}', 'admin', '${(ord.userName||'العميل').replace(/'/g, "\\'")}')">💬 فتح الشات</button>
+                            </div>
+                        `;
+                        logsEl.appendChild(card);
+                    });
+                }
+            }, (err) => console.warn("Cashier orders fallback:", err));
+        }
+
+        /* ------------------ التحقق من كلمة مرور الكاشير ------------------ */
+        function openCashierPortal() {
+            document.getElementById('cashierAuthModal').style.display = 'flex';
+            document.getElementById('cashierPassInput').value = '';
+            setTimeout(() => { document.getElementById('cashierPassInput').focus(); }, 100);
+        }
+
+        async function verifyCashierPassword() {
+            const pass = document.getElementById('cashierPassInput').value.trim();
+            if (!pass) return alert('أدخل كلمة المرور للكاشير');
+
+            let savedPass = safeGetStorage('storia_cashier_pass', null);
+
+            if (!savedPass && window.db && window.firebaseModules) {
+                try {
+                    const { doc, getDoc } = window.firebaseModules;
+                    const snap = await getDoc(doc(window.db, "settings", "cashier_config"));
+                    if (snap.exists() && snap.data().password) {
+                        savedPass = String(snap.data().password).trim();
+                        safeSetStorage('storia_cashier_pass', savedPass);
+                    }
+                } catch(e) {}
+            }
+
+            if (!savedPass) {
+                savedPass = '123'; // الباسورد الافتراضي
+            }
+
+            if (pass === savedPass) {
+                document.getElementById('cashierAuthModal').style.display = 'none';
+                document.getElementById('cashierOrdersModal').style.display = 'flex';
+                updateCashierAlarmUI();
+            } else {
+                alert('كلمة مرور الكاشير غير صحيحة!');
+            }
+        }
+
+        async function updateCashierPassword() {
+            const newP = document.getElementById('newCashierPassInput').value.trim();
+            if (!newP) return alert('يرجى إدخال كلمة المرور الجديدة للكاشير');
+
+            if (window.db && window.firebaseModules) {
+                try {
+                    const { doc, setDoc } = window.firebaseModules;
+                    await setDoc(doc(window.db, "settings", "cashier_config"), { password: newP }, { merge: true });
+                    safeSetStorage('storia_cashier_pass', newP);
+                    alert('✅ تم تحديث كلمة مرور شاشة الكاشير بنجاح!');
+                    document.getElementById('newCashierPassInput').value = '';
+                    closeFloatingModal('cashierPasswordModal');
+                } catch(e) {
+                    alert('حدث خطأ أثناء الحفظ في السيرفر');
+                }
             }
         }
 
@@ -3648,7 +3939,6 @@
                 document.getElementById('adminModal').style.display = 'flex';
                 document.getElementById('adminAuthView').style.display = 'none';
                 document.getElementById('adminDashboardView').style.display = 'block';
-                setTimeout(() => { listenToOrdersLogs(); }, 50);
                 return;
             }
 
@@ -3683,10 +3973,6 @@
                 if (markupInput) markupInput.value = priceMarkupPercentage;
                 const pointsRateInput = document.getElementById('adminPointsRateInput');
                 if (pointsRateInput) pointsRateInput.value = pointsMultiplierRate;
-
-                setTimeout(() => {
-                    listenToOrdersLogs();
-                }, 50);
             } else {
                 alert('كلمة المرور غير صحيحة! الباسورد هو: 123321');
             }
@@ -3721,68 +4007,6 @@
         function closeFloatingModal(id) {
             const el = document.getElementById(id);
             if (el) el.style.display = 'none';
-        }
-
-        let ordersUnsubscribe = null;
-        function listenToOrdersLogs() {
-            if (!window.db || !window.firebaseModules) return;
-            const { collection, onSnapshot, query, limit } = window.firebaseModules;
-            if (ordersUnsubscribe) ordersUnsubscribe();
-
-            const q = query(collection(window.db, "orders"), limit(50));
-            ordersUnsubscribe = onSnapshot(q, (snapshot) => {
-                const logsEl = document.getElementById('adminOrdersLogsList');
-                if (!logsEl) return;
-                logsEl.innerHTML = '';
-
-                if (snapshot.empty) {
-                    logsEl.innerHTML = '<div style="text-align:center; padding:20px 0; color:var(--desc-text); font-weight:700;">لا توجد طلبات مسجلة حتى الآن.</div>';
-                    return;
-                }
-
-                let ordersArr = [];
-                snapshot.forEach((d) => {
-                    ordersArr.push({ id: d.id, ...d.data() });
-                });
-
-                ordersArr.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-
-                ordersArr.forEach((ord) => {
-                    const card = document.createElement('div');
-                    card.className = 'admin-order-card';
-                    const timeStr = ord.timestamp ? new Date(ord.timestamp).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }) : '';
-                    
-                    card.innerHTML = `
-                        <div class="admin-order-header">
-                            <div>
-                                <b style="color:var(--accent); font-size:0.95rem;">${ord.userName || 'بدون اسم'}</b>
-                                <span style="font-size:0.75rem; color:var(--desc-text); display:block;">📞 ${ord.userPhone || ''} | ${timeStr}</span>
-                            </div>
-                            <span style="font-weight:900; color:#1b4d3e;">${ord.totalPrice ? ord.totalPrice.toFixed(2) : 0} ج.م</span>
-                        </div>
-                        <div style="font-size:0.75rem; margin-bottom:8px; line-height:1.4;">
-                            ${(ord.items || []).join('<br>')}
-                        </div>
-                        ${ord.userAddr ? `<div style="font-size:0.75rem; color:#b91c1c; margin-bottom:8px;">📍 ${ord.userAddr}</div>` : ''}
-                        <div style="display:flex; gap:6px;">
-                            <button style="flex:1; background:#25D366; color:#fff; border:none; padding:6px; border-radius:8px; font-weight:800; cursor:pointer;" onclick="openChatModal('${ord.id}', 'admin', '${(ord.userName||'العميل').replace(/'/g, "\\'")}')">💬 فتح الشات</button>
-                            <button style="background:#ef4444; color:#fff; border:none; padding:6px 12px; border-radius:8px; font-weight:800; cursor:pointer;" onclick="deleteOrderRecord('${ord.id}')">حذف ✕</button>
-                        </div>
-                    `;
-                    logsEl.appendChild(card);
-                });
-            }, (err) => {
-                console.error("Orders listener error:", err);
-            });
-        }
-
-        async function deleteOrderRecord(orderId) {
-            if (confirm("هل أنت متأكد من حذف هذا الطلب نهائياً؟")) {
-                if (window.db && window.firebaseModules) {
-                    const { doc, deleteDoc } = window.firebaseModules;
-                    await deleteDoc(doc(window.db, "orders", orderId));
-                }
-            }
         }
 
         let itemsStatusUnsubscribe = null;
@@ -3968,7 +4192,6 @@
             if (window.db && window.firebaseModules && adminSearchedPhone) {
                 const { doc, setDoc, getDoc } = window.firebaseModules;
                 
-                // معرفة الفرق لتسجيله في الحركات
                 const snap = await getDoc(doc(window.db, "loyalty_users", adminSearchedPhone));
                 const oldPts = snap.exists() && snap.data().points !== undefined ? snap.data().points : 0;
                 const diff = newPts - oldPts;
