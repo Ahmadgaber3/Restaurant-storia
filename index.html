@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -20,6 +20,7 @@
     
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 
     <style>
         :root {
@@ -888,7 +889,7 @@
             <div class="points-action-grid">
                 <button class="pts-btn" onclick="openScanReceiptModal()">
                     <span style="font-size: 1.5rem;">📷</span>
-                    <span>مسح QR الفاتورة</span>
+                    <span>مسح باركود الفاتورة</span>
                     <small style="opacity: 0.8;">إضافة نقاط الحساب</small>
                 </button>
                 <button class="pts-btn" onclick="openRedeemSetupModal()">
@@ -928,15 +929,15 @@
         </div>
     </div>
 
-    <!-- نافذة مسح QR الفاتورة للعميل -->
+    <!-- نافذة مسح باركود الفاتورة للعميل -->
     <div class="floating-sub-modal" id="scanReceiptModal" style="z-index: 6000;" onclick="if(event.target==this) closeScanReceiptModal()">
         <div class="floating-card-box" style="text-align: center;">
             <div class="floating-header">
-                <h4>📷 مسح رمز QR الفاتورة</h4>
+                <h4>📷 مسح باركود الفاتورة</h4>
                 <button class="admin-close" onclick="closeScanReceiptModal()">✕</button>
             </div>
             <p style="font-size: 0.82rem; font-weight: 700; color: var(--desc-text); margin-bottom: 12px;">
-                وجه الكاميرا نحو رمز الـ QR الموجود أسفل فاتورة الشيك لإضافة نقاطك تلقائياً:
+                وجه الكاميرا أفقياً نحو خطوط الباركود الموجودة أسفل الفاتورة لإضافة نقاطك تلقائياً:
             </p>
             <div id="qrReaderArea"></div>
             <button class="admin-save-btn" style="background: #64748b;" onclick="closeScanReceiptModal()">إلغاء ✕</button>
@@ -1140,8 +1141,8 @@
                     <div class="admin-nav-card" onclick="openFloatingModal('adminCreateQrModal')">
                         <div class="card-badge-num">🧾</div>
                         <div class="card-avatar-box">🖨️</div>
-                        <div class="card-title">توليد QR فاتورة</div>
-                        <div class="card-subtitle">طباعة QR النقاط للزبون</div>
+                        <div class="card-title">توليد باركود فاتورة</div>
+                        <div class="card-subtitle">طباعة باركود النقاط للزبون</div>
                     </div>
 
                     <div class="admin-nav-card" onclick="openFloatingModal('loyaltyAdminModal')">
@@ -1258,20 +1259,22 @@
     <div class="floating-sub-modal" id="adminCreateQrModal" onclick="if(event.target==this) closeFloatingModal('adminCreateQrModal')">
         <div class="floating-card-box" style="text-align: center;">
             <div class="floating-header">
-                <h4>🧾 توليد رمز QR رسمي للفاتورة</h4>
+                <h4>🧾 توليد باركود رسمي للفاتورة</h4>
                 <button class="admin-close" onclick="closeFloatingModal('adminCreateQrModal')">✕</button>
             </div>
             <div class="admin-custom-input-group">
                 <label>رقم الفاتورة (Invoice Number):</label>
-                <input type="text" id="adminGenInvNumber" placeholder="مثال: 1110">
+                <input type="text" id="adminGenInvNumber" placeholder="مثال: 54086">
             </div>
             <div class="admin-custom-input-group">
                 <label>عدد النقاط الممنوحة للفاتورة:</label>
-                <input type="number" id="adminGenInvPoints" placeholder="مثال: 68" value="68">
+                <input type="number" id="adminGenInvPoints" placeholder="مثال: 478" value="478">
             </div>
-            <button class="admin-save-btn" onclick="generateOfficialInvoiceQr()">توليد رمز QR الرسمي 🖨️</button>
+            <button class="admin-save-btn" onclick="generateOfficialInvoiceQr()">توليد رمز الباركود الرسمي 🖨️</button>
 
-            <div id="generatedInvoiceQrBox" style="margin-top: 14px; display: flex; justify-content: center;"></div>
+            <div id="generatedInvoiceQrBox" style="margin-top: 14px; display: flex; justify-content: center; overflow-x: auto;">
+                <svg id="barcodeCanvas"></svg>
+            </div>
         </div>
     </div>
 
@@ -2553,12 +2556,21 @@
             modal.style.display = 'flex';
 
             if (!html5QrScannerInstance) {
-                html5QrScannerInstance = new Html5Qrcode("qrReaderArea");
+                const formats = [
+                    Html5QrcodeSupportedFormats.CODE_128,
+                    Html5QrcodeSupportedFormats.CODE_39,
+                    Html5QrcodeSupportedFormats.EAN_13,
+                    Html5QrcodeSupportedFormats.EAN_8,
+                    Html5QrcodeSupportedFormats.UPC_A,
+                    Html5QrcodeSupportedFormats.UPC_E,
+                    Html5QrcodeSupportedFormats.QR_CODE
+                ];
+                html5QrScannerInstance = new Html5Qrcode("qrReaderArea", { formatsToSupport: formats });
             }
 
             html5QrScannerInstance.start(
                 { facingMode: "environment" },
-                { fps: 10, qrbox: { width: 250, height: 250 } },
+                { fps: 15, qrbox: { width: 280, height: 120 } },
                 onScanReceiptSuccess,
                 (errorMessage) => {}
             ).catch(err => {
@@ -2582,29 +2594,26 @@
             closeScanReceiptModal();
             
             const raw = (decodedText || '').trim();
-            if (!raw.startsWith('STORIA-INVOICE:')) {
-                return alert("⚠️ رمز QR غير صالح أو غير معتمد من مطعم ستوريا!");
-            }
-
-            const parts = raw.split(':');
             let invId = null;
             let earnedPoints = 0;
-            let isValidSig = false;
 
-            if (parts.length >= 4) {
-                if (parts[1].startsWith('INV=') && parts[2].startsWith('PTS=')) {
+            // استخراج محكم ومباشر يمنع أي لخبطة بين رقم الفاتورة وعدد النقاط مهما اختلف اتجاه اللغة
+            const invMatch = raw.match(/(?:INV|I)[-_:]?(\d+)/i);
+            const ptsMatch = raw.match(/(?:PTS|P)[-_:]?(\d+)/i);
+
+            if (invMatch && ptsMatch) {
+                invId = invMatch[1];
+                earnedPoints = parseInt(ptsMatch[1]) || 0;
+            } else if (raw.startsWith('STORIA-INVOICE:')) {
+                const parts = raw.split(':');
+                if (parts.length >= 4) {
                     invId = parts[1].replace('INV=', '').trim();
                     earnedPoints = parseInt(parts[2].replace('PTS=', '')) || 0;
-                    isValidSig = parts[3].trim() === 'SECURE_OK';
-                } else {
-                    invId = parts[1].trim();
-                    earnedPoints = parseInt(parts[2]) || 0;
-                    isValidSig = parts[3].trim() === 'SECURE_OK';
                 }
             }
 
-            if (!invId || earnedPoints <= 0 || !isValidSig) {
-                return alert("⚠️ رمز QR غير صالح أو به بيانات ناقصة!");
+            if (!invId || earnedPoints <= 0) {
+                return alert("⚠️ رمز الباركود غير صالح أو غير معتمد من مطعم ستوريا!");
             }
 
             if (!activeUserPhone) {
@@ -2639,7 +2648,7 @@
                     }, { merge: true });
 
                     updatePointsBadge(newPts);
-                    recordPointsLog('in', activeUserPhone, earnedPoints, invId, 'مسح كود الفاتورة وإضافة نقاط');
+                    recordPointsLog('in', activeUserPhone, earnedPoints, invId, 'مسح باركود الفاتورة وإضافة نقاط');
 
                     alert(`🎉 تم إضافة +${earnedPoints} نقطة إلى محفظتك بنجاح من الفاتورة رقم (${invId})!`);
                     openLoyaltyModal();
@@ -2694,22 +2703,20 @@
                 return alert("يرجى إدخال رقم الفاتورة وعدد النقاط بشكل صحيح");
             }
 
-            const box = document.getElementById('generatedInvoiceQrBox');
-            box.innerHTML = '';
-
-            const qrData = `STORIA-INVOICE:INV=${inv}:PTS=${pts}:SECURE_OK`;
+            // معرف الباركود المختصر والدقيق
+            const barcodeData = `INV-${inv}-PTS-${pts}`;
 
             try {
-                new QRCode(box, {
-                    text: qrData,
-                    width: 180,
-                    height: 180,
-                    colorDark: "#000000",
-                    colorLight: "#ffffff",
-                    correctLevel: QRCode.CorrectLevel.M
+                JsBarcode("#barcodeCanvas", barcodeData, {
+                    format: "CODE128",
+                    lineColor: "#000",
+                    width: 2,
+                    height: 65,
+                    displayValue: true,
+                    fontSize: 14
                 });
             } catch(e) {
-                box.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrData)}" alt="QR">`;
+                console.error("Error generating barcode:", e);
             }
         }
 
@@ -2985,7 +2992,6 @@
             } catch(e) {}
         }
 
-        // إتاحة تشغيل الصوت فور نقر المستخدم في أي مكان
         ['click', 'touchstart'].forEach(evt => {
             window.addEventListener(evt, () => {
                 if (isCashierAlarmActive) initAudioContext();
@@ -3061,7 +3067,6 @@
             }
         }
 
-        // استماع فوري عالي السرعة لطلبات الكاشير مع تشغيل الجرس عند أي طلب جديد لحظياً
         let cashierOrdersUnsubscribe = null;
         function setupLiveCashierOrdersListener() {
             if (!window.db || !window.firebaseModules) return;
@@ -3074,7 +3079,6 @@
             cashierOrdersUnsubscribe = onSnapshot(q, (snapshot) => {
                 const logsEl = document.getElementById('cashierOrdersLogsList');
                 
-                // رصد الطلبات الجديدة فورياً بالـ docChanges
                 if (!isCashierFirstSnapshotLoad) {
                     snapshot.docChanges().forEach((change) => {
                         if (change.type === "added") {
@@ -3373,6 +3377,14 @@
                 el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
             }
             renderMenu(false);
+
+            // إرجاع الشاشة لبداية الأصناف دائماً عند التبديل بين الأقسام
+            const menuContainer = document.getElementById('menuList');
+            if (menuContainer) {
+                menuContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
         }
 
         function renderMenu(forceRebuild = false) {
@@ -3935,14 +3947,7 @@
         }
 
         function openAdminPanel() {
-            const isAutoAuth = safeGetStorage('storia_admin_auto_auth', 'false');
-            if (isAutoAuth === 'true') {
-                document.getElementById('adminModal').style.display = 'flex';
-                document.getElementById('adminAuthView').style.display = 'none';
-                document.getElementById('adminDashboardView').style.display = 'block';
-                return;
-            }
-
+            // طلب كلمة المرور في كل مرة دون أي دخول تلقائي
             document.getElementById('adminModal').style.display = 'flex';
             document.getElementById('adminAuthView').style.display = 'block';
             document.getElementById('adminDashboardView').style.display = 'none';
@@ -3950,23 +3955,35 @@
             setTimeout(() => { document.getElementById('adminPassInput').focus(); }, 100);
         }
 
-        function closeAdminPanel() { document.getElementById('adminModal').style.display = 'none'; }
+        function closeAdminPanel() { 
+            document.getElementById('adminModal').style.display = 'none'; 
+            document.getElementById('adminPassInput').value = '';
+            document.getElementById('adminAuthView').style.display = 'block';
+            document.getElementById('adminDashboardView').style.display = 'none';
+        }
 
         async function verifyAdminPassword() {
             const pass = document.getElementById('adminPassInput').value.trim();
             if (!pass) return alert(currentLang === 'ar' ? 'من فضلك أدخل كلمة المرور' : 'Please enter password');
 
-            const officialPass = '123321';
+            let officialPass = safeGetStorage('storia_admin_pass', null);
+
+            if (!officialPass && window.db && window.firebaseModules) {
+                try {
+                    const { doc, getDoc } = window.firebaseModules;
+                    const snap = await getDoc(doc(window.db, "settings", "admin_config"));
+                    if (snap.exists() && snap.data().password) {
+                        officialPass = String(snap.data().password).trim();
+                        safeSetStorage('storia_admin_pass', officialPass);
+                    }
+                } catch(e) {}
+            }
+
+            if (!officialPass) {
+                officialPass = '123321';
+            }
 
             if (pass === officialPass) {
-                let loginCount = parseInt(safeGetStorage('storia_login_success_count', '0')) || 0;
-                loginCount += 1;
-                safeSetStorage('storia_login_success_count', String(loginCount));
-
-                if (loginCount >= 5) {
-                    safeSetStorage('storia_admin_auto_auth', 'true');
-                }
-
                 document.getElementById('adminAuthView').style.display = 'none';
                 document.getElementById('adminDashboardView').style.display = 'block';
                 
@@ -3975,7 +3992,7 @@
                 const pointsRateInput = document.getElementById('adminPointsRateInput');
                 if (pointsRateInput) pointsRateInput.value = pointsMultiplierRate;
             } else {
-                alert('كلمة المرور غير صحيحة! الباسورد هو: 123321');
+                alert('كلمة المرور غير صحيحة!');
             }
         }
 
