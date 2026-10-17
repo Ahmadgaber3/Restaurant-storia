@@ -2597,23 +2597,24 @@
             let invId = null;
             let earnedPoints = 0;
 
-            // استخراج محكم ومباشر يمنع أي لخبطة بين رقم الفاتورة وعدد النقاط مهما اختلف اتجاه اللغة
-            const invMatch = raw.match(/(?:INV|I)[-_:]?(\d+)/i);
-            const ptsMatch = raw.match(/(?:PTS|P)[-_:]?(\d+)/i);
+            // استخراج فائق المرونة لمطابقة كود الفاتورة INV-54086-PTS-478 بدقة تامة
+            const invMatch = raw.match(/INV[-_:]?(\d+)/i) || raw.match(/I[-_:]?(\d+)/i);
+            const ptsMatch = raw.match(/PTS[-_:]?(\d+)/i) || raw.match(/P[-_:]?(\d+)/i);
 
             if (invMatch && ptsMatch) {
                 invId = invMatch[1];
                 earnedPoints = parseInt(ptsMatch[1]) || 0;
-            } else if (raw.startsWith('STORIA-INVOICE:')) {
-                const parts = raw.split(':');
-                if (parts.length >= 4) {
-                    invId = parts[1].replace('INV=', '').trim();
-                    earnedPoints = parseInt(parts[2].replace('PTS=', '')) || 0;
+            } else {
+                // دعم الصيغ الرقمية المفصولة في حال مسح باركود بدون بادئة
+                const numbers = raw.match(/\d+/g);
+                if (numbers && numbers.length >= 2) {
+                    invId = numbers[0];
+                    earnedPoints = parseInt(numbers[1]) || 0;
                 }
             }
 
             if (!invId || earnedPoints <= 0) {
-                return alert("⚠️ رمز الباركود غير صالح أو غير معتمد من مطعم ستوريا!");
+                return alert(`⚠️ رمز الباركود غير صالح أو غير معتمد من مطعم ستوريا!\n(النص المقروء: ${raw})`);
             }
 
             if (!activeUserPhone) {
@@ -2703,7 +2704,7 @@
                 return alert("يرجى إدخال رقم الفاتورة وعدد النقاط بشكل صحيح");
             }
 
-            // معرف الباركود المختصر والدقيق
+            // توليد الباركود المعتمد INV-54086-PTS-478
             const barcodeData = `INV-${inv}-PTS-${pts}`;
 
             try {
