@@ -668,7 +668,6 @@
 </head>
 <body>
 
-    <!-- شاشة الإنذار المستمرة للطلب الجديد الخاص بالكاشير -->
     <div class="cashier-alarm-overlay" id="cashierAlarmOverlay">
         <span style="font-size: 4rem;">🚨</span>
         <h1 style="font-size: 1.8rem; font-weight: 900; margin-top: 10px;">أوردر جديد وارد الآن!</h1>
@@ -778,7 +777,6 @@
         </div>
     </div>
 
-    <!-- نافذة تقييم الأوردر الفورية -->
     <div class="order-review-modal" id="orderReviewModal">
         <div class="order-review-card">
             <div class="review-icon-circle">
@@ -806,7 +804,6 @@
         </div>
     </div>
 
-    <!-- نافذة عرض التقييم الإجمالي والتعليقات الحية للعملاء -->
     <div class="overall-toast-modal" id="overallToastModal" onclick="if(event.target===this) closeOverallToast()">
         <div class="overall-toast-card">
             <div class="overall-toast-icon">⭐</div>
@@ -871,7 +868,6 @@
         <div id="menuLoadingMsg" style="text-align: center; padding: 40px 10px; font-weight: 800; color: var(--accent);">جاري تحميل قائمة المنيو... ☕</div>
     </div>
 
-    <!-- نافذة محفظة النقاط للعميل -->
     <div class="loyalty-modal" id="loyaltyModal" onclick="if(event.target===this) closeLoyaltyModal()">
         <div class="loyalty-box">
             <div class="loyalty-header">
@@ -901,7 +897,6 @@
         </div>
     </div>
 
-    <!-- نافذة تحديد النقاط المستبدلة مع حساب القيمة المالية الديناميكية -->
     <div class="floating-sub-modal" id="redeemSetupModal" style="z-index: 6000;" onclick="if(event.target==this) closeRedeemSetupModal()">
         <div class="floating-card-box" style="text-align: center;">
             <div class="floating-header">
@@ -929,7 +924,7 @@
         </div>
     </div>
 
-    <!-- نافذة مسح باركود الفاتورة للعميل -->
+    <!-- نافذة مسح باركود الفاتورة للعميل مع إطار عريض ودعم فائق للـ High Density Barcode -->
     <div class="floating-sub-modal" id="scanReceiptModal" style="z-index: 6000;" onclick="if(event.target==this) closeScanReceiptModal()">
         <div class="floating-card-box" style="text-align: center;">
             <div class="floating-header">
@@ -937,14 +932,13 @@
                 <button class="admin-close" onclick="closeScanReceiptModal()">✕</button>
             </div>
             <p style="font-size: 0.82rem; font-weight: 700; color: var(--desc-text); margin-bottom: 12px;">
-                وجه الكاميرا أفقياً نحو خطوط الباركود الموجودة أسفل الفاتورة لإضافة نقاطك تلقائياً:
+                وجّه الكاميرا نحو خطوط الباركود الموجودة أسفل الفاتورة لإضافة نقاطك فوراً:
             </p>
-            <div id="qrReaderArea"></div>
+            <div id="qrReaderArea" style="min-height: 250px;"></div>
             <button class="admin-save-btn" style="background: #64748b;" onclick="closeScanReceiptModal()">إلغاء ✕</button>
         </div>
     </div>
 
-    <!-- نافذة إظهار رمز QR العميل للكاشير -->
     <div class="floating-sub-modal" id="myRedeemQrModal" style="z-index: 6500;" onclick="if(event.target==this) closeMyRedeemQrModal()">
         <div class="floating-card-box" style="text-align: center;">
             <div class="floating-header">
@@ -1054,7 +1048,6 @@
         </div>
     </div>
 
-    <!-- نافذة تسجيل دخول الكاشير المستقلة (باسورد: 123) -->
     <div class="floating-sub-modal" id="cashierAuthModal" style="z-index: 8200;" onclick="if(event.target==this) closeFloatingModal('cashierAuthModal')">
         <div class="floating-card-box" style="text-align: center; max-width: 360px;">
             <div class="floating-header">
@@ -1069,7 +1062,6 @@
         </div>
     </div>
 
-    <!-- شاشة سجل الأوردرات المستقلة الخاصة بالكاشير فقط مع تنبيه الجرس -->
     <div class="floating-sub-modal" id="cashierOrdersModal" style="z-index: 8300;" onclick="if(event.target==this) closeFloatingModal('cashierOrdersModal')">
         <div class="floating-card-box">
             <div class="floating-header">
@@ -1077,7 +1069,6 @@
                 <button class="admin-close" onclick="closeFloatingModal('cashierOrdersModal')">✕</button>
             </div>
 
-            <!-- زر تفعيل وضع الجرس المستمر لجهاز الكاشير -->
             <div style="background: rgba(27, 77, 62, 0.08); border: 1.5px solid var(--accent); border-radius: 14px; padding: 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
                 <div>
                     <b style="font-size: 0.88rem; color: var(--accent);">جرس التنبيه المستمر</b>
@@ -1092,7 +1083,6 @@
         </div>
     </div>
 
-    <!-- لوحة التحكم الإدارية الكاملة للمدير -->
     <div class="admin-modal" id="adminModal" onclick="if(event.target==this) closeAdminPanel()">
         <div class="admin-box">
             <div class="admin-header">
@@ -1198,7 +1188,6 @@
         </div>
     </div>
 
-    <!-- نافذة تغيير باسورد شاشة الكاشير من داخل الداشبورد -->
     <div class="floating-sub-modal" id="cashierPasswordModal" onclick="if(event.target==this) closeFloatingModal('cashierPasswordModal')">
         <div class="floating-card-box">
             <div class="floating-header">
@@ -1213,7 +1202,6 @@
         </div>
     </div>
 
-    <!-- نافذة سجل حركات النقاط المنظمة -->
     <div class="floating-sub-modal" id="pointsLogsModal" onclick="if(event.target==this) closeFloatingModal('pointsLogsModal')">
         <div class="floating-card-box">
             <div class="floating-header">
@@ -1234,7 +1222,6 @@
         </div>
     </div>
 
-    <!-- نافذة التحكم في قيمة النقطة بالجنيه -->
     <div class="floating-sub-modal" id="pointsRateModal" onclick="if(event.target==this) closeFloatingModal('pointsRateModal')">
         <div class="floating-card-box">
             <div class="floating-header">
@@ -1255,7 +1242,6 @@
         </div>
     </div>
 
-    <!-- نافذة توليد كود فاتورة رسمي دقيق لا يتبدل -->
     <div class="floating-sub-modal" id="adminCreateQrModal" onclick="if(event.target==this) closeFloatingModal('adminCreateQrModal')">
         <div class="floating-card-box" style="text-align: center;">
             <div class="floating-header">
@@ -1278,7 +1264,6 @@
         </div>
     </div>
 
-    <!-- نافذة ترتيب العملاء في لوحة الإدارة -->
     <div class="floating-sub-modal" id="loyaltyRankModal" onclick="if(event.target==this) closeFloatingModal('loyaltyRankModal')">
         <div class="floating-card-box">
             <div class="floating-header">
@@ -1295,7 +1280,6 @@
         </div>
     </div>
 
-    <!-- نافذة مسح QR العميل وتبديل النقاط بواسطة الكاشير -->
     <div class="floating-sub-modal" id="adminScanRedeemModal" onclick="if(event.target==this) closeAdminScanRedeemModal()">
         <div class="floating-card-box">
             <div class="floating-header">
@@ -1318,7 +1302,6 @@
         </div>
     </div>
 
-    <!-- نافذة إدارة تعليقات العملاء -->
     <div class="floating-sub-modal" id="adminReviewsModal" onclick="if(event.target==this) closeFloatingModal('adminReviewsModal')">
         <div class="floating-card-box">
             <div class="floating-header">
@@ -1469,7 +1452,6 @@
         </div>
     </div>
 
-    <!-- كود إعدادات Firebase -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, onSnapshot, addDoc, deleteDoc, getDocs, query, limit, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -1584,7 +1566,6 @@
         let pointsLogsLimit = 20;
         let allCachedLogs = [];
 
-        // متغيرات تنبيه جرس الكاشير المستمر وسرعة الاستجابة
         let isCashierAlarmActive = safeGetStorage('storia_cashier_alarm_enabled', 'false') === 'true';
         let audioContext = null;
         let alarmIntervalTimer = null;
@@ -2565,12 +2546,28 @@
                     Html5QrcodeSupportedFormats.UPC_E,
                     Html5QrcodeSupportedFormats.QR_CODE
                 ];
-                html5QrScannerInstance = new Html5Qrcode("qrReaderArea", { formatsToSupport: formats });
+                html5QrScannerInstance = new Html5Qrcode("qrReaderArea", { formatsToSupport: formats, verbose: false });
             }
 
+            // إعدادات محسنة لكاميرا المسح لتغطي عرض الباركود بالكامل بدقة HD
+            const config = {
+                fps: 20,
+                qrbox: function(viewfinderWidth, viewfinderHeight) {
+                    return {
+                        width: Math.floor(viewfinderWidth * 0.95),
+                        height: Math.floor(Math.min(viewfinderHeight * 0.45, 140))
+                    };
+                },
+                aspectRatio: 1.777778
+            };
+
+            const cameraConfig = {
+                facingMode: "environment"
+            };
+
             html5QrScannerInstance.start(
-                { facingMode: "environment" },
-                { fps: 15, qrbox: { width: 280, height: 120 } },
+                cameraConfig,
+                config,
                 onScanReceiptSuccess,
                 (errorMessage) => {}
             ).catch(err => {
@@ -2597,7 +2594,7 @@
             let invId = null;
             let earnedPoints = 0;
 
-            // استخراج فائق المرونة لمطابقة كود الفاتورة INV-54086-PTS-478 بدقة تامة
+            // 1) البحث عن التنسيق الصريح INV و PTS أولاً
             const invMatch = raw.match(/INV[-_:]?(\d+)/i) || raw.match(/I[-_:]?(\d+)/i);
             const ptsMatch = raw.match(/PTS[-_:]?(\d+)/i) || raw.match(/P[-_:]?(\d+)/i);
 
@@ -2605,16 +2602,25 @@
                 invId = invMatch[1];
                 earnedPoints = parseInt(ptsMatch[1]) || 0;
             } else {
-                // دعم الصيغ الرقمية المفصولة في حال مسح باركود بدون بادئة
+                // 2) معالجة ذكية ومحصنة في حال تم مسح أرقام مفصولة فقط
                 const numbers = raw.match(/\d+/g);
                 if (numbers && numbers.length >= 2) {
-                    invId = numbers[0];
-                    earnedPoints = parseInt(numbers[1]) || 0;
+                    const n1 = parseInt(numbers[0], 10);
+                    const n2 = parseInt(numbers[1], 10);
+
+                    // الرقم الكبير ذو القيمة الأعلى هو رقم الفاتورة حتماً، والرقم الأصغر المنطقي هو عدد النقاط
+                    if (n1 > n2) {
+                        invId = String(n1);
+                        earnedPoints = n2;
+                    } else {
+                        invId = String(n2);
+                        earnedPoints = n1;
+                    }
                 }
             }
 
             if (!invId || earnedPoints <= 0) {
-                return alert(`⚠️ رمز الباركود غير صالح أو غير معتمد من مطعم ستوريا!\n(النص المقروء: ${raw})`);
+                return alert(`⚠️ رمز الباركود غير صالح أو غير معتمد من مطعم ستوريا!\n(الكود المقروء: ${raw})`);
             }
 
             if (!activeUserPhone) {
@@ -2704,7 +2710,6 @@
                 return alert("يرجى إدخال رقم الفاتورة وعدد النقاط بشكل صحيح");
             }
 
-            // توليد الباركود المعتمد INV-54086-PTS-478
             const barcodeData = `INV-${inv}-PTS-${pts}`;
 
             try {
@@ -2981,7 +2986,6 @@
             }
         }
 
-        /* ------------------ نظام صوت وجرس الكاشير المستمر وسرعة الاستجابة ------------------ */
         function initAudioContext() {
             try {
                 if (!audioContext) {
@@ -3126,7 +3130,6 @@
             }, (err) => console.warn("Cashier orders listener:", err));
         }
 
-        /* ------------------ التحقق من كلمة مرور الكاشير ------------------ */
         function openCashierPortal() {
             document.getElementById('cashierAuthModal').style.display = 'flex';
             document.getElementById('cashierPassInput').value = '';
@@ -3379,7 +3382,6 @@
             }
             renderMenu(false);
 
-            // إرجاع الشاشة لبداية الأصناف دائماً عند التبديل بين الأقسام
             const menuContainer = document.getElementById('menuList');
             if (menuContainer) {
                 menuContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -3818,7 +3820,6 @@
             const activeOrderTotal = currentTotal;
             const activeOrderCart = [...cart];
 
-            // حفظ الطلب في فايربيس فورياً
             if (window.db && window.firebaseModules) {
                 const { collection, addDoc } = window.firebaseModules;
                 addDoc(collection(window.db, "orders"), {
@@ -3948,7 +3949,6 @@
         }
 
         function openAdminPanel() {
-            // طلب كلمة المرور في كل مرة دون أي دخول تلقائي
             document.getElementById('adminModal').style.display = 'flex';
             document.getElementById('adminAuthView').style.display = 'block';
             document.getElementById('adminDashboardView').style.display = 'none';
