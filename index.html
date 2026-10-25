@@ -924,7 +924,7 @@
         </div>
     </div>
 
-    <!-- نافذة مسح باركود الفاتورة للعميل مع إطار عريض ودعم فائق للـ High Density Barcode -->
+    <!-- نافذة مسح باركود الفاتورة للعميل -->
     <div class="floating-sub-modal" id="scanReceiptModal" style="z-index: 6000;" onclick="if(event.target==this) closeScanReceiptModal()">
         <div class="floating-card-box" style="text-align: center;">
             <div class="floating-header">
@@ -2531,47 +2531,53 @@
             openMyRedeemQrModal(inputVal);
         }
 
+        // ==========================================
+        // 🚀 دالة مسح الباركود المحدثة والشرسة (تم تعديلها هنا فقط)
+        // ==========================================
         function openScanReceiptModal() {
             closeLoyaltyModal();
             const modal = document.getElementById('scanReceiptModal');
             modal.style.display = 'flex';
 
+            // تنظيف منطقة العرض قبل البدء
+            document.getElementById('qrReaderArea').innerHTML = "";
+
             if (!html5QrScannerInstance) {
                 const formats = [
-                    Html5QrcodeSupportedFormats.CODE_128,
+                    Html5QrcodeSupportedFormats.CODE_128, // باركود الفواتير
                     Html5QrcodeSupportedFormats.CODE_39,
-                    Html5QrcodeSupportedFormats.EAN_13,
+                    Html5QrcodeSupportedFormats.EAN_13,   // باركود المنتجات العادي
                     Html5QrcodeSupportedFormats.EAN_8,
                     Html5QrcodeSupportedFormats.UPC_A,
-                    Html5QrcodeSupportedFormats.UPC_E,
-                    Html5QrcodeSupportedFormats.QR_CODE
+                    Html5QrcodeSupportedFormats.UPC_E
                 ];
                 html5QrScannerInstance = new Html5Qrcode("qrReaderArea", { formatsToSupport: formats, verbose: false });
             }
 
-            // إعدادات محسنة لكاميرا المسح لتغطي عرض الباركود بالكامل بدقة HD
+            // إعدادات مخصصة جداً لضمان قراءة الباركود بدون أي تقييد
             const config = {
-                fps: 20,
-                qrbox: function(viewfinderWidth, viewfinderHeight) {
-                    return {
-                        width: Math.floor(viewfinderWidth * 0.95),
-                        height: Math.floor(Math.min(viewfinderHeight * 0.45, 140))
-                    };
-                },
+                fps: 30, // 30 لقطة في الثانية (سريع جداً)
+                qrbox: undefined, // مسح الشاشة بالكامل (لأن الباركود طويل ومش مربع)
                 aspectRatio: 1.777778
             };
 
             const cameraConfig = {
-                facingMode: "environment"
+                facingMode: "environment" // الكاميرا الخلفية
             };
+
+            if (html5QrScannerInstance.isScanning) {
+                return;
+            }
 
             html5QrScannerInstance.start(
                 cameraConfig,
                 config,
                 onScanReceiptSuccess,
-                (errorMessage) => {}
+                (errorMessage) => {
+                    // بنتجاهل أخطاء عدم وجود باركود لحد ما يلاقي حاجة
+                }
             ).catch(err => {
-                alert("تعذر فتح الكاميرا: يرجى إعطاء الإذن بالوصول للكاميرا من المتصفح.");
+                alert("⚠️ تعذر فتح الكاميرا:\n1. تأكد من إعطاء المتصفح الإذن بالوصول للكاميرا.\n2. لا يمكن تجربة الكاميرا على الموبايل إذا كان الرابط يبدأ بـ http (يجب أن يكون https).");
                 closeScanReceiptModal();
             });
         }
@@ -2665,6 +2671,7 @@
                 }
             }
         }
+        // ==========================================
 
         function openMyRedeemQrModal(selectedPointsToRedeem) {
             const modal = document.getElementById('myRedeemQrModal');
